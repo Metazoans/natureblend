@@ -9,13 +9,124 @@
     <ul class="navbar-nav">
 
       <!-- 네비게이션바 항목 시작 -->
-      <li class="nav-item">
+      <li v-if="headerMenu === $departments[1]" class="nav-item">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
-          v-bind:collapse="false"
+          v-bind:collapse="true"
           collapseRef="mainpage"
-          navText="MainPage"
+          navText="영업파트"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+      </li>
+      <li v-if="headerMenu === $departments[2]" class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="자재파트"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+
+        </sidenav-collapse>
+      </li>
+      <li v-if="headerMenu === $departments[3]" class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="생산계획"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">생산계획 등록</li>
+            <li class="sub-item">생산계획 목록</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="생산지시"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">생산계획 등록</li>
+            <li class="sub-item">생산계획 목록</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="공정작업"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">생산계획 등록</li>
+            <li class="sub-item">생산계획 목록</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="false"
+            collapseRef="mainpage"
+            navText="공정실적"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+      </li>
+      <li v-if="headerMenu === $departments[4]" class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="품질파트"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+      </li>
+      <li v-if="headerMenu === $departments[5]" class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="설비파트"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+      </li>
+      <li v-if="headerMenu === $departments[6]" class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="기준정보파트"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
@@ -40,6 +151,7 @@
 </template>
 <script>
 import SidenavCollapse from "./SidenavCollapse.vue";
+import {mapState} from "vuex";
 
 export default {
   name: "SidenavList",
@@ -56,5 +168,31 @@ export default {
   components: {
     SidenavCollapse,
   },
+
+  computed: {
+    ...mapState([
+      "headerMenu"
+    ]),
+  },
+
+  created() {
+  },
+
+  methods: {
+
+  }
 };
 </script>
+<style scoped>
+.sub-item {
+  font-size: 14px;
+  cursor: pointer;
+  border-left: 3px solid #ffa500;
+  margin: 4px 0 10px 0;
+  padding: 0 0 0 5px;
+}
+
+.sub-item:hover {
+  color: #ffa500 !important;
+}
+</style>

@@ -6,8 +6,14 @@ import "./assets/css/nucleo-icons.css";
 import "./assets/css/nucleo-svg.css";
 import MaterialDashboard from "./material-dashboard";
 
-const appInstance = createApp(App);
-appInstance.use(store);
-appInstance.use(router);
-appInstance.use(MaterialDashboard);
-appInstance.mount("#app");
+import { departments } from './utils/dataCode.js';
+
+
+const app = createApp(App);
+
+app.config.globalProperties.$departments = departments;
+
+app.use(store);
+app.use(router);
+app.use(MaterialDashboard);
+app.mount("#app");

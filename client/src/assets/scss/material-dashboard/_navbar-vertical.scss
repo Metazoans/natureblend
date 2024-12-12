@@ -358,7 +358,8 @@ body:not(.dark-version) {
     .navbar-nav {
       .nav-link {
         &.active:after {
-          color: $dark-version-caret-sidebar-color !important;
+          // 사이드 메뉴 흰색(디폴트값)으로 하고 싶어서 주석처리
+          //color: $dark-version-caret-sidebar-color !important;
         }
       }
     }

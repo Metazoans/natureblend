@@ -9,19 +9,32 @@
         </li>
       </ul>
       <div>
+        <ul class="navbar-nav justify-content-end">
+          <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+            <a
+                href="#"
+                @click="toggleSidebar"
+                class="p-0 nav-link text-body lh-1"
+                id="iconNavbarSidenav"
+            >
+              <div class="hamburger-menu">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+              </div>
+            </a>
+          </li>
+        </ul>
 
-    <a href="#" @click="toggleSidebar">
-    btn
-    </a>
-
-  </div>
+      </div>
     </header>
   </template>
   
   <script>
-  import { mapMutations, mapState } from "vuex";
+  import {mapActions, mapMutations, mapState} from "vuex";
   export default {
     name: "AppHeader",
+    components: {},
     data() {
       return {
         navItems: [
@@ -35,13 +48,19 @@
       };
     },
     methods: {
+      ...mapMutations(["navbarMinimize"]),
+      ...mapActions(["setHeaderMenu"]),
+
       handleClick(item) {
         this.navItems.forEach(i => i.active = false);
         item.active = true;
+        console.log(item.text)
+        this.setHeaderMenu(item.text)
       },
-      ...mapMutations(["navbarMinimize", "toggleConfigurator"]),
+
       toggleSidebar() {
       this.navbarMinimize();
+
     },
       
     },
@@ -80,22 +99,48 @@
     object-fit: contain;
     vertical-align: middle;
   }
-  
+
   .nav-list {
     list-style-type: none;
     display: flex;
     justify-content: center;
-    width: 100%;
+    gap: 48px;
+    flex-grow: 1;
     margin: 0;
     padding: 0;
   }
-  
+
   .nav-list li {
-    color: gray;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 26px;
     cursor: pointer;
-    padding: 10px 10px;
-    margin-left: 40px;
-    margin-right: 40px;
-    transition: background-color 0.3s;
+  }
+
+  .nav-list li:hover {
+    text-decoration: underline;
+  }
+  .hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .hamburger-menu .line {
+    height: 3px; /* 각 선의 높이 */
+    background-color: #fff; /* 선의 색상 */
+    border-radius: 2px; /* 둥근 모서리 */
+  }
+  @media all and (min-width:480px) and (max-width:767px) {
+    .nav-list {
+      gap: 16px;
+      li {
+        font-size: 20px;
+      }
+    }
   }
   </style>

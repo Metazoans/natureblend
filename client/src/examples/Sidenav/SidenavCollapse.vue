@@ -19,7 +19,7 @@
       navText
     }}</span>
   </router-link>
-  <div :class="isExpanded ? 'collapse show' : 'collapse'">
+  <div :class="isExpanded ? 'collapse show' : 'collapse'" class="sub-nav">
     <slot name="list"></slot>
   </div>
 </template>
@@ -58,3 +58,10 @@ export default {
   }
 };
 </script>
+<style scoped>
+.sub-nav {
+  padding: 8px 20px 10px 20px;
+  margin: 0 0 0 16px;
+
+}
+</style>

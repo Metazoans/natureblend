@@ -1,5 +1,5 @@
 <!--
-  Product 페이지 병합
+  Production 페이지 병합
 -->
 
 <template>
