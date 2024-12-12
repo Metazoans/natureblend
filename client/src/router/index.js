@@ -5,6 +5,8 @@ import MainPage from "../views/MainPage.vue";
 
 import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoutes from "./machineRoute";
+
+import MaterialApp from '@/views/material/MaterialApp.vue';
 import MaterialRoute from "./materialRoute";
 
 const routes = [
