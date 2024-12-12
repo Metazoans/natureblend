@@ -5,6 +5,7 @@ import MainPage from "../views/MainPage.vue";
 
 import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoutes from "./machineRoute";
+import MaterialRoute from "./materialRoute";
 
 import ProductApp from '@/views/product/ProductApp.vue';
 import productRoutes from "./productRoute";
@@ -35,7 +36,7 @@ const routes = [
     path: "/material",
     name: "materialApp",
     component: MaterialApp,
-    children : MaterialRoutes
+    children : MaterialRoute
   },
 
   // 생산
