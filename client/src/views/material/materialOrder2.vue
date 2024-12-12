@@ -6,7 +6,7 @@
 </template>
 <script>
 //import WijmoGrid from '../../components/WijmoGrid.vue';
-import WijmoGrid from '../../components/WijmoGrid2.vue';
+import WijmoGrid from '../../components/WijmoGrid3.vue';
 
 export default {
    components: {
