@@ -6,6 +6,9 @@ import MainPage from "../views/MainPage.vue";
 import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoutes from "./machineRoute";
 
+import ProductApp from '@/views/product/ProductApp.vue';
+import productRoutes from "./productRoute";
+
 const routes = [
   // 공용 페이지
   {
