@@ -1,14 +1,25 @@
 /*
   파일명 : machineRoute.js
   작성자 : 김선용
-  개요   : 설비 관련 라우터
+  개요   : 설비 라우터
   작성일 : 2024-12-12
 */
 
-/*
-  [업데이트]
-  
-*/
+import MachineList from '@/views/machine/MachineList.vue';
+
+const machineRoutes = [
+  {
+    path: '',
+    redirect : { name : 'machineList'}
+  },
+  {
+    path: 'list',
+    name: 'machineList',
+    component: MachineList
+  },
+];
+
+export default machineRoutes;
 
 
 
