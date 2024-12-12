@@ -5,6 +5,7 @@ import MainPage from "../views/MainPage.vue";
 
 import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoutes from "./machineRoute";
+import MaterialRoute from "./materialRoute";
 
 const routes = [
   // 공용 페이지
@@ -32,7 +33,7 @@ const routes = [
     path: "/material",
     name: "materialApp",
     component: MaterialApp,
-    children : MaterialRoutes
+    children : MaterialRoute
   },
 
   // 생산
