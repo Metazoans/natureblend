@@ -6,6 +6,9 @@ import MainPage from "../views/MainPage.vue";
 import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoutes from "./machineRoute";
 
+import QualityApp from '@/views/machine/QualityApp.vue';
+import qualityRoute from "./qualityRoute";
+
 const routes = [
   // 공용 페이지
   {
