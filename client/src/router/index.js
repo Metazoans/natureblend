@@ -5,6 +5,8 @@ import MainPage from "../views/MainPage.vue";
 
 import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoutes from "./machineRoute";
+import SalesApp from '@/views/sales/SalesApp.vue';
+import salesRoute from "./salesRoute";
 
 const routes = [
   // 공용 페이지
@@ -24,7 +26,7 @@ const routes = [
     path: "/sales",
     name: "salesApp",
     component: SalesApp,
-    children : SalesRoutes
+    children : salesRoute
   },
 
   // 자재
