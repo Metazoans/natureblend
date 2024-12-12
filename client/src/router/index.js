@@ -20,12 +20,36 @@ const routes = [
   },
 
   // 영업
+  {
+    path: "/sales",
+    name: "salesApp",
+    component: SalesApp,
+    children : SalesRoutes
+  },
 
   // 자재
+  {
+    path: "/material",
+    name: "materialApp",
+    component: MaterialApp,
+    children : MaterialRoutes
+  },
 
   // 생산
+  {
+    path: "/product",
+    name: "productApp",
+    component: ProductApp,
+    children : ProductRoutes
+  },
 
   // 품질
+  {
+    path: "/quality",
+    name: "qualityApp",
+    component: QualityApp,
+    children : QualityRoutes
+  },
 
   // 설비
   {
@@ -34,9 +58,14 @@ const routes = [
     component: MachineApp,
     children : machineRoutes
   },
+
   // 기준정보
-
-
+  {
+    path: "/standard",
+    name: "standardApp",
+    component: StandardApp,
+    children : StandardRoutes
+  },
 
 ];
 
