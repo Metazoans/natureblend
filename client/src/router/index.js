@@ -2,7 +2,12 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import MainPage from "../views/MainPage.vue";
 
+
+import MachineApp from '@/views/machine/MachineApp.vue';
+import machineRoutes from "./machineRoute";
+
 const routes = [
+  // 공용 페이지
   {
     path: "/",
     name: "/",
@@ -12,6 +17,54 @@ const routes = [
     path: "/mainpage",
     name: "MainPage",
     component: MainPage,
+  },
+
+  // 영업
+  {
+    path: "/sales",
+    name: "salesApp",
+    component: SalesApp,
+    children : SalesRoutes
+  },
+
+  // 자재
+  {
+    path: "/material",
+    name: "materialApp",
+    component: MaterialApp,
+    children : MaterialRoutes
+  },
+
+  // 생산
+  {
+    path: "/product",
+    name: "productApp",
+    component: ProductApp,
+    children : ProductRoutes
+  },
+
+  // 품질
+  {
+    path: "/quality",
+    name: "qualityApp",
+    component: QualityApp,
+    children : QualityRoutes
+  },
+
+  // 설비
+  {
+    path: '/machine',
+    name: 'machineApp',
+    component: MachineApp,
+    children : machineRoutes
+  },
+
+  // 기준정보
+  {
+    path: "/standard",
+    name: "standardApp",
+    component: StandardApp,
+    children : StandardRoutes
   },
 
 ];
