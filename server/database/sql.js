@@ -1,8 +1,8 @@
 const boards = require('./sqls/boards.js');
 const comments = require('./sqls/comments.js');
 const books = require('./sqls/books.js');
-const emp = require('./sqls/emp.js')
-const material = require('./sqls/material.js')
+const emp = require('./sqls/emp.js');
+const material = require('./sqls/material.js');
 
 module.exports = {
   ...boards,
