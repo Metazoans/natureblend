@@ -2,7 +2,7 @@
 
 import StandardTest from '@/views/standard/StandardTest.vue';
 
-const standardRoutes = [
+const standardRoute = [
   {
     path: '',
     redirect : { name : 'StandardTest'}
@@ -14,4 +14,4 @@ const standardRoutes = [
   },
 ];
 
-export default standardRoutes;
+export default standardRoute;
