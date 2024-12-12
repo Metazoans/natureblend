@@ -7,7 +7,7 @@ const materialRoute = [
     redirect : { name : 'materialList'}
   },
   {
-    path: 'list',
+    path: 'order',
     name: 'materialList',
     component: MaterialList
   },
