@@ -1,9 +1,9 @@
-const mysql = require('mysql');
-//const mariadb = require('mariadb/callback');
+//const mysql = require('mysql');
+const mariadb = require('mariadb/callback');
 const sqlList = require('./sql.js');
 
-const connectionPool = mysql.createPool({
-//const connectionPool = mariadb.createPool({
+//const connectionPool = mysql.createPool({
+const connectionPool = mariadb.createPool({
   host : process.env.MYSQL_HOST,
   port : process.env.MYSQL_PORT,
   user : process.env.MYSQL_USER,

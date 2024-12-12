@@ -4,9 +4,9 @@ const boardService = require('../service/board_service.js');
 
 // 전체조회
 router.get('/boards', async (req, res)=>{
-  let searchs = req.query;
-  let boardList = await boardService.findAllBoard(searchs);
-  res.send(boardList);  
+    let searchs = req.query;
+    let boardList = await boardService.findAllBoard(searchs);
+    res.send(boardList); 
 });
 
 // 단건조회
