@@ -10,6 +10,9 @@ import MaterialRoute from "./materialRoute";
 import ProductApp from '@/views/product/ProductApp.vue';
 import productRoutes from "./productRoute";
 
+import StandardApp from '@/views/standard/StandardApp.vue';
+import standardRoutes from "./standardRoute";
+
 const routes = [
   // 공용 페이지
   {
