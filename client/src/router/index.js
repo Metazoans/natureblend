@@ -17,6 +17,8 @@ import standardRoutes from "./standardRoute";
 import SalesApp from '@/views/sales/SalesApp.vue';
 import salesRoute from "./salesRoute";
 
+import QualityApp from '@/views/machine/QualityApp.vue';
+import qualityRoute from "./qualityRoute";
 
 const routes = [
   // 공용 페이지
