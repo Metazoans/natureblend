@@ -22,7 +22,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li v-if="headerMenu === $departments[2]" class="nav-item">
+      <li v-else-if="headerMenu === $departments[2]" class="nav-item">
         <sidenav-collapse
             url="#"
             :aria-controls="''"
@@ -36,7 +36,7 @@
 
         </sidenav-collapse>
       </li>
-      <li v-if="headerMenu === $departments[3]" class="nav-item">
+      <li v-else-if="headerMenu === $departments[3]" class="nav-item">
         <sidenav-collapse
             url="#"
             :aria-controls="''"
@@ -94,7 +94,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li v-if="headerMenu === $departments[4]" class="nav-item">
+      <li v-else-if="headerMenu === $departments[4]" class="nav-item">
         <sidenav-collapse
             url="#"
             :aria-controls="''"
@@ -107,7 +107,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li v-if="headerMenu === $departments[5]" class="nav-item">
+      <li v-else-if="headerMenu === $departments[5]" class="nav-item">
         <sidenav-collapse
             url="#"
             :aria-controls="''"
@@ -120,7 +120,7 @@
           </template>
         </sidenav-collapse>
       </li>
-      <li v-if="headerMenu === $departments[6]" class="nav-item">
+      <li v-else-if="headerMenu === $departments[6]" class="nav-item">
         <sidenav-collapse
             url="#"
             :aria-controls="''"
