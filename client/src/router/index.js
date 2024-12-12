@@ -4,21 +4,21 @@ import MainPage from "../views/MainPage.vue";
 
 
 import MachineApp from '@/views/machine/MachineApp.vue';
-import machineRoutes from "./machineRoute";
+import machineRoute from "./machineRoute";
 
 import MaterialApp from '@/views/material/MaterialApp.vue';
-import MaterialRoute from "./materialRoute";
+import materialRoute from "./materialRoute";
 
 import ProductApp from '@/views/product/ProductApp.vue';
-import productRoutes from "./productRoute";
+import productRoute from "./productRoute";
 
 import StandardApp from '@/views/standard/StandardApp.vue';
-import standardRoutes from "./standardRoute";
+import standardRoute from "./standardRoute";
 
 import SalesApp from '@/views/sales/SalesApp.vue';
 import salesRoute from "./salesRoute";
 
-import QualityApp from '@/views/machine/QualityApp.vue';
+import QualityApp from '@/views/quality/QualityApp.vue';
 import qualityRoute from "./qualityRoute";
 
 const routes = [
@@ -47,7 +47,7 @@ const routes = [
     path: "/material",
     name: "materialApp",
     component: MaterialApp,
-    children : MaterialRoute
+    children : materialRoute
   },
 
   // 생산
@@ -55,7 +55,7 @@ const routes = [
     path: "/product",
     name: "productApp",
     component: ProductApp,
-    children : ProductRoutes
+    children : productRoute
   },
 
   // 품질
@@ -63,7 +63,7 @@ const routes = [
     path: "/quality",
     name: "qualityApp",
     component: QualityApp,
-    children : QualityRoutes
+    children : qualityRoute
   },
 
   // 설비
@@ -71,7 +71,7 @@ const routes = [
     path: '/machine',
     name: 'machineApp',
     component: MachineApp,
-    children : machineRoutes
+    children : machineRoute
   },
 
   // 기준정보
@@ -79,7 +79,7 @@ const routes = [
     path: "/standard",
     name: "standardApp",
     component: StandardApp,
-    children : StandardRoutes
+    children : standardRoute
   },
 
 ];

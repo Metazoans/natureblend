@@ -2,7 +2,7 @@
 
 import ProductList from '@/views/product/ProductList.vue';
 
-const productRoutes = [
+const productRoute = [
   {
     path: '',
     redirect : { name : 'productList'}
@@ -14,4 +14,4 @@ const productRoutes = [
   },
 ];
 
-export default productRoutes;
+export default productRoute;

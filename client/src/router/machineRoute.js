@@ -7,7 +7,7 @@
 
 import MachineList from '@/views/machine/MachineList.vue';
 
-const machineRoutes = [
+const machineRoute = [
   {
     path: '',
     redirect : { name : 'machineList'}
@@ -19,7 +19,7 @@ const machineRoutes = [
   },
 ];
 
-export default machineRoutes;
+export default machineRoute;
 
 
 

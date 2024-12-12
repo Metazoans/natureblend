@@ -1,7 +1,7 @@
 // 자재 라우터
 import MaterialList from '@/views/material/materialOrder.vue';
 
-const materialRoutes = [
+const materialRoute = [
   {
     path: '',
     redirect : { name : 'materialList'}
@@ -13,4 +13,4 @@ const materialRoutes = [
   },
 ];
 
-export default materialRoutes;
+export default materialRoute;
