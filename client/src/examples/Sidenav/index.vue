@@ -55,3 +55,10 @@ export default {
   },
 };
 </script>
+
+<style>
+/* #sidenav-main{
+  position: relative;
+  height: 800px;
+} */
+</style>
