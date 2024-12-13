@@ -2,15 +2,15 @@
   <div class="modal fade" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <header>
-          <slot name="header"></slot>
-        </header>
-        <main>
-          <slot name="body"></slot>
-        </main>
-        <footer>
-          <slot name="footer"></slot>
-        </footer>
+        <div class="modal-header">
+          <slot name="header">slot</slot>
+        </div>
+        <div class="modal-body">
+          <slot name="body">slot</slot>
+        </div>
+        <div class="modal-footer">
+          <slot name="footer">slot</slot>
+        </div>
       </div>
     </div>
   </div>
