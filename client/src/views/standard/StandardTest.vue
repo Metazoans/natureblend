@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-12">
@@ -323,6 +322,7 @@
           </div>
         </div>
       </div>
+    </div>
       <div>
  <material-button color="success" size="lg">등록</material-button>
 </div>
@@ -659,14 +659,12 @@
           </div>
         </div>
       </div>
-=======
     <div>
         <h1>실험1실험</h1>
         <h2>실험2실험</h2>
         <h3>실험3실험</h3>
         <h4>실험4실험</h4>
         <h5>실험5실험</h5>
->>>>>>> 7b9923da29b3c79f889a271fbdebd24e41be5489
     </div>
   </template>
   
