@@ -84,6 +84,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 16px;
+    border-radius: 10px;
   }
   
   .logo {
