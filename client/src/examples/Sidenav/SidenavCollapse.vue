@@ -14,7 +14,7 @@
     >
       <slot name="icon"></slot>
     </div>
-    <span class="nav-link-text">{{
+    <span class="nav-link-text ms-1">{{
       navText
     }}</span>
   </router-link>

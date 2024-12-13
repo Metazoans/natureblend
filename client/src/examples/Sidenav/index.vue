@@ -1,7 +1,7 @@
 <template>
   <aside
     id="sidenav-main"
-    class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 ms-3"
+    class="fixed-start ms-3 sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 ms-3"
     :class="`${sidebarType}`"
   >
     <div class="sidenav-header">

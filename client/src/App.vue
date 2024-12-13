@@ -3,6 +3,7 @@
     
     <sidenav
     :custom_class="color"
+    class="fixed-start"
     v-if="showSidenav"
   />
   <main
