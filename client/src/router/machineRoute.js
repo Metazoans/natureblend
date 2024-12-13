@@ -7,6 +7,9 @@
 
 import MachineList from '@/views/machine/MachineList.vue';
 
+//임시페이지
+import MachineModal from '@/views/machine/MachineModal.vue';
+
 const machineRoute = [
   {
     path: '',
@@ -17,6 +20,11 @@ const machineRoute = [
     name: 'machineList',
     component: MachineList
   },
+  {
+    path: 'modal',
+    name: 'machintModal',
+    component: MachineModal
+  }
 ];
 
 export default machineRoute;

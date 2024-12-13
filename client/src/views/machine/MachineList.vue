@@ -1,6 +1,13 @@
 <template>
   <div>
-    <h1>MachineList Page</h1>
+    <h1>Machint List Page</h1>
   </div>
 </template>
 
+<script>
+
+</script>
+
+<style>
+
+</style>

@@ -107,19 +107,43 @@
           </template>
         </sidenav-collapse>
       </li>
+
+      <!-- 설비 메뉴 -->
       <li v-else-if="headerMenu === $departments[5]" class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="flase"
+            collapseRef="mainpage"
+            navText="설비 정보"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item"><a href="machine/List">설비 관리</a></li>
+            <li class="sub-item">부품 관리</li>
+            <li class="sub-item">비가동 관리</li>
+          </template>
+        </sidenav-collapse>
+
         <sidenav-collapse
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
             collapseRef="mainpage"
-            navText="설비파트"
+            navText="정비 정보"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
+          <template v-slot:list>
+            <li class="sub-item">정비 요청 내역</li>
+            <li class="sub-item">정비 완료 내역</li>
+          </template>
         </sidenav-collapse>
       </li>
+
       <li v-else-if="headerMenu === $departments[6]" class="nav-item">
         <sidenav-collapse
             url="#"
