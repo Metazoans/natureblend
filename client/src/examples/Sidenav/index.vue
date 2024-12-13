@@ -1,10 +1,8 @@
 <template>
   <aside
     id="sidenav-main"
-    class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 ms-3"
-    :class="`${
-      isRTL ? 'me-3 rotate-caret fixed-end' : 'fixed-start ms-3'
-    } ${sidebarType}`"
+    class="fixed-start ms-3 sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 ms-3"
+    :class="`${sidebarType}`"
   >
     <div class="sidenav-header">
       <i
@@ -43,7 +41,7 @@ export default {
   },
   computed: {
     // 사이드바 테마 설정
-    ...mapState(["isRTL", "sidebarType", "isDarkMode"]),
+    ...mapState(["sidebarType", "isDarkMode"]),
   },
 };
 </script>

@@ -11,11 +11,10 @@
   >
     <div
       class="text-center d-flex align-items-center justify-content-center"
-      :class="isRTL ? ' ms-2' : 'me-2'"
     >
       <slot name="icon"></slot>
     </div>
-    <span class="nav-link-text" :class="isRTL ? ' me-1' : 'ms-1'">{{
+    <span class="nav-link-text">{{
       navText
     }}</span>
   </router-link>
@@ -54,7 +53,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["isRTL", "color"])
+    ...mapState(["color"])
   }
 };
 </script>

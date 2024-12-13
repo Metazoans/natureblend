@@ -1,22 +1,26 @@
 <template>
-  <div
-    class="input-group"
-    :class="`input-group-${variant} ${getStatus(error, success)}`"
-  >
-    <label :class="variant === 'static' ? '' : 'form-label'">{{ label }}</label>
-    <input
-      :id="id"
-      :type="type"
-      class="form-control"
-      :class="getClasses(size)"
-      :name="name"
-      :value="value"
-      :placeholder="placeholder"
-      :isRequired="isRequired"
-      :disabled="disabled"
-      @input="$emit('update:value', $event.target.value)"
-    />
+  <div>
+    <div
+        class="input-group"
+        :class="`input-group-${variant} ${getStatus(error, success)}`"
+
+    >
+      <label :class="variant === 'static' ? '' : 'form-label'">{{ label }}</label>
+      <input
+          :id="id"
+          :type="type"
+          class="form-control"
+          :class="getClasses(size)"
+          :name="name"
+          :value="value"
+          :placeholder="placeholder"
+          :isRequired="isRequired"
+          :disabled="disabled"
+          @input="$emit('update:value', $event.target.value)"
+      />
+    </div>
   </div>
+
 </template>
 
 <script>

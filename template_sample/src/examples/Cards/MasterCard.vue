@@ -14,7 +14,7 @@
         </h5>
         <div class="d-flex">
           <div class="d-flex">
-            <div :class="isRTL ? 'ms-4' : 'me-4'">
+            <div>
               <p class="text-white text-sm opacity-8 mb-0">
                 {{ card.holderText }}
               </p>
@@ -29,7 +29,6 @@
           </div>
           <div
             class="w-20 d-flex align-items-end justify-content-end"
-            :class="isRTL ? 'me-auto' : 'ms-auto'"
           >
             <material-avatar class="w-60 mt-2" :img="img1" alt="logo" />
           </div>
@@ -72,9 +71,6 @@ export default {
     return {
       img1,
     };
-  },
-  computed: {
-    ...mapState(["isRTL"]),
   },
 };
 </script>
