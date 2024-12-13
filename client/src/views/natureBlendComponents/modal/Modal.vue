@@ -18,6 +18,8 @@
   </div>
 </template>
 <script>
+import {mapActions} from "vuex";
+
 export default {
   name: "Modal",
   props: {
@@ -30,14 +32,16 @@ export default {
     }
 
   },
-
   methods: {
+    ...mapActions(["setModalToggle"]),
     closeModal() {
       this.$emit('closeModal')
+      this.setModalToggle(false)
     },
 
     confirm() {
       this.$emit('confirm')
+      this.setModalToggle(false)
     }
   }
 }

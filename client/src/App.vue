@@ -5,18 +5,19 @@
     :custom_class="color"
     class="fixed-start"
     v-if="showSidenav"
-  />
-  <main
-    class="main-content position-relative max-height-vh-100 h-100 overflow-x-hidden"
-  >
-  <AppHeader />
-  
-  
-  <div class="content-container">
-    <router-view />
-  </div>
+    />
+    <main
+      class="main-content position-relative max-height-vh-100 h-100 overflow-x-hidden"
+    >
+      <AppHeader />
 
-  </main  >
+
+      <div class="content-container">
+        <router-view />
+      </div>
+
+    </main>
+    <div v-if="isModalOpen" class="modal-back"></div>
 </div>
 
 </template>
@@ -46,8 +47,14 @@ export default {
       "showFooter",
       "showConfig",
       "hideConfigButton",
+        'isModalOpen',
     ]),
   },
+
+  created() {
+
+  },
+
   beforeMount() {
     this.$store.state.isTransparent = "bg-transparent";
 
@@ -67,5 +74,14 @@ export default {
   background-color: #fff;
   margin: 10px 0 10px 0;
   border-radius: 8px;
+
+}
+.modal-back {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
 }
 </style>

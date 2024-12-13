@@ -2,7 +2,7 @@
   <aside
     id="sidenav-main"
     class="fixed-start ms-3 sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 ms-3"
-    :class="`${sidebarType}`"
+    :class="`${sidebarType} ${isModalOpen && 'modal-back'}`"
   >
     <div class="sidenav-header">
       <i
@@ -49,14 +49,14 @@ export default {
   },
   computed: {
     // 사이드바 테마 설정
-    ...mapState(["sidebarType", "isDarkMode"]),
+    ...mapState(["sidebarType", "isDarkMode", 'isModalOpen']),
   },
 };
 </script>
 
-<style>
-/* #sidenav-main{
-  position: relative;
-  height: 800px;
-} */
+<style scoped>
+.modal-back {
+  z-index: 0;
+  transition: none;
+}
 </style>
