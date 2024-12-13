@@ -160,9 +160,9 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item"><a href="machine/List">설비 관리</a></li>
-            <li class="sub-item">부품 관리</li>
-            <li class="sub-item">비가동 관리</li>
+            <li class="sub-item" @click="movePage('machineList')">설비 관리</li>
+            <li class="sub-item" @click="movePage('partsList')">부품 관리</li>
+            <li class="sub-item" @click="movePage('inActList')">비가동 관리</li>
           </template>
         </sidenav-collapse>
 
@@ -177,8 +177,8 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">정비 요청 내역</li>
-            <li class="sub-item">정비 완료 내역</li>
+            <li class="sub-item" @click="movePage('requestList')">정비 요청 내역</li>
+            <li class="sub-item" @click="movePage('requestEnd')">정비 완료 내역</li>
           </template>
         </sidenav-collapse>
       </li>

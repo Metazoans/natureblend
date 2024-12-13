@@ -111,7 +111,20 @@
         <material-pagination-item next />
       </material-pagination>
 
-      <material-button color="warning">설비 등록</material-button>
+      <material-button
+        color="warning"
+        @click="openModal"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        설비 등록
+      </material-button>
+
+      <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
+        <template v-slot:list>
+          <MachineManage />
+        </template>
+      </Modal>
     </div>
     
   </div>
@@ -122,6 +135,8 @@ import MaterialPagination from "@/components/MaterialPagination.vue";
 import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
 import MaterialButton from "@/components/MaterialButton.vue";
 import MaterialRadio from "@/components/MaterialRadio.vue";
+import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import MachineManage from "./MachineManage.vue";
 
 export default {
   name: "tables",
@@ -130,7 +145,30 @@ export default {
     MaterialPagination,
     MaterialButton,
     MaterialRadio,
+    Modal,
+    MachineManage,
   },
+  
+  data() {
+    return {
+      isShowModal: false,
+    };
+  },
+
+  methods: {
+    openModal() {
+      this.isShowModal = !this.isShowModal
+    },
+
+    confirm() {
+      console.log('값 저장')
+      this.closeModal()
+    },
+
+    closeModal() {
+      this.isShowModal = false
+    }
+  }
 };
 </script>
 
@@ -138,5 +176,12 @@ export default {
 .pagination {
   display: flex;
   justify-content: center;
+}
+
+.container-fluid {
+  min-height: 500px;
+  .search {
+    margin-top: 24px;
+  }
 }
 </style>
