@@ -66,7 +66,7 @@
     },
 
       computed: {
-      ...mapState(["isRTL", "isAbsolute"]),
+      ...mapState(["isAbsolute"]),
 
       currentRouteName() {
         return this.$route.name;

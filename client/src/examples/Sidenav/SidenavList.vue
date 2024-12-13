@@ -41,15 +41,15 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
-            collapseRef="mainpage"
+            collapseRef="production"
             navText="생산계획"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">생산계획 등록</li>
-            <li class="sub-item">생산계획 목록</li>
+            <li class="sub-item" @click="movePage('productionAdd')">생산계획 등록</li>
+            <li class="sub-item" @click="movePage('productionList')">생산계획 목록</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
@@ -179,7 +179,10 @@ export default {
   },
 
   methods: {
-
+    movePage(page) {
+      this.$router.push({ name: page })
+      // this.$router.push({ name : 'boardInfo', params : { bno : boardNo }});
+    }
   }
 };
 </script>
@@ -193,6 +196,6 @@ export default {
 }
 
 .sub-item:hover {
-  color: #ffa500 !important;
+  color: $orange !important;
 }
 </style>
