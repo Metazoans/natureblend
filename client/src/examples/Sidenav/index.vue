@@ -11,18 +11,9 @@
         id="iconSidenav"
       ></i>
       <a class="m-0 navbar-brand" href="/">
-        <img
-          :src="
-            sidebarType === 'bg-white' ||
-            (sidebarType === 'bg-transparent' && !isDarkMode)
-              ? logoDark
-              : logo
-          "
-          class="navbar-brand-img h-100"
-          alt="main_logo"
-        />
+        <img src="@/assets/img/logogo.jpg" alt="Logo" class="logo-img" />
         <span class="ms-2 font-weight-bold text-white"
-          >Material Dashboard 2</span
+          >NatureBlend</span
         >
       </a>
     </div>
