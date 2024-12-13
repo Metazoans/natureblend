@@ -15,11 +15,59 @@
           :aria-controls="''"
           v-bind:collapse="true"
           collapseRef="mainpage"
-          navText="영업파트"
+          navText="주문서"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('salesForm')">주문서관리</li>
+            <li class="sub-item" @click="movePage('salesList')">주문조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+          url="#"
+          :aria-controls="''"
+          v-bind:collapse="true"
+          collapseRef="mainpage"
+          navText="제품출고"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">제품출고관리</li>
+            <li class="sub-item">제품출고조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+          url="#"
+          :aria-controls="''"
+          v-bind:collapse="true"
+          collapseRef="mainpage"
+          navText="제품입고"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">제품입고등록</li>
+            <li class="sub-item">제품입고조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+          url="#"
+          :aria-controls="''"
+          v-bind:collapse="true"
+          collapseRef="mainpage"
+          navText="제품재고"
+        >
+          <template v-slot:icon>
+              <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+            </template>
+            <template v-slot:list>
+              <li class="sub-item">제품재고조회</li>
+            </template> 
         </sidenav-collapse>
       </li>
       <li v-else-if="headerMenu === $departments[2]" class="nav-item">
