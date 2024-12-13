@@ -28,7 +28,6 @@
         <a href="#" class="switch-trigger background-color">
           <div
             class="my-2 badge-colors"
-            :class="isRTL ? 'text-end' : ' text-start'"
           >
             <span
               class="badge filter bg-gradient-primary"
@@ -192,7 +191,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["isRTL", "sidebarType"]),
+    ...mapState(["sidebarType"]),
     sidenavResponsive() {
       return this.sidenavTypeOnResize;
     },

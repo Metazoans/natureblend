@@ -41,15 +41,15 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
-            collapseRef="mainpage"
+            collapseRef="production"
             navText="생산계획"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">생산계획 등록</li>
-            <li class="sub-item">생산계획 목록</li>
+            <li class="sub-item" @click="movePage('productionAdd')">생산계획 등록</li>
+            <li class="sub-item" @click="movePage('productionList')">생산계획 목록</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
@@ -100,10 +100,49 @@
             :aria-controls="''"
             v-bind:collapse="true"
             collapseRef="mainpage"
-            navText="품질파트"
+            navText="입고검사"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">검사신청</li>
+            <li class="sub-item">입고검사관리</li>
+            <li class="sub-item">검사기록조회</li>
+            <li class="sub-item">불량내역조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="공정품질검사"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">세척검사관리</li>
+            <li class="sub-item">음료검사관리</li>
+            <li class="sub-item">검사기록조회</li>
+            <li class="sub-item">불량내역조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="포장품질검사"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">관리</li>
+            <li class="sub-item">검사기록조회</li>
+            <li class="sub-item">불량내역조회</li>
           </template>
         </sidenav-collapse>
       </li>
@@ -203,7 +242,9 @@ export default {
   },
 
   methods: {
-
+    movePage(page) {
+      this.$router.push({ name: page })
+    }
   }
 };
 </script>
@@ -217,6 +258,6 @@ export default {
 }
 
 .sub-item:hover {
-  color: #ffa500 !important;
+  color: $orange !important;
 }
 </style>

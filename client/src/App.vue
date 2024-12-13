@@ -3,7 +3,7 @@
     
     <sidenav
     :custom_class="color"
-    :class="[isRTL ? 'fixed-end' : 'fixed-start']"
+    class="fixed-start"
     v-if="showSidenav"
   />
   <main
@@ -12,9 +12,10 @@
   <AppHeader />
   
   
-  
+  <div class="content-container">
     <router-view />
-    
+  </div>
+
   </main  >
 </div>
 
@@ -35,7 +36,6 @@ export default {
   },
   computed: {
     ...mapState([
-      "isRTL",
       "color",
       "isAbsolute",
       "isNavFixed",
@@ -59,3 +59,13 @@ export default {
   },
 };
 </script>
+<style>
+#app {
+  padding-right: 10px;
+}
+.content-container {
+  background-color: #fff;
+  margin: 10px 0 10px 0;
+  border-radius: 8px;
+}
+</style>
