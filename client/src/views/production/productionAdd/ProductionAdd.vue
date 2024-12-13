@@ -8,18 +8,15 @@
       <material-input id="search" label="제품명" />
     </div>
 
-    <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
+    <Modal
+        :isShowModal="isShowModal"
+        :modalTitle="modalTitle"
+        :noBtn="'닫기'"
+        :yesBtn="'선택'"
+        @closeModal="closeModal"
+        @confirm="confirm">
       <template v-slot:list>
-        <p>content</p>
-        <p>content</p>
-        <p>content</p>
-        <p>content</p>
-        <p>content</p>
-        <p>content</p>
-        <p>content</p>
-        <p>content</p>
-        <p>content</p>
-        <p>content</p>
+        <ProductList v-if="isShowModal"/>
       </template>
     </Modal>
   </div>
@@ -28,18 +25,26 @@
 import MaterialInput from "@/components/MaterialInput.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import {mapActions} from "vuex";
+import ProductList from "@/views/production/productionAdd/productList.vue";
+
 
 export default {
   name: "tables",
-  components: {Modal, MaterialInput},
+  components: {ProductList, Modal, MaterialInput},
 
   data() {
     return {
       isShowModal: false,
+      modalTitle: '제품 목록'
     };
   },
 
+  created() {
+  },
+
   methods: {
+
+
     ...mapActions(["setModalToggle"]),
 
     openModal() {
