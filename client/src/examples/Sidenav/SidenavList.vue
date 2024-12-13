@@ -82,7 +82,7 @@
             <li class="sub-item">생산계획 목록</li>
           </template>
         </sidenav-collapse>
-        <sidenav-collapse
+        <sidenav-collapse 
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
@@ -161,6 +161,7 @@
       </li>
       <li v-else-if="headerMenu === $departments[6]" class="nav-item">
         <sidenav-collapse 
+            class="sub-item" @click="movePage('employeemanagement')"
             url=""
             :aria-controls="''"
             v-bind:collapse="true"
@@ -172,6 +173,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('customermanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -183,6 +185,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('bommanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -194,6 +197,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('processflowmanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -205,6 +209,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('productmanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -216,6 +221,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('materialmanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -227,6 +233,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('badcodemanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -238,6 +245,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('returncodemanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -249,6 +257,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('processstandardmanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -260,6 +269,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('warehousemanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -271,6 +281,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('standardTest')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
@@ -282,6 +293,7 @@
           </template>
         </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('standardTest2')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"

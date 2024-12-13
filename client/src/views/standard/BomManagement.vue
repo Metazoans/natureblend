@@ -1,5 +1,9 @@
 <template>
     <div>
-        <h1>BOM 관리 페이지</h1>
+        <h1> BOM 관리 </h1>
     </div>
 </template>
+<script>
+    export default { 
+        name: 'BomManagement' };
+</script>

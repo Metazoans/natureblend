@@ -1,9 +1,9 @@
 <template>
     <div>
-        <h1> 사원 관리 페이지 </h1>
+        <h1> 반품코드 관리 </h1>
     </div>
 </template>
 <script>
     export default { 
-        name: 'EmployeeManagement' } ;
+        name: 'ReturncodeManagement' }; 
 </script>
