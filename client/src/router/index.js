@@ -9,8 +9,8 @@ import machineRoute from "./machineRoute";
 import MaterialApp from '@/views/material/MaterialApp.vue';
 import materialRoute from "./materialRoute";
 
-import ProductApp from '@/views/product/ProductApp.vue';
-import productRoute from "./productRoute";
+import ProductionApp from '@/views/production/ProductionApp.vue';
+import productionRoute from "./productionRoute";
 
 import StandardApp from '@/views/standard/StandardApp.vue';
 import standardRoute from "./standardRoute";
@@ -52,10 +52,10 @@ const routes = [
 
   // 생산
   {
-    path: "/product",
-    name: "productApp",
-    component: ProductApp,
-    children : productRoute
+    path: "/production",
+    name: "productionApp",
+    component: ProductionApp,
+    children : productionRoute
   },
 
   // 품질

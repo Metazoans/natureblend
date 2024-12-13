@@ -10,12 +10,10 @@
       <breadcrumbs :currentPage="currentRouteName" :color="color" />
       <div
         class="mt-2 collapse navbar-collapse mt-sm-0 me-md-0 me-sm-4"
-        :class="isRTL ? 'px-0' : 'me-sm-4'"
         id="navbar"
       >
         <div
           class="pe-md-3 d-flex align-items-center"
-          :class="isRTL ? 'me-md-auto' : 'ms-md-auto'"
         >
           <material-input id="search" label="Search here" />
         </div>
@@ -26,7 +24,7 @@
               class="px-0 nav-link font-weight-bold lh-1"
               :class="color ? color : 'text-body'"
             >
-              <i class="material-icons" :class="isRTL ? 'ms-sm-2' : 'me-sm-1'">
+              <i class="material-icons">
                 account_circle
               </i>
             </router-link>
@@ -58,7 +56,6 @@
           </li>
           <li
             class="nav-item dropdown d-flex align-items-center"
-            :class="isRTL ? 'ps-2' : 'pe-2'"
           >
             <a
               href="#"
@@ -212,7 +209,7 @@ export default {
     MaterialInput,
   },
   computed: {
-    ...mapState(["isRTL", "isAbsolute"]),
+    ...mapState(["isAbsolute"]),
 
     currentRouteName() {
       return this.$route.name;
