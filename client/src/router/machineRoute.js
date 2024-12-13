@@ -8,7 +8,8 @@
 import MachineList from '@/views/machine/MachineList.vue';
 
 //임시페이지
-import MachineModal from '@/views/machine/MachineModal.vue';
+import MachineManage from '@/views/machine/MachineManage.vue';
+import ModalView from '@/views/machine/ModalView.vue';
 
 const machineRoute = [
   {
@@ -21,10 +22,19 @@ const machineRoute = [
     component: MachineList
   },
   {
-    path: 'modal',
-    name: 'machintModal',
-    component: MachineModal
+    path: 'manage',
+    name: 'machineManage',
+    component: MachineManage
+  },
+
+  // 테스트용
+  {
+    path: 'test',
+    name: 'modalView',
+    component: ModalView
   }
+
+
 ];
 
 export default machineRoute;
