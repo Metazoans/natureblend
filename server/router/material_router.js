@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const bookService = require('../service/material_service.js');
+const materialService = require('../service/material_service.js');
+
+//allmaterial
 
 // 전체조회
-// router.get('/books', async (req, res)=>{
-//   let bookList = await bookService.findAllBook();
-//   res.send(bookList);
-// });
+ router.get('/material', async (req, res)=>{
+   let materialList = await materialService.allmaterial();
+   res.send(materialList);
+ });
 
 module.exports = router;
