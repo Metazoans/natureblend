@@ -12,9 +12,10 @@
   <AppHeader />
   
   
-  
+  <div class="content-container">
     <router-view />
-    
+  </div>
+
   </main  >
 </div>
 
@@ -58,3 +59,13 @@ export default {
   },
 };
 </script>
+<style>
+#app {
+  padding-right: 10px;
+}
+.content-container {
+  background-color: #fff;
+  margin: 10px 0 10px 0;
+  border-radius: 8px;
+}
+</style>
