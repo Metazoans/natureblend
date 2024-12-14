@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
@@ -11,14 +11,13 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">{{ noBtn }}</button>
-          <button type="button" class="btn btn-primary" @click="confirm">{{ yesBtn }}</button>
+          <button type="button" class="btn btn-warning" @click="confirm">{{ yesBtn }}</button>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import {mapActions} from "vuex";
 
 export default {
   name: "Modal",
@@ -36,15 +35,12 @@ export default {
 
   },
   methods: {
-    ...mapActions(["setModalToggle"]),
     closeModal() {
       this.$emit('closeModal')
-      this.setModalToggle(false)
     },
 
     confirm() {
       this.$emit('confirm')
-      this.setModalToggle(false)
     }
   }
 }
@@ -53,7 +49,18 @@ export default {
 
 
 <style scoped>
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
 .show {
   display: block;
+}
+button {
+  font-size: 16px;
 }
 </style>

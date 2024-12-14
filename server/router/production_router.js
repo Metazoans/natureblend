@@ -8,4 +8,12 @@ router.get('/products', async (req, res)=>{
     res.send(productList);
 });
 
+router.get('/orders', async (req, res)=>{
+    let productCode = req.query.product_code;
+
+    let orders = await productionService.findOrders(productCode);
+    res.send(orders);
+});
+
+
 module.exports = router

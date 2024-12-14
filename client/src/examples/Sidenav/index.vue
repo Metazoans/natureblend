@@ -11,18 +11,8 @@
         id="iconSidenav"
       ></i>
       <a class="m-0 navbar-brand" href="/">
-        <img
-          :src="
-            sidebarType === 'bg-white' ||
-            (sidebarType === 'bg-transparent' && !isDarkMode)
-              ? logoDark
-              : logo
-          "
-          class="navbar-brand-img h-100"
-          alt="main_logo"
-        />
-        <span class="ms-2 font-weight-bold text-white"
-          >Material Dashboard 2</span
+        <span class="text-2xl font-weight-bold text-white"
+          >Nature Blend</span
         >
       </a>
     </div>
@@ -55,8 +45,5 @@ export default {
 </script>
 
 <style scoped>
-.modal-back {
-  z-index: 0;
-  transition: none;
-}
+
 </style>

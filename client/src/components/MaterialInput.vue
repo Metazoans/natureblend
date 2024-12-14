@@ -107,8 +107,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-input {
-  z-index: 0 !important;
-}
-</style>
+

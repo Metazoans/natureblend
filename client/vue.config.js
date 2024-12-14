@@ -15,7 +15,13 @@ module.exports = defineConfig({
         }
     },
 
-    pluginOptions: {
-        vuetify: {}
+    css: {
+        loaderOptions: {
+            sass: {
+                additionalData: `
+          @import "@/assets/scss/variables.scss";
+        `
+            }
+        }
     }
 })

@@ -11,19 +11,25 @@
                 <thead>
                 <tr>
                   <th
-                      class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+                      class="text-uppercase text-secondary text-md font-weight-bolder opacity-7"
                   >
                     제품번호
                   </th>
                   <th
-                      class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+                      class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
                   >
                     제품이름
                   </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="product in productList" :key="product.product_code">
+                <tr
+                    v-for="product in productList"
+                    :key="product.product_code"
+                    class="product"
+                    :class="{ selected: selectedCode === product.product_code }"
+                    @click="selectProduct(product)"
+                >
                   <td>
                     <div class="d-flex px-2">
                       <div class="my-auto">
@@ -59,7 +65,8 @@ export default {
 
   data() {
     return {
-      productList: []
+      productList: [],
+      selectedCode: ''
     }
   },
 
@@ -73,7 +80,11 @@ export default {
           await axios.get(`${ajaxUrl}/production/products`)
               .catch(err => console.log(err));
       this.productList = result.data
-      console.log(this.productList)
+    },
+
+    selectProduct(product) {
+      this.selectedCode = product.product_code
+      this.$emit('selectProduct', product)
     },
   }
 }
@@ -81,8 +92,23 @@ export default {
 
 
 
-<style scoped>
+<style scoped lang="scss">
 .card {
   box-shadow: none;
+}
+.product:hover {
+  background-color: $main3;
+  cursor: pointer;
+  transition: all .1s ease-in-out;
+  h6, p {
+    color: $white;
+  }
+
+}
+.selected {
+  background-color: $main1;
+  h6, p {
+    color: $white;
+  }
 }
 </style>

@@ -17,7 +17,6 @@
       </div>
 
     </main>
-    <div v-if="isModalOpen" class="modal-back"></div>
 </div>
 
 </template>
@@ -47,7 +46,6 @@ export default {
       "showFooter",
       "showConfig",
       "hideConfigButton",
-        'isModalOpen',
     ]),
   },
 
@@ -75,13 +73,5 @@ export default {
   margin: 10px 0 10px 0;
   border-radius: 8px;
 
-}
-.modal-back {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
 }
 </style>

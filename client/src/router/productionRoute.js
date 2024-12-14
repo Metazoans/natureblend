@@ -1,7 +1,7 @@
 // 생산 라우터
 
 import ProductionList from '@/views/production/ProductionList.vue';
-import ProductionAdd from "@/views/production/productionAdd/ProductionAdd.vue";
+import ProductionAdd from "@/views/production/productionPlanAdd/PlanAdd.vue";
 
 const productionRoute = [
   {
