@@ -1,36 +1,68 @@
 <template>
-  <div id="example-3">
-    수신동의 :
-    <input type="checkbox" value="all" v-model="allSelected" />
-    <label for="all">전체</label>
-    <template v-for="(item) in checkList" :key="item">
-      <input type="checkbox" :id="item" :value="item" v-model="selectList" />
-      <label :for="item"> {{ item }}</label>
-    </template>
-    <br />
-    <span>check: {{ selectList }}</span>
+  <div class="container-fluid py-4">
+    <h1>생산등록</h1>
+    <div
+        class="search pe-md-3 d-flex align-items-center ms-md-auto"
+    >
+      <material-input id="search" label="제품명" />
+    </div>
+
+    <button type="button" @click="openModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Launch demo modal
+    </button>
+
+    <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
+      <template v-slot:list>
+        <p>content</p>
+        <p>content</p>
+        <p>content</p>
+        <p>content</p>
+        <p>content</p>
+        <p>content</p>
+        <p>content</p>
+        <p>content</p>
+        <p>content</p>
+        <p>content</p>
+      </template>
+    </Modal>
   </div>
 </template>
-
 <script>
+import MaterialInput from "@/components/MaterialInput.vue";
+import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+
 export default {
+  name: "tables",
+  components: {Modal, MaterialInput},
+
   data() {
     return {
-      checkList: ["e-mail", "SMS", "test1"],
-      selectList: [],
+      isShowModal: false,
     };
   },
-  computed: {
-    allSelected: {
-      //getter
-      get: function() {
-        return this.checkList.length === this.selectList.length;
-      },
-      //setter
-      set: function(e) {
-        this.selectList = e ? this.checkList : [];
-      },
+
+  methods: {
+    openModal() {
+      this.isShowModal = !this.isShowModal
     },
-  },
-};
+
+    confirm() {
+      console.log('값 저장')
+      this.closeModal()
+    },
+
+    closeModal() {
+      this.isShowModal = false
+    }
+  }
+  };
 </script>
+<style scoped>
+.container-fluid {
+  min-height: 500px;
+  .search {
+    margin-top: 24px;
+  }
+}
+
+</style>
