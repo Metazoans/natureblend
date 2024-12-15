@@ -20,7 +20,7 @@
 export default {
   name: "machineModal",
   props: {
-    isShowModal: Boolean
+    isShowModal: Boolean,
   },
 
   data() {
@@ -30,15 +30,6 @@ export default {
 
   },
 
-  methods: {
-    closeModal() {
-      this.$emit('closeModal')
-    },
-
-    confirm() {
-      this.$emit('confirm')
-    }
-  }
 }
 </script>
 

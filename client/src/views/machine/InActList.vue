@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid py-4">
+  <div class="container-fluid py-4" id="inActList">
     <h1>비가동 페이지</h1>
 
     <material-pagination color="warning" size="md">
@@ -21,32 +21,8 @@
       임시 비가동 등록
     </material-button>
 
-    <MachineModal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
-      <template v-slot:header>
-        <h2>TEST</h2>
-      </template>
-      <template v-slot:body>
-        <InActAdd/>
-      </template>
-      <template v-slot:footer>
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="confirm"
-        >
-          등록
-        </button>
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="closeModal"
-        >
-          취소
-        </button>
-      </template>
-    </MachineModal>
+    <InActAdd :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm"></InActAdd>
+
   </div>
 </template>
 
@@ -54,8 +30,8 @@
 import MaterialPagination from "@/components/MaterialPagination.vue";
 import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
 import MaterialButton from "@/components/MaterialButton.vue";
-import MachineModal from "@/views/machine/MachineModal.vue";
 import InActAdd from "./InActAdd.vue";
+
 
 
 export default {
@@ -64,30 +40,30 @@ export default {
     MaterialPaginationItem,
     MaterialPagination,
     MaterialButton,
-    MachineModal,
     InActAdd,
   },
   
   data() {
     return {
       isShowModal: false,
+      
     };
   },
 
   methods: {
     openModal() {
-      this.isShowModal = !this.isShowModal
+      this.isShowModal = !this.isShowModal;
     },
 
-    confirm() {
-      console.log('값 저장')
-      this.closeModal()
+    confirm(data) {
+      console.log(data.machineNum);
+      this.closeModal();
     },
 
     closeModal() {
-      this.isShowModal = false
-    }
-  }
+      this.isShowModal = false;
+    },
+  },
 };
 </script>
 

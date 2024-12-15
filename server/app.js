@@ -25,7 +25,11 @@ const express = require('express');
 const app = express();
 const boardRouter = require('./router/board_router.js');
 const bookRouter = require('./router/book_router.js');
-const empRouter = require('./router/emp_router.js')
+const empRouter = require('./router/emp_router.js');
+
+// 설비
+const machineRouter = require('./router/machine/machine_router.js');
+const inactRouter = require('./router/machine/inact_router.js');
 
 // 미들웨어
 app.use(express.json()); // application/json
@@ -35,6 +39,10 @@ app.use(express.urlencoded({ extended : false})) // application/x-form-urlencode
 app.use('/', boardRouter);
 app.use('/', bookRouter);
 app.use('/', empRouter);
+
+// 설비
+app.use('/', machineRouter);
+app.use('/', inactRouter);
 
 app.listen(3000, ()=>{
   console.log('Server Start');
