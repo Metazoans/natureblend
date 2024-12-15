@@ -10,7 +10,13 @@ const findOrders = async (productCode)=>{
     return await mysql.query(sql, productCode);
 }
 
+const findProductStock = async (productCode)=>{
+    console.log(await mysql.query('productStock',productCode))
+    return await mysql.query('productStock',productCode);
+}
+
 module.exports = {
     findAllProducts,
-    findOrders
+    findOrders,
+    findProductStock
 }

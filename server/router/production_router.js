@@ -15,5 +15,11 @@ router.get('/orders', async (req, res)=>{
     res.send(orders);
 });
 
+router.get('/stock/:productCode', async (req, res)=>{
+    let productCode = req.params.productCode;
+    let stock = await productionService.findProductStock(productCode);
+    res.send(stock);
+});
+
 
 module.exports = router

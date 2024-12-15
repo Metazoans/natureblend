@@ -37,10 +37,20 @@ const ordersByProductCode =
     ON o.orderlist_num = ol.orderlist_num
      WHERE o.product_code = p.product_code
        AND o.product_code = ?`;
-        
+
+
+const productStock =
+    `SELECT
+       product_code,
+       input_amount,
+       input_flag,
+       dispose_flag
+     FROM input_body
+        where product_code = ?`;
         
 module.exports = {
   productList,
   orders,
-  ordersByProductCode
+  ordersByProductCode,
+  productStock
 }

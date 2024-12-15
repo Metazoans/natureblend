@@ -164,10 +164,21 @@ export default {
 
     addOrderNum(order) {
       if (this.selectedOrders.length) {
+        if(this.selectedOrders[0].product_code !== order.product_code) {
+          this.$notify({
+            text: "동일한 제품의 주문만 추가 가능합니다.",
+            type: 'error',
+          });
+
+          return
+        }
+
+        // 중복 주문이 아니면 추가
         if (!this.selectedOrders.some(selectedOrder => selectedOrder.order_num === order.order_num)) {
           this.selectedOrders.push(order);
           this.selectedOrderNums.push(order.order_num)
         } else {
+          // 중복 주문일 때 해당 주문 삭제
           this.selectedOrders = this.selectedOrders.filter((selectedOrder) => selectedOrder.order_num !== order.order_num)
           this.selectedOrderNums = this.selectedOrderNums.filter((selectedOrder) => selectedOrder !== order.order_num)
         }
