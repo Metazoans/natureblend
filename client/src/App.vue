@@ -5,18 +5,19 @@
     :custom_class="color"
     class="fixed-start"
     v-if="showSidenav"
-  />
-  <main
-    class="main-content position-relative max-height-vh-100 h-100 overflow-x-hidden"
-  >
-  <AppHeader />
-  
-  
-  <div class="content-container">
-    <router-view />
-  </div>
+    />
+    <main
+      class="main-content position-relative max-height-vh-100 h-100 overflow-x-hidden"
+    >
+      <AppHeader />
 
-  </main  >
+
+      <div class="content-container">
+        <router-view />
+      </div>
+
+    </main>
+    <notifications />
 </div>
 
 </template>
@@ -24,10 +25,12 @@
 import Sidenav from "./examples/Sidenav";
 import { mapMutations, mapState } from "vuex";
 import AppHeader from './components/AppHeader.vue';
+import {Notifications} from "@kyvg/vue3-notification";
 
 export default {
   name: "App",
   components: {
+    Notifications,
     Sidenav,
     AppHeader,
   },
@@ -48,6 +51,11 @@ export default {
       "hideConfigButton",
     ]),
   },
+
+  created() {
+
+  },
+
   beforeMount() {
     this.$store.state.isTransparent = "bg-transparent";
 
@@ -67,5 +75,34 @@ export default {
   background-color: #fff;
   margin: 10px 0 10px 0;
   border-radius: 8px;
+
+}
+.vue-notification {
+  margin: 0 5px 5px;
+  padding: 10px;
+  font-size: 12px;
+  color: #ffffff;
+
+  background: #44a4fc;
+  border-left: 5px solid #187fe7;
+
+  &.success {
+    background: #68cd86;
+    border-left-color: #42a85f;
+  }
+
+  &.warn {
+    background: #ffb648;
+    border-left-color: #f48a06;
+  }
+
+  &.error {
+    background: #e54d42;
+    border-left-color: #b82e24;
+  }
+
+  .notification-content {
+    font-size: 16px;
+  }
 }
 </style>
