@@ -1,13 +1,18 @@
 <template>
-
-  <div class="container-fluid py-4">
+  <div class="px-4 py-4">
     <h1>입고검사-검사신청</h1>
+    <hr>
     <div class="row">
       <h4>검색조건</h4>
-      <div class="col-sm"><material-input type="date" placeholder="Date" value="2024-12-13" /></div>
-      <div class="col-sm"><material-input type="date" placeholder="Date" value="2024-12-13" /></div>
-      <div class="col-sm"><material-input label="자재명" type="search" /></div>
-      <div class="col-sm"><material-button size="md" v-on:click="search">검색</material-button></div>
+      <label for="startDate" >날짜범위 </label>
+      <div class="col-sm">
+        <input type="date" placeholder="Date" v-model="searchInfo.startDate"/>
+      </div>
+      <div class="col-sm">
+        <input type="date" placeholder="Date" v-model="searchInfo.endDate"/>
+      </div>
+      <div class="col-sm"><input label="자재명" type="search" v-model="searchInfo.mName"/></div>
+      <div class="col-sm"><material-button size="md" v-on:click="searchOrder">검색</material-button></div>
     </div>
     <!-- <div class="row">
         <div class="col-sm"><input type="date" placeholder="Date" value="2024-12-13" /></div>
@@ -19,7 +24,7 @@
   <hr>
   <div class="container-fluid py-4">
     <h4>검색 결과</h4>
-    <div class="row" v-if="searchFinish">
+    <div class="row">
       <div class="col-12">
         <table class="table align-items-center mb-0">
           <thead>
@@ -43,7 +48,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr :key="i" v-for="(list, i) in orderList">
               <td>
                 <div class="d-flex px-2 py-1">
                   <material-checkbox id="checkboxId" />
@@ -52,43 +57,19 @@
               <td>
                 <div class="d-flex px-2 py-1">
                   <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">(자재발주코드)</h6>
+                    <h6 class="mb-0 text-sm">{{ list.order_code }}</h6>
                   </div>
                 </div>
               </td>
               <td>
-                <p class="text-xs font-weight-bold mb-0">오렌지(18kg)</p>
+                <p class="text-xs font-weight-bold mb-0">{{ list.material_name }}</p>
               </td>
               <td class="align-middle text-center text-sm">
-                <h6 class="mb-0 text-sm">100</h6>
-                <p class="text-xs text-secondary mb-0">(box)</p>
+                <h6 class="mb-0 text-sm">{{ list.ord_qty }}</h6>
+                <p class="text-xs text-secondary mb-0">(개)</p>
               </td>
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <material-checkbox id="checkboxId" />
-                </div>
-              </td>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">(자재발주코드)</h6>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">병(1.5L)</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <h6 class="mb-0 text-sm">500</h6>
-                <p class="text-xs text-secondary mb-0">(box)</p>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">11/01/19</span>
+                <span class="text-secondary text-xs font-weight-bold">{{ dateFormat(list.order_date, 'yyyy-MM-dd') }}</span>
               </td>
             </tr>
           </tbody>
@@ -191,35 +172,66 @@
 </template>
 
 <script>
-// import axios from 'axios'
-// import { ajaxUrl } from '@/utils/commons.js';
+import axios from 'axios';
+import { ajaxUrl } from '@/utils/commons.js';
+import userDateUtils from '@/utils/useDates.js';
 
 import MaterialButton from "@/components/MaterialButton.vue";
 import MaterialCheckbox from "@/components/MaterialCheckbox.vue";
-import MaterialInput from "@/components/MaterialInput.vue";
+//import MaterialInput from "@/components/MaterialInput.vue";
 
 import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 
 export default {
   name: "입고검사",
-  components: { MaterialCheckbox, MaterialInput, MaterialButton, Modal },
+  components: { MaterialCheckbox, MaterialButton, Modal },
 
 
   data() {
     return {
-      searcKeywordInfo: {
-        name: '',
-        start_date:'',
-        end_date:''
+      searchInfo: {
+        mName: '',
+        startDate: this.formatDate(new Date()),
+        endDate:this.formatDate(new Date())
       },
-      searchFinish: true,
-      contentlist: [],
+      orderList: [],
 
       isShowModal: false,
     };
   },
+  
 
   methods: {
+    formatDate(date) {
+      // 날짜를 YYYY-MM-DD 형식으로 변환
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
+
+    //검색창 관련
+    async searchOrder() {
+      const name = this.searchInfo.mName.replace(/\s+/g, "");
+      const result = {
+        mName : name.length != 0 ? name : "",
+        startDate: this.searchInfo.startDate,
+        endDate: this.searchInfo.endDate
+      };
+
+      let searchResult = await axios.get(`${ajaxUrl}/meterialOrderQC/${result.mName}`)
+                              .catch(err => console.log(err));
+                              
+      // let searchResult = await axios.post(`${ajaxUrl}/meterialOrderQC`, result)
+      // .catch(err => console.log(err));
+      this.orderList = searchResult.data;
+    },
+    // 날짜를 YYYY-MM-DD 형식으로 변환
+    dateFormat(value, format) {
+        return userDateUtils.dateFormat(value, format);
+    },
+
+  
     openModal() {
       this.isShowModal = !this.isShowModal
     },
