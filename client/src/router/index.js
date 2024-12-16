@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
+import MainPage from '@/views/MainPage.vue';
 
 import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoute from "./machineRoute";
@@ -22,11 +22,6 @@ import qualityRoute from "./qualityRoute";
 
 const routes = [
   // 공용 페이지
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
   {
     path: "/mainpage",
     name: "MainPage",
@@ -82,7 +77,6 @@ const routes = [
   },
 
 ];
->>>>>>> 5fcc082b0ca74b5b152e020b4a4703fde09f68b5
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
