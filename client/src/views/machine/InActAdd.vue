@@ -78,7 +78,6 @@
 import MaterialInput from "@/components/MaterialInput.vue";
 import MachineModal from "@/views/machine/MachineModal.vue";
 import MachineInput from "@/components/MachineInput.vue";
-import MachineInput from "../../components/MachineInput.vue";
 
 export default {
   name: "inActAdd",

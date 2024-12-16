@@ -30,10 +30,6 @@ import setMaterialInput from "@/assets/js/material-input.js";
 export default {
   name: "MachineInput",
   props: {
-    inputData: {
-      type: Object,
-      default: "",
-    },
     variant: {
       type: String,
       default: "outline",
