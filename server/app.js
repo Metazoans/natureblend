@@ -6,6 +6,7 @@ const boardRouter = require('./router/board_router.js');
 const bookRouter = require('./router/book_router.js');
 const empRouter = require('./router/emp_router.js');
 const materialRouter = require('./router/material_router.js');
+const standardRouter = require('./router/standard_router.js');
 
 // 미들웨어
 app.use(express.json()); // application/json
@@ -17,6 +18,7 @@ app.use('/', boardRouter);
 app.use('/', bookRouter);
 app.use('/', empRouter);
 app.use('/', materialRouter);
+app.use('/', standardRouter);
 
 app.listen(3000, ()=>{
   console.log('Server Start');
