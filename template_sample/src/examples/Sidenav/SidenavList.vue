@@ -6,7 +6,7 @@
     <ul class="navbar-nav">
       <li class="nav-item">
         <sidenav-collapse
-          url="#"
+          url=""
           :aria-controls="''"
           v-bind:collapse="false"
           collapseRef="dashboard"

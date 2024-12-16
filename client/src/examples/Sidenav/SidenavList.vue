@@ -127,7 +127,7 @@
             <li class="sub-item">생산계획 목록</li>
           </template>
         </sidenav-collapse>
-        <sidenav-collapse
+        <sidenav-collapse 
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
@@ -205,14 +205,147 @@
         </sidenav-collapse>
       </li>
       <li v-else-if="headerMenu === $departments[6]" class="nav-item">
+        <sidenav-collapse 
+            class="sub-item" @click="movePage('employeemanagement')"
+            url=""
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="사원 관리"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
         <sidenav-collapse
+            class="sub-item" @click="movePage('customermanagement')"
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
             collapseRef="mainpage"
-            navText="기준정보파트"
+            navText="거래처 관리"
         >
-          <template v-slot:icon>
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('bommanagement')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="BOM 관리"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('processflowmanagement')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="공정 흐름도 관리"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('productmanagement')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="제품 관리"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('materialmanagement')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="자재 관리"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('badcodemanagement')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="불량 코드 관리"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('returncodemanagement')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="반품 코드 관리"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('processstandardmanagement')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="공정기준정보 관리"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('warehousemanagement')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="창고 관리"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('standardTest')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="테스트1"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('standardTest2')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="테스트2"
+        >
+        <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
         </sidenav-collapse>
