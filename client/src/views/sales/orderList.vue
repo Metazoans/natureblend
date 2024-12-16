@@ -52,7 +52,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(order, index) in filteredOrderList" :key="order.id">
+                    <tr v-for="(orders, index) in filterOrderlist" :key="orders.id">
                       <td>
                       <div class="d-flex px-2 py-1">
                         <div class="d-flex flex-column justify-content-center">
@@ -61,30 +61,31 @@
                       </div>
                       </td>
                       <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ order.orderlist_num }}</p>
+                      <p class="text-xs font-weight-bold mb-0">{{ orders.orderlist_num }}</p>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <p class="text-xs font-weight-bold mb-0">{{ order.orderlist_title }}</p>
+                      <p class="text-xs font-weight-bold mb-0">{{ orders.orderlist_title }}</p>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <p class="text-xs font-weight-bold mb-0">{{ order.com_name}}</p>
+                      <p class="text-xs font-weight-bold mb-0">{{ orders.com_name}}</p>
                     </td>
                     <td class="align-middle text-center text-sm">
-                      <p class="text-xs font-weight-bold mb-0">{{ order.name }}</p>
+                      <p class="text-xs font-weight-bold mb-0">{{ orders.name }}</p>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold">{{ order.order_date }}</span>
+                      <span class="text-secondary text-xs font-weight-bold">{{ orders.order_date }}</span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold">{{ order.due_date }}</span>
+                      <span class="text-secondary text-xs font-weight-bold">{{ orders.due_date }}</span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold">{{ order.orderlist_status }}</span>
+                      <span class="text-secondary text-xs font-weight-bold">{{ orders.orderlist_status }}</span>
                     </td>
                     <td class="align-middle text-center">
-                      <button class="btn btn-sm btn-primary me-2" @click="editOrder(order)">수정</button>
-                      <button class="btn btn-sm btn-danger" @click="deleteOrder(order.id)">삭제</button>
+                      <!-- <button class="btn btn-sm btn-primary me-2" @click="editOrder(orders)">수정</button>
+                      <button class="btn btn-sm btn-danger" @click="deleteOrder(orders.id)">삭제</button> -->
                     </td>
+                
                   </tr>
                   </tbody>
                 </table>
@@ -103,28 +104,26 @@
       <material-pagination-item next />
     </material-pagination>
     </div>
-    <order/>
+
+    {{ filters }}
 </template>
 
 <script>
 import MaterialPagination from "@/components/MaterialPagination.vue";
 import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
-import order from "./order.vue";
 import axios from "axios";
+
 
 export default {
   name: "orderList",
   components: {MaterialPaginationItem, 
                 MaterialPagination,
-                order,
             },
-  emits: ['save'],
   props: {
     filters: {
         type: Object,
         required: true,
     },
-    mode:String,
   },
   
  
@@ -133,48 +132,33 @@ export default {
       orders : []
     }
   },
-  computed:{
-    filteredOrderList(){
-      return this.orders.filter(order =>{
-      return(
-        (this.filters.orderStatus.length === 0 || this.filters.orderStatus.includes(order.status)) &&
-          (!this.filters.clientName || order.com_name.includes(this.filters.clientName)) &&
-          (!this.filters.orderName || order.orderlist_title.includes(this.filters.orderName)) &&
-          (!this.filters.startDate || order.order_date >= this.filters.startDate) &&
-          (!this.filters.endDate || order.order_date <= this.filters.endDate)
-        );
-      });
-    },
-  },
+    
     
   watch: {
     filters:{
       handler(){
         this.searchOrder();
       },
-      deep:true,
     },
   },
   methods:{
     async searchOrder(){
+      let obj = {
+        orderStatus:this.filters.orderStatus,
+        clientName:this.filters.clientName,
+        orderName :this.filters.orderName,
+        startDate:this.filters.startDate,
+        endDate:this.filters.endDate 
+      }
       //서버에 검색 필터 데이터 전송
-      try{
-        const response = await axios.get("/api/orderlist/search",{
-          query:this.filters
-        });
-        this.orders = response.data; //서버에 받은 데이터 저장 
-      } catch(error){
-        console.log("검색오류:",error);
-      }                           
+        let result = await axios.put(`/api/orderlist/search`,obj)
+                                .catch(err=> console.log(err));
+        this.filterOrderlist = result.data; //서버에 받은 데이터 저장 
+      }                   
     },
     created() {
-        this.searchOrders(); // 컴포넌트가 생성될 때 초기 검색
+        this.searchOrder(); // 컴포넌트가 생성될 때 초기 검색
     },
-    saveOrder(data) {
-      this.$emit('save', data); // save 이벤트를 부모 컴포넌트로 전송
-    },
-  }
-  
 };
 </script>
 <style scoped>

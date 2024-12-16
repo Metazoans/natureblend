@@ -29,10 +29,9 @@
         <div class="row align-items-center mb-3">
             <label class="col-sm-2 col-form-label fw-bold" >거래처명</label>
             <div class="col-sm-4">
-                <material-input 
-                    id="clientSearch" 
-                    label="거래처명" 
-                    v-model="clientName" @click="openModal"/>
+                <input 
+                    id="clientSearch"  
+                    :value="clientName" @click="openModal"/>
                 <Modal :isShowModal="isShowModal" @closeModal="closeModal">
                     <template v-slot:list>
                         <!--모달 안에 거래처 목록 출력-->
@@ -55,27 +54,26 @@
         <div  class="row align-items-center mb-3">
             <label class="col-sm-2 col-form-label fw-bold">주문서명</label>
             <div class="col-sm-6">
-                <material-input 
+                <input 
                 id="orderSearch" 
-                label="주문서명"
-                v-model="orderName" />
+                :value="orderName" />
             </div>
         </div>
          <!--주문일자 검색 -->
         <div class="row align-items-center mb-3">
             <label class="col-sm-2 col-form-label fw-bold">주문일자</label>
             <div class="col-sm-4">
-                <material-input 
+                <input 
                 type="date" 
                 id="startDate"
-                v-model="startDate"/>
+                :value="startDate"/>
             </div>
             <div class="col-sm-1 text-center">~</div>
             <div class="col-sm-4">
-                <material-input 
+                <input 
                 type="date" 
                 id="endDate" 
-                v-model="endDate" />
+                :value="endDate" />
             </div>
         </div>
         <!--검색 및 초기화-->
@@ -88,13 +86,12 @@
        
     </div>
     <!--orderList  컴포넌트 : 등록 또는  수정 -->
-<orderList :filters="filters"  @save="saveOrder"/>
+<orderList :filters="filters"/>
 
 
 </template>
 
 <script>
-import MaterialInput from "@/components/MaterialInput.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import orderList from "./orderList.vue";
 import axios from "axios";
@@ -104,7 +101,6 @@ import axios from "axios";
 export default{
     name :"orderlistSearch",
     components:{
-            MaterialInput,
             Modal,
             orderList,
     },
@@ -123,19 +119,25 @@ export default{
             startDate:"", //주문날짜 시작 날짜
             endDate:"", //주문날짜 끝 날짜
 
-            filters: {},
+            filters: [],
             
         };
     },
+    
 
     methods:{
         async openModal(){
-            const response = await axios.get("/api/clients"); //서버호출
+            console.log("modal 열림")
+            const response = await axios.get("/api/clients") //서버호출
+                                        .catch(err=> console.log(err));
             this.clientList = response.data; //거래처목록 저장
             this.isShowModal = !this.isShowModal; //모달 열기 
         },
         selectClient(client){
+            
             this.clientName = client; // 선택된 거래처명 설정
+            console.log(client);
+            console.log("this.clientName:",this.clientName);
             this.isShowModal = false;
             
         },
@@ -154,11 +156,11 @@ export default{
         },
         searchOrderlists(){
             const statusMap ={
-                등록:"update",
-                진행중:"continue",
-                완료:"done",
+                "등록":"update",
+                "진행중":"continue",
+                "완료":"done",
             }
-
+            
             const dbStatus = this.pickedStatus.map(status=>statusMap[status]);
             this.filters = {
                 orderStatus : dbStatus,
@@ -167,16 +169,14 @@ export default{
                 startDate : this.startDate,
                 endDate : this.endDate,
             };
-
-            this.$emit('updateFilters',this.filters);
+            console.log(this.filters);
         },
         addOrder(){
             this.orderData = {};
         },
-        saveOrder(data){
-            console.log('Order saved:',data);
-        }, 
+        
     },
+    
 };
 </script>
 <style scoped>
