@@ -62,13 +62,13 @@
         <div class="input-content">
           <p>계획시작일자</p>
           <div class="input-group w-auto h-25">
-            <input type="text" readonly class="form-control border p-2">
+            <input type="date" class="form-control border p-2" >
           </div>
         </div>
         <div class="input-content">
           <p>계획종료일자</p>
           <div class="input-group w-auto h-25">
-            <input type="text" readonly class="form-control border p-2">
+            <input type="date" class="form-control border p-2">
           </div>
         </div>
       </div>
@@ -201,6 +201,7 @@ export default {
     }
     input {
       background-color: $white;
+      width: 180px !important;
       &:read-only {
         background-color: $gray-100;
       }

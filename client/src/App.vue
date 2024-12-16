@@ -78,6 +78,7 @@ export default {
 
 }
 .vue-notification-group {
+  width: 400px !important;
   top: 16px !important;
   right: 20px !important;
 }
