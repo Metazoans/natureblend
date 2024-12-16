@@ -11,7 +11,7 @@
                     <input 
                         type="checkbox" 
                         v-model="pickedStatus" 
-                        :value="status"
+                        v-mode="status"
                     />
                     {{ status }}
                     </label>
@@ -31,7 +31,7 @@
             <div class="col-sm-4">
                 <input 
                     id="clientSearch"  
-                    :value="clientName" @click="openModal"/>
+                    v-mode="clientName" @click="openModal"/>
                 <Modal :isShowModal="isShowModal" @closeModal="closeModal">
                     <template v-slot:list>
                         <!--모달 안에 거래처 목록 출력-->
@@ -56,7 +56,7 @@
             <div class="col-sm-6">
                 <input 
                 id="orderSearch" 
-                :value="orderName" />
+                v-mode="orderName" />
             </div>
         </div>
          <!--주문일자 검색 -->
@@ -66,14 +66,14 @@
                 <input 
                 type="date" 
                 id="startDate"
-                :value="startDate"/>
+                v-mode="startDate"/>
             </div>
             <div class="col-sm-1 text-center">~</div>
             <div class="col-sm-4">
                 <input 
                 type="date" 
                 id="endDate" 
-                :value="endDate" />
+                v-model="endDate" />
             </div>
         </div>
         <!--검색 및 초기화-->

@@ -18,10 +18,10 @@ const connectionPool = mariadb.createPool({
   insertIdAsNumber : true,           //insertId를 Number 타입으로
   bigIntAsNumber : true,             //bigInt를 자동으로 Number 타입으로
 });
-
+//where 절 있는 경우 where 절 string으로 sql 에 넘긴다. 해당 타입이 string이고 공백이 아닌 경우 값을 sql로 values 보내고 아닌 경우 공백 
 const query = (alias, values)=>{
   return new Promise((resolve, reject)=>{
-    let executeSql = sqlList[alias];
+    let executeSql = sqlList[alias] + (typeof values == 'string' && values != '' ? values : '');
     connectionPool.query(executeSql, values, (err, results)=>{
       if(err) {
         reject({err});
@@ -29,8 +29,10 @@ const query = (alias, values)=>{
         resolve(results);
       }
     });
-  });
+  })
+  .catch(err => console.log(err));
 };
+
 
 
 // const query = async (alias, values) => {
@@ -48,5 +50,5 @@ const query = (alias, values)=>{
 // }
 
 module.exports = {
-  query,
+  query
 }
