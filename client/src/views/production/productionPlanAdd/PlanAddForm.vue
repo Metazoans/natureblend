@@ -41,7 +41,7 @@
           <p>계획수량</p>
 
           <div class="input-group w-auto h-25">
-            <input type="number" class="form-control border p-2" v-model="amount"/>
+            <input type="number" class="form-control border p-2" v-model="planAmount"/>
           </div>
         </div>
         <div class="input-content">
@@ -71,8 +71,26 @@
             <input type="date" class="form-control border p-2" v-model="planEndDate"/>
           </div>
         </div>
+        <div class="input-content ">
+          <p>등록인</p>
+          <div class="input-group w-auto h-25">
+            <input type="text" @click="openModal" :value="searchEmp.name" readonly class="form-control border p-2 emp" />
+          </div>
+        </div>
       </div>
     </div>
+    <Modal
+        :isShowModal="isShowModal"
+        :modalTitle="modalTitle"
+        :noBtn="'닫기'"
+        :yesBtn="'선택'"
+        @closeModal="closeModal"
+        @confirm="confirm"
+    >
+      <template v-slot:list>
+        <EmpList v-if="isShowModal" @selectEmp="selectEmp"/>
+      </template>
+    </Modal>
   </div>
 
 </template>
@@ -80,10 +98,12 @@
 import MaterialButton from "@/components/MaterialButton.vue";
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
+import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import EmpList from "@/views/production/productionPlanAdd/ModalEmpList.vue";
 
 export default {
   name: "PlanAddForm" ,
-  components: {MaterialButton},
+  components: {EmpList, Modal, MaterialButton},
   props: {
     selectedOrders: Array,
   },
@@ -95,6 +115,11 @@ export default {
       productStock: null,
       planStartDate: '',
       planEndDate: '',
+      planCreator: '',
+      isShowModal: false,
+      modalTitle: '직원 목록',
+      searchEmp: {},
+      selectedEmp: {}
     }
   },
 
@@ -103,6 +128,14 @@ export default {
   },
 
   methods: {
+    selectEmp(emp) {
+      this.selectedEmp = emp
+    },
+
+    openModal() {
+      this.isShowModal = !this.isShowModal
+    },
+
     addPlan() {
       if(!this.selectedOrders.length || !this.planAmount || !this.planName || !this.planStartDate || !this.planEndDate) {
         this.$notify({
@@ -113,6 +146,15 @@ export default {
       }
 
 
+    },
+
+    confirm() {
+      this.searchEmp = this.selectedEmp
+      this.closeModal()
+    },
+
+    closeModal() {
+      this.isShowModal = false
     },
 
     async getProductStock() {
@@ -207,12 +249,16 @@ export default {
         height: 40px;
         font-size: 12px;
       }
+
     }
     input {
       background-color: $white;
       width: 180px !important;
       &:read-only {
         background-color: $gray-100;
+      }
+      &.emp {
+        cursor: pointer;
       }
     }
   }
