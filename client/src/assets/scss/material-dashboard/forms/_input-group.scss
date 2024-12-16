@@ -204,17 +204,17 @@
     &.is-focused,
     &.is-filled {
       .form-label + .form-control {
-        border-color: $success !important;
+        border-color: $warning !important;
         border-top-color: transparent !important;
-        box-shadow: inset 1px 0 $success, inset -1px 0 $success,
-          inset 0 -1px $success;
+        box-shadow: inset 1px 0 $warning, inset -1px 0 $warning,
+          inset 0 -1px $warning;
       }
 
       .form-label {
         width: 100%;
         height: 100%;
         font-size: $form-label-font-size-focused !important;
-        color: $success;
+        color: $warning;
         display: flex;
         line-height: $line-height-sm !important;
 
@@ -225,8 +225,8 @@
 
         &:before,
         &:after {
-          border-top-color: $success;
-          box-shadow: inset 0 1px $success;
+          border-top-color: $warning;
+          box-shadow: inset 0 1px $warning;
         }
       }
     }

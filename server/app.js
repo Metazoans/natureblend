@@ -25,7 +25,8 @@ const express = require('express');
 const app = express();
 const boardRouter = require('./router/board_router.js');
 const bookRouter = require('./router/book_router.js');
-const empRouter = require('./router/emp_router.js')
+const empRouter = require('./router/emp_router.js');
+const materialRouter = require('./router/material_router.js');
 
 // 미들웨어
 app.use(express.json()); // application/json
@@ -35,6 +36,7 @@ app.use(express.urlencoded({ extended : false})) // application/x-form-urlencode
 app.use('/', boardRouter);
 app.use('/', bookRouter);
 app.use('/', empRouter);
+app.use('/', materialRouter);
 
 app.listen(3000, ()=>{
   console.log('Server Start');
