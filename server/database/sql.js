@@ -3,7 +3,7 @@ const comments = require('./sqls/comments.js');
 const books = require('./sqls/books.js');
 const emp = require('./sqls/emp.js');
 const material = require('./sqls/material.js');
-const production = require('./sqls/production/production')
+const productionPlan = require('./sqls/production/productionPlan')
 
 module.exports = {
   ...boards,
@@ -11,5 +11,5 @@ module.exports = {
   ...books,
   ...emp,
   ...material,
-  ...production,
+  ...productionPlan,
 }
