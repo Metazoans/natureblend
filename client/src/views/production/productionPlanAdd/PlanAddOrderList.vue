@@ -212,6 +212,7 @@ export default {
     align-content: center;
     h3 {
       width: 120px;
+      margin-right: 12px;
     }
     input {
       background-color: transparent;

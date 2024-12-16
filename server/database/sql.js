@@ -6,7 +6,7 @@ const emp = require('./sqls/emp.js');
 const machine = require('./sqls/machine/machine.js');
 const inactivity = require('./sqls/machine/inactivity.js');
 const material = require('./sqls/material.js');
-const production = require('./sqls/production/production');
+const productionPlan = require('./sqls/production/productionPlan')
 
 module.exports = {
   ...boards,
@@ -14,8 +14,8 @@ module.exports = {
   ...books,
   ...emp,
   ...material,
-  ...production,
-
+  ...productionPlan,
+  
   //설비
   ...machine,
   ...inactivity,
