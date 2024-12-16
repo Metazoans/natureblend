@@ -21,12 +21,12 @@
           <a for="machineState">사용 여부</a>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="machineState" id="machineState1"
-                   value="사용" v-model="machineData.machine_state" checked>
+                   value="run" v-model="machineData.machine_state" checked>
             <label class="form-check-label" for="flexRadioDefault1">사용</label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="machineState" id="machineState2"
-                   value="미사용" v-model="machineData.machine_state">
+                   value="stop" v-model="machineData.machine_state">
             <label class="form-check-label" for="flexRadioDefault2">미사용</label>
           </div>
         </div>
@@ -50,9 +50,9 @@
           <a>제작 업체</a>
           <select class="form-select" aria-label="Default select example"
                   v-model="machineData.client_num">
-            <option value="거래처1">거래처1</option>
-            <option value="거래처2">거래처2</option>
-            <option value="거래처3">거래처3</option>
+            <option value="1">거래처1</option>
+            <option value="2">거래처2</option>
+            <option value="3">거래처3</option>
           </select>
         </div>
 
@@ -68,12 +68,12 @@
 
         <div class="modalRow">
           <label for="empNum">등록자</label>
-          <input type="text" id="empNum" name="empNum" v-model="machineData.emp_num"/>
+          <input type="number" id="empNum" name="empNum" v-model="machineData.emp_num"/>
         </div>
 
         <div class="modalRow">
           <label for="buyDate">구매 일자</label>
-          <input type="date" id="buyDate" name="buyDate" v-model="machineData.buy_date"/>
+          <input type="datetime-local" id="buyDate" name="buyDate" v-model="machineData.buy_date"/>
         </div>
       </div>
     </template>
@@ -127,7 +127,7 @@ export default {
         buy_date: '',
         
         // 자동
-        emp_num: '0',
+        emp_num: 0,
         process_code: '0',
       }
     }
@@ -138,7 +138,7 @@ export default {
       this.deleteVal();
     },
     confirm() {
-      this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd');
+      this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
       this.$emit('confirm', this.machineData);
       this.machineInsert();
     },
@@ -146,7 +146,7 @@ export default {
       for(let key in this.machineData){
         this.machineData[key] = '';
       }
-      this.machineData.emp_num = '0';
+      this.machineData.emp_num = 0;
       this.machineData.process_code = '0';
     },
 
@@ -157,20 +157,20 @@ export default {
         machine_img: this.machineData.machine_img,  // 설비 이미지
         machine_state: this.machineData.machine_state,// 사용 여부
         model_num: this.machineData.model_num,      // 모델 번호
-        machine_type: this.machineData.machine_type,// 설비 분류
-        client_num: this.machineData.client_num,    // 거래처
+        //machine_type: this.machineData.machine_type,// 설비 분류
+        client_num: Number(this.machineData.client_num),    // 거래처
         uph: this.machineData.uph,                  // 시간당 생산량
         machine_location: this.machineData.machine_location,// 설비 위치
         buy_date: this.machineData.buy_date,
         
         // 자동
-        emp_num: '0',     // 등록자
+        emp_num: 0,     // 등록자
         process_code: '0',// 설비 분류 기반
       }
 
-      obj.upd = 11;     // uph * 24
+      obj.upd = Number(this.machineData.uph) * 24;     // uph * 24
 
-      if(this.machineData.machine_state == '사용중'){
+      if(this.machineData.machine_state == 'run'){
         obj.install_date = this.machineData.buy_date;
       }
 
@@ -184,7 +184,7 @@ export default {
 
     // 날짜 관련
     getToday(){
-      return this.dateFormat(null, 'yyyy-MM-dd');
+      return this.dateFormat(null, 'yyyy-MM-dd hh:mm:ss');
     },
     dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);
