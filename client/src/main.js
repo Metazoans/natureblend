@@ -7,9 +7,11 @@ import "./assets/css/nucleo-svg.css";
 import MaterialDashboard from "./material-dashboard";
 import Notifications from '@kyvg/vue3-notification'
 import { departments } from './utils/dataCode.js';
-
+import { AgGridVue } from "ag-grid-vue3";
 
 const app = createApp(App);
+
+app.component("AgGridVue", AgGridVue);
 
 app.config.globalProperties.$departments = departments;
 
