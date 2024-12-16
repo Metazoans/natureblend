@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>QualityList Page3</h1>
+    <h1>QualityList Page4</h1>
   </div>
 </template>
 <style scoped lang="scss">

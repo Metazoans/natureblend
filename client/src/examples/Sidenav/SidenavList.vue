@@ -151,10 +151,10 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">검사신청</li>
-            <li class="sub-item">입고검사관리</li>
-            <li class="sub-item">검사기록조회</li>
-            <li class="sub-item">불량내역조회</li>
+            <li class="sub-item" @click="movePage('qualityList')">검사신청</li>
+            <li class="sub-item" @click="movePage('qualityList2')">입고검사관리</li>
+            <li class="sub-item" @click="movePage('qualityList3')">검사기록조회</li>
+            <li class="sub-item" @click="movePage('qualityList4')">불량내역조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
@@ -354,16 +354,7 @@
       <!-- 네비게이션바 항목 끝-->
     </ul>
     
-    <div class="sidenav-footer position-absolute w-100 bottom-0">
-      <div class="mx-3">
-        <a
-          class="btn mt-4 w-100"
-          :class="`bg-gradient-${this.$store.state.color}`"
-          href="https://www.creative-tim.com/product/vue-material-dashboard-2-pro"
-          >Upgrade to pro</a
-        >
-      </div>
-    </div>
+
   </div>
 </template>
 <script>

@@ -5,6 +5,7 @@ const material = require('./sqls/material.js');
 const productionPlan = require('./sqls/production/productionPlan')
 const emp = require('./sqls/emp.js')
 const bomlist = require('./sqls/standard/bomlist.js');
+const quality = require('./sqls/quality.js');
 
 module.exports = {
   ...boards,
@@ -14,4 +15,5 @@ module.exports = {
   ...material,
   ...productionPlan,
   ...bomlist,
+  ...quality,
 }

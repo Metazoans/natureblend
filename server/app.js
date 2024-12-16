@@ -4,6 +4,7 @@ const app = express();
 const productionRouter = require('./router/production_router')
 const boardRouter = require('./router/board_router.js');
 const bookRouter = require('./router/book_router.js');
+const qualityRouter = require('./router/qc_router.js');
 const empRouter = require('./router/emp_router.js');
 const materialRouter = require('./router/material_router.js');
 const standardRouter = require('./router/standard_router.js');
@@ -17,6 +18,7 @@ app.use('/production', productionRouter);
 app.use('/', boardRouter);
 app.use('/', bookRouter);
 app.use('/', empRouter);
+app.use('/', qualityRouter);
 app.use('/', materialRouter);
 app.use('/', standardRouter);
 
