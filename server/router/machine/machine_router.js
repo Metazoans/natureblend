@@ -11,7 +11,7 @@ router.get('/machineList', async (req, res)=>{
 // 설비 등록
 router.post('/machineInsert', async(req, res)=>{
   let machineInfo = req.body;
-  let result = await inactService.createNewInAct(machineInfo);
+  let result = await machineService.createNewMachine(machineInfo);
   res.send(result);
 });
 

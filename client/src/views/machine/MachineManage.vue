@@ -21,12 +21,12 @@
           <a for="machineState">사용 여부</a>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="machineState" id="machineState1"
-                   v-model="machineData.machine_state" checked>
+                   value="사용" v-model="machineData.machine_state" checked>
             <label class="form-check-label" for="flexRadioDefault1">사용</label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="machineState" id="machineState2"
-                   v-model="machineData.machine_state">
+                   value="미사용" v-model="machineData.machine_state">
             <label class="form-check-label" for="flexRadioDefault2">미사용</label>
           </div>
         </div>
@@ -129,8 +129,6 @@ export default {
         // 자동
         emp_num: '0',
         process_code: '0',
-        upd: '',
-        install_date: '',
       }
     }
   },
@@ -168,30 +166,25 @@ export default {
         // 자동
         emp_num: '0',     // 등록자
         process_code: '0',// 설비 분류 기반
-        upd: Number(this.machineData.uph) * 24,     // uph * 24
-        install_date: this.machineData., // 사용중이면 == buy_date
-
-        machine_num: this.inActData.machine_num,
-        inact_start_time: this.inActData.inact_start_time,
-        inact_type: this.inActData.inact_type,
-        inact_info: this.inActData.inact_info,
-        inact_start_emp: this.inActData.inact_start_emp,
-      }
-      if(this.inActData.inact_end_time != ''){
-        obj.inact_end_time = this.inActData.inact_end_time;
       }
 
-      let result = await axios.post(`${ajaxUrl}/inActs/inActInsert`, obj)
+      obj.upd = 11;     // uph * 24
+
+      if(this.machineData.machine_state == '사용중'){
+        obj.install_date = this.machineData.buy_date;
+      }
+
+      let result = await axios.post(`${ajaxUrl}/machine/machineInsert`, obj)
                               .catch(err => console.log(err));
       let addRes = result.data;
-      if(addRes.inact_num > 0){
+      if(addRes.machine_num > 0){
         alert('등록되었습니다.');
       }
     },
 
     // 날짜 관련
     getToday(){
-      return this.dateFormat(null, 'yyyy-MM-dd hh:mm:ss');
+      return this.dateFormat(null, 'yyyy-MM-dd');
     },
     dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);

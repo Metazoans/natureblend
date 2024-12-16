@@ -155,8 +155,8 @@ export default {
       this.isShowModal = !this.isShowModal
     },
 
-    confirm() {
-      console.log('값 저장')
+    confirm(data) {
+      console.log(data)
       this.closeModal()
     },
 
