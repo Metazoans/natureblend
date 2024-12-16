@@ -6,7 +6,18 @@ const findAllMachines = async ()=>{
   return list;
 }
 
+// 설비 등록
+const createNewMachine = async (machineInfo)=>{
+  let result = await mariadb.query('machineInsert', machineInfo);
+  if( result.insertId > 0){
+    return { inact_num : result.insertId }; 
+  }else{
+    return {};
+  }
+}
+
 module.exports = {
   findAllMachines,
-
+  createNewMachine,
+  
 };

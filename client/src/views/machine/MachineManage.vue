@@ -11,41 +11,69 @@
           <label for="machineName">설비 이름</label>
           <input type="text" id="machineName" name="machineName" v-model="machineData.machine_name"/>
         </div>
+
         <div class="modalRow">
-          <label for="">설비 이미지</label>
-          <input type="text" id="" name="" v-model="machineData.machine_img"/>
+          <label for="machineImg">설비 이미지</label>
+          <input type="file" id="machineImg" name="machineImg" v-bind:src="machineData.machine_img"/>
         </div>
+
         <div class="modalRow">
-          <label for="">사용 여부</label>
-          <input type="text" id="" name="" v-model="machineData.machine_state"/>
+          <a for="machineState">사용 여부</a>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="machineState" id="machineState1"
+                   v-model="machineData.machine_state" checked>
+            <label class="form-check-label" for="flexRadioDefault1">사용</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="machineState" id="machineState2"
+                   v-model="machineData.machine_state">
+            <label class="form-check-label" for="flexRadioDefault2">미사용</label>
+          </div>
         </div>
+
         <div class="modalRow">
-          <label for="">모델 번호</label>
-          <input type="text" id="" name="" v-model="machineData.model_num"/>
+          <label for="modelNum">모델 번호</label>
+          <input type="text" id="modelNum" name="modelNum" v-model="machineData.model_num"/>
         </div>
+
         <div class="modalRow">
-          <label for="">설비 분류</label>
-          <input type="text" id="" name="" v-model="machineData.machine_type"/>
+          <a>설비 분류</a>
+          <select class="form-select" aria-label="Default select example"
+                  v-model="machineData.machine_type">
+            <option value="세척기">세척기</option>
+            <option value="음료제작기">음료제작기</option>
+            <option value="포장기">포장기</option>
+          </select>
         </div>
+
         <div class="modalRow">
-          <label for="">제작 업체</label>
-          <input type="text" id="" name="" v-model="machineData.client_num"/>
+          <a>제작 업체</a>
+          <select class="form-select" aria-label="Default select example"
+                  v-model="machineData.client_num">
+            <option value="거래처1">거래처1</option>
+            <option value="거래처2">거래처2</option>
+            <option value="거래처3">거래처3</option>
+          </select>
         </div>
+
         <div class="modalRow">
-          <label for="">UPH</label>
-          <input type="text" id="" name="" v-model="machineData.uph"/>
+          <label for="uph">UPH</label>
+          <input type="number" id="uph" name="uph" v-model="machineData.uph"/>
         </div>
+
         <div class="modalRow">
-          <label for="">설비 위치</label>
-          <input type="text" id="" name="" v-model="machineData.machine_location"/>
+          <label for="machineLocation">설비 위치</label>
+          <input type="text" id="machineLocation" name="machineLocation" v-model="machineData.machine_location"/>
         </div>
+
         <div class="modalRow">
-          <label for="">등록자</label>
-          <input type="text" id="" name="" v-model="machineData.emp_num"/>
+          <label for="empNum">등록자</label>
+          <input type="text" id="empNum" name="empNum" v-model="machineData.emp_num"/>
         </div>
+
         <div class="modalRow">
-          <label for="">구매 일자</label>
-          <input type="text" id="" name="" v-model="machineData.buy_date"/>
+          <label for="buyDate">구매 일자</label>
+          <input type="date" id="buyDate" name="buyDate" v-model="machineData.buy_date"/>
         </div>
       </div>
     </template>
@@ -74,37 +102,116 @@
 
 
 <script>
-  import MachineModal from "@/views/machine/MachineModal.vue";
-  import userDateUtils from "@/utils/useDates.js";
-  import { ajaxUrl } from '@/utils/commons.js';
-  import axios from 'axios';
+import MachineModal from "@/views/machine/MachineModal.vue";
+import userDateUtils from "@/utils/useDates.js";
+import { ajaxUrl } from '@/utils/commons.js';
+import axios from 'axios';
 
-  export default {
-    name: "MachineManage",
-    components: {
-      MachineModal,
+export default {
+  name: "MachineManage",
+  components: {
+    MachineModal,
+  },
+  data() {
+    return {
+      machineData: {
+        // 입력
+        machine_name: '',
+        machine_img: '',
+        model_num: '',
+        machine_state: '',
+        machine_type: '',
+        client_num: '',
+        machine_location: '',
+        uph: '',
+        buy_date: '',
+        
+        // 자동
+        emp_num: '0',
+        process_code: '0',
+        upd: '',
+        install_date: '',
+      }
+    }
+  },
+  methods: {
+    closeModal() {
+      this.$emit('closeModal');
+      this.deleteVal();
     },
-    data() {
-      return {
-        machineData: {
-          machine_name: '',
-          machine_img: '',
-          model_num: '',
-          machine_state: '',
-          machine_type: '세척기기',
-          machine_location: '',
-          uph: '',
-          upd: '',
-          buy_date: '',
-          install_date: '',
-          emp_num: 0,
-          client_num: 0,
-          process_code: '세척',
-        }
+    confirm() {
+      this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd');
+      this.$emit('confirm', this.machineData);
+      this.machineInsert();
+    },
+    deleteVal() {
+      for(let key in this.machineData){
+        this.machineData[key] = '';
+      }
+      this.machineData.emp_num = '0';
+      this.machineData.process_code = '0';
+    },
+
+    // insert 동작
+    async machineInsert(){
+      let obj = {
+        machine_name: this.machineData.machine_name,// 설비 이름
+        machine_img: this.machineData.machine_img,  // 설비 이미지
+        machine_state: this.machineData.machine_state,// 사용 여부
+        model_num: this.machineData.model_num,      // 모델 번호
+        machine_type: this.machineData.machine_type,// 설비 분류
+        client_num: this.machineData.client_num,    // 거래처
+        uph: this.machineData.uph,                  // 시간당 생산량
+        machine_location: this.machineData.machine_location,// 설비 위치
+        buy_date: this.machineData.buy_date,
+        
+        // 자동
+        emp_num: '0',     // 등록자
+        process_code: '0',// 설비 분류 기반
+        upd: Number(this.machineData.uph) * 24,     // uph * 24
+        install_date: this.machineData., // 사용중이면 == buy_date
+
+        machine_num: this.inActData.machine_num,
+        inact_start_time: this.inActData.inact_start_time,
+        inact_type: this.inActData.inact_type,
+        inact_info: this.inActData.inact_info,
+        inact_start_emp: this.inActData.inact_start_emp,
+      }
+      if(this.inActData.inact_end_time != ''){
+        obj.inact_end_time = this.inActData.inact_end_time;
+      }
+
+      let result = await axios.post(`${ajaxUrl}/inActs/inActInsert`, obj)
+                              .catch(err => console.log(err));
+      let addRes = result.data;
+      if(addRes.inact_num > 0){
+        alert('등록되었습니다.');
       }
     },
-    created() {
-      this.inActData.inact_start_time = this.getToday();  
+
+    // 날짜 관련
+    getToday(){
+      return this.dateFormat(null, 'yyyy-MM-dd hh:mm:ss');
     },
-  };
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    }
+  }
+};
 </script>
+
+<style scoped lang="scss">
+.modalRow > * {
+  display: inline-block;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox  */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+</style>

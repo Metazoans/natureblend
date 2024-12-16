@@ -14,6 +14,8 @@ const findAllInAct = async ()=>{
 
 // 등록
 const createNewInAct = async (inActInfo)=>{
+  // inActInfo 객체를 배열로 넘기는 방식으로 변경 예정 => mariadb.query('inActInsert', [inActInfo]);
+  // mapper 쿼리문 변경 예정
   let result = await mariadb.query('inActInsert', inActInfo);
   if( result.insertId > 0){
     return { inact_num : result.insertId }; 

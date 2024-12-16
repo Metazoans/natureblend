@@ -119,12 +119,9 @@
       >
         설비 등록
       </material-button>
-
-      <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
-        <template v-slot:list>
-          <MachineManage />
-        </template>
-      </Modal>
+      
+      <MachineManage :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm"/>
+      
     </div>
     
   </div>
@@ -135,7 +132,6 @@ import MaterialPagination from "@/components/MaterialPagination.vue";
 import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
 import MaterialButton from "@/components/MaterialButton.vue";
 import MaterialRadio from "@/components/MaterialRadio.vue";
-import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import MachineManage from "./MachineManage.vue";
 
 export default {
@@ -145,7 +141,6 @@ export default {
     MaterialPagination,
     MaterialButton,
     MaterialRadio,
-    Modal,
     MachineManage,
   },
   
