@@ -118,7 +118,7 @@ export default {
       let result =
           await axios.get(`${ajaxUrl}/production/stock/${this.selectedOrders[0].product_code}`)
               .catch(err => console.log(err));
-      console.log(result.data)
+      this.productStock = result.data.stock
     },
 
   },
