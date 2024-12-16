@@ -23,8 +23,8 @@ app.use('/', empRouter);
 app.use('/', materialRouter);
 
 // 설비
-app.use('/', machineRouter);
-app.use('/', inactRouter);
+app.use('/machine', machineRouter);
+app.use('/inActs', inactRouter);
 
 app.listen(3000, ()=>{
   console.log('Server Start');

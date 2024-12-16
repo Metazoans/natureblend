@@ -9,7 +9,11 @@ const connectionPool = mariadb.createPool({
   database : process.env.MYSQL_DB,
   connectionLimit : process.env.MYSQL_LIMIT,
 
-  trace : true, //log
+  // trace : true, //log
+  logger: {
+    query: (msg) => console.info(msg),
+    error: (err) => console.error(err),
+  },
   permitSetMultiParamEntries : true, //parameter가 객체일 경우 escape 작업
   insertIdAsNumber : true,           //insertId를 Number 타입으로
   bigIntAsNumber : true,             //bigInt를 자동으로 Number 타입으로

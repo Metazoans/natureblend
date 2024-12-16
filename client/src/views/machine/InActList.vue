@@ -56,7 +56,7 @@ export default {
     },
 
     confirm(data) {
-      console.log(data.machineNum);
+      console.log(data);
       this.closeModal();
     },
 
