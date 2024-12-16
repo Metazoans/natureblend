@@ -34,7 +34,7 @@ SET ?
 WHERE no = ? `;
 
 //다른 방식을 하는 것을 권장
-const boardListWithKeywoard =
+const boardListWithKeyword =
 `SELECT no
       , title
       , writer
@@ -50,5 +50,5 @@ module.exports = {
   boardInfo,
   boardInsert,
   boardUpdate,
-  boardListWithKeywoard
+  boardListWithKeyword
 }

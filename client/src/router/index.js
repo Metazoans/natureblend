@@ -1,7 +1,6 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from 'vue-router'
 
-import MainPage from "../views/MainPage.vue";
-
+import MainPage from '@/views/MainPage.vue';
 
 import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoute from "./machineRoute";
@@ -23,11 +22,6 @@ import qualityRoute from "./qualityRoute";
 
 const routes = [
   // 공용 페이지
-  {
-    path: "/",
-    name: "/",
-    redirect: "/mainpage",
-  },
   {
     path: "/mainpage",
     name: "MainPage",
@@ -86,8 +80,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes,
-  linkActiveClass: "active",
-});
+  routes
+})
 
-export default router;
+export default router

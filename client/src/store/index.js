@@ -20,7 +20,7 @@ export default createStore({
     navbarFixed:
       "position-sticky blur shadow-blur left-auto top-1 z-index-sticky px-0 mx-4",
     absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
-    headerMenu: '영업'
+    headerMenu: '영업',
   },
   mutations: {
     toggleConfigurator(state) {
@@ -65,7 +65,7 @@ export default createStore({
     },
     setHeaderMenu({commit}, headerMenu) {
       commit("selectHeaderMenu", headerMenu);
-    }
+    },
   },
   getters: {},
 });
