@@ -40,7 +40,7 @@
 
 <script>
 import MaterialAvatar from "@/components/MaterialAvatar.vue";
-import { mapState } from "vuex";
+// import { mapState } from "vuex";
 import img1 from "../../assets/img/logos/mastercard.png";
 
 export default {
