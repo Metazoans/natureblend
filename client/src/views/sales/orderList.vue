@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid py-4">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
@@ -52,7 +52,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(orders, index) in filterOrderlist" :key="orders.orderlist_num">
+                    <tr v-for="(orders, index) in filterOrderlist" :key="orders.orderlist_num" >
                       <td>
                       <div class="d-flex px-2 py-1">
                         <div class="d-flex flex-column justify-content-center">
@@ -73,17 +73,21 @@
                       <p class="text-xs font-weight-bold mb-0">{{ orders.name }}</p>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold">{{ orders.order_date }}</span>
+                      <span class="text-secondary text-xs font-weight-bold">
+                        {{ dateFormat(orders.order_date, 'yyyy-MM-dd') }}
+                      </span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold">{{ orders.due_date }}</span>
+                      <span class="text-secondary text-xs font-weight-bold">
+                        {{ dateFormat(orders.due_date, 'yyyy-MM-dd') }}
+                      </span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold">{{ orders.orderlist_status }}</span>
+                      <span class="text-secondary text-xs font-weight-bold">{{  statusMap[orders.orderlist_status] || orders.orderlist_status }}</span>
                     </td>
                     <td class="align-middle text-center">
-                      <!-- <button class="btn btn-sm btn-primary me-2" @click="editOrder(orders)">수정</button>
-                      <button class="btn btn-sm btn-danger" @click="deleteOrder(orders.id)">삭제</button> -->
+                      <material-button size="sm" color="warning" class="button" @click="editOrder(orders)" >수정</material-button>
+                      <material-button size="sm" color="danger" class="button" @click="deleteOrder(orders.id)" >삭제</material-button>
                     </td>
                 
                   </tr>
@@ -111,6 +115,7 @@
 <script>
 import MaterialPagination from "@/components/MaterialPagination.vue";
 import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
+import MaterialButton from "@/components/MaterialButton.vue";
 import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
@@ -120,6 +125,7 @@ export default {
   name: "orderList",
   components: {MaterialPaginationItem, 
                 MaterialPagination,
+                MaterialButton,
             },
   props: {
     filters: {
@@ -131,7 +137,12 @@ export default {
  
   data(){
     return {
-      filterOrderlist : []
+      filterOrderlist : [],
+      statusMap: {         // DB 상태값과 화면 상태명 매핑
+        "update": "등록",
+        "continue": "진행중",
+        "done": "완료",
+      },
     }
   },
     
@@ -157,7 +168,7 @@ export default {
                                 .catch(err=> console.log(err));
         console.log(result);
         this.filterOrderlist = result.data; //서버에 받은 데이터 저장 
-
+        
       },
       
     dateFormat(value, format) {
@@ -170,9 +181,32 @@ export default {
     },
 };
 </script>
-<style scoped>
-.pagination {
-  display: flex;
-  justify-content: center;
-}
+<style lang="scss" scoped>
+.table-responsive {
+    height: 250px;
+    overflow-y: auto;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    thead {
+      th {
+        color: $gray-900 !important;
+
+      }
+      tr {
+        position: sticky;
+        top: 0;
+        background-color: $main8 !important;
+      }
+    }
+    tbody {
+      tr:hover {
+        background-color: $gray-100;
+        cursor: pointer;
+      }
+      .selected {
+        background-color: $gray-300 !important;
+      }
+    }
+
+  }
 </style>
