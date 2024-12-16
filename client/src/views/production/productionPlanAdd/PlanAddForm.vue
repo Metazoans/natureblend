@@ -62,13 +62,13 @@
         <div class="input-content">
           <p>계획시작일자</p>
           <div class="input-group w-auto h-25">
-            <input type="date" class="form-control border p-2" >
+            <input type="date" class="form-control border p-2" v-model="planStartDate"/>
           </div>
         </div>
         <div class="input-content">
           <p>계획종료일자</p>
           <div class="input-group w-auto h-25">
-            <input type="date" class="form-control border p-2">
+            <input type="date" class="form-control border p-2" v-model="planEndDate"/>
           </div>
         </div>
       </div>
@@ -93,6 +93,8 @@ export default {
       planAmount: 0,
       planName: '',
       productStock: null,
+      planStartDate: '',
+      planEndDate: '',
     }
   },
 
@@ -101,8 +103,15 @@ export default {
   },
 
   methods: {
-
     addPlan() {
+      if(!this.selectedOrders.length || !this.planAmount || !this.planName || !this.planStartDate || !this.planEndDate) {
+        this.$notify({
+          text: "입력칸을 채워주세요",
+          type: 'error',
+        });
+        return
+      }
+
 
     },
 

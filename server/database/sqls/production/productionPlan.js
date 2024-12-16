@@ -89,6 +89,47 @@ const ordersByProductCode =
 
 const productStock = `CALL get_stock(?)`;
 
+// procedure
+// 생산계획 등록시, 주문별 생산 데이터를 insert 한 후 실제 계획 등록
+// DELIMITER $$
+// CREATE PROCEDURE add_plan_by_orders(
+//     IN json_array TEXT
+// )
+// BEGIN
+// DECLARE i INT DEFAULT 1;
+// DECLARE array_length INT;
+// DECLARE current_value TEXT;
+//
+// DECLARE plan_num INT;
+// DECLARE order_num INT;
+// declare count int;
+//
+// SET array_length = JSON_LENGTH(json_array);
+//
+// select count(*)
+// into count
+// from order_plan_relation;
+//
+// set count = count + 1;
+//
+// -- 반복적으로 JSON 배열 요소 추출
+// WHILE i <= array_length DO
+// SET current_value = JSON_UNQUOTE(JSON_EXTRACT(json_array, CONCAT('$[', i - 1, ']')));
+//
+// INSERT INTO order_plan_relation (plan_num, order_num)
+// VALUES (count, current_value);
+//
+// SET i = i + 1;
+// END WHILE;
+// END$$
+//
+// DELIMITER ;
+
+// CALL add_plan_by_orders('[1, 2, 3]');
+const insertPlanByOrders = `
+  CALL add_plan_by_orders(?)
+`;
+
         
 module.exports = {
   productList,
