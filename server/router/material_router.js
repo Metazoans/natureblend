@@ -31,4 +31,16 @@ router.get('/material/fullClientKeyWord/:clientKeyWord', async (req, res)=>{
   res.send(fullClientListInfo);
 });
 
+
+//발주서 등록 프로시저 발동
+router.post('/material/inputPoLIst', async (req, res)=>{
+  let materialObj = req.body;
+  console.log(materialObj);
+  let inputPoLIstinfo = await materialService.inputOrder(materialObj);
+  console.log(inputPoLIstinfo);
+  res.send(inputPoLIstinfo);
+});
+
+
+
 module.exports = router;
