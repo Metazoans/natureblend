@@ -1,8 +1,6 @@
-//const mysql = require('mysql');
 const mariadb = require('mariadb/callback');
 const sqlList = require('./sql.js');
 
-//const connectionPool = mysql.createPool({
 const connectionPool = mariadb.createPool({
   host : process.env.MYSQL_HOST,
   port : process.env.MYSQL_PORT,
@@ -30,17 +28,20 @@ const query = (alias, values)=>{
   });
 };
 
-// const query = (alias, values)=>{
-//   let executeSql = sqlList[alias];
-//   let conn;
+
+// const query = async (alias, values) => {
+//   let executeSql = sqlList[alias]
+//   console.log('executeSql', executeSql)
+//   let conn
 //   try{
-//     const res = await conn.query('select 1', [2]);
-//     console.log(res); // [{ "1": 1 }]
-//     return res;
+//     conn = await connectionPool.getConnection()
+//     return await conn.query(executeSql, values)
 //   }catch(err){
-//     console.log
-//   } 
-// };
+//     throw err
+//   }finally{
+//     if(conn) await conn.release()
+//   }
+// }
 
 module.exports = {
   query,

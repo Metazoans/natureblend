@@ -28,12 +28,57 @@
             :aria-controls="''"
             v-bind:collapse="true"
             collapseRef="mainpage"
-            navText="자재파트"
+            navText="자재 주문"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
-
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('materialList')">자재 주문 관리</li>
+            <li class="sub-item" @click="movePage('materialOrderList')">자재 주문 조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="자재 입고"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('materialInput')">자재 입고</li>
+            <li class="sub-item" @click="movePage('materialInputList')">자재 입고 조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="자재 재고"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('materialLotqty')">자재 LOT 조회</li>
+            <li class="sub-item" @click="movePage('materialqty')">자재 재고 조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="true"
+            collapseRef="mainpage"
+            navText="테스트페이지"
+            @click="movePage('tabletest')"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
         </sidenav-collapse>
       </li>
       <li v-else-if="headerMenu === $departments[3]" class="nav-item">

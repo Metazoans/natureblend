@@ -17,6 +17,7 @@
           :isRequired="isRequired"
           :disabled="disabled"
           @input="$emit('update:value', $event.target.value)"
+          readonly
       />
     </div>
   </div>
@@ -106,3 +107,4 @@ export default {
   },
 };
 </script>
+
