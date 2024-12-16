@@ -2,7 +2,7 @@
   <aside
     id="sidenav-main"
     class="fixed-start ms-3 sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 ms-3"
-    :class="`${sidebarType}`"
+    :class="`${sidebarType} ${isModalOpen && 'modal-back'}`"
   >
     <div class="sidenav-header">
       <i
@@ -11,18 +11,8 @@
         id="iconSidenav"
       ></i>
       <a class="m-0 navbar-brand" href="/">
-        <img
-          :src="
-            sidebarType === 'bg-white' ||
-            (sidebarType === 'bg-transparent' && !isDarkMode)
-              ? logoDark
-              : logo
-          "
-          class="navbar-brand-img h-100"
-          alt="main_logo"
-        />
-        <span class="ms-2 font-weight-bold text-white"
-          >Material Dashboard 2</span
+        <span class="text-2xl font-weight-bold text-white"
+          >Nature Blend</span
         >
       </a>
     </div>
@@ -49,14 +39,11 @@ export default {
   },
   computed: {
     // 사이드바 테마 설정
-    ...mapState(["sidebarType", "isDarkMode"]),
+    ...mapState(["sidebarType", "isDarkMode", 'isModalOpen']),
   },
 };
 </script>
 
-<style>
-/* #sidenav-main{
-  position: relative;
-  height: 800px;
-} */
+<style scoped>
+
 </style>

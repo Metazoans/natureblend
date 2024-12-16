@@ -100,6 +100,7 @@
     height: 50px;
     object-fit: contain;
     vertical-align: middle;
+    border-radius: 50%;
   }
 
   .nav-list {
