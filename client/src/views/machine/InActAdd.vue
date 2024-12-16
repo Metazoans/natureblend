@@ -6,12 +6,13 @@
     </template>
     <template v-slot:body>
       <div class="inactBody" v-bind="inActData">
-        <div class="modalRow">
+        <div class="modalRow ">
           <a>설비 번호</a>
-          <material-input id="text" placeholder="" @update:value="inputValue" />
-          <input id="text" class="form-control" placeholder="" v-model.number="inActData.machineNum"/>
+          <material-input id="text" placeholder="" @update:value="inputNum" />
+          <machine-input id="text" placeholder="" v-model="inActData.machineNum"/>
+
         </div>
-        
+
         <div class="modalRow">
           <a>설비 이름</a>
           <material-input id="text" placeholder="" v-model="inActData.machineName"/>
@@ -76,12 +77,15 @@
 <script>
 import MaterialInput from "@/components/MaterialInput.vue";
 import MachineModal from "@/views/machine/MachineModal.vue";
+import MachineInput from "@/components/MachineInput.vue";
+import MachineInput from "../../components/MachineInput.vue";
 
 export default {
   name: "inActAdd",
   components: {
     MaterialInput,
     MachineModal,
+    MachineInput,
   },
   
   data() {
