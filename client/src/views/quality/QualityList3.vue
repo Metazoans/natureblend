@@ -3,7 +3,7 @@
     <h1>QualityList Page3</h1>
   </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
 .pagination {
   display: flex;
   justify-content: center;

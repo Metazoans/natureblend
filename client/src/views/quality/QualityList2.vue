@@ -154,7 +154,7 @@ export default {
   components: { MaterialInput, MaterialButton, MaterialCheckbox,   },      
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 .pagination {
   display: flex;
   justify-content: center;
