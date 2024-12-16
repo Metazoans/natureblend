@@ -146,6 +146,7 @@ export default {
     left: 180px;
     top: 14px;
     font-size: 14px;
+    margin-left: 12px;
   }
 }
 .main-container {

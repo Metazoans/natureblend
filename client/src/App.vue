@@ -77,6 +77,11 @@ export default {
   border-radius: 8px;
 
 }
+.vue-notification-group {
+  top: 16px !important;
+  right: 20px !important;
+}
+
 .vue-notification {
   margin: 0 5px 5px;
   padding: 10px;
