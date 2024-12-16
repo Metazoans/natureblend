@@ -26,7 +26,7 @@ const getOrderList = async (orderStatus, orderName, clientName, startDate, endDa
    if(orderStatus != undefined && Object.keys(orderStatus).length > 0){
     let search = `o.orderlist_status IN (`;  
     for (let key in orderStatus) {        
-        search += (key == '0' ? ' ' : ', ') + `\'${value}\'`;   
+        search += (key == '0' ? ' ' : ', ') + `\'${orderStatus[key]}\'`;   
     }
     search += ' )';
     searchList.push(search);

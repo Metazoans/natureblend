@@ -52,7 +52,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(orders, index) in filterOrderlist" :key="orders.id">
+                    <tr v-for="(orders, index) in filterOrderlist" :key="orders.orderlist_num">
                       <td>
                       <div class="d-flex px-2 py-1">
                         <div class="d-flex flex-column justify-content-center">
@@ -113,6 +113,7 @@ import MaterialPagination from "@/components/MaterialPagination.vue";
 import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
 import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
+import userDateUtils from '@/utils/useDates.js';
 
 
 export default {
@@ -154,9 +155,20 @@ export default {
       //서버에 검색 필터 데이터 전송
         let result = await axios.put(`${ajaxUrl}/orderlist/search`,obj)
                                 .catch(err=> console.log(err));
+        console.log(result);
         this.filterOrderlist = result.data; //서버에 받은 데이터 저장 
-      }                   
-    },
+
+        
+
+      },
+      
+    dateFormat(value, format) {
+        return userDateUtils.dateFormat(value, format);
+      },
+
+
+    },//end of method
+    
     created() {
         this.searchOrder(); // 컴포넌트가 생성될 때 초기 검색
     },

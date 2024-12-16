@@ -8,12 +8,12 @@
                 <label class="form-label fw-bold">주문상태</label>
                 <div>
                     <label class="me-3" v-for="status in statusList" :key="status">
+                        {{ status }}
                     <input 
-                        type="checkbox" 
-                        v-model="pickedStatus" 
-                        v-mode="status"
-                    />
-                    {{ status }}
+                        :value="status"
+                        type="checkbox"
+                        v-model="pickedStatus"
+                    >
                     </label>
             </div>
             <!--체크박스 선택 상태 값 -->
@@ -31,7 +31,7 @@
             <div class="col-sm-4">
                 <input 
                     id="clientSearch"  
-                    v-mode="clientName" @click="openModal"/>
+                    v-model="clientName" @click="openModal"/>
                 <Modal :isShowModal="isShowModal" @closeModal="closeModal">
                     <template v-slot:list>
                         <!--모달 안에 거래처 목록 출력-->
@@ -56,7 +56,7 @@
             <div class="col-sm-6">
                 <input 
                 id="orderSearch" 
-                v-mode="orderName" />
+                v-model="orderName" />
             </div>
         </div>
          <!--주문일자 검색 -->
@@ -66,7 +66,7 @@
                 <input 
                 type="date" 
                 id="startDate"
-                v-mode="startDate"/>
+                v-model="startDate"/>
             </div>
             <div class="col-sm-1 text-center">~</div>
             <div class="col-sm-4">
@@ -82,7 +82,7 @@
             <button type="button" class="btn btn-secondary"  @click="resetSearch" >초기화</button>
         </div>
         <!--추가 -->
-        <button type="button" class="btn btn-secondary" @click="addOrder">추가</button>
+        <!-- <button type="button" class="btn btn-secondary" @click="addOrder">추가</button> -->
        
     </div>
     <!--orderList  컴포넌트 : 등록 또는  수정 -->
@@ -158,7 +158,7 @@ export default{
             const statusMap ={
                 "등록":"update",
                 "진행중":"continue",
-                "완료":"done",
+                "완료":"done"
             }
             
             const dbStatus = this.pickedStatus.map(status=>statusMap[status]);
@@ -171,9 +171,9 @@ export default{
             };
             console.log(this.filters);
         },
-        addOrder(){
-            this.orderData = {};
-        },
+        // addOrder(){
+        //     this.orderData = {};
+        // },
         
     },
     
