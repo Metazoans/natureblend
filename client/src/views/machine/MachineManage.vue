@@ -1,71 +1,110 @@
 <template>
-  <div>
-    <h5 class="mb-0">설비 관리 페이지</h5>
+  <MachineModal>
+    <template v-slot:header>
+      <h2>설비 등록 및 수정</h2>
+    </template>
 
-    <a>설비 이름 </a>
-    <material-input id="text" placeholder="Type here..." />
-
-    <!-- 파일 선택 디자인 수정 필요 -->
-    <a>설비 이미지 </a>
-    <material-input type="file" id="text" placeholder="" />
-
-    <a>사용 여부 </a>
-    <material-radio id="use" name="machine_use" checked>사용</material-radio>
-    <material-radio id="notuse" name="machine_use">미사용</material-radio>
-
-    <a>모델 번호 </a>
-    <material-input id="text" placeholder="Type here..." />
-    <a>설비 분류 </a>
-    <material-input id="text" placeholder="Type here..." />
-    <a>제작 업체 </a>
-    <material-input id="text" placeholder="Type here..." />
-    <a>UPH </a>
-    <material-input id="text" placeholder="Type here..." />
-    <a>설비 위치 </a>
-    <material-input id="text" placeholder="Type here..." />
-    <a>등록자 </a>
-    <material-input id="text" placeholder="Type here..." />
-    <a>구매 일자 </a>
-    <material-input type="date" placeholder="Date" value="" />
     
-  </div>
-
-  <!-- button -->
-  <div class="card-body p-3">
-    <div class="row">
-      <div class="col-lg-3 col-sm-6 col-12 mt-lg-0 mt-2">
-        <button
+    <template v-slot:body>
+      <div class="inactBody" v-bind="inActData">
+        <div class="modalRow">
+          <label for="machineName">설비 이름</label>
+          <input type="text" id="machineName" name="machineName" v-model="machineData.machine_name"/>
+        </div>
+        <div class="modalRow">
+          <label for="">설비 이미지</label>
+          <input type="text" id="" name="" v-model="machineData.machine_img"/>
+        </div>
+        <div class="modalRow">
+          <label for="">사용 여부</label>
+          <input type="text" id="" name="" v-model="machineData.machine_state"/>
+        </div>
+        <div class="modalRow">
+          <label for="">모델 번호</label>
+          <input type="text" id="" name="" v-model="machineData.model_num"/>
+        </div>
+        <div class="modalRow">
+          <label for="">설비 분류</label>
+          <input type="text" id="" name="" v-model="machineData.machine_type"/>
+        </div>
+        <div class="modalRow">
+          <label for="">제작 업체</label>
+          <input type="text" id="" name="" v-model="machineData.client_num"/>
+        </div>
+        <div class="modalRow">
+          <label for="">UPH</label>
+          <input type="text" id="" name="" v-model="machineData.uph"/>
+        </div>
+        <div class="modalRow">
+          <label for="">설비 위치</label>
+          <input type="text" id="" name="" v-model="machineData.machine_location"/>
+        </div>
+        <div class="modalRow">
+          <label for="">등록자</label>
+          <input type="text" id="" name="" v-model="machineData.emp_num"/>
+        </div>
+        <div class="modalRow">
+          <label for="">구매 일자</label>
+          <input type="text" id="" name="" v-model="machineData.buy_date"/>
+        </div>
+      </div>
+    </template>
+    <template v-slot:footer>
+      <button
           class="btn bg-gradient-warning w-100 mb-0 toast-btn"
           type="button"
           data-target="warningToast"
-          @click="snackbar = 'warning'"
+          @click="confirm"
         >
           등록
         </button>
-      </div>
-      <div class="col-lg-3 col-sm-6 col-12 mt-lg-0 mt-2">
         <button
           class="btn bg-gradient-warning w-100 mb-0 toast-btn"
           type="button"
           data-target="warningToast"
-          @click="snackbar = 'warning'"
+          @click="closeModal"
         >
           취소
         </button>
-      </div>
-    </div>
-  </div>
+    </template>
+  </MachineModal>
+
+
 </template>
 
 
 <script>
-  import MaterialInput from "@/components/MaterialInput.vue";
-  import MaterialRadio from "@/components/MaterialRadio.vue";
+  import MachineModal from "@/views/machine/MachineModal.vue";
+  import userDateUtils from "@/utils/useDates.js";
+  import { ajaxUrl } from '@/utils/commons.js';
+  import axios from 'axios';
 
   export default {
+    name: "MachineManage",
     components: {
-      MaterialInput,
-      MaterialRadio,
-    }
+      MachineModal,
+    },
+    data() {
+      return {
+        machineData: {
+          machine_name: '',
+          machine_img: '',
+          model_num: '',
+          machine_state: '',
+          machine_type: '세척기기',
+          machine_location: '',
+          uph: '',
+          upd: '',
+          buy_date: '',
+          install_date: '',
+          emp_num: 0,
+          client_num: 0,
+          process_code: '세척',
+        }
+      }
+    },
+    created() {
+      this.inActData.inact_start_time = this.getToday();  
+    },
   };
 </script>

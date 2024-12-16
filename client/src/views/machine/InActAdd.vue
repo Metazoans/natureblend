@@ -6,7 +6,7 @@
     </template>
     <template v-slot:body>
       <div class="inactBody" v-bind="inActData">
-        <div class="modalRow ">
+        <div class="modalRow">
           <!-- 템플릿 input 컴포넌트 사용시 update:value 메소드 생성해야함 임시로 input 사용 -->
           <!-- <material-input id="text" placeholder="" @update:value="inputNum" /> -->
           <label for="machineNum">설비 번호</label>
@@ -99,9 +99,7 @@ export default {
     }
   },
   created() {
-    //등록
     this.inActData.inact_start_time = this.getToday();  
-
   },
   methods: {
     closeModal() {
