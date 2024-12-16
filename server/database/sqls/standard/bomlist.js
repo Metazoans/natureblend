@@ -11,7 +11,17 @@ const bomList =
  on bm.bom_num = b.bom_num
  ORDER BY bm.bom_seq;`;
 
+ const bomView = 
+ `SELECT product_name,
+         capacity
+  FROM bom`;
+
+  const bomInsert =
+`INSERT INTO bom
+SET ? `;
 
  module.exports = {
     bomList,
+    bomView,
+    bomInsert
 }

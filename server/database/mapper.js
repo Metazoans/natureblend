@@ -30,18 +30,6 @@ const query = (alias, values)=>{
   });
 };
 
-// const query = (alias, values)=>{
-//   let executeSql = sqlList[alias];
-//   let conn;
-//   try{
-//     const res = await conn.query('select 1', [2]);
-//     console.log(res); // [{ "1": 1 }]
-//     return res;
-//   }catch(err){
-//     console.log
-//   } 
-// };
-
 module.exports = {
   query,
 }

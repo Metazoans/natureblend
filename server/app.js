@@ -1,25 +1,3 @@
-// require('dotenv').config({ path : './database/mysql.env'});
-// const express = require('express');
-// const app = express();
-
-// // 미들웨어
-// app.use(express.json()); // application/json
-
-// // 라우터 등록
-
-// app.listen(3000, ()=>{
-//   console.log('Server Start');
-//   console.log('http://localhost:3000');
-// })
-
-// // 라우팅
-// app.get('/', (req, res)=>{
-//   res.send('Welcome!!');
-// })
-
-
-
-
 require('dotenv').config({ path : './database/mysql.env'});
 const express = require('express');
 const app = express();
@@ -36,7 +14,7 @@ app.use(express.urlencoded({ extended : false})) // application/x-form-urlencode
 app.use('/', boardRouter);
 app.use('/', bookRouter);
 app.use('/', empRouter);
-app.use('/',standardRouter);
+app.use('/', standardRouter);
 
 app.listen(3000, ()=>{
   console.log('Server Start');
