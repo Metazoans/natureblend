@@ -11,7 +11,6 @@ router.get('/clients',async(req,res)=>{
 // 검색 기준으로 주문리스트 조회
 router.put('/orderList/search', async(req,res)=>{
   let {orderStatus, orderName, clientName, startDate, endDate} = req.body;
-  console.log(req.body);
   let result = await salesService.getOrderList(orderStatus, orderName, clientName, startDate, endDate);
   res.send(result);
 });

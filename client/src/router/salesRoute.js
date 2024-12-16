@@ -13,7 +13,7 @@ const salesRoute = [
         component: SalesList
     },
     {
-        path:'orderlist/search',
+        path:'/orderlist/search',
         name :'orderlistSearch',
         component: orderlistSearch
     },

@@ -112,6 +112,7 @@
 import MaterialPagination from "@/components/MaterialPagination.vue";
 import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
 import axios from "axios";
+import { ajaxUrl } from '@/utils/commons.js';
 
 
 export default {
@@ -151,7 +152,7 @@ export default {
         endDate:this.filters.endDate 
       }
       //서버에 검색 필터 데이터 전송
-        let result = await axios.put(`/api/orderlist/search`,obj)
+        let result = await axios.put(`${ajaxUrl}/orderlist/search`,obj)
                                 .catch(err=> console.log(err));
         this.filterOrderlist = result.data; //서버에 받은 데이터 저장 
       }                   
