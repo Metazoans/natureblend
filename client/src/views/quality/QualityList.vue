@@ -7,7 +7,7 @@
       <div class="col-sm"><material-input type="date" placeholder="Date" value="2024-12-13" /></div>
       <div class="col-sm"><material-input type="date" placeholder="Date" value="2024-12-13" /></div>
       <div class="col-sm"><material-input label="자재명" type="search" /></div>
-      <div class="col-sm"><material-button size="md">검색</material-button></div>
+      <div class="col-sm"><material-button size="md" v-on:click="search">검색</material-button></div>
     </div>
     <!-- <div class="row">
         <div class="col-sm"><input type="date" placeholder="Date" value="2024-12-13" /></div>
@@ -19,7 +19,7 @@
   <hr>
   <div class="container-fluid py-4">
     <h4>검색 결과</h4>
-    <div class="row">
+    <div class="row" v-if="searchFinish">
       <div class="col-12">
         <table class="table align-items-center mb-0">
           <thead>
@@ -191,6 +191,9 @@
 </template>
 
 <script>
+// import axios from 'axios'
+// import { ajaxUrl } from '@/utils/commons.js';
+
 import MaterialButton from "@/components/MaterialButton.vue";
 import MaterialCheckbox from "@/components/MaterialCheckbox.vue";
 import MaterialInput from "@/components/MaterialInput.vue";
@@ -204,6 +207,14 @@ export default {
 
   data() {
     return {
+      searcKeywordInfo: {
+        name: '',
+        start_date:'',
+        end_date:''
+      },
+      searchFinish: true,
+      contentlist: [],
+
       isShowModal: false,
     };
   },
