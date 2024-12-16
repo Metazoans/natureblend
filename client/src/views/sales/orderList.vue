@@ -158,16 +158,12 @@ export default {
         console.log(result);
         this.filterOrderlist = result.data; //서버에 받은 데이터 저장 
 
-        
-
       },
       
     dateFormat(value, format) {
-        return userDateUtils.dateFormat(value, format);
+          return userDateUtils.dateFormat(value, format);
       },
-
-
-    },//end of method
+    },//end-Method
     
     created() {
         this.searchOrder(); // 컴포넌트가 생성될 때 초기 검색
