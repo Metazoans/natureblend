@@ -25,7 +25,7 @@ router.get('/employees', async (req, res)=>{
     res.send(await planService.getProductionEmpList());
 });
 
-router.post('/plan', async (req, res)=>{
+router.post('/', async (req, res)=>{
     let planInfo = req.body;
     res.send(await planService.addPlan(planInfo));
 });

@@ -19,11 +19,11 @@ const getProductionEmpList = async ()=>{
 }
 
 const addPlan = async (planInfo)=>{
-    let result = await mysql.query('insertPlanByOrders', planInfo);
-    if(result.insertId > 0){
-        console.log('result.insertId', result.insertId)
+    let result = await mysql.query('insertPlanByOrders', Object.values(planInfo));
+    if(result.affectedRows > 0 ){
+        return { message: 'success' }
     } else {
-        return {};
+        return { message: 'fail' }
     }
 }
 

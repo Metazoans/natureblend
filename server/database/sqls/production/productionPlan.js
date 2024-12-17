@@ -142,7 +142,7 @@ const productStock = `CALL get_stock(?)`;
 
 // CALL add_plan_by_orders('[1, 2, 3]', '2024 생산 계획', 'P001', 10, '2024-12-16', '2025-01-02', 1);
 const insertPlanByOrders = `
-  CALL add_plan_by_orders('[1, 2, 3]', ?, ?, ?, ?, ?, ?);
+  CALL add_plan_by_orders(?, ?, ?, ?, ?, ?, ?);
 `;
 
 // 생산계획시 등록 가능한 직원만: 생산부서 반장이상 직급, 관리자 직급만 가능
