@@ -9,7 +9,7 @@ const allmaterial = async ()=>{
 
 // 발주 필요 자재 조회 need_order_material
 const needOrderMaterial = async (plan_code)=>{
-  let list = await mysql.query('need_order_material', plan_code);
+  let list = await mysql.query('need_order_material', [plan_code]);
   //let info = list[0];
   return list;
 }
@@ -23,8 +23,29 @@ const fullClient = async ()=>{
 //거래처 전체 조회 full_client
 const fullClientInfo = async (clientKeyWord)=>{
   searchKeyword = '%'+clientKeyWord+'%';
-let list = await mysql.query('full_client_info', searchKeyword);
+let list = await mysql.query('full_client_info', [searchKeyword]);
 return list;
+}
+
+
+// 발주서 등록 input_order
+// CALL material_input_polist(?, ?, ?, ?, ?, ?, ?, @result);
+//CALL material_input_polist(22, 33, 'M032', 150, NOW(), 1500, 30000, @result);
+const inputOrder = async (materialObj)=>{
+  console.log(materialObj);
+  let a1 = materialObj.clientNum;
+  let a2 = materialObj.empNum;
+  let a3 = materialObj.materialCode;
+  let a4 = materialObj.ordQty;
+  let a5 = materialObj.limitDate;
+  let a6 = materialObj.unitPrice;
+  let a7 = materialObj.totalPrice;
+  //let queryString = ` ${a1}, ${a2}, '${a3}', ${a4}, '${a5}', ${a6}, ${a7} `;
+  //console.log('hell', queryString);
+
+  //let list = await mysql.query('input_order', queryString);
+  let list = await mysql.query('input_order', [a1, a2, a3, a4, a5, a6, a7] );
+  return list;
 }
 
 
@@ -33,4 +54,5 @@ module.exports = {
   needOrderMaterial,
   fullClient,
   fullClientInfo,
+  inputOrder,
 };

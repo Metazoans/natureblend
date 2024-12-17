@@ -2,4 +2,45 @@
    <div>
       <h1>자재 주문 조회</h1>
    </div>
-</template>
+   <div class="grid-container" >
+     <ag-grid-vue
+       :rowData="rowData"
+       :columnDefs="columnDefs"
+       :theme="theme"
+   >
+   </ag-grid-vue>
+ 
+   </div>
+ </template>
+ <script>
+ import theme from "@/utils/agGridTheme";
+ 
+ export default {
+   name: "AgGridExample",
+ 
+ 
+   data() {
+     return {
+       theme: theme,
+       rowData: [
+         { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+         { make: "Ford", model: "F-Series", price: 33850, electric: true },
+         { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+       ],
+ 
+       columnDefs: [
+         { field: "make" },
+         { field: "model" },
+         { field: "price" },
+         {
+           field: "electric",
+           // checkboxSelection: true,
+           editable: true,          // 편집 가능하게 설정
+         }
+       ],
+ 
+ 
+     }
+   },
+ }
+ </script>
