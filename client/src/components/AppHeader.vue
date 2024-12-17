@@ -1,8 +1,6 @@
 <template>
     <header class="header-bar">
-      <div class="logo">
-        <img src="@/assets/img/logogo.jpg" alt="Logo" class="logo-img" />
-      </div>
+
       <ul class="nav-list">
         <li v-for="(item, index) in navItems" :key="index" @click="handleClick(item)" :class="{ active: item.active }">
           {{ item.text }}

@@ -329,10 +329,16 @@ export default {
       this.materialInputPOList(this.materialObj);
     },
     async materialInputPOList(materialObj){
-      //console.log(materialObj);
+      console.log(materialObj);
       let result = await axios.post(`${ajaxUrl}/material/inputPoLIst`, materialObj)
                                .catch(err => console.log(err));
       console.log(result.data);
+      const resultValue = result.data[0][0]; 
+      if(resultValue.result == 'OK'){
+        this.$router.push({ name : 'materialOrderList' });
+      }else{
+        alert('개발자한테 문의 해주세요 ERRCODE 001');
+      }
     },
   },
   created(){
