@@ -42,5 +42,12 @@ router.post('/material/inputPoLIst', async (req, res)=>{
 });
 
 
+//자재 입고 처리하는 페이지 리스트 material_input_qc_list (materialInputQcList)
+router.get('/material/miql', async (req, res)=>{
+  let materialInputQcListinfo = await materialService.materialInputQcList();
+  res.send(materialInputQcListinfo);
+});
+
+
 
 module.exports = router;

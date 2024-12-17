@@ -36,12 +36,12 @@
                 <tbody>
                 <tr v-for="pdt in productorderlist" :key="pdt.order_code">
                   <td>
-                    <label><input type="checkbox" :value="pdt.plan_code" v-model="checked"></label>
+                    <label><input type="checkbox" :value="pdt.plan_num" v-model="checked"></label>
                   </td>
                   <td>
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">{{ pdt.plan_code }}</h6>
+                        <h6 class="mb-0 text-sm">{{ pdt.plan_num }}</h6>
                       </div>
                     </div>
                   </td>
@@ -135,7 +135,7 @@ export default {
         this.checked = [];
       }else{
         //console.log(this.productorderlist);
-        this.checked = this.productorderlist.map(pdt => pdt.plan_code);
+        this.checked = this.productorderlist.map(pdt => pdt.plan_num);
       }
       this.allSelected = !this.allSelected;
     },
