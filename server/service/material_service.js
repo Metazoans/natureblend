@@ -33,13 +33,13 @@ return list;
 //CALL material_input_polist(22, 33, 'M032', 150, NOW(), 1500, 30000, @result);
 const inputOrder = async (materialObj)=>{
   console.log(materialObj);
-  let a1 = 100;
-  let a2 = 22;
-  let a3 = 'M044';
-  let a4 = 300;
-  let a5 = '2024-12-31 12:12:12';
-  let a6 = 1750;
-  let a7 = 35000000;
+  let a1 = materialObj.clientNum;
+  let a2 = materialObj.empNum;
+  let a3 = materialObj.materialCode;
+  let a4 = materialObj.ordQty;
+  let a5 = materialObj.limitDate;
+  let a6 = materialObj.unitPrice;
+  let a7 = materialObj.totalPrice;
   //let queryString = ` ${a1}, ${a2}, '${a3}', ${a4}, '${a5}', ${a6}, ${a7} `;
   //console.log('hell', queryString);
 
