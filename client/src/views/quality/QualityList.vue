@@ -2,84 +2,54 @@
   <div class="px-4 py-4">
     <h1>입고검사-검사신청</h1>
     <hr>
-    <div class="row">
-      <h4>검색조건</h4>
-      <label for="startDate" >날짜범위 </label>
-      <div class="col-sm">
-        <input type="date" placeholder="Date" v-model="searchInfo.startDate"/>
+    <div class="row align-items-center mb-3">
+      <div class="col-2">
+        <h3 class="mr-3">검색조건</h3>
       </div>
-      <div class="col-sm">
-        <input type="date" placeholder="Date" v-model="searchInfo.endDate"/>
+      <div class="col">
+        <material-button class="btn-search" size="sm" v-on:click="searchOrderAll">전체 조회</material-button>
       </div>
-      <div class="col-sm"><input label="자재명" type="search" v-model="searchInfo.mName"/></div>
-      <div class="col-sm"><material-button size="md" v-on:click="searchOrder">검색</material-button></div>
     </div>
-    <!-- <div class="row">
-        <div class="col-sm"><input type="date" placeholder="Date" value="2024-12-13" /></div>
-        <div class="col-sm"><input type="date" placeholder="Date" value="2024-12-13" /></div>
-        <div class="col-sm"><material-input type="search" placeholder="Search" value="Creative Tim" /></div>
-    </div> -->
+
+    <div class="row">
+      <label for="startDate" class="mr-2">날짜범위</label>
+      <div class="col-sm">
+        <input type="date" placeholder="Date" v-model="searchInfo.startDate" />
+      </div>
+      <div class="col-sm">
+        <input type="date" placeholder="Date" v-model="searchInfo.endDate" />
+      </div>
+      <div class="col-sm">
+        <input label="자재명" placeholder="자재명" type="search" v-model="searchInfo.mName" />
+      </div>
+      <div class="col-sm">
+        <material-button size="md" v-on:click="searchOrder">검색</material-button>
+      </div>
+    </div>
   </div>
+
 
   <hr>
   <div class="container-fluid py-4">
     <h4>검색 결과</h4>
-    <div class="row">
-      <div class="col-12">
-        <table class="table align-items-center mb-0">
-          <thead>
-            <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                체크
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                자재발주코드
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                자재명
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                발주수량
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                발주신청일
-              </th>
-              <th class="text-secondary opacity-7"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :key="i" v-for="(list, i) in orderList">
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <material-checkbox id="checkboxId" />
-                </div>
-              </td>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">{{ list.order_code }}</h6>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">{{ list.material_name }}</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <h6 class="mb-0 text-sm">{{ list.ord_qty }}</h6>
-                <p class="text-xs text-secondary mb-0">(개)</p>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">{{ dateFormat(list.order_date, 'yyyy-MM-dd') }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="grid-container">
+      <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef" @grid-ready="onGridReady" >
+      </ag-grid-vue>
+
     </div>
   </div>
+
+
+
   <hr>
   <div class="container-fluid py-4">
     <h4>신청내역</h4>
+    <div class="grid-container">
+      <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef" @grid-ready="onGridReady">
+      </ag-grid-vue>
+
+    </div>
+
     <div class="row">
       <div class="col-12">
         <table class="table align-items-center mb-0">
@@ -177,29 +147,68 @@ import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
 
 import MaterialButton from "@/components/MaterialButton.vue";
-import MaterialCheckbox from "@/components/MaterialCheckbox.vue";
-//import MaterialInput from "@/components/MaterialInput.vue";
 
+import theme from "@/utils/agGridTheme";
 import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 
 export default {
   name: "입고검사",
-  components: { MaterialCheckbox, MaterialButton, Modal },
+  components: { MaterialButton, Modal },
 
 
   data() {
     return {
+      //검색창 및 결과 관련
       searchInfo: {
         mName: '',
         startDate: this.formatDate(new Date()),
-        endDate:this.formatDate(new Date())
+        endDate: this.formatDate(new Date())
       },
       orderList: [],
 
+      //모달 관련
       isShowModal: false,
+
+      //ag grid 관련
+      theme: theme,
+      rowData1: [],
+      columnDefs: [
+        { field: "자재발주코드", resizable: false },
+        { field: "자재명", resizable: false },
+        { field: "발주수량", resizable: false },
+        { field: "발주신청일", resizable: false },
+        {
+          field: "체크",
+          resizable: false,
+          editable: true,
+        }
+      ],
+      rowData2: [],
+      columnDefs2: [
+        { field: "자재발주코드", resizable: false, cellStyle: { textAlign: "center" }},
+        { field: "자재명", resizable: false, cellStyle: { textAlign: "center" }},
+        { field: "발주수량", resizable: false, cellStyle: { textAlign: "center" } },
+        { field: "발주신청일", resizable: false, cellStyle: { textAlign: "center" }},
+        {
+          cellRenderer: (params) => {
+            return `
+              <button class="btn btn-danger size="sm" data-id="${params.node.id}">
+                  삭제
+              </button>
+            `;
+          },
+          resizable: false,
+          sortable: false, // 열정렬
+          filter: false    // 필터링
+          , cellStyle: { textAlign: "center" }
+        }
+      ],
+      defaultColDef: {
+        headerClass: "header-center"
+      },
     };
   },
-  
+
 
   methods: {
     formatDate(date) {
@@ -210,41 +219,59 @@ export default {
       return `${year}-${month}-${day}`;
     },
 
-    //검색창 관련
+    //검색창 관련    
     async searchOrder() {
       const name = this.searchInfo.mName.replace(/\s+/g, "");
       const result = {
-        mName : name.length != 0 ? name : "",
+        mName: name.length != 0 ? name : "",
         startDate: this.searchInfo.startDate,
         endDate: this.searchInfo.endDate
       };
+      let searchResult = await axios.post(`${ajaxUrl}/meterialOrderQC`, result)
+        .catch(err => console.log(err));
+      this.orderList = searchResult.data;
 
-      // let searchResult = await axios.get(`${ajaxUrl}/meterialOrderQC/${result.mName}`)
-      //                         .catch(err => console.log(err));
-      //this.orderList = searchResult.data;
-      try {
-        let searchResult = await axios.get(`${ajaxUrl}/meterialOrderQC`, { params: result });
-        this.orderList = searchResult.data; // 응답 데이터 처리
-    } catch (err) {
-        console.log(err);
-    }
-                              
-      // let searchResult = await axios.post(`${ajaxUrl}/meterialOrderQC`, result)
-      // .catch(err => console.log(err));
-      // this.orderList = searchResult.data;
-    //   try {
-    //     let searchResult = await axios.post(`${ajaxUrl}/meterialOrderQC`, result);
-    //     this.orderList = searchResult.data; // 응답 데이터 처리
-    // } catch (err) {
-    //     console.log(err);
-    // }
+      // ag grid에 결과값 넣기
+      this.rowData1 = []
+      for (let i = 0; i < this.orderList.length; i++) {
+        let col = {
+          "체크": false, "자재발주코드": this.orderList[i].order_code, "자재명": this.orderList[i].material_name,
+          "발주수량": this.orderList[i].ord_qty, "발주신청일": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
+        };
+        console.log('col:', col);
+        this.rowData1[i] = col;
+        console.log(this.rowData1[i]);
+      }
+
+      console.log(this.rowData);
     },
+
+    async searchOrderAll() {
+      let searchResult = await axios.get(`${ajaxUrl}/meterialOrderQCAll`)
+        .catch(err => console.log(err));
+      this.orderList = searchResult.data;
+
+      // ag grid에 결과값 넣기
+      this.rowData1 = []
+      for (let i = 0; i < this.orderList.length; i++) {
+        let col = {
+          "체크": false, "자재발주코드": this.orderList[i].order_code, "자재명": this.orderList[i].material_name,
+          "발주수량": this.orderList[i].ord_qty, "발주신청일": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
+        }
+        this.rowData1[i] = col;
+      }
+    },
+    onGridReady(params) {
+      this.gridApi = params.api;
+      this.gridApi.sizeColumnsToFit();
+    },
+
     // 날짜를 YYYY-MM-DD 형식으로 변환
     dateFormat(value, format) {
-        return userDateUtils.dateFormat(value, format);
+      return userDateUtils.dateFormat(value, format);
     },
 
-  
+
     openModal() {
       this.isShowModal = !this.isShowModal
     },
@@ -269,4 +296,5 @@ export default {
     margin-top: 24px;
   }
 }
+
 </style>
