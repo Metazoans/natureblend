@@ -31,4 +31,23 @@ router.get('/material/fullClientKeyWord/:clientKeyWord', async (req, res)=>{
   res.send(fullClientListInfo);
 });
 
+
+//발주서 등록 프로시저 발동
+router.post('/material/inputPoLIst', async (req, res)=>{
+  let materialObj = req.body;
+  //console.log(materialObj);
+  let inputPoLIstinfo = await materialService.inputOrder(materialObj);
+  console.log(inputPoLIstinfo);
+  res.send(inputPoLIstinfo);
+});
+
+
+//자재 입고 처리하는 페이지 리스트 material_input_qc_list (materialInputQcList)
+router.get('/material/miql', async (req, res)=>{
+  let materialInputQcListinfo = await materialService.materialInputQcList();
+  res.send(materialInputQcListinfo);
+});
+
+
+
 module.exports = router;

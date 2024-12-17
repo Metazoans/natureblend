@@ -194,8 +194,8 @@
   </div>
 </template>
 <script>
-//import axios from 'axios';
-//import { ajaxUrl } from '@/utils/commons.js';
+import axios from 'axios';
+import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
 import Modal from "@/views/material/materialOrderChildModal.vue";  //모달
 
@@ -220,6 +220,7 @@ export default {
       modalName: '',  //모달이름
       needQty: '',  //필요수량
       clientselect: [],
+      materialObj: {},
     };
   },
   // 감시하다 값이 바뀌면 작업하는 녀석
@@ -302,18 +303,42 @@ export default {
       let selectedMaterials = this.needMaterialListCopy.filter((material) =>
         this.checked2.includes(material.material_code)
       );
-      //필요한거
-      console.log('주문하는회사:', selectedMaterials[0].clientName);
-      console.log('납기일자:', selectedMaterials[0].lastDate);
-      console.log('단가:', selectedMaterials[0].pic);
-      console.log('발주수량:', selectedMaterials[0].qty);
+
       let totalprice = (selectedMaterials[0].pic * selectedMaterials[0].qty);
-      console.log('총금액:', totalprice);
-      console.log('자재코드:', selectedMaterials[0].material_code);
-      console.log('사원번호: 로그인해야 알지');
-      console.log('거래처코드:', selectedMaterials[0].code);
+
+      //필요한거
+      // console.log('주문하는회사:', selectedMaterials[0].clientName);
+      // console.log('납기일자:', selectedMaterials[0].lastDate);
+      // console.log('단가:', selectedMaterials[0].pic);
+      // console.log('발주수량:', selectedMaterials[0].qty);
+      // console.log('총금액:', totalprice);
+      // console.log('자재코드:', selectedMaterials[0].material_code);
+      // console.log('사원번호: 로그인해야 알지');
+      // console.log('거래처코드:', selectedMaterials[0].code);
       //이걸로 배열만들고 함수에 던지고
       //값을 받아서 처리할수 있게 SQL에 프로시저인가 함수인가 먼가 만들어야함
+      this.materialObj = {
+        clientNum: selectedMaterials[0].code,   //회사코드
+        empNum: 1,    //추후에 로구인 아이디 받는걸로 바꿔야함!!! //사원코드
+        materialCode: selectedMaterials[0].material_code, //자재코드
+        ordQty: selectedMaterials[0].qty, //발주수량
+        limitDate: selectedMaterials[0].lastDate,  //납기일자
+        unitPrice: selectedMaterials[0].pic,  //단가
+        totalPrice: totalprice //총금액
+      };
+      this.materialInputPOList(this.materialObj);
+    },
+    async materialInputPOList(materialObj){
+      console.log(materialObj);
+      let result = await axios.post(`${ajaxUrl}/material/inputPoLIst`, materialObj)
+                               .catch(err => console.log(err));
+      console.log(result.data);
+      const resultValue = result.data[0][0]; 
+      if(resultValue.result == 'OK'){
+        this.$router.push({ name : 'materialOrderList' });
+      }else{
+        alert('개발자한테 문의 해주세요 ERRCODE 001');
+      }
     },
   },
   created(){

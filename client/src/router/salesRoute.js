@@ -1,6 +1,6 @@
 // 영업 라우터
-import SalesList from '@/views/sales/SalesList.vue';
-import orderlistSearch from '@/views/sales/orderlistSearch.vue';
+import orderForm from '@/views/sales/Order/orderForm.vue';
+import orderlistSearch from '@/views/sales/Order/orderlistSearch.vue';
 
 const salesRoute = [
     {
@@ -8,9 +8,9 @@ const salesRoute = [
         redirect :{ name : 'salesList'}
     },
     {
-        path:'list',
-        name :'salesList',
-        component: SalesList
+        path:'/orderForm/insert',
+        name :'orderForm',
+        component: orderForm
     },
     {
         path:'/orderlist/search',

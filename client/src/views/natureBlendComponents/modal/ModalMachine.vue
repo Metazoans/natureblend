@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: "machineModal",
+  name: "modalMachine",
   props: {
     isShowModal: Boolean,
   },
