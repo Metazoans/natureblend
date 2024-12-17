@@ -5,40 +5,42 @@
         <div class="card">
           <div class="card-body px-0">
             <div class="table-responsive p-0">
+              <p>* 생산부서의 반장 직급 이상만 조회됩니다</p>
               <table
                   class="table align-items-center justify-content-center mb-0"
               >
                 <thead>
+
                 <tr>
                   <th
                       class="text-uppercase text-secondary text-md font-weight-bolder opacity-7"
                   >
-                    제품번호
+                    사원번호
                   </th>
                   <th
                       class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
                   >
-                    제품이름
+                    이름
                   </th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr
-                    v-for="product in productList"
-                    :key="product.product_code"
-                    class="product"
-                    :class="{ selected: selectedCode === product.product_code }"
-                    @click="selectProduct(product)"
+                    v-for="emp in empList"
+                    :key="emp.emp_num"
+                    class="emp"
+                    :class="{ selected: selectedEmpNum === emp.emp_num }"
+                    @click="selectEmp(emp)"
                 >
                   <td>
                     <div class="d-flex px-2">
                       <div class="my-auto">
-                        <h6 class="mb-0 text-sm">{{ product.product_code }}</h6>
+                        <h6 class="mb-0 text-sm">{{ emp.emp_num }}</h6>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <p class="text-sm font-weight-bold mb-0">{{ product.product_name }}</p>
+                    <p class="text-sm font-weight-bold mb-0">{{ emp.name }}</p>
                   </td>
                 </tr>
                 </tbody>
@@ -57,7 +59,7 @@ import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
 
 export default {
-  name: "productList",
+  name: "empList",
 
   props: {
 
@@ -65,26 +67,26 @@ export default {
 
   data() {
     return {
-      productList: [],
-      selectedCode: ''
+      empList: [],
+      selectedEmpNum: 0
     }
   },
 
   created() {
-      this.getProductList()
+    this.getEmpList()
   },
 
   methods: {
-    async getProductList() {
+    async getEmpList() {
       let result =
-          await axios.get(`${ajaxUrl}/production/products`)
+          await axios.get(`${ajaxUrl}/production/employees`)
               .catch(err => console.log(err));
-      this.productList = result.data
+      this.empList = result.data
     },
 
-    selectProduct(product) {
-      this.selectedCode = product.product_code
-      this.$emit('selectProduct', product)
+    selectEmp(emp) {
+      this.selectedEmpNum = emp.emp_num
+      this.$emit('selectEmp', emp)
     },
   }
 }
@@ -96,7 +98,7 @@ export default {
 .card {
   box-shadow: none;
 }
-.product:hover {
+.emp:hover {
   background-color: $main3;
   cursor: pointer;
   transition: all .1s ease-in-out;
