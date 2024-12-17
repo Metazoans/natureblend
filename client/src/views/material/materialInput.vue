@@ -7,8 +7,11 @@
        :rowData="rowData"
        :columnDefs="columnDefs"
        :theme="theme"
+       :pagination="true"
+       :paginationPageSize="10"
        @grid-ready="onReady"
        style="height: 700px;"
+       rowSelection="multiple"
       >
    </ag-grid-vue>
  
@@ -33,8 +36,9 @@ import userDateUtils from '@/utils/useDates.js';
           headerCheckboxSelection: true,
           checkboxSelection: true,
           headerName: "",
+          width:75,
         },
-        { headerName: "No.", field: "body_num" },
+        { headerName: "No.", field: "body_num", width:100 },
         { headerName: "자재발주코드", field: "order_code" },
         { headerName: "자재명", field: "material_name" },
         { headerName: "업체명", field: "com_name" },
@@ -42,20 +46,33 @@ import userDateUtils from '@/utils/useDates.js';
         { headerName: "입고수량", field: "total_qnt" },
         { headerName: "정상수량", field: "pass_qnt" },
         { headerName: "불량수량", field: "rjc_qnt" },
-        { headerName: "단가", field: "unit_price", },
+        { headerName: "단가", field: "unit_price" },
         { headerName: "총액", field: "total_price" },
         { headerName: "검사완료일", field: "inspec_end" },
         {  
-          headerName: "비고", 
+          headerName: "입고검사", 
           field: "비고", 
           editable: false,
           cellRenderer: params => {
             const button = document.createElement('button');
-            button.innerText = '시험성적서';
+            button.innerText = '검사표';
             button.addEventListener('click', () => {
-              alert(`버튼 클릭: ${JSON.stringify(params.data)}`);
+              console.log("레코드 확인 : ", JSON.stringify(params.data));
             });
             return button;
+          }
+        },
+        {  
+          headerName: "입고", 
+          field: "입고", 
+          editable: false,
+          cellRenderer: params => {
+            const button2 = document.createElement('button');
+            button2.innerText = '입고';
+            button2.addEventListener('click', () => {
+              console.log("레코드 확인 : ", JSON.stringify(params.data));
+            });
+            return button2;
           }
         }
       ]);
@@ -69,7 +86,7 @@ const matrialQcInput = async function(){
   console.log(rowData.value[0]['inspec_end']);
   rowData.value = result.data.map(col => ({
     ...col,
-    inspec_end: col.inspec_end ? col.inspec_end.split('T')[0] : null,
+    inspec_end: userDateUtils.dateFormat(col.inspec_endm, "yyyy-MM-dd"),
     ord_qty: (col.ord_qty * 0.001) + " kg",
     total_qnt: (col.total_qnt * 0.001) + " kg",
     pass_qnt: (col.pass_qnt * 0.001) + " kg",
@@ -77,9 +94,6 @@ const matrialQcInput = async function(){
     unit_price: Number(col.unit_price).toLocaleString() + " 원",
     total_price: Number(col.total_price*0.001).toLocaleString() + " 원",
   }));
-  console.log(rowData.value);
-  //이부분 물엉봐야지 
-  userDateUtils.dateFormat(rowData.value[0]['inspec_end'], "yyyy-MM-dd");
 }
 
 const onReady = (param) => {
