@@ -4,9 +4,9 @@
       :rowData="rowData"
       :columnDefs="columnDefs"
       :theme="theme"
+      @grid-ready="onGridReady"
   >
   </ag-grid-vue>
-
   </div>
 </template>
 <script>
@@ -26,7 +26,7 @@ export default {
       ],
 
       columnDefs: [
-        { field: "make" },
+        { field: "make"},
         { field: "model" },
         { field: "price" },
         {
@@ -39,5 +39,12 @@ export default {
 
     }
   },
+
+  methods: {
+    onGridReady(params) {
+      this.gridApi = params.api;
+      this.gridApi.sizeColumnsToFit();
+    },
+  }
 }
 </script>
