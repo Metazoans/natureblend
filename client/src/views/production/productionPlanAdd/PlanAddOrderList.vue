@@ -1,3 +1,4 @@
+
 <template>
   <div class="container-fluid">
     <div class="search-container mt-4 mb-2">
@@ -7,81 +8,14 @@
       </div>
       <material-button size="sm" color="warning" class="button" @click="findOrdersAll">전체조회</material-button>
     </div>
-    <div class="table-responsive p-0">
-      <table
-          class="table align-items-center justify-content-center mb-0"
+    <div class="grid-container" >
+      <ag-grid-vue
+          :rowData="rowData"
+          :columnDefs="columnDefs"
+          :theme="theme"
+          @grid-ready="onGridReady"
       >
-        <thead>
-        <tr>
-          <th
-              class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 text-center"
-          >
-            주문번호
-          </th>
-          <th
-              class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2 text-center"
-          >
-            주문일자
-          </th>
-          <th
-              class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2 text-center"
-          >
-            납기일자
-          </th>
-          <th
-              class="text-uppercase text-secondary text-md font-weight-bolder text-center opacity-7 ps-2 text-center"
-          >
-            제품명
-          </th>
-          <th
-              class="text-uppercase text-secondary text-md font-weight-bolder text-center opacity-7 ps-2 text-center"
-          >
-            주문량
-          </th>
-          <th
-              class="text-uppercase text-secondary text-md font-weight-bolder text-center opacity-7 ps-2 text-center"
-          >
-            기계획량
-          </th>
-          <th
-              class="text-uppercase text-secondary text-md font-weight-bolder text-center opacity-7 ps-2 text-center"
-          >
-            미계획량
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="order in orders" :key="order.order_num" @click="addOrderNum(order)" :class="{ selected: selectedOrderNums.includes(order.order_num) }">
-          <td>
-            <h6 class="mb-0 text-sm text-center">{{ order.order_num }}</h6>
-          </td>
-          <td>
-            <p class="text-sm font-weight-bold mb-0 text-center">{{ order.order_date }}</p>
-          </td>
-          <td>
-            <p class="text-sm font-weight-bold mb-0 text-center">{{ order.due_date }}</p>
-          </td>
-          <td class="align-middle text-center">
-            <p class="text-sm font-weight-bold mb-0 text-center">{{ order.product_name }}</p>
-          </td>
-          <td class="align-middle">
-            <p class="text-sm font-weight-bold mb-0 text-center">{{ order.order_amount }}</p>
-          </td>
-          <td class="align-middle">
-            <p class="text-sm font-weight-bold mb-0 text-center">{{ 기계획량 }}</p>
-          </td>
-          <td class="align-middle">
-            <p class="text-sm font-weight-bold mb-0 text-center">{{ 미계획량 }}</p>
-          </td>
-        </tr>
-        <tr v-if="!orders.length">
-          <td colspan="7" class="text-center height-100">
-            미출고 상태인 <b>{{ selectedProduct.product_name }}</b>의 주문이 없습니다
-          </td>
-
-        </tr>
-        </tbody>
-      </table>
+      </ag-grid-vue>
     </div>
     <Modal
         :isShowModal="isShowModal"
@@ -104,6 +38,8 @@ import {ajaxUrl} from "@/utils/commons";
 import MaterialButton from "@/components/MaterialButton.vue";
 import ProductList from "@/views/production/productionPlanAdd/ModalProductList.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import theme from "@/utils/agGridTheme";
+// import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 
 export default {
   name: "orderList",
@@ -111,6 +47,11 @@ export default {
 
   data() {
     return {
+      // noRowsOverlayComponent: 'CustomNoRowsOverlay',
+      noRowsOverlayComponentParams: {
+        noRowsMessageFunc: () =>
+            "No rows fou!!!!!!!nd at: " + new Date().toLocaleTimeString(),
+      },
       orders: [],
       searchProduct: {
         product_code: '',
@@ -123,7 +64,20 @@ export default {
         product_name: '',
       },
       selectedOrders: [],
-      selectedOrderNums: []
+      selectedOrderNums: [],
+      theme: theme,
+      rowData: [],
+
+      columnDefs: [
+        { field: "주문번호"},
+        { field: "주문일자" },
+        { field: "납기일자" },
+        { field: "제품명" },
+        { field: "주문량" },
+        { field: "기계획량" },
+        { field: "미계획량" }
+      ],
+      loading: false,
     }
 
   },
@@ -133,6 +87,11 @@ export default {
   },
 
   methods: {
+    onGridReady(params) {
+      this.gridApi = params.api;
+      this.gridApi.sizeColumnsToFit();
+    },
+
     async getOrders() {
       let result =
           await axios.get(`${ajaxUrl}/production/plan/orders${this.searchProduct?.product_code && '?product_code=' + this.searchProduct.product_code}`)
@@ -142,7 +101,26 @@ export default {
         order.order_date = order.order_date.split('T')[0]
         order.due_date = order.due_date.split('T')[0]
       })
+
+      let keys = []
+      this.columnDefs.forEach((col) => {
+        keys.push(col.field)
+      })
+
+      this.rowData = []
+      this.orders.forEach((order, idx) => {
+        this.rowData[idx] = {
+          [keys[0]]: order.order_num,
+          [keys[1]]: order.order_date,
+          [keys[2]]: order.due_date,
+          [keys[3]]: order.product_name,
+          [keys[4]]: order.order_amount,
+          [keys[5]]: '기계획량',
+          [keys[6]]: '미계획량'
+        }
+      })
     },
+
     openModal() {
       this.isShowModal = !this.isShowModal
     },
