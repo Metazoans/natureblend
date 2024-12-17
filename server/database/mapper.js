@@ -10,8 +10,7 @@ const connectionPool = mariadb.createPool({
   connectionLimit : process.env.MYSQL_LIMIT,
 
 
-  //trace : true, //log
-
+  trace : true, //log
   logger: {
     query: (msg) => console.info(msg),
     error: (err) => console.error(err),
@@ -34,6 +33,7 @@ const query = (alias, values)=>{
   })
   .catch(err => console.log(err));
 };
+
 
 // const query = async (alias, values) => {
 //   let executeSql = sqlList[alias]

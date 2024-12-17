@@ -19,8 +19,8 @@ app.use('/production', productionRouter);
 app.use('/', boardRouter);
 app.use('/', bookRouter);
 app.use('/', empRouter);
-app.use('/', salesRouter);
 app.use('/', qualityRouter);
+app.use('/', salesRouter);
 app.use('/', materialRouter);
 app.use('/', standardRouter);
 
