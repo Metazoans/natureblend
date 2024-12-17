@@ -1,6 +1,6 @@
 
 <template>
-  <MachineModal>
+  <ModalMachine>
     <template v-slot:header>
       <h2>비동기 내역 등록</h2>
     </template>
@@ -67,13 +67,13 @@
           취소
         </button>
     </template>
-  </MachineModal>
+  </ModalMachine>
 
 </template>
 
 
 <script>
-import MachineModal from "@/views/machine/MachineModal.vue";
+import ModalMachine from "@/views/natureBlendComponents/modal/ModalMachine.vue";
 import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
@@ -81,7 +81,7 @@ import axios from 'axios';
 export default {
   name: "inActAdd",
   components: {
-    MachineModal,
+    ModalMachine,
   },
   
   data() {

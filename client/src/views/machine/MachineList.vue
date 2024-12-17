@@ -1,173 +1,121 @@
 <template>
   <div class="container-fluid py-4">
-    <div class="row">
-      <div class="col-12">
-        
-        <material-radio id="all" name="machine_list" checked>전체</material-radio>
-        <material-radio id="use" name="machine_list">가동</material-radio>
-        <material-radio id="notuse" name="machine_list">미가동</material-radio>
-
-        <!-- 리스트 본문 -->
-        <div class="card my-4">
-          <div class="card-body px-0 pb-2">
-            <div class="table-responsive p-0">
-              <table
-                  class="table align-items-center justify-content-center mb-0"
-              >
-                <thead>
-                <tr>
-                  <th
-                      class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
-                  >
-                    Project
-                  </th>
-                  <th
-                      class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
-                  >
-                    Budget
-                  </th>
-                  <th
-                      class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
-                  >
-                    Status
-                  </th>
-                  <th
-                      class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2"
-                  >
-                    Completion
-                  </th>
-                  <th></th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr>
-                  <td>
-                    <div class="d-flex px-2">
-                      <div>
-                        <img
-                            src="@/assets/img/apple-icon.png"
-                            class="avatar avatar-sm rounded-circle me-2"
-                            alt="spotify"
-                        />
-                      </div>
-                      <div class="my-auto">
-                        <h6 class="mb-0 text-sm">Asana</h6>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <p class="text-sm font-weight-bold mb-0">$2,500</p>
-                  </td>
-                  <td>
-                    <span class="text-xs font-weight-bold">working</span>
-                  </td>
-                  <td class="align-middle text-center">
-                    <div
-                        class="d-flex align-items-center justify-content-center"
-                    >
-                      <span class="me-2 text-xs font-weight-bold">60%</span>
-                      <div>
-                        <div class="progress">
-                          <div
-                              class="progress-bar bg-gradient-info"
-                              role="progressbar"
-                              aria-valuenow="60"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                              style="width: 60%"
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="align-middle">
-                    <button class="btn btn-link text-secondary mb-0">
-                      <i
-                          class="fa fa-ellipsis-v text-xs"
-                          aria-hidden="true"
-                      ></i>
-                    </button>
-                  </td>
-                </tr>
-                
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="grid-container" >
+      <ag-grid-vue
+        :rowData="rowData"
+        :columnDefs="columnDefs"
+        :theme="theme"
+       	@grid-ready="onReady"
+        style="height: 500px;"
+      ></ag-grid-vue>
     </div>
 
-    <!-- 페이지 네이션 -->
-    <div>
-      <material-pagination color="warning" size="md">
-        <material-pagination-item prev />
-        <material-pagination-item label="1" active />
-        <material-pagination-item label="2" disabled />
-        <material-pagination-item label="3" disabled/>
-        <material-pagination-item label="4" disabled/>
-        <material-pagination-item label="5" disabled/>
-        <material-pagination-item next />
-      </material-pagination>
+    <a></a>
 
-      <material-button
-        color="warning"
-        @click="openModal"
-        data-bs-toggle="modal"
-        data-bs-target="#exampleModal"
-      >
-        설비 등록
-      </material-button>
-      
-      <MachineManage :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm"/>
-      
-    </div>
+    <material-button
+      color="warning"
+      @click="openModal"
+      data-bs-toggle="modal"
+      data-bs-target="#exampleModal"
+    >
+      설비 등록
+    </material-button>
+    <MachineManage :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm"/>
     
   </div>
 </template>
 
 <script>
-import MaterialPagination from "@/components/MaterialPagination.vue";
-import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
-import MaterialButton from "@/components/MaterialButton.vue";
-import MaterialRadio from "@/components/MaterialRadio.vue";
 import MachineManage from "./MachineManage.vue";
+// import MaterialPagination from "@/components/MaterialPagination.vue";
+// import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
+// import MaterialRadio from "@/components/MaterialRadio.vue";
+import MaterialButton from "@/components/MaterialButton.vue";
+
+import { ajaxUrl } from '@/utils/commons.js';
+import axios from 'axios';
+
+import theme from "@/utils/agGridTheme";
+
+import {shallowRef} from 'vue';
 
 export default {
   name: "tables",
+  setup() {
+    const machineList = shallowRef([]);
+    const rowData = shallowRef([]);
+    const columnDefs = shallowRef([
+      /*
+      번호, 공정코드, 공정명, 모델번호, 설비분류, 설비 이름, 설비 위치, 작동상태
+      */
+      // { headerName: '번호', field: '' },
+      { headerName: '공정코드', field: 'process_code' },
+      { headerName: '공정명', field: 'process_name' },
+      { headerName: '모델번호', field: 'model_num' },
+      { headerName: '설비분류', field: 'machine_type' },
+      { headerName: '설비이름', field: 'machine_name' },
+      { headerName: '설비위치', field: 'machine_location' },
+      { headerName: '작동상태', field: 'machine_state' },
+    ]);
+
+    const getMachineList = async () => {
+      let result = await axios.get(`${ajaxUrl}/machine/machineList`)
+                              .catch(err => console.log(err));
+      machineList.value = result.data;
+      rowData.value = result.data;
+      
+    }
+
+    const onReady = (params) => {
+      params.api.sizeColumnsToFit();
+    }  
+
+    return {
+      machineList,
+      rowData,
+      columnDefs,
+      getMachineList,
+      onReady,
+    }
+  },
   components: {
-    MaterialPaginationItem,
-    MaterialPagination,
-    MaterialButton,
-    MaterialRadio,
     MachineManage,
+    // MaterialPaginationItem,
+    // MaterialPagination,
+    // MaterialRadio,
+    MaterialButton,
   },
   
   data() {
     return {
       isShowModal: false,
+      theme: theme,
     };
   },
-
+  beforeMount() {
+    this.getMachineList();
+  },
   methods: {
     openModal() {
-      this.isShowModal = !this.isShowModal
+      this.isShowModal = !this.isShowModal;
+      console.log(this.machineList);
+      console.log(this.rowData);
+      console.log(this.columnDefs);
     },
 
     confirm(data) {
-      console.log(data)
-      this.closeModal()
+      console.log(data);
+      this.closeModal();
     },
 
     closeModal() {
-      this.isShowModal = false
+      this.isShowModal = false;
     }
   }
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .pagination {
   display: flex;
   justify-content: center;
