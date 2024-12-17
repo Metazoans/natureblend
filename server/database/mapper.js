@@ -35,7 +35,6 @@ const query = (alias, values)=>{
 };
 
 
-
 // const query = async (alias, values) => {
 //   let executeSql = sqlList[alias]
 //   console.log('executeSql', executeSql)
