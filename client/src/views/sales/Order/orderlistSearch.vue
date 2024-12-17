@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid py-4">
         <!--검색 폼 -->
-        <h2>주문서관리</h2>
+        <h2>주문서 조회</h2>
             <div class= "main-container">
                  <!--주문서 상태 체크 박스-->
                     <div class="mb-3">
@@ -38,9 +38,9 @@
                                 <div>
                                     <ul>
                                         <li v-for="client in clientList" :key="client.com_name">
-                                            <button class="btn btn-light" @click="selectClient(client.com_name)">
+                                            <p class="btn btn-light" @click="selectClient(client.com_name)">
                                                 {{ client.com_name }}
-                                            </button>
+                                            </p>
 
                                         </li>
                                     </ul>
@@ -172,7 +172,7 @@ export default{
                 startDate : this.startDate,
                 endDate : this.endDate,
             };
-            console.log(this.filters);
+            //console.log(this.filters);
         },
         // addOrder(){
         //     this.orderData = {};
@@ -185,6 +185,7 @@ export default{
 <style lang="scss" scoped>
 .main-container{
     background-color:  #e9ecef;
+    border-radius: 10px;
 }
 
 .text-center {

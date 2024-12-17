@@ -96,10 +96,23 @@ WHERE trade = '구매'
 and com_name like IFNULL(?, '%')
 `;
 
+// 상품등록 트렌젝션
+// CALL material_input_polist(22, 33, 'M032', 150, NOW(), 1500, 30000, @result);
+const input_order =
+`
+    CALL material_input_polist(?, ?, ?, ?, ?, ?, ?, @result);
+`;
+
+// const input_order =
+// `
+//     CALL material_input_polist(?, @result);
+// `;
+
 module.exports = {
    material_order_head,
    need_order_material,
    full_client,
    full_client_info,
+   input_order,
 
 };

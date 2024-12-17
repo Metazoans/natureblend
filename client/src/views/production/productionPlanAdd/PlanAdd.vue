@@ -2,7 +2,7 @@
   <div class="container-fluid product-add py-4">
     <h1>생산계획 등록</h1>
     <PlanAddOrderList @selectOrders="selectOrders"></PlanAddOrderList>
-    <PlanAddForm :selectedOrders="selectedOrders"></PlanAddForm>
+    <PlanAddForm :selectedOrders="selectedOrders" @resetSelectedOrders="resetSelectedOrders"></PlanAddForm>
 
 
   </div>
@@ -26,6 +26,10 @@ export default {
     selectOrders(orders) {
       this.selectedOrders = orders
     },
+
+    resetSelectedOrders() {
+      this.selectedOrders = []
+    }
   }
 
 
