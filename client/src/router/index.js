@@ -19,8 +19,16 @@ import salesRoute from "./salesRoute";
 
 import QualityApp from '@/views/quality/QualityApp.vue';
 import qualityRoute from "./qualityRoute";
+import AgGridExample from "@/views/natureBlendComponents/grid/AgGridExample.vue";
 
 const routes = [
+    // test
+  {
+    path: '/grid',
+    name: 'AgGridExample',
+    component: AgGridExample
+  },
+
   // 공용 페이지
   {
     path: "/mainpage",

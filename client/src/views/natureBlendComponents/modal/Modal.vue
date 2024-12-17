@@ -56,6 +56,9 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
+  .modal-body {
+    max-height: 500px;
+  }
 }
 .show {
   display: block;
