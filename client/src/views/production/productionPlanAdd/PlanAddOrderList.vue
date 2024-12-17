@@ -135,7 +135,7 @@ export default {
   methods: {
     async getOrders() {
       let result =
-          await axios.get(`${ajaxUrl}/production/orders${this.searchProduct?.product_code && '?product_code=' + this.searchProduct.product_code}`)
+          await axios.get(`${ajaxUrl}/production/plan/orders${this.searchProduct?.product_code && '?product_code=' + this.searchProduct.product_code}`)
               .catch(err => console.log(err));
       this.orders = result.data
       this.orders.forEach((order) => {

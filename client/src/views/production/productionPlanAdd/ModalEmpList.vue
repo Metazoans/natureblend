@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-body px-0">
             <div class="table-responsive p-0">
-              <p>* 생산부서의 반장 직급 이상만 조회됩니다</p>
+              <p>* 생산부서의 반장 직급 이상 및 관리자만 조회됩니다</p>
               <table
                   class="table align-items-center justify-content-center mb-0"
               >
@@ -79,7 +79,7 @@ export default {
   methods: {
     async getEmpList() {
       let result =
-          await axios.get(`${ajaxUrl}/production/employees`)
+          await axios.get(`${ajaxUrl}/production/plan/employees`)
               .catch(err => console.log(err));
       this.empList = result.data
     },

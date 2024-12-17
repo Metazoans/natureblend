@@ -12,7 +12,7 @@ const salesRouter = require('./router/sales_router.js');
 const materialRouter = require('./router/material_router.js');
 
 // 생산
-const productionRouter = require('./router/production_router');
+const productionPlanRouter = require('./router/production/plan_router');
 
 // 품질
 const qualityRouter = require('./router/qc_router.js');
@@ -40,7 +40,7 @@ app.use('/', salesRouter);
 app.use('/', materialRouter);
 
 // 생산 라우터
-app.use('/production', productionRouter);
+app.use('/production/plan', productionPlanRouter);
 
 // 품질 라우터
 app.use('/', qualityRouter);

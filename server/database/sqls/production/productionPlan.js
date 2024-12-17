@@ -91,9 +91,16 @@ const productStock = `CALL get_stock(?)`;
 
 // procedure
 // 생산계획 등록시, 주문별 생산 데이터를 insert 한 후 실제 계획 등록
+
 // DELIMITER $$
 // CREATE PROCEDURE add_plan_by_orders(
-//     IN json_array TEXT
+//     IN json_array TEXT,
+//     IN p_plan_name varchar(50),
+// in p_product_code varchar(50),
+// in p_plan_qty int,
+// in p_plan_start_date datetime,
+// in p_plan_end_date datetime,
+// in p_emp_num int
 // )
 // BEGIN
 // DECLARE i INT DEFAULT 1;
@@ -121,13 +128,29 @@ const productStock = `CALL get_stock(?)`;
 //
 // SET i = i + 1;
 // END WHILE;
+//
+// -- 생산계획번호plan_num(count임), 생산계획명 plan_name, 제품코드 product_code, 계획수량 plan_qty
+// -- 계획일자 plan_create_date(sysdate), 계획시작일자 plan_start_date, 계획종료일자 plan_end_date,
+//     -- 계획진행상태 plan_status(default plan_waiting), 생산계획자 emp_num
+//
+// -- order_plan_relation의 plan_num이 production_plan의 plan_num에도 들어감
+// insert into production_plan(plan_num, plan_name, product_code, plan_qty, plan_start_date, plan_end_date, plan_emp)
+// value(count, p_plan_name, p_product_code, p_plan_qty, p_plan_start_date, p_plan_end_date, p_emp_num);
 // END$$
 //
 // DELIMITER ;
 
-// CALL add_plan_by_orders('[1, 2, 3]');
+// CALL add_plan_by_orders('[1, 2, 3]', '2024 생산 계획', 'P001', 10, '2024-12-16', '2025-01-02', 1);
 const insertPlanByOrders = `
-  CALL add_plan_by_orders(?)
+  CALL add_plan_by_orders('[1, 2, 3]', ?, ?, ?, ?, ?, ?);
+`;
+
+// 생산계획시 등록 가능한 직원만: 생산부서 반장이상 직급, 관리자 직급만 가능
+const productionEmployees = `
+  select emp_num, name
+  from employee
+  where job_num = 2 and level >= 2
+     or job_num = 6
 `;
 
         
@@ -136,4 +159,6 @@ module.exports = {
   orders,
   ordersByProductCode,
   productStock,
+  insertPlanByOrders,
+  productionEmployees
 }
