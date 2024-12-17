@@ -6,7 +6,9 @@
         :columnDefs="columnDefs"
         :theme="theme"
        	@grid-ready="onReady"
-        style="height: 500px;"
+        style="height: 800px;"
+        :pagination="true"
+        :paginationPageSize="8"
       ></ag-grid-vue>
     </div>
 
