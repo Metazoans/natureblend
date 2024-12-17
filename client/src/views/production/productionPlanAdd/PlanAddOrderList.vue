@@ -1,4 +1,3 @@
-
 <template>
   <div class="container-fluid">
     <div class="search-container mt-4 mb-2">
@@ -14,7 +13,7 @@
           :columnDefs="columnDefs"
           :theme="theme"
           @grid-ready="onGridReady"
-      >
+          :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
     <Modal
@@ -29,9 +28,12 @@
         <ProductList v-if="isShowModal" @selectProduct="selectProduct"/>
       </template>
     </Modal>
+    <div style="display: none">
+      <CustomNoRowsOverlay/>
+    </div>
   </div>
-
 </template>
+
 <script>
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
@@ -39,19 +41,15 @@ import MaterialButton from "@/components/MaterialButton.vue";
 import ProductList from "@/views/production/productionPlanAdd/ModalProductList.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import theme from "@/utils/agGridTheme";
-// import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 
 export default {
   name: "orderList",
-  components: {Modal, ProductList, MaterialButton},
+  components: {Modal, ProductList, MaterialButton, CustomNoRowsOverlay},
 
   data() {
     return {
-      // noRowsOverlayComponent: 'CustomNoRowsOverlay',
-      noRowsOverlayComponentParams: {
-        noRowsMessageFunc: () =>
-            "No rows fou!!!!!!!nd at: " + new Date().toLocaleTimeString(),
-      },
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
       orders: [],
       searchProduct: {
         product_code: '',
