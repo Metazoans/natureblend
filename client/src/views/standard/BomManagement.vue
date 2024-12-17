@@ -97,6 +97,7 @@
           this.bomBox=result.data;
           console.log(result.data);
         },
+        
         view(productname,capa,bomnum) {
           console.log(bomnum);
           this.getBom(bomnum);
