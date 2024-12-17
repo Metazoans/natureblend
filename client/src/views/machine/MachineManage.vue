@@ -1,17 +1,17 @@
 <template>
-  <MachineModal>
+  <ModalMachine>
     <template v-slot:header>
       <h2>설비 등록 및 수정</h2>
     </template>
-
     
     <template v-slot:body>
-      <div class="inactBody" v-bind="inActData">
+      <div class="machineBody" v-bind="machineData">
         <div class="modalRow">
           <label for="machineName">설비 이름</label>
           <input type="text" id="machineName" name="machineName" v-model="machineData.machine_name"/>
         </div>
 
+        <!-- 이미지 안들어감 input file 데이터 바인딩 수정 필요 -->
         <div class="modalRow">
           <label for="machineImg">설비 이미지</label>
           <input type="file" id="machineImg" name="machineImg" v-bind:src="machineData.machine_img"/>
@@ -77,32 +77,34 @@
         </div>
       </div>
     </template>
+    
     <template v-slot:footer>
       <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="confirm"
-        >
-          등록
-        </button>
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="closeModal"
-        >
-          취소
-        </button>
+        class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+        type="button"
+        data-target="warningToast"
+        @click="confirm"
+      >
+        <a v-if="isUpdate">수정</a>
+        <a v-else>등록</a>
+      </button>
+      <button
+        class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+        type="button"
+        data-target="warningToast"
+        @click="closeModal"
+      >
+        취소
+      </button>
     </template>
-  </MachineModal>
+  </ModalMachine>
 
 
 </template>
 
 
 <script>
-import MachineModal from "@/views/machine/MachineModal.vue";
+import ModalMachine from "@/views/natureBlendComponents/modal/ModalMachine.vue";
 import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
@@ -110,7 +112,7 @@ import axios from 'axios';
 export default {
   name: "MachineManage",
   components: {
-    MachineModal,
+    ModalMachine,
   },
   data() {
     return {
@@ -119,7 +121,7 @@ export default {
         machine_name: '',
         machine_img: '',
         model_num: '',
-        machine_state: '',
+        machine_state: 'run',
         machine_type: '',
         client_num: '',
         machine_location: '',
@@ -129,10 +131,32 @@ export default {
         // 자동
         emp_num: 0,
         process_code: '0',
-      }
+      },
+      isUpdate: false, // 수정페이지 체크
+      typeSelect: [], // 설비 분류 객체
+    }
+  },
+  created() {
+    // 설비 분류 및 거래처 정보 가져오기
+    
+
+    // update 여부 확인
+    let selectNo = this.$route.query.mno;
+    if(selectNo > 0) {
+      //수정
+      this.getMachineInfo(selectNo)    
+      this.isUpdated = true;      
     }
   },
   methods: {
+    // 선택지 정보 가져오기
+    async getSelectItem() {
+      let result = await axios.get(`${ajaxUrl}/machine/machineType`)
+                              .catch(err => console.log(err));
+      this.typeSelect = result.data;
+    },
+
+    // 모달 동작
     closeModal() {
       this.$emit('closeModal');
       this.deleteVal();
@@ -150,7 +174,7 @@ export default {
       this.machineData.process_code = '0';
     },
 
-    // insert 동작
+    // insert
     async machineInsert(){
       let obj = {
         machine_name: this.machineData.machine_name,// 설비 이름
@@ -182,8 +206,16 @@ export default {
       }
     },
 
+    // update 기존 데이터
+    async getMachineInfo(selectNo) {
+      console.log('설비 정보 가져오기');
+      console.log(selectNo);
+    },
+
+    // update
+
     // 날짜 관련
-    getToday(){
+    getToday() {
       return this.dateFormat(null, 'yyyy-MM-dd hh:mm:ss');
     },
     dateFormat(value, format) {
