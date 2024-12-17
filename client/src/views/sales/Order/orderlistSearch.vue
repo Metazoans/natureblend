@@ -110,6 +110,7 @@ export default{
     data(){
         return{
             isShowModal : false,
+            modalTitle: '거래처 목록',
 
             //주문서상태 체크 박스 관련 데이터
             statusList:["등록","진행중","완료"], //상태 리스트
@@ -131,7 +132,7 @@ export default{
     methods:{
         async openModal(){
             console.log("modal 열림")
-            const response = await axios.get("/api/clients") //서버호출
+            const response = await axios.get("/api/orderlist/clients") //서버호출
                                         .catch(err=> console.log(err));
             this.clientList = response.data; //거래처목록 저장
             this.isShowModal = !this.isShowModal; //모달 열기 
