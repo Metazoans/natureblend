@@ -41,7 +41,7 @@
           <p>계획수량</p>
 
           <div class="input-group w-auto h-25">
-            <input type="number" class="form-control border p-2" v-model="planAmount"/>
+            <input type="number" class="form-control border p-2" v-model="planQty"/>
           </div>
         </div>
         <div class="input-content">
@@ -110,7 +110,7 @@ export default {
 
   data() {
     return {
-      planAmount: 0,
+      planQty: 0,
       planName: '',
       productStock: null,
       planStartDate: '',
@@ -136,13 +136,47 @@ export default {
       this.isShowModal = !this.isShowModal
     },
 
-    addPlan() {
-      if(!this.selectedOrders.length || !this.planAmount || !this.planName || !this.planStartDate || !this.planEndDate) {
+    async addPlan() {
+      if(!this.selectedOrders.length || !this.planQty || !this.planName || !this.planStartDate || !this.planEndDate) {
         this.$notify({
-          text: "입력칸을 채워주세요",
+          text: "입력칸을 채워주세요.",
           type: 'error',
         });
         return
+      }
+
+      let orderNums = []
+      this.selectedOrders.forEach((order) => {
+        orderNums.push(order.order_num)
+      })
+
+      let planInfo = {
+        orderNums:  '['+ orderNums.toString() +']',
+        planName : this.planName,
+        productCode : this.selectedOrders[0].product_code,
+        planQty : this.planQty,
+        planStartDate : this.planStartDate,
+        planEndDate: this.planEndDate,
+        empNum: this.selectedEmp.emp_num
+      }
+
+      let result =
+          await axios.post(`${ajaxUrl}/production/plan`, planInfo)
+              .catch(err => console.log(err));
+      if(result.data.message === 'success') {
+        this.$notify({
+          text: `${this.planName}이 등록되었습니다.`,
+          type: 'success',
+        });
+
+
+        this.planName = ''
+        this.planQty = 0
+        this.planStartDate = ''
+        this.planEndDate = ''
+        this.selectedEmp = {}
+
+        this.$emit('resetSelectedOrders')
       }
 
 
@@ -167,7 +201,7 @@ export default {
       }
 
       let result =
-          await axios.get(`${ajaxUrl}/production/stock/${this.selectedOrders[0].product_code}`)
+          await axios.get(`${ajaxUrl}/production/plan/stock/${this.selectedOrders[0].product_code}`)
               .catch(err => console.log(err));
       this.productStock = result.data.stock
     },

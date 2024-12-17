@@ -219,12 +219,25 @@ export default {
         endDate: this.searchInfo.endDate
       };
 
-      let searchResult = await axios.get(`${ajaxUrl}/meterialOrderQC/${result.mName}`)
-                              .catch(err => console.log(err));
+      // let searchResult = await axios.get(`${ajaxUrl}/meterialOrderQC/${result.mName}`)
+      //                         .catch(err => console.log(err));
+      //this.orderList = searchResult.data;
+      try {
+        let searchResult = await axios.get(`${ajaxUrl}/meterialOrderQC`, { params: result });
+        this.orderList = searchResult.data; // 응답 데이터 처리
+    } catch (err) {
+        console.log(err);
+    }
                               
       // let searchResult = await axios.post(`${ajaxUrl}/meterialOrderQC`, result)
       // .catch(err => console.log(err));
-      this.orderList = searchResult.data;
+      // this.orderList = searchResult.data;
+    //   try {
+    //     let searchResult = await axios.post(`${ajaxUrl}/meterialOrderQC`, result);
+    //     this.orderList = searchResult.data; // 응답 데이터 처리
+    // } catch (err) {
+    //     console.log(err);
+    // }
     },
     // 날짜를 YYYY-MM-DD 형식으로 변환
     dateFormat(value, format) {

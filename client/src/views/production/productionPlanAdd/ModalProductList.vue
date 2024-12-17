@@ -77,7 +77,7 @@ export default {
   methods: {
     async getProductList() {
       let result =
-          await axios.get(`${ajaxUrl}/production/products`)
+          await axios.get(`${ajaxUrl}/production/plan/products`)
               .catch(err => console.log(err));
       this.productList = result.data
     },

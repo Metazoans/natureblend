@@ -21,8 +21,8 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('orderlistSearch')">주문서관리</li>
-            <li class="sub-item" @click="movePage('salesList')">주문조회</li>
+            <li class="sub-item" @click="movePage('orderForm')">주문등록</li>
+            <li class="sub-item" @click="movePage('orderlistSearch')">주문서조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
@@ -239,19 +239,43 @@
           </template>
         </sidenav-collapse>
       </li>
+
+      <!-- 설비 메뉴 -->
       <li v-else-if="headerMenu === $departments[5]" class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="flase"
+            collapseRef="mainpage"
+            navText="설비 정보"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('machineList')">설비 관리</li>
+            <li class="sub-item" @click="movePage('partsList')">부품 관리</li>
+            <li class="sub-item" @click="movePage('inActList')">비가동 관리</li>
+          </template>
+        </sidenav-collapse>
+
         <sidenav-collapse
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
             collapseRef="mainpage"
-            navText="설비파트"
+            navText="정비 정보"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('requestList')">정비 요청 내역</li>
+            <li class="sub-item" @click="movePage('requestEnd')">정비 완료 내역</li>
+          </template>
         </sidenav-collapse>
       </li>
+
       <li v-else-if="headerMenu === $departments[6]" class="nav-item">
         <sidenav-collapse 
             class="sub-item" @click="movePage('employeemanagement')"
