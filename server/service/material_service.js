@@ -31,7 +31,8 @@ return list;
 // 발주서 등록 input_order
 // CALL material_input_polist(?, ?, ?, ?, ?, ?, ?, @result);
 //CALL material_input_polist(22, 33, 'M032', 150, NOW(), 1500, 30000, @result);
-const inputOrder = async ()=>{
+const inputOrder = async (materialObj)=>{
+  console.log(materialObj);
   let a1 = 100;
   let a2 = 22;
   let a3 = 'M044';
