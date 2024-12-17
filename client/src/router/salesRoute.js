@@ -1,5 +1,6 @@
 // 영업 라우터
 import SalesList from '@/views/sales/SalesList.vue';
+import orderlistSearch from '@/views/sales/orderlistSearch.vue';
 
 const salesRoute = [
     {
@@ -10,6 +11,11 @@ const salesRoute = [
         path:'list',
         name :'salesList',
         component: SalesList
+    },
+    {
+        path:'/orderlist/search',
+        name :'orderlistSearch',
+        component: orderlistSearch
     },
 ];
 
