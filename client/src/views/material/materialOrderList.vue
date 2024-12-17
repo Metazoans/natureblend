@@ -1,7 +1,4 @@
 <template>
-   <div>
-      <h1>자재 주문 조회</h1>
-   </div>
    <div class="grid-container" >
      <ag-grid-vue
        :rowData="rowData"
@@ -31,10 +28,10 @@
        columnDefs: [
          { field: "make" },
          { field: "model" },
-         { field: "price" },
+         { field: "price", editable:true, },
          {
            field: "electric",
-           // checkboxSelection: true,
+           checkboxSelection: true,
            editable: true,          // 편집 가능하게 설정
          }
        ],

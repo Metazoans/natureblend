@@ -30,7 +30,6 @@ return list;
 
 // 발주서 등록 input_order
 // CALL material_input_polist(?, ?, ?, ?, ?, ?, ?, @result);
-//CALL material_input_polist(22, 33, 'M032', 150, NOW(), 1500, 30000, @result);
 const inputOrder = async (materialObj)=>{
   console.log(materialObj);
   let a1 = materialObj.clientNum;
@@ -40,11 +39,15 @@ const inputOrder = async (materialObj)=>{
   let a5 = materialObj.limitDate;
   let a6 = materialObj.unitPrice;
   let a7 = materialObj.totalPrice;
-  //let queryString = ` ${a1}, ${a2}, '${a3}', ${a4}, '${a5}', ${a6}, ${a7} `;
-  //console.log('hell', queryString);
-
-  //let list = await mysql.query('input_order', queryString);
   let list = await mysql.query('input_order', [a1, a2, a3, a4, a5, a6, a7] );
+  return list;
+}
+
+
+// 자재 입고 처리 페이지 리스트
+// material_input_qc_list
+const materialInputQcList = async ()=>{
+  let list = await mysql.query('material_input_qc_list');
   return list;
 }
 
@@ -55,4 +58,6 @@ module.exports = {
   fullClient,
   fullClientInfo,
   inputOrder,
+  materialInputQcList,
+
 };
