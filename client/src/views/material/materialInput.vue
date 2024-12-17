@@ -45,7 +45,7 @@ import userDateUtils from '@/utils/useDates.js';
         { headerName: "단가", field: "unit_price", },
         { headerName: "총액", field: "total_price" },
         { headerName: "검사완료일", field: "inspec_end" },
-        { 
+        {  
           headerName: "비고", 
           field: "비고", 
           editable: false,
