@@ -21,8 +21,8 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('orderlistSearch')">주문서관리</li>
-            <li class="sub-item" @click="movePage('salesList')">주문조회</li>
+            <li class="sub-item" @click="movePage('orderForm')">주문등록</li>
+            <li class="sub-item" @click="movePage('orderlistSearch')">주문서조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
