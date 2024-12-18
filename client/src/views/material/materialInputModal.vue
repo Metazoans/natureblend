@@ -9,11 +9,11 @@
           <div class="modal-body" v-if="isShowModal">
             <div class="grid-container">
                 <ag-grid-vue
-                    :rowData="rowData"
+                    :rowData="[...nuwList]"
                     :columnDefs="columnDefs"
                     :theme="theme"
                     @grid-ready="onReady"
-                    style="height: 100px;"
+                    
                     rowSelection="multiple"
                     >
                 </ag-grid-vue>
@@ -21,7 +21,7 @@
 
 
                 <!-- <ul>
-                    <li v-for="(row, index) in selectedRows" :key="index">
+                    <li v-for="(row, index) in nuwList" :key="index">
                     {{ row }}
                     </li>
                 </ul> -->
@@ -37,24 +37,13 @@
 
 
 <script setup>
-  import { defineProps, defineEmits, ref } from 'vue';
+  import { defineProps, defineEmits, ref } from 'vue';     //watch
 
-  const { isShowModal, selectedRows, testStr } = defineProps({
+  const { isShowModal, nuwList, testStr  } = defineProps({
         isShowModal: Boolean,
-        selectedRows: Array,
+        nuwList: Array,
         testStr: String,
     });
-    console.log(selectedRows);
-
-    // watch(
-    //     () => isShowModal,
-    //     (newVal) => {
-    //         if (newVal) {
-    //             console.log('모달이 열림:', selectedRows);
-    //         rowData.value = selectedRows; // ag-grid에 데이터 반영
-    //         }
-    //     }
-    // );
 
     const emit = defineEmits(['closeModal', 'confirm']);
 
@@ -67,17 +56,34 @@
         console.log(testStr);
     };
 
-    // 행 레코드 삽입하는 변수
-    const rowData = ref([]);
+// 행 레코드 삽입하는 변수 (지금 newlist로 바로 넣고 있음)
+//const rowData = ref([]);
+ 
 
-     //그리드 api 컬럼명 들어가는 거
+  //그리드 api 컬럼명 들어가는 거
  const columnDefs = ref([
-        { headerName: "발주코드", field: "order_code" },
+        { headerName: "발주코드", field: "order_code", width:300 },
         { headerName: "자재명", field: "material_name" },
         { headerName: "정상수량", field: "pass_qnt" },
-        { headerName: "창고", field: "changgo" },
+        {
+          headerName: "창고",
+          field: "warehouse1",
+          cellEditor: "agSelectCellEditor", // 셀렉트 에디터
+          cellEditorParams: {
+            values: ["자재창고", "보관창고", "폐기창고"],
+          },
+          editable: true, //편집가능
+        },
         { headerName: "불량수량", field: "rjc_qnt" },
-        { headerName: "창고", field: "changgo" },
+        {
+          headerName: "창고2",
+          field: "warehouse1",
+          cellEditor: "agSelectCellEditor", // 셀렉트 에디터
+          cellEditorParams: {
+            values: ["자재창고", "보관창고", "폐기창고"],
+          },
+          editable: true, //편집가능
+        },
       ]);
 
 //ag-grid 메소드 API가 준비된 후 발생하는 이벤트

@@ -17,7 +17,7 @@
     </ag-grid-vue>
    </div>
    <div>
-    <Modal :isShowModal="isShowModal" :testStr="testStr" :selectedRows="selectedRows" @closeModal="closeModal" @confirm="confirm">
+    <Modal :isShowModal="isShowModal" :testStr="testStr" :nuwList="nuwList" @closeModal="closeModal" @confirm="confirm">
     </Modal>
   </div>
  </template>
@@ -81,6 +81,7 @@ import Modal from "@/views/material/materialInputModal.vue";
             button2.innerText = '입고';
             button2.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
+              //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
             });
             return button2;
           }
@@ -117,21 +118,30 @@ const onReady = (param) => {
  const allInputData = ref(null);
  //모달 여는 변수
  const isShowModal = ref(false);
- //전체 선택한 데이터 담는 그릇
- const selectedRows = ref([]);
+
+ //모달에 전달할 배열담는 그릇
+ const nuwList = ref([]);
 
 // allInput 클릭 이벤트 함수
 const allInput = () => {
-  selectedRows.value = allInputData.value.getSelectedRows();  // 그리드에 전체선택된 값을 가져옴
-  console.log('selectedRows :', selectedRows.value);
+  const selectedRows = allInputData.value.getSelectedRows();  // 그리드에 전체선택된 값을 가져옴
+  console.log('selectedRows :', selectedRows);
   ///////// 여기서 데이터 가공해서 던저야하네
 
+  //모달에 던져줄 녀석
+  nuwList.value = selectedRows.map((val) => ({
+      order_code: val.order_code,
+      material_name: val.material_name,
+      warehouse1: '▼창고선택',
+      pass_qnt: val.pass_qnt,
+      rjc_qnt: val.rjc_qnt,
+      warehouse2: '▼창고선택',
+    })
+  );
 
+  console.log('nuwList.value :', nuwList.value);
 
-
-
-  ////////////////
-  if (selectedRows.value.length > 0) {
+  if (selectedRows.length > 0) {
     //console.log(JSON.stringify(selectedRows.value, null, 2));   // 해당값을 json형태로 만든다 null=데이터직렬화 , 2=들여쓰기2칸
   } else {
     console.log("선택된 항목이 없습니다.");
