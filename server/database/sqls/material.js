@@ -213,8 +213,62 @@ AND
 		qm.inspec_status = '검사완료'
 `;
 
+//창고조회
+const warehouse_list =
+`
+SELECT 
+		warehouse_code,
+		warehouse_name
+FROM
+		warehouse
+WHERE
+		STORAGE = '가능'
+`;
 
-
+//LOT번호 가공해오기
+const material_lot_num =
+`
+SELECT
+		CASE
+			WHEN SUBSTRING(lot_code, 5, 5) != CONCAT(
+														DATE_FORMAT(NOW(), '%d'),
+														CASE
+															WHEN DATE_FORMAT(NOW(), '%m') = 10 THEN 'X'
+															WHEN DATE_FORMAT(NOW(), '%m') = 11 THEN 'Y'
+															WHEN DATE_FORMAT(NOW(), '%m') = 12 THEN 'Z'
+															ELSE DATE_FORMAT(NOW(), '%m')
+														END,
+														DATE_FORMAT(NOW(), '%y')
+													)
+			THEN 
+				CONCAT(
+					DATE_FORMAT(NOW(), '%d'),
+					CASE
+						WHEN DATE_FORMAT(NOW(), '%m') = 10 THEN 'X'
+						WHEN DATE_FORMAT(NOW(), '%m') = 11 THEN 'Y'
+						WHEN DATE_FORMAT(NOW(), '%m') = 12 THEN 'Z'
+						ELSE DATE_FORMAT(NOW(), '%m')
+					END,
+					DATE_FORMAT(NOW(), '%y'),
+					LPAD( (RIGHT(lot_code, 3)+ 1), 3, '0' )
+				)
+			ELSE 
+				CONCAT(
+					DATE_FORMAT(NOW(), '%d'),
+					CASE
+						WHEN DATE_FORMAT(NOW(), '%m') = 10 THEN 'X'
+						WHEN DATE_FORMAT(NOW(), '%m') = 11 THEN 'Y'
+						WHEN DATE_FORMAT(NOW(), '%m') = 12 THEN 'Z'
+						ELSE DATE_FORMAT(NOW(), '%m')
+					END,
+					DATE_FORMAT(NOW(), '%y'),
+					'001'
+				)
+		END AS LOTNUM
+FROM 
+		material_lot_qty1
+ORDER BY lot_seq LIMIT 1
+`;
 
 module.exports = {
    material_order_head,
@@ -223,5 +277,7 @@ module.exports = {
    full_client_info,
    input_order,
    material_input_qc_list,
+   warehouse_list,
+   material_lot_num,
 
 };

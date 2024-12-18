@@ -17,7 +17,7 @@
     </ag-grid-vue>
    </div>
    <div>
-    <Modal :isShowModal="isShowModal" :testStr="testStr" :nuwList="nuwList" @closeModal="closeModal" @confirm="confirm">
+    <Modal :isShowModal="isShowModal" :testStr="testStr" v-model:nuwList="nuwList" :whList="whList" @closeModal="closeModal" @confirm="confirm">
     </Modal>
   </div>
  </template>
@@ -108,6 +108,18 @@ const matrialQcInput = async function(){
   }));
 }
 
+//창고리스트 모달에 던질꺼
+const whList = ref([]);
+
+//창고 조회 해오기
+const warehouseInfo = async function(){
+  let result = await axios.get(`${ajaxUrl}/material/warehouse`)
+                      .catch(err=>console.log(err));
+  //console.log('창고조회 : ',result.data);
+  whList.value = result.data;
+}
+
+
 //ag-grid 메소드 API가 준비된 후 발생하는 이벤트
 const onReady = (param) => {
   param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
@@ -125,27 +137,29 @@ const onReady = (param) => {
 // allInput 클릭 이벤트 함수
 const allInput = () => {
   const selectedRows = allInputData.value.getSelectedRows();  // 그리드에 전체선택된 값을 가져옴
-  console.log('selectedRows :', selectedRows);
+  //console.log('selectedRows :', selectedRows);
   ///////// 여기서 데이터 가공해서 던저야하네
 
   //모달에 던져줄 녀석
   nuwList.value = selectedRows.map((val) => ({
       order_code: val.order_code,
       material_name: val.material_name,
-      warehouse1: '▼창고선택',
+      warehouse1: '',
       pass_qnt: val.pass_qnt,
       rjc_qnt: val.rjc_qnt,
-      warehouse2: '▼창고선택',
+      warehouse2: '',
     })
   );
 
-  console.log('nuwList.value :', nuwList.value);
+  //console.log('nuwList.value :', nuwList.value);
 
   if (selectedRows.length > 0) {
     //console.log(JSON.stringify(selectedRows.value, null, 2));   // 해당값을 json형태로 만든다 null=데이터직렬화 , 2=들여쓰기2칸
   } else {
     console.log("선택된 항목이 없습니다.");
   }
+
+  warehouseInfo();  //창고 조회 해오기
   //모달 열꺼임
   isShowModal.value = true;
 }
@@ -155,11 +169,78 @@ const closeModal = () => {
   isShowModal.value = false;
 };
 
+
+
+
+/*
+0: {order_code: 'PO241213005', material_name: '당근', warehouse1: 'W001', pass_qnt: '90 kg', rjc_qnt: '8 kg', …}
+1: {order_code: 'PO241218003', material_name: '설탕', warehouse1: 'W002', pass_qnt: '100 kg', rjc_qnt: '0 kg', …}
+2: {order_code: 'PO241218004', material_name: '식용색소', warehouse1: 'W002', pass_qnt: '999 kg', rjc_qnt: '1 kg', …}
+*/
+
+const materialObj = ref([]);
+const prefix = ref([]);
+const numberPart = ref([]);
+
+const lotMaking = async function(){
+  let result = await axios.get(`${ajaxUrl}/material/lotNum`)
+                      .catch(err=>console.log(err));
+  //console.log('로트뼈대 : ',result.data);
+  //console.log('삽입할데이터 : ', nuwList.value);
+
+  const lotNum = result.data[0]['LOTNUM'];
+  //console.log(lotNum);
+  if(lotNum){
+    prefix.value = lotNum.slice(0, 5);
+    numberPart.value = parseInt(lotNum.slice(5), 10);
+    //console.log( (numberPart.value + 1).toString().padStart(3, '0') );
+  }
+
+  for(let i=0; i<nuwList.value.length; i++){
+    materialObj.value = {
+      lot_code: prefix.value + ( (numberPart.value + i).toString().padStart(3, '0') ),
+      order_code: nuwList.value[i].order_code,
+      material_name: nuwList.value[i].material_name,
+      pass_qnt: ( Number( nuwList.value[i].pass_qnt.split(' ')[0] ) * 1000 ),
+      warehouse1: nuwList.value[i].warehouse1,
+      rjc_qnt: ( Number( nuwList.value[i].rjc_qnt.split(' ')[0] ) * 1000 ),
+      warehouse2: nuwList.value[i].warehouse2,
+    };
+    //console.log(materialObj.value);
+    //여기서 서버통신 시작함
+    inputMaterial(materialObj.value);
+  }
+}
+
+//const materialObjInput = ref([]);
+const inputMaterial = async function(materialObj){
+  console.log(materialObj);
+  let result = await axios.post(`${ajaxUrl}/material/inputMaterial`, materialObj)
+                             .catch(err=>console.log(err));
+  console.log(result.data);
+  ///material/inputMaterial
+}
+
+
 // 모달 확인
 const confirm = () => {
+  //console.log('엄마컴포넌트 : ', nuwList.value);
+  for(let i=0; i<nuwList.value.length; i++){
+    // console.log('엄마컴포넌트 : ', nuwList.value[i]['warehouse1']);
+    // console.log('엄마컴포넌트 : ', nuwList.value[i]['warehouse2']);
+    if(!nuwList.value[i]['warehouse1'] || !nuwList.value[i]['warehouse2']){
+      alert('창고선택이 덜 됐음 noti 해야하는데... 다영이한테 다시 물어보기');
+      break;
+    }
+    if(i == nuwList.value.length-1){
+      console.log(i);
+      lotMaking();
+    }
+  }
   console.log("모달 확인 버튼 클릭됨");
   isShowModal.value = false; // 모달 닫기
 };
+
 
 // 화면 생성되는 시점
 onBeforeMount(()=>{
