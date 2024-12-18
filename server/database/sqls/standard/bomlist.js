@@ -44,6 +44,12 @@ const bomUpdate =
 SET ? 
 WHERE bom_seq = ? `;
 
+// 자재추가 (등록)
+const bomAddInsert =
+`INSERT INTO bom_material
+SET ?
+WHERE bom_num = ?` ;
+
 // 삭제
   const bomDelete =
 `DELETE FROM bom
@@ -57,5 +63,6 @@ WHERE bom_seq = ? `;
     bomInsert,
     bomDelete,
     bomUpdate,
-    bomselectView
+    bomselectView,
+    bomAddInsert
 }

@@ -28,6 +28,14 @@ router.post('/bomupdate/:bomnum', async(req,res)=>{
   res.send(result);
 });
 
+// 자재 추가 등록
+router.post('/bominsert', async(req,res)=>{
+  let bomInfo = req.body;
+  let result = await bomService.insertBom(bomInfo);
+  res.send(result);
+});
+
+
 // bom 목록 조회
 router.get('/bomview',async (req,res)=>{
     let searchs = req.query;
