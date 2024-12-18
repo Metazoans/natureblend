@@ -79,9 +79,18 @@ const getProductList = async()=>{
   return list;
 }
 
+
+//주문서, 주문 등록
+const addOrder = async(orderInfo)=>{
+  let result = await mysql.query('orderListInsert',Object.values(orderInfo));
+  return { message: result[0][0].result }
+}
+
+
 module.exports = {
     getClientList,
     getOrderList,
     getEmpList,
     getProductList,
+    addOrder,
 }

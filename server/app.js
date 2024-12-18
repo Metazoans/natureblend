@@ -6,7 +6,7 @@ const bookRouter = require('./router/book_router.js');
 const empRouter = require('./router/emp_router.js');
 
 // 영업
-const salesRouter = require('./router/sales_router.js');
+const salesRouter = require('./router/sales/order_router.js');
 
 // 자재
 const materialRouter = require('./router/material_router.js');
