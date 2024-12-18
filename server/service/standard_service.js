@@ -26,6 +26,13 @@ const updateBom = async (num , updateInfo) => {
   return result;
 }
 
+// BOM 자재 추가 
+const insertBom = async (insertInfo) => {
+  console.log(insertInfo);
+  let datas = [insertInfo];
+  let result = await mysql.query('bomInsert',datas);
+  return result;
+}
 // BOM 목록 조회
 const findBomView = async (no) => {
     let list = await mysql.query('bomView', no);
@@ -44,4 +51,5 @@ module.exports = {
     findBomView,
     deleteBom,
     updateBom,
+    insertBom,
 }
