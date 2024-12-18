@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bomService = require('../service/standard_service.js');
 
-// 전체 조회
+// 조회
 router.get('/boms/:bomnum', async (req, res)=>{
     let searchs = req.params.bomnum;
     let bomList = await bomService.findAllBom(searchs);
@@ -14,14 +14,19 @@ router.get('/boms/:bomnum', async (req, res)=>{
 // 등록
 router.post('/bommanagement', async(req, res)=>{
   let bomInfo = req.body;
-  let result = await bomService.createNewBoard(bomInfo);
+  let result = await bomService.createNewBom(bomInfo);
   res.send(result);
 });
 
 // 수정
-router.put('/boms',async(req,res)=>{
-    
-})
+router.post('/bomupdate/:bomnum', async(req,res)=>{
+  let num = req.params.bomnum;
+  let info = req.body;
+  // console.log(num);
+  // console.log('aaa', info);
+  let result = await bomService.updateBom(num,info);
+  res.send(result);
+});
 
 // bom 목록 조회
 router.get('/bomview',async (req,res)=>{

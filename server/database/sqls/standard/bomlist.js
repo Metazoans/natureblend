@@ -24,6 +24,7 @@ const bomList =
 `SELECT b.bom_num,
         b.product_name,
         b.capacity,
+        bm.material_code,
         bm.material,
         bm.material_con
  FROM bom_material bm join bom b
@@ -38,12 +39,10 @@ const bomList =
  SET ?`;
 
 // 수정
-  const bomUpdate =
-  `UPDATE bom b
-   JOIN bom_material bm ON b.bom_num = bm.bom_num
-   SET ?
-   WHERE bm.bom_num = ?; `;
-
+const bomUpdate =
+`UPDATE bom_material 
+SET ? 
+WHERE bom_seq = ? `;
 
 // 삭제
   const bomDelete =
