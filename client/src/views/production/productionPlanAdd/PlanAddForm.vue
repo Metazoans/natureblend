@@ -2,77 +2,81 @@
   <div>
     <div class="add-top mt-4">
       <h3>생산계획 등록</h3>
-      <span>* 위의 주문을 클릭해서 추가/삭제 해주세요</span>
       <material-button size="sm" color="warning" class="button" @click="addPlan">등록</material-button>
     </div>
     <div class="main-container">
-      <div class="input-container">
-        <div class="input-content">
-          <p class="orderNum">주문번호</p>
-          <div v-if="!selectedOrders.length" class="order-num-input">
-            <div class="input-group w-auto h-25">
-              <input type="text" readonly class="form-control border p-2">
-            </div>
-          </div>
-          <div v-else class="order-num-container">
-            <div v-for="order in selectedOrders" :key="order.order_num" class="order-num-input" >
-              <div class="input-group w-auto h-25">
-                <input
-                    type="text"
-                    readonly
-                    :value="order.order_num"
-                    class="form-control border p-2">
-              </div>
-<!--              <span class="ni ni-fat-delete ni-lg me-1" @click="removeOrderNum(order)"/>-->
-            </div>
-          </div>
+      <div class="table-responsive p-0">
+        <table
 
+            class="table align-items-center justify-content-center mb-0"
+        >
+          <thead>
+          <tr>
+            <th v-for="col in cols" :key="col"
+                class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 text-center"
+            >
+              {{ col }}
+            </th>
+          </tr>
+          </thead>
 
-        </div>
+          <tbody v-show="!selectedOrders.length" class="no-data">
+           <tr><td :colspan="cols.length">* 위의 주문을 클릭해서 추가/삭제 해주세요</td></tr>
+          </tbody>
+          <tbody v-show="selectedOrders.length">
+          <tr v-for="order in selectedOrders" :key="order.orderNum">
+            <td>
+              <h6 class="mb-0 text-sm text-center">{{ order.orderNum }}</h6>
+            </td>
+            <td>
+              <h6 class="mb-0 text-sm text-center">{{ order.orderDate }}</h6>
+            </td>
+            <td>
+              <h6 class="mb-0 text-sm text-center">{{ order.dueDate }}</h6>
+            </td>
+            <td>
+              <h6 class="mb-0 text-sm text-center">{{ order.productName }}</h6>
+            </td>
+            <td>
+              <h6 class="mb-0 text-sm text-center">{{ order.orderQty }}</h6>
+            </td>
+            <td>
+              <h6 class="mb-0 text-sm text-center">{{ order.plannedQty }}</h6>
+            </td>
+            <td>
+              <h6 class="mb-0 text-sm text-center">{{ order.unplannedQty }}</h6>
+            </td>
+            <td>
+              <input type="number" class="mb-0 text-sm text-center" v-model="order.planQty"/>
+            </td>
+            <td>
+              <h6 class="mb-0 text-sm text-center">{{ order.stockQty }}</h6>
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
       <div class="input-container">
         <div class="input-content">
-          <p>제품명</p>
-          <div class="input-group w-auto h-25">
-            <input type="text" readonly class="form-control border p-2" :value="selectedOrders[0]?.product_name"/>
-          </div>
-        </div>
-        <div class="input-content">
-          <p>계획수량</p>
-
-          <div class="input-group w-auto h-25">
-            <input type="number" class="form-control border p-2" v-model="planQty"/>
-          </div>
-        </div>
-        <div class="input-content">
-          <p>생산계획명</p>
+          <h6>생산계획명</h6>
           <div class="input-group w-auto h-25">
             <input type="text" class="form-control border p-2" v-model="planName"/>
           </div>
         </div>
-      </div>
-      <div class="input-container">
         <div class="input-content">
-          <p>재고수량</p>
-          <material-button v-if="productStock === null" color="secondary" size="sm" class="button" @click="getProductStock">수량 조회</material-button>
-          <div v-else class="input-group w-auto h-25">
-            <input type="text" readonly class="form-control border p-2" v-model="productStock">
-          </div>
-        </div>
-        <div class="input-content">
-          <p>계획시작일자</p>
+          <h6>계획시작일자</h6>
           <div class="input-group w-auto h-25">
             <input type="date" class="form-control border p-2" v-model="planStartDate"/>
           </div>
         </div>
         <div class="input-content">
-          <p>계획종료일자</p>
+          <h6>계획종료일자</h6>
           <div class="input-group w-auto h-25">
             <input type="date" class="form-control border p-2" v-model="planEndDate"/>
           </div>
         </div>
         <div class="input-content ">
-          <p>등록인</p>
+          <h6>등록인</h6>
           <div class="input-group w-auto h-25">
             <input type="text" @click="openModal" :value="searchEmp.name" readonly class="form-control border p-2 emp" />
           </div>
@@ -88,7 +92,7 @@
         @confirm="confirm"
     >
       <template v-slot:list>
-        <EmpList v-if="isShowModal" @selectEmp="selectEmp"/>
+        <EmpList v-show="isShowModal" @selectEmp="selectEmp"/>
       </template>
     </Modal>
   </div>
@@ -110,7 +114,6 @@ export default {
 
   data() {
     return {
-      planQty: 0,
       planName: '',
       productStock: null,
       planStartDate: '',
@@ -119,12 +122,9 @@ export default {
       isShowModal: false,
       modalTitle: '직원 목록',
       searchEmp: {},
-      selectedEmp: {}
+      selectedEmp: {},
+      cols: ['주문번호', '주문일자', '납기일자', '제품명', '주문량', '기계획량', '미계획량', '현계획량', '재고']
     }
-  },
-
-  computed: {
-
   },
 
   methods: {
@@ -137,7 +137,23 @@ export default {
     },
 
     async addPlan() {
-      if(!this.selectedOrders.length || !this.planQty || !this.planName || !this.planStartDate || !this.planEndDate) {
+      if(!this.selectedOrders.length) {
+        this.$notify({
+          text: "주문을 선택해주세요.",
+          type: 'error',
+        });
+        return
+      }
+
+      if(this.selectedOrders.filter((order) => !order.planQty).length) {
+        this.$notify({
+          text: "주문별 현계획량을 입력해주세요.",
+          type: 'error',
+        });
+        return
+      }
+
+      if(!this.planName || !this.planStartDate || !this.planEndDate || !this.planName) {
         this.$notify({
           text: "입력칸을 채워주세요.",
           type: 'error',
@@ -146,18 +162,22 @@ export default {
       }
 
       let orderNums = []
+      let productCodes = []
+      let planQtys = []
       this.selectedOrders.forEach((order) => {
-        orderNums.push(order.order_num)
+        orderNums.push(order.orderNum)
+        productCodes.push(order.productCode);
+        planQtys.push(order.planQty)
       })
 
       let planInfo = {
-        orderNums:  '['+ orderNums.toString() +']',
-        planName : this.planName,
-        productCode : this.selectedOrders[0].product_code,
-        planQty : this.planQty,
-        planStartDate : this.planStartDate,
+        orderNums: JSON.stringify(orderNums),
+        planName: this.planName,
+        productCode: JSON.stringify(productCodes),
+        planQty: JSON.stringify(planQtys),
+        planStartDate: this.planStartDate,
         planEndDate: this.planEndDate,
-        empNum: this.selectedEmp.emp_num
+        empNum: this.selectedEmp.emp_num,
       }
 
       let result =
@@ -170,13 +190,13 @@ export default {
         });
 
 
-        this.planName = ''
-        this.planQty = 0
-        this.planStartDate = ''
-        this.planEndDate = ''
-        this.selectedEmp = {}
-
-        this.$emit('resetSelectedOrders')
+        // this.planName = ''
+        // this.planQty = 0
+        // this.planStartDate = ''
+        // this.planEndDate = ''
+        // this.selectedEmp = {}
+        //
+        // this.$emit('resetSelectedOrders')
       }
 
 
@@ -201,7 +221,7 @@ export default {
       }
 
       let result =
-          await axios.get(`${ajaxUrl}/production/plan/stock/${this.selectedOrders[0].product_code}`)
+          await axios.get(`${ajaxUrl}/production/plan/stock/${this.selectedOrders[0].productCode}`)
               .catch(err => console.log(err));
       this.productStock = result.data.stock
     },
@@ -235,21 +255,35 @@ export default {
   }
 }
 .main-container {
-  display: flex;
   justify-content: space-between;
   width: 100%;
   padding: 40px;
   border-radius: 8px;
   background-color: $gray-200;
   margin-top: 12px;
+  .table-responsive {
+    background-color: $gray-100;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    .no-data{
+      td {
+        text-align: center;
+        height: 80px;
+        font-weight: 800;
+      }
+    }
+  }
   .input-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
     .input-content {
       position: relative;
       display: flex;
       align-content: center;
       margin-bottom: 8px;
 
-      > p {
+      > h6 {
         width: 100px;
         margin-right: 8px;
         font-size: 16px;

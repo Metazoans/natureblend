@@ -1,4 +1,3 @@
-
 <template>
   <div class="container-fluid">
     <div class="search-container mt-4 mb-2">
@@ -14,8 +13,9 @@
           :columnDefs="columnDefs"
           :theme="theme"
           @grid-ready="onGridReady"
-      >
-      </ag-grid-vue>
+          :noRowsOverlayComponent="noRowsOverlayComponent"
+          @rowClicked="onRowClicked"
+      />
     </div>
     <Modal
         :isShowModal="isShowModal"
@@ -26,12 +26,15 @@
         @confirm="confirm"
     >
       <template v-slot:list>
-        <ProductList v-if="isShowModal" @selectProduct="selectProduct"/>
+        <ProductList v-show="isShowModal" @selectProduct="selectProduct"/>
       </template>
     </Modal>
+    <div style="display: none">
+      <CustomNoRowsOverlay/>
+    </div>
   </div>
-
 </template>
+
 <script>
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
@@ -39,19 +42,15 @@ import MaterialButton from "@/components/MaterialButton.vue";
 import ProductList from "@/views/production/productionPlanAdd/ModalProductList.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import theme from "@/utils/agGridTheme";
-// import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 
 export default {
   name: "orderList",
-  components: {Modal, ProductList, MaterialButton},
+  components: {Modal, ProductList, MaterialButton, CustomNoRowsOverlay},
 
   data() {
     return {
-      // noRowsOverlayComponent: 'CustomNoRowsOverlay',
-      noRowsOverlayComponentParams: {
-        noRowsMessageFunc: () =>
-            "No rows fou!!!!!!!nd at: " + new Date().toLocaleTimeString(),
-      },
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
       orders: [],
       searchProduct: {
         product_code: '',
@@ -64,18 +63,20 @@ export default {
         product_name: '',
       },
       selectedOrders: [],
-      selectedOrderNums: [],
       theme: theme,
       rowData: [],
 
       columnDefs: [
-        { field: "주문번호"},
-        { field: "주문일자" },
-        { field: "납기일자" },
-        { field: "제품명" },
-        { field: "주문량" },
-        { field: "기계획량" },
-        { field: "미계획량" }
+        { headerName: "주문번호", field: 'orderNum'},
+        { headerName: "주문일자", field: 'orderDate' },
+        { headerName: "납기일자", field: 'dueDate' },
+        { headerName: "제품명", field: 'productName' },
+        { headerName: "주문량", field: 'orderQty' },
+        { headerName: "기계획량", field: 'plannedQty' },
+        { headerName: "미계획량", field: 'unplannedQty' },
+        { headerName: "부분출고량", field: 'partialOutputQty' },
+        { headerName: "재고", field: 'stockQty', hide: true },
+        { headerName: "상품코드", field: 'productCode', hide: true },
       ],
       loading: false,
     }
@@ -115,8 +116,11 @@ export default {
           [keys[2]]: order.due_date,
           [keys[3]]: order.product_name,
           [keys[4]]: order.order_amount,
-          [keys[5]]: '기계획량',
-          [keys[6]]: '미계획량'
+          [keys[5]]: order.plan_qty,
+          [keys[6]]: order.unplanned_qty,
+          [keys[7]]: order.output_amount === null ? 0 : order.output_amount,
+          [keys[8]]: '재고',
+          [keys[9]]: order.product_code
         }
       })
     },
@@ -140,32 +144,24 @@ export default {
       this.getOrders()
     },
 
-    addOrderNum(order) {
-      if (this.selectedOrders.length) {
-        if(this.selectedOrders[0].product_code !== order.product_code) {
-          this.$notify({
-            text: "동일한 제품의 주문만 추가 가능합니다.",
-            type: 'error',
-          });
+    async onRowClicked(row) {
+      let order = row.data
+      order.stockQty = await this.getProductStock(order.productCode)
 
-          return
-        }
-
-        // 중복 주문이 아니면 추가
-        if (!this.selectedOrders.some(selectedOrder => selectedOrder.order_num === order.order_num)) {
-          this.selectedOrders.push(order);
-          this.selectedOrderNums.push(order.order_num)
-        } else {
-          // 중복 주문일 때 해당 주문 삭제
-          this.selectedOrders = this.selectedOrders.filter((selectedOrder) => selectedOrder.order_num !== order.order_num)
-          this.selectedOrderNums = this.selectedOrderNums.filter((selectedOrder) => selectedOrder !== order.order_num)
-        }
-      } else {
+      if (!this.selectedOrders.some(selectedOrder => selectedOrder.orderNum === order.orderNum)) {
         this.selectedOrders.push(order);
-        this.selectedOrderNums.push(order.order_num)
+      } else {
+        this.selectedOrders = this.selectedOrders.filter((selectedOrder) => selectedOrder.orderNum !== order.orderNum)
       }
 
       this.$emit('selectOrders', this.selectedOrders)
+    },
+
+    async getProductStock(productCode) {
+      let result =
+          await axios.get(`${ajaxUrl}/production/plan/stock/${productCode}`)
+              .catch(err => console.log(err));
+      return result.data.stock
     },
 
     closeModal() {
@@ -175,7 +171,7 @@ export default {
     selectProduct(product) {
       this.selectedProduct = product
     },
-  }
+  },
 }
 </script>
 
@@ -230,6 +226,8 @@ export default {
 
   }
 }
-
+.ag-row.selected {
+  background-color: red;
+}
 
 </style>

@@ -11,6 +11,7 @@ const material = require('./sqls/material.js');
 
 // 생산
 const productionPlan = require('./sqls/production/productionPlan');
+const productionOrder = require('./sqls/production/productionOrder');
 
 // 품질
 const quality = require('./sqls/quality.js');
@@ -37,6 +38,7 @@ module.exports = {
 
   // 생산
   ...productionPlan,
+  ...productionOrder,
 
   // 품질
   ...quality,
