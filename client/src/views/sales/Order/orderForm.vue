@@ -6,14 +6,14 @@
                     <form class="row gx-3 gy-2 align-items-center">
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="orderlistNum">주문서코드</label>
-                            <input type="text" class="form-control" id="orderlistNum" v-model="orders.orderlistNum" readonly>
+                            <input type="text" class="form-control" id="orderlistNum" v-model="orderlistNum" readonly>
                             <div>
                             </div>
                             
                         </div>
                         <div class="sm-2">
                             <label class="col-form-label fw-bold" for="orderlistName">주문서명</label>
-                            <input type="text" class="form-control" id="orderlistName" v-model="orders.orderName">
+                            <input type="text" class="form-control" id="orderlistName" v-model="orderName">
                         </div>
                         <div class="col-sm-4">
                             <label class="col-form-label fw-bold" for="clientName">거래처명</label>
@@ -29,7 +29,7 @@
                                 @confirm="confirm('client')"
                             >
                             <template v-slot:list>
-                                <ComList v-if="isShowModal.client" @selectclient="selectclient"/>
+                                <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
                             </template>
                             </Modal>
                         </div>
@@ -47,21 +47,21 @@
                                 @confirm="confirm('emp')"
                             >
                             <template v-slot:list>
-                                <EmpList v-if="isShowModal.emp" @selectemp="selectemp"/>
+                                <EmpList v-show="isShowModal.emp" @selectemp="selectemp"/>
                             </template>
                             </Modal>
                         </div>
                         <div class="col-sm-4">
                             <label class="col-form-label fw-bold" for="dueDate">납기일자</label>
                             <div class="input-group">
-                            <input type="date" class="form-control" id="dueDate" v-model="orders.dueDate">
+                            <input type="date" class="form-control" id="dueDate" v-model="dueDate">
                             </div>
                         </div>
                     </form>
                     <div class="mb-3 text-end">
                         <material-button size="sm" color="warning" class="button"  @click="addMaterial">+</material-button>
                     </div>
-                    <div v-for="(material, index) in orders.materials" :key="index" class="row gx-3 gy-2 align-items-center">
+                    <div v-for="(material, index) in materials" :key="index" class="row gx-3 gy-2 align-items-center">
                         <form class="row gx-3 gy-2 align-items-center mt-2">
                             <div class="col-sm-2">
                                 <label class="col-form-label fw-bold" for="orderCode">주문코드</label>
@@ -71,7 +71,7 @@
                                 <label class="col-form-label fw-bold" for="productCode">제품코드</label>
                                 <input type="text" class="form-control" id="productCode" v-model="material.productCode" readonly>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-2">
                                 <label class="col-form-label fw-bold" for="productName">제품명</label>
                                 <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product')" readonly>
                             </div>
@@ -84,7 +84,7 @@
                                     @confirm="confirm('product')"
                                 >
                                 <template v-slot:list>
-                                    <proList v-if="isShowModal.product" @selectproduct="selectproduct"/>
+                                    <proList v-show="isShowModal.product" @selectproduct="selectproduct" :indexNum="indexNum"/>
                                 </template>
                             </Modal>
                             <div class="col-sm-2">
@@ -99,12 +99,16 @@
                                 <input type="text" class="form-control" id="perSale" v-model="material.perPrice">
                                 </div>
                             </div>
+                            <div class="col-sm-2">
+                                <material-button size="sm" color="warning" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
+                            </div>      
                         </form>
                     </div>
                    
 
                     <div class="col-auto mt-5 text-center">
-                            <button type="button" class="btn btn-warning">저장</button>
+                            <material-button type="button" class="btn btn-warning" @click="insertOrder">저장</material-button>
+                            <material-button type="button" class="btn btn-warning ms-10" @click="resetSearch">초기화</material-button>
                     </div>
                 </div>
             </div>
@@ -128,17 +132,20 @@ export default{
     },
     data(){
         return{
-            orders:{
-                orderlistNum :'',
-                orderName : '',
-                dueDate:'',
-                orderCode:'',
-                productCode:'',
-                productName:'',
-                productNum:'',
-                perPrice:'',
-                materials:[],
-            },
+            orderlistNum :'',
+            orderName : '',
+            dueDate:'',
+
+            orderCode:'' ,
+            productCode:'',
+            productName:'',
+            productNum:'',
+            perPrice:'',
+
+            materials:[
+            
+            ],
+
             //거래처 모달 
             searchCom:"", // 저장 될 거래처 명 
             selectedCom: "", //선택된 거래처 명
@@ -153,7 +160,8 @@ export default{
 
             isShowModal: {
             client: false, // 거래처 모달
-            emp: false // 직원 모달
+            emp: false, // 직원 모달
+            product:false // 제품 모달 
             },
         }
     },
@@ -170,7 +178,7 @@ export default{
         this.selectedEmpName = emp;
     },
     selectproduct(product){
-        console.log(product); 
+        //console.log(product); 
         this.selectedProCode = product.product_code;
         this.selectedProName = product.product_name;
     },
@@ -184,9 +192,21 @@ export default{
       } else if (modalType === 'emp') {
         this.searchEmpName = this.selectedEmpName;
       } else if(modalType === 'product'){
-        this.orders.productCode = this.selectedProCode;
-        this.orders.productName = this.selectedProName;
-        console.log(this.orders.productCode,this.orders.productName);
+        this.productCode = this.selectedProCode;
+        this.productName = this.selectedProName;
+
+        //순서대로 공백이면 차례대로 넣기 
+        for(let i=0; i<this.materials.length; i++){
+            if(this.materials[i]['productCode'] == ''){
+            this.materials[i]['productCode'] = this.productCode;
+            this.materials[i]['productName'] = this.productName;
+            break;
+            }
+        }
+
+
+        console.log(this.materials);
+        
       }
 
       this.closeModal(modalType); // 모달 닫기
@@ -195,18 +215,64 @@ export default{
         this.isShowModal[modalType] = false;
     },
     addMaterial() {
+        
     const newMaterial={
       orderCode: '',
       productCode : '',
       productName : '',
-    //   productCode: this.selectedProCode || '',
-    //   productName: this.selectedProName || '',
       productNum: '',
       perPrice: ''
     };
+    //마지막 material 요소의 productCode가 공백인 경우 newMaterial 형성 못하게 하기 
+        if(this.materials.length == 0){
+            this.materials.push(newMaterial);
+            //console.log(this.materials[this.materials.length]);
+        }else if(this.materials[this.materials.length -1 ].productCode != ''){
+            this.materials.push(newMaterial);
+        }    
+    },
 
-    this.orders.materials.push(newMaterial);
-  }
+    deleteMaterial(index){
+        //console.log("deleteMaterial실행");
+        // let index = parseInt(this.value);
+        // const selectedNum = this.materials[index];
+        this.materials = this.materials.filter((material, idx) => index != idx);
+        //console.log(this.materials);
+       
+        
+    },
+
+
+    resetSearch(){
+        this.orderlistNum = "",
+        this.orderName ="",
+        this.dueDate="",
+
+        this.orderCode="" ,
+        this.productCode="",
+        this.productName="",
+        this.productNum="",
+        this.perPrice="",
+        this.materials= [],
+
+        this.searchEmpName="",
+        this.searchCom=""
+
+    },
+    insertOrder(){
+        console.log("save");
+        for(let i=0; i<this.materials.length; i++){
+            let productCode = this.materials[i]['productCode'];
+            let productName = this.materials[i]['productName'];
+            let productNum = this.materials[i]['productNum'];
+            let perPrice = this.materials[i]['perPrice'];
+            console.log(this.orderName,this.dueDate,this.searchEmpName,productCode,productName,productNum,perPrice);
+            
+        }
+       
+        
+    },
+        
     }//end method
 }
 </script>
@@ -232,6 +298,7 @@ export default{
   background-color: #ffeeba;
   font-weight: bold;
 }
+
 /* 일반 input 태그 스타일 */
 input {
   background-color: #ffffff; /* 배경색 흰색 */
