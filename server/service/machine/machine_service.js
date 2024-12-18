@@ -6,6 +6,19 @@ const findAllMachines = async () => {
   return list;
 }
 
+// 설비 상세 정보
+const findMachineInfo = async (no) => {
+  let list = await mariadb.query('machineInfo', [no]);
+  let info = list[0];
+  return info;
+}
+// 설비 생산 정보 
+const findMachinePrdInfo = async (no) => {
+  let list = await mariadb.query('machinePrdInfo', [no]);
+  let info = list[0];
+  return info;
+}
+
 // 설비 등록
 const createNewMachine = async (machineInfo) => {
   let result = await mariadb.query('machineInsert', machineInfo);
@@ -26,5 +39,7 @@ module.exports = {
   findAllMachines,
   createNewMachine,
   findMachineType,
+  findMachineInfo,
+  findMachinePrdInfo,
   
 };

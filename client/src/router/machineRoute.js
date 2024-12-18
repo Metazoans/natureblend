@@ -25,7 +25,7 @@ const machineRoute = [
     component: MachineList
   },
   {
-    path: 'machineInfo',
+    path: 'machineInfo/:mno',
     name: 'machineInfo',
     component: MachineInfo
   },

@@ -8,6 +8,20 @@ router.get('/machineList', async (req, res) => {
   res.send(machineList);
 });
 
+// 설비 상세 정보
+router.get('/machineInfo/:mno', async (req,res)=>{
+  let machineNo = req.params.mno;
+  let info = await machineService.findMachineInfo(machineNo);
+  res.send(info);
+  console.log(info);
+});
+// 설비 생산 정보
+router.get('/machinePrdInfo/:mno', async (req,res)=>{
+  let machineNo = req.params.mno;
+  let info = await machineService.findMachinePrdInfo(machineNo);
+  res.send(info);
+});
+
 // 설비 등록
 router.post('/machineInsert', async(req, res) => {
   let machineInfo = req.body;
