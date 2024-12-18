@@ -115,8 +115,8 @@ export default {
           [keys[2]]: order.due_date,
           [keys[3]]: order.product_name,
           [keys[4]]: order.order_amount,
-          [keys[5]]: '기계획량',
-          [keys[6]]: '미계획량',
+          [keys[5]]: order.plan_qty,
+          [keys[6]]: order.unplanned_qty,
           [keys[7]]: '재고',
           [keys[8]]: order.product_code
         }
