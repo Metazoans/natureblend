@@ -92,11 +92,19 @@ UPH
             UPH : 
             {{ machineData.uph }}
           </div>
-          <div class="col">
+          <div class="col" v-if="machinePrdData.success_sum != null">
             생산량 : 
+            {{ (machinePrdData.success_sum / machinePrdData.hour_sum) * 24 }}
           </div>
-          <div class="col">
-            불량률
+          <div class="col" v-else>
+            {{ machineData.upd }}
+          </div>
+          <div class="col" v-if="machinePrdData.success_sum != null">
+            불량률 : 
+            {{ (machinePrdData.fail_sum / (machinePrdData.success_sum + machinePrdData.fail_sum)) * 100 }}%
+          </div>
+          <div class="col" v-else>
+            {{ 0 }}%
           </div>
         </div>
       </div>
@@ -138,11 +146,13 @@ export default {
   data() {
     return {
       machineData: {},
+      machinePrdData: {},
     }
   },
   beforeMount() {
     let selectNo = this.$route.params.mno;
     this.getMachineInfo(selectNo);
+    this.getMachinePrdInfo(selectNo);
   },
   methods: {
     async getMachineInfo(selectNo) {
@@ -150,7 +160,14 @@ export default {
                               .catch(err => console.log(err));
       this.machineData = result.data;
       console.log(this.machineData);
-    }
+    },
+    async getMachinePrdInfo(selectNo) {
+      let result = await axios.get(`${ajaxUrl}/machine/machinePrdInfo/${selectNo}`)
+                              .catch(err => console.log(err));
+      this.machinePrdData = result.data;
+      console.log(this.machinePrdData);
+    },
+
   }
 }
 </script>

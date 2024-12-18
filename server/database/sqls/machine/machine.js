@@ -26,7 +26,8 @@ SELECT machine_name,
        emp_num,
        client_num,
        buy_date,
-       uph
+       uph,
+       upd
 FROM machine m JOIN process_based_information pbi
                ON (m.process_code = pbi.process_code)
 WHERE machine_num = ?
