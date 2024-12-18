@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid product-add py-4">
+  <div class="container-fluid product-plan-add py-4">
     <h1>생산계획 등록</h1>
     <PlanAddOrderList @selectOrders="selectOrders"></PlanAddOrderList>
     <PlanAddForm :selectedOrders="selectedOrders" @resetSelectedOrders="resetSelectedOrders"></PlanAddForm>
@@ -13,7 +13,7 @@ import PlanAddForm from "@/views/production/productionPlanAdd/PlanAddForm.vue";
 
 
 export default {
-  name: "tables",
+  name: "PlanAdd",
   components: {PlanAddForm, PlanAddOrderList},
 
   data() {
@@ -36,7 +36,7 @@ export default {
   };
 </script>
 <style lang="scss" scoped>
-.product-add {
+.product-plan-add {
   min-height: 500px;
 
 }

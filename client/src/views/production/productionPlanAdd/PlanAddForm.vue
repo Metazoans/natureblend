@@ -58,25 +58,25 @@
       </div>
       <div class="input-container">
         <div class="input-content">
-          <p>생산계획명</p>
+          <h6>생산계획명</h6>
           <div class="input-group w-auto h-25">
             <input type="text" class="form-control border p-2" v-model="planName"/>
           </div>
         </div>
         <div class="input-content">
-          <p>계획시작일자</p>
+          <h6>계획시작일자</h6>
           <div class="input-group w-auto h-25">
             <input type="date" class="form-control border p-2" v-model="planStartDate"/>
           </div>
         </div>
         <div class="input-content">
-          <p>계획종료일자</p>
+          <h6>계획종료일자</h6>
           <div class="input-group w-auto h-25">
             <input type="date" class="form-control border p-2" v-model="planEndDate"/>
           </div>
         </div>
         <div class="input-content ">
-          <p>등록인</p>
+          <h6>등록인</h6>
           <div class="input-group w-auto h-25">
             <input type="text" @click="openModal" :value="searchEmp.name" readonly class="form-control border p-2 emp" />
           </div>
@@ -283,7 +283,7 @@ export default {
       align-content: center;
       margin-bottom: 8px;
 
-      > p {
+      > h6 {
         width: 100px;
         margin-right: 8px;
         font-size: 16px;

@@ -134,30 +134,30 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
-            collapseRef="production"
+            collapseRef="productionPlan"
             navText="생산계획"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('productionAdd')">생산계획 등록</li>
-            <li class="sub-item" @click="movePage('productionList')">생산계획 목록</li>
+            <li class="sub-item" @click="movePage('productionPlanAdd')">생산계획 등록</li>
+            <li class="sub-item" @click="movePage('productionPlanList')">생산계획 목록</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
             url="#"
             :aria-controls="''"
             v-bind:collapse="true"
-            collapseRef="mainpage"
+            collapseRef="productionOrder"
             navText="생산지시"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">생산계획 등록</li>
-            <li class="sub-item">생산계획 목록</li>
+            <li class="sub-item" @click="movePage('productionOrderAdd')">생산지시 등록</li>
+            <li class="sub-item" @click="movePage('productionOrderList')">생산지시 목록</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
