@@ -10,12 +10,14 @@ const findMeterialOrder = async (mName, startDate, endDate)=>{
   }
 
   if(startDate  != undefined && startDate != null && startDate != ''){
-    let search = `h.order_date >= \'${startDate}\'`;
+    let search = `h.order_date >= \'${startDate} 00:00:00\'`;
     searchList.push(search);
   }
 
   if(endDate  != undefined && endDate != null && endDate != ''){
-    let search = `h.order_date <= \'${endDate}\'`;
+    let search = `h.order_date <= \'${endDate} 23:59:59\'`;
+    //let search = `h.order_date <= TO_DATE(TO_CHAR(TO_DATE(:${endDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD') || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')`;
+    
     searchList.push(search);
   }
 

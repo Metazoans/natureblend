@@ -2,6 +2,7 @@
   <div class="px-4 py-4">
     <h1>입고검사-검사신청</h1>
     <hr>
+    <!-- 검사조건 부분 시작 -->
     <div class="row align-items-center mb-3">
       <div class="col-2">
         <h3 class="mr-3">검색조건</h3>
@@ -27,112 +28,58 @@
       </div>
     </div>
   </div>
-
+  <!-- 검사조건 부분 끝 -->
 
   <hr>
+  <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
     <h4>검색 결과</h4>
+    <p>생산 내역에 추가할 건을 선택해주세요.</p>
+    <div class="col-2">
+      <material-button size="md" color="primary" @click="addCheckedRows">선택 항목 추가</material-button>
+    </div>
+
     <div class="grid-container">
-      <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef" @grid-ready="onGridReady" >
+      <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
+        @grid-ready="onGridReady">
       </ag-grid-vue>
 
     </div>
   </div>
-
-
+  <!-- 검사결과 끝 -->
 
   <hr>
+  <!-- 신청내역 시작 -->
   <div class="container-fluid py-4">
     <h4>신청내역</h4>
     <div class="grid-container">
-      <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef" @grid-ready="onGridReady">
+      <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef"
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked">
       </ag-grid-vue>
 
     </div>
-
-    <div class="row">
-      <div class="col-12">
-        <table class="table align-items-center mb-0">
-          <thead>
-            <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                자재발주코드
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                자재명
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                발주수량
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                발주신청일
-              </th>
-              <th class="text-secondary opacity-7"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">(자재발주코드)</h6>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">오렌지(18kg)</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <h6 class="mb-0 text-sm">100</h6>
-                <p class="text-xs text-secondary mb-0">(box)</p>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-              </td>
-              <td class="align-middle">
-                <material-button color="danger" size="sm">
-                  삭제
-                </material-button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">(자재발주코드)</h6>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">병(1.5L)</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <h6 class="mb-0 text-sm">500</h6>
-                <p class="text-xs text-secondary mb-0">(box)</p>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">11/01/19</span>
-              </td>
-              <td class="align-middle">
-                <material-button color="danger" size="sm">
-                  삭제
-                </material-button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <!-- 신청내역 끝 -->
     <hr>
+    <!-- 버튼 구역 -->
     <div class="row">
       <div class="col">
         <material-button color="warning" size="lg" @click="openModal">저장</material-button>
       </div>
       <div class="col">
-        <material-button color="dark" size="lg">초기화</material-button>
+        <material-button color="dark" size="lg" @click="resetAll">초기화</material-button>
       </div>
     </div>
+    <!-- 버튼 구역 끝-->
   </div>
+  <!-- <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
+      <template v-slot:list>
+        <p>신청내역대로 저장하시겠습니까?</p>
+        <div>
+          <label for="quantityInput">수정할 실제 수량:</label>
+          <input v-model="editedQuantity" type="number" id="quantityInput" />
+        </div>
+      </template>
+</Modal> -->
 
   <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
     <template v-slot:list>
@@ -142,6 +89,8 @@
 </template>
 
 <script>
+import { toRaw } from 'vue';
+
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
@@ -151,56 +100,63 @@ import MaterialButton from "@/components/MaterialButton.vue";
 import theme from "@/utils/agGridTheme";
 import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 
+
 export default {
   name: "입고검사",
   components: { MaterialButton, Modal },
-
 
   data() {
     return {
       //검색창 및 결과 관련
       searchInfo: {
         mName: '',
-        startDate: this.formatDate(new Date()),
+        //범위 : 일주일전부터 오늘
+        startDate: this.formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
         endDate: this.formatDate(new Date())
       },
+      //db를 통해 얻은 결과
       orderList: [],
 
       //모달 관련
       isShowModal: false,
 
+      editedQuantity: null, // 모달에서 수정한 실제 수량
+      selectedRow: null, // 수정할 행 정보
+
       //ag grid 관련
       theme: theme,
-      rowData1: [],
-      columnDefs: [
-        { field: "자재발주코드", resizable: false },
-        { field: "자재명", resizable: false },
-        { field: "발주수량", resizable: false },
-        { field: "발주신청일", resizable: false },
+      rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
+      columnDefs: [ //검색 결과 열
         {
           field: "체크",
           resizable: false,
           editable: true,
-        }
+          sortable: false,
+        },
+        { field: "자재발주코드", resizable: false },
+        { field: "자재명", resizable: false },
+        { field: "발주수량", resizable: false },
+        { field: "발주신청일", resizable: false },
       ],
-      rowData2: [],
+      rowData2: [],   //신청 내역
       columnDefs2: [
-        { field: "자재발주코드", resizable: false, cellStyle: { textAlign: "center" }},
-        { field: "자재명", resizable: false, cellStyle: { textAlign: "center" }},
-        { field: "발주수량", resizable: false, cellStyle: { textAlign: "center" } },
-        { field: "발주신청일", resizable: false, cellStyle: { textAlign: "center" }},
+        { field: "자재발주코드", resizable: false },
+        { field: "자재명", resizable: false },
+        { headerName: "실제 수량", field: "발주수량", resizable: false },
+        { field: "발주신청일", resizable: false },
         {
           cellRenderer: (params) => {
             return `
-              <button class="btn btn-danger size="sm" data-id="${params.node.id}">
-                  삭제
+              <button class="btn btn-danger btn-sm delete-btn" data-id="${params.node.id}">
+                삭제
               </button>
             `;
           },
+          editable: false,
           resizable: false,
-          sortable: false, // 열정렬
-          filter: false    // 필터링
-          , cellStyle: { textAlign: "center" }
+          sortable: false,
+          filter: false,
+          cellStyle: { textAlign: "center" }
         }
       ],
       defaultColDef: {
@@ -208,6 +164,7 @@ export default {
       },
     };
   },
+
 
 
   methods: {
@@ -221,6 +178,11 @@ export default {
 
     //검색창 관련    
     async searchOrder() {
+      if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
+        alert("시작 날짜는 종료 날짜보다 이전이어야 합니다.");
+        return;
+      }
+
       const name = this.searchInfo.mName.replace(/\s+/g, "");
       const result = {
         mName: name.length != 0 ? name : "",
@@ -238,14 +200,10 @@ export default {
           "체크": false, "자재발주코드": this.orderList[i].order_code, "자재명": this.orderList[i].material_name,
           "발주수량": this.orderList[i].ord_qty, "발주신청일": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
         };
-        console.log('col:', col);
         this.rowData1[i] = col;
-        console.log(this.rowData1[i]);
       }
-
-      console.log(this.rowData);
     },
-
+    //전체 조회
     async searchOrderAll() {
       let searchResult = await axios.get(`${ajaxUrl}/meterialOrderQCAll`)
         .catch(err => console.log(err));
@@ -261,15 +219,65 @@ export default {
         this.rowData1[i] = col;
       }
     },
+
     onGridReady(params) {
       this.gridApi = params.api;
       this.gridApi.sizeColumnsToFit();
+
+      // 삭제 버튼 이벤트 리스너
+      document.addEventListener("click", (event) => {
+        if (event.target && event.target.classList.contains("delete-btn")) {
+          const rowIndex = event.target.getAttribute("data-id");
+          this.deleteRow(rowIndex);
+        }
+      });
     },
 
+    //검색 결과 관련
+    // 체크한 항목을 rowData2(신청내역)에 추가
+    addCheckedRows() {
+      // 체크박스가 true인 항목만 필터링
+      const checkedRows = this.rowData1.filter(row => row["체크"] === true);
+
+      // 중복되지 않게 추가하기 위해 기존 rowData2와 병합
+      const newRows = checkedRows.filter(row =>
+        !this.rowData2.some(existingRow => existingRow["자재발주코드"] === row["자재발주코드"])
+      );
+
+      this.rowData2 = [...this.rowData2, ...newRows]; // rowData2에 추가
+    },
+
+    //생산내역 관련
+    //삭제버튼
+    deleteRow(rowIndex) {
+      const nodeToDelete = this.gridApi.getDisplayedRowAtIndex(rowIndex);
+      this.rowData2 = this.rowData2.filter(
+        (row) => row !== nodeToDelete.data
+      );
+
+    },
+    //초기화
+    resetAll() {
+      const rawData = toRaw(this.rowData2);
+      console.log('Raw rowData2:', rawData);
+      this.rowData2.forEach((item, index) => {
+        console.log(`Index ${index}:`, item);
+        console.log(`  자재발주코드: ${item.자재발주코드}`);
+        console.log(`  자재명: ${item.자재명}`);
+        console.log(`  발주수량: ${item.발주수량}`);
+        console.log(`  발주신청일: ${item.발주신청일}`);
+      });
+      this.rowData1 = [];
+      this.rowData2 = []; // 저장된 항목 초기화
+    },
+
+
+    //기타 관련
     // 날짜를 YYYY-MM-DD 형식으로 변환
     dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);
     },
+
 
 
     openModal() {
@@ -288,6 +296,7 @@ export default {
 };
 </script>
 
+
 <style scoped lang="scss">
 .container-fluid {
   min-height: 500px;
@@ -296,5 +305,4 @@ export default {
     margin-top: 24px;
   }
 }
-
 </style>
