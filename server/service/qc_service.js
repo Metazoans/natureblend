@@ -1,59 +1,47 @@
 const mysql = require('../database/mapper.js');
 
-// 전체조회
-const findMeterialOrder = async (keywords)=>{
-  console.log(keywords);
-  //let sql, list;
+// 조회
+const findMeterialOrder = async (mName, startDate, endDate)=>{
+  let searchList = [];
 
-  // if((keywords.mName).length == 0){
-  //   sql = 'searchMaterialOrder';
-  //   list = await mysql.query(sql, keywords.startDate, keywords.endDate);
-  // }else{
-  //   sql = 'searchMaterialOrderWithConditions';
-  //   list = await mysql.query(sql, keywords.mName, keywords.startDate, keywords.endDate);
-  // }
+  if(mName  != undefined && mName != null && mName != ''){
+    let search = `m.material_name LIKE \'%${mName}%\'`;
+    searchList.push(search);
+  }
 
-  let sql = Object.keys(keywords.mName).length == 0 ? 'searchMaterialOrder' : 'searchMaterialOrderWithName';
-  let list = await mysql.query(sql, keywords);
-  return list;
-}
+  if(startDate  != undefined && startDate != null && startDate != ''){
+    let search = `h.order_date >= \'${startDate} 00:00:00\'`;
+    searchList.push(search);
+  }
 
-// const findMeterialOrder = async (keywords)=>{
-//   let sql = Object.keys(keywords).length == 0 ? 'searchMaterialOrder' : 'searchMaterialOrderWithName';
-//   let list = await mysql.query(sql, keywords);
-//   return list;
-// }
+  if(endDate  != undefined && endDate != null && endDate != ''){
+    let search = `h.order_date <= \'${endDate} 23:59:59\'`;
+    //let search = `h.order_date <= TO_DATE(TO_CHAR(TO_DATE(:${endDate}, 'YYYY-MM-DD'), 'YYYY-MM-DD') || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')`;
+    
+    searchList.push(search);
+  }
 
-// const findMeterialOrder = async (keywords) => {
-//   const { mName, startDate, endDate } = keywords;
+  let querywhere = '';
+  for(let i = 0 ; i < searchList.length; i++){
+    let search  = searchList[i];
+    querywhere+= (i == 0 ? ` `:`AND `) + search;  
+  };
 
-//   // 조건에 따라 SQL 쿼리 선택
-//   let sql = "searchMaterialOrder"; // 기본 쿼리 (조건 없음)
-//   const params = [];
+  querywhere = searchList.length == 0 ? "ORDER BY h.order_code" : `AND ${querywhere} ORDER BY h.order_code`;
+    console.log('selected Query', querywhere);
   
+    let result = await mysql.query('searchMaterialOrderWithConditions',querywhere);
+    return result;
+  
+};
 
-//   if (mName || (startDate && endDate)) {
-//     sql = "searchMaterialOrderWithConditions"; // 조건 있는 쿼리
-//     if (mName) params.push(`%${mName}%`);
-//     if (startDate && endDate) {
-//       params.push(startDate, endDate);
-//     }
-//   }
-//   console.log(params);
-
-//   // SQL 실행
-//   const list = await mysql.query(sql, params);
-//   return list;
-// };
-
-
-const findMeterialOrderByName = async (keywords)=>{
-  let sql = Object.keys(keywords).length == 0 ? 'searchMaterialOrder' : 'searchMaterialOrderWithName';
-  let list = await mysql.query(sql, keywords);
+const findMeterialAllOrder = async ()=>{
+  let sql = 'searchMaterialOrder';
+  let list = await mysql.query(sql);
   return list;
 }
 
 module.exports = {
   findMeterialOrder,
-  findMeterialOrderByName
+  findMeterialAllOrder
 };

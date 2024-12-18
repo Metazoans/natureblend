@@ -39,10 +39,8 @@
         <div class="modalRow">
           <a>설비 분류</a>
           <select class="form-select" aria-label="Default select example"
-                  v-model="machineData.machine_type">
-            <option value="세척기">세척기</option>
-            <option value="음료제작기">음료제작기</option>
-            <option value="포장기">포장기</option>
+                  v-model="machineData.process_code">
+            <option v-for="item in typeSelect" :key="item.process_code" :value="item.process_code">{{ item.machine_type }}</option>
           </select>
         </div>
 
@@ -122,7 +120,6 @@ export default {
         machine_img: '',
         model_num: '',
         machine_state: 'run',
-        machine_type: '',
         client_num: '',
         machine_location: '',
         uph: '',
@@ -134,9 +131,10 @@ export default {
       },
       isUpdate: false, // 수정페이지 체크
       typeSelect: [], // 설비 분류 객체
+      isInsert: false, // 등록 성공 여부
     }
   },
-  created() {
+  beforeMount() {
     // 설비 분류 및 거래처 정보 가져오기
     
 
@@ -145,8 +143,12 @@ export default {
     if(selectNo > 0) {
       //수정
       this.getMachineInfo(selectNo)    
-      this.isUpdated = true;      
+      this.isUpdated = true;
     }
+
+    // 선택지 정보 가져오기
+    this.getSelectItem();
+
   },
   methods: {
     // 선택지 정보 가져오기
@@ -163,7 +165,6 @@ export default {
     },
     confirm() {
       this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
-      this.$emit('confirm', this.machineData);
       this.machineInsert();
     },
     deleteVal() {
@@ -172,6 +173,8 @@ export default {
       }
       this.machineData.emp_num = 0;
       this.machineData.process_code = '0';
+      
+      console.log(this.typeSelect);
     },
 
     // insert
@@ -181,15 +184,14 @@ export default {
         machine_img: this.machineData.machine_img,  // 설비 이미지
         machine_state: this.machineData.machine_state,// 사용 여부
         model_num: this.machineData.model_num,      // 모델 번호
-        //machine_type: this.machineData.machine_type,// 설비 분류
         client_num: Number(this.machineData.client_num),    // 거래처
         uph: this.machineData.uph,                  // 시간당 생산량
         machine_location: this.machineData.machine_location,// 설비 위치
         buy_date: this.machineData.buy_date,
+        process_code: this.machineData.process_code,
         
         // 자동
         emp_num: 0,     // 등록자
-        process_code: '0',// 설비 분류 기반
       }
 
       obj.upd = Number(this.machineData.uph) * 24;     // uph * 24
@@ -202,7 +204,10 @@ export default {
                               .catch(err => console.log(err));
       let addRes = result.data;
       if(addRes.machine_num > 0){
+        // 등록메시지 수정 예정
         alert('등록되었습니다.');
+        this.isInsert = true;
+        this.$emit('confirm', this.isInsert);
       }
     },
 

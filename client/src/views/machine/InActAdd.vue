@@ -95,6 +95,7 @@ export default {
         inact_type: '',
         inact_info: '',
         inact_start_emp: 0,
+        inact_end_emp: null,
       }
     }
   },
@@ -111,7 +112,7 @@ export default {
       if(this.inActData.inact_end_time != ''){
         this.inActData.inact_end_time = this.dateFormat(this.inActData.inact_end_time, 'yyyy-MM-dd hh:mm:ss');
       }
-      this.$emit('confirm', this.inActData);
+      this.$emit('confirm');
       this.inActInsert();
     },
     deleteVal() {
@@ -119,6 +120,7 @@ export default {
         this.inActData[key] = '';
       }
       this.inActData.inact_start_emp = 0;
+      this.inActData.inact_end_emp = null;
     },
 
     // insert 동작
@@ -132,6 +134,7 @@ export default {
       }
       if(this.inActData.inact_end_time != ''){
         obj.inact_end_time = this.inActData.inact_end_time;
+        obj.inact_end_emp = this.inActData.inact_start_emp;
       }
 
       let result = await axios.post(`${ajaxUrl}/inActs/inActInsert`, obj)

@@ -3,7 +3,7 @@ const mysql = require('../database/mapper.js');
 
 // 전체조회
 const findAllBom = async (bomnum)=>{
-    let list = await mysql.query('bomList', bomnum);
+    let list = await mysql.query('bomList', [bomnum]);
     return list;
     }
 
@@ -17,6 +17,15 @@ const createNewBom = async (bomInfo)=>{
     }
   }
 
+// BOM 수정
+const updateBom = async (num , updateInfo) => {
+  console.log(num);
+  console.log('dOsdf', updateInfo);
+  let datas = [updateInfo, num];
+  let result = await mysql.query('bomUpdate',datas);
+  return result;
+}
+
 // BOM 목록 조회
 const findBomView = async (no) => {
     let list = await mysql.query('bomView', no);
@@ -29,12 +38,10 @@ const deleteBom = async (bomnum) => {
   return list;
 }
 
-// BOM 수정
-
-
 module.exports = {
     findAllBom,
     createNewBom,
     findBomView,
     deleteBom,
+    updateBom,
 }

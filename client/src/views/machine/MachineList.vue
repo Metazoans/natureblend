@@ -6,11 +6,11 @@
         :columnDefs="columnDefs"
         :theme="theme"
        	@grid-ready="onReady"
-        style="height: 500px;"
+        style="height: 800px;"
+        :pagination="true"
+        :paginationPageSize="8"
       ></ag-grid-vue>
     </div>
-
-    <a></a>
 
     <material-button
       color="warning"
@@ -22,6 +22,12 @@
     </material-button>
     <MachineManage :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm"/>
     
+    <material-button
+      color="warning"
+      @click="goToDetail(1)"
+    >
+      테스트 버튼
+    </material-button>
   </div>
 </template>
 
@@ -40,7 +46,7 @@ import theme from "@/utils/agGridTheme";
 import {shallowRef} from 'vue';
 
 export default {
-  name: "tables",
+  name: "machineList",
   setup() {
     const machineList = shallowRef([]);
     const rowData = shallowRef([]);
@@ -48,7 +54,7 @@ export default {
       /*
       번호, 공정코드, 공정명, 모델번호, 설비분류, 설비 이름, 설비 위치, 작동상태
       */
-      // { headerName: '번호', field: '' },
+      { headerName: '번호', field: 'machine_num' },
       { headerName: '공정코드', field: 'process_code' },
       { headerName: '공정명', field: 'process_name' },
       { headerName: '모델번호', field: 'model_num' },
@@ -98,18 +104,23 @@ export default {
   methods: {
     openModal() {
       this.isShowModal = !this.isShowModal;
-      console.log(this.machineList);
-      console.log(this.rowData);
-      console.log(this.columnDefs);
+      this.getMachineList();
     },
 
-    confirm(data) {
-      console.log(data);
+    confirm(check) {
       this.closeModal();
+      if(check == true){
+        this.getMachineList();
+      }
+      console.log(check);
     },
 
     closeModal() {
       this.isShowModal = false;
+    },
+
+    goToDetail(mno) {
+      this.$router.push({name: 'machineInfo', params : {mno : mno}});
     }
   }
 };
