@@ -74,6 +74,7 @@ export default {
         { headerName: "주문량", field: 'orderQty' },
         { headerName: "기계획량", field: 'plannedQty' },
         { headerName: "미계획량", field: 'unplannedQty' },
+        { headerName: "부분출고량", field: 'partialOutputQty' },
         { headerName: "재고", field: 'stockQty', hide: true },
         { headerName: "상품코드", field: 'productCode', hide: true },
       ],
@@ -117,8 +118,9 @@ export default {
           [keys[4]]: order.order_amount,
           [keys[5]]: order.plan_qty,
           [keys[6]]: order.unplanned_qty,
-          [keys[7]]: '재고',
-          [keys[8]]: order.product_code
+          [keys[7]]: order.output_amount === null ? 0 : order.output_amount,
+          [keys[8]]: '재고',
+          [keys[9]]: order.product_code
         }
       })
     },

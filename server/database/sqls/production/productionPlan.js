@@ -18,7 +18,8 @@ const orders =
        ol.due_date,
        p.product_name,
        opr.plan_qty,
-       order_amount - opr.plan_qty AS unplanned_qty
+       order_amount - opr.plan_qty AS unplanned_qty,
+       (select outp.output_amount from output outp where outp.order_num = o.order_num) as output_amount
      FROM orders o INNER JOIN orderlists ol INNER JOIN product p inner join order_plan_relation opr
                                                                             ON o.orderlist_num = ol.orderlist_num
      WHERE o.product_code = p.product_code
@@ -26,7 +27,7 @@ const orders =
 
 const ordersByProductCode =
     `SELECT
-       order_num,
+       o.order_num,
        order_amount,
        total_price,
        order_status,
@@ -35,10 +36,14 @@ const ordersByProductCode =
        o.orderlist_num,
        ol.order_date,
        ol.due_date,
-       p.product_name
-     FROM orders o INNER JOIN orderlists ol INNER JOIN product p
-    ON o.orderlist_num = ol.orderlist_num
+       p.product_name,
+       opr.plan_qty,
+       order_amount - opr.plan_qty AS unplanned_qty,
+       (select outp.output_amount from output outp where outp.order_num = o.order_num) as output_amount
+     FROM orders o INNER JOIN orderlists ol INNER JOIN product p inner join order_plan_relation opr
+                                                                            ON o.orderlist_num = ol.orderlist_num
      WHERE o.product_code = p.product_code
+       and opr.order_num = o.order_num
        AND o.product_code = ?`;
 
 // procedure 설정
