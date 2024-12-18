@@ -147,13 +147,15 @@
 
         },
         async insertBomlist({bom_num, material_code, material, material_con}){
-      
         this.newList = { bom_num, material_code, material, material_con };
             console.log(this.newList);
 
           console.log('insert 데이터');
-          let result = await axios.post(`${ajaxUrl}/bominsert`, this.newList);
+          let result = await axios.post(`${ajaxUrl}/bominsert/${bom_num}`, this.newList);
           console.log(result.data);
+        },
+        async insertBom() { // 등록
+
         },
         
         view(productname,capa,bomnum,materialcode) {

@@ -31,11 +31,13 @@ const bomList =
  on bm.bom_num = b.bom_num
  WHERE bom_num = ?;`;
 
-// 등록
+// bom등록
   const bomInsert =
 `INSERT INTO bom
- SET ? 
- INSERT INTO bom_material
+ SET ? `;
+// bom 자재 등록
+  const materialInsert =
+ `INSERT INTO bom_material
  SET ?`;
 
 // 수정
@@ -47,8 +49,8 @@ WHERE bom_seq = ? `;
 // 자재추가 (등록)
 const bomAddInsert =
 `INSERT INTO bom_material
-SET ?
-WHERE bom_num = ?` ;
+SET ?` ;
+
 
 // 삭제
   const bomDelete =
@@ -64,5 +66,6 @@ WHERE bom_num = ?` ;
     bomDelete,
     bomUpdate,
     bomselectView,
-    bomAddInsert
+    bomAddInsert,
+    materialInsert
 }

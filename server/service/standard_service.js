@@ -20,17 +20,17 @@ const createNewBom = async (bomInfo)=>{
 // BOM 수정
 const updateBom = async (num , updateInfo) => {
   console.log(num);
-  console.log('dOsdf', updateInfo);
+  console.log(updateInfo);
   let datas = [updateInfo, num];
   let result = await mysql.query('bomUpdate',datas);
   return result;
 }
 
 // BOM 자재 추가 
-const insertBom = async (insertInfo) => {
+const insertBom = async (bomnum , insertInfo) => {
   console.log(insertInfo);
-  let datas = [insertInfo];
-  let result = await mysql.query('bomInsert',datas);
+  let datas = [insertInfo,bomnum];
+  let result = await mysql.query('bomAddInsert',datas);
   return result;
 }
 // BOM 목록 조회

@@ -12,7 +12,7 @@ router.get('/boms/:bomnum', async (req, res)=>{
 
 
 // 등록
-router.post('/bommanagement', async(req, res)=>{
+router.post('/bomregist', async(req, res)=>{
   let bomInfo = req.body;
   let result = await bomService.createNewBom(bomInfo);
   res.send(result);
@@ -29,9 +29,10 @@ router.post('/bomupdate/:bomnum', async(req,res)=>{
 });
 
 // 자재 추가 등록
-router.post('/bominsert', async(req,res)=>{
-  let bomInfo = req.body;
-  let result = await bomService.insertBom(bomInfo);
+router.post('/bominsert/:bomnum', async(req,res)=>{
+  let bomnum = req.params.bomnum;
+  let insertInfo = req.body;
+  let result = await bomService.insertBom(bomnum, insertInfo);
   res.send(result);
 });
 
