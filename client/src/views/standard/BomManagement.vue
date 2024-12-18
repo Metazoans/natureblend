@@ -20,6 +20,10 @@
           </div>
           
           <div class="search pe-md-3 d-flex align-items-center ms-md-auto" v-for="(item, index) in bomBox" :key="index">
+            <div class="d-flex align-items-center ms-md-3">
+                  <span>자재코드</span>
+                  <input v-model="item.material_code" :id="'materialcode-' + index" type="text" class="form-control"/>
+              </div>
               <div class="d-flex align-items-center ms-md-3">
                   <span>자재</span>
                   <input v-model="item.material" :id="'material-' + index" type="text" class="form-control"/>
@@ -37,7 +41,7 @@
           <button type="button" @click="addMaterial" class="btn btn-primary">
              자재 추가
           </button>
-          <button type="button" @click="registerBom" class="btn btn-danger">
+          <button type="button" @click="insertBom" class="btn btn-danger">
             BOM 등록
           </button>
       </div>
@@ -55,7 +59,7 @@
                       <tr :key="i" v-for="(bom, i) in bomList">
                           <td>{{ bom.product_name }}</td>
                           <td>{{ bom.capacity }}</td>
-                          <td><button type="button" @click="view(bom.product_name,bom.capacity,bom.bom_num)" class="btn btn-secondary">조회</button></td>
+                          <td><button type="button" @click="view(bom.product_name,bom.capacity,bom.bom_num,bom.material_code)" class="btn btn-secondary">조회</button></td>
                           <td><button type="button" @click="dele" class="btn btn-warning">삭제</button></td>
                       </tr>
                   </tbody>
@@ -75,9 +79,26 @@
         return { 
           bomList: [],
           bomBox: [],
+          bomBox2: [],
+          newList: [],
+
           searchBomnum: '',  // BOM 번호
           searchProduct: '', // 제품명
           searchCapacity: '', // 용량
+          searchMaterialcode: '', // 자재코드
+          bomInfo: {
+            bom_num:'',
+            product_code:'',
+            product_name:'',
+            capacity:''
+          },
+          bomMaterial:{
+            bom_num:'',
+            material_code:'',
+            material: '',
+            material_con: ''
+          },
+          isUpdated : false
         };
       },
       created() {
@@ -95,22 +116,83 @@
         async getBom(bomnum){
           let result = await axios.get(`${ajaxUrl}/boms/${bomnum}`);
           this.bomBox=result.data;
-          console.log(result.data);
+          this.bomBox2 = JSON.parse(JSON.stringify(this.bomBox));
+          // console.log(result.data);
         },
         
-        view(productname,capa,bomnum) {
-          console.log(bomnum);
+        
+    async updateBomlist({bom_seq, bom_num, material_code, material, material_con}){
+      /*
+      console.log(bomarray);
+      console.log(bomarray.bom_seq);
+      if (!Array.isArray(bomarray)) {
+            console.error('Invalid data: bomarray is not an array', bomarray);
+            return; 
+      };
+     
+      this.newList = bomarray.map(({ bom_num, material_code, material, material_con }) => ({
+            bom_num,
+            material_code,
+            material,
+            material_con
+        })); */
+      
+        this.newList = { bom_num, material_code, material, material_con };
+            console.log(this.newList);
+
+          console.log('update 데이터');
+          let result = await axios.post(`${ajaxUrl}/bomupdate/${bom_seq}`, this.newList);
+          console.log(result.data);
+          
+
+        },
+        
+        view(productname,capa,bomnum,materialcode) {
+          // console.log(bomnum);
           this.getBom(bomnum);
           this.searchBomnum = bomnum;
           this.searchProduct = productname;  // 제품명 입력창에 값 설정
           this.searchCapacity = capa;        // 용량 입력창에 값 설정
+          this.searchMaterialcode = materialcode;
         },
         addMaterial() {
-          this.bomBox.push({ material: '', material_con: '' });
+          this.bomBox.push({ bom_num:'', material_code: '', material: '', material_con: '' });
         },
         goToDetail(bomNum) {
           this.$router.push({ name : 'bomInfo', params : { bomno : bomNum }});
         },
+        updateBom() {
+          for(let i =0; i<this.bomBox2.length; i++){
+            console.log(i);
+          }
+            // console.log(this.bomBox);
+            this.bomBox.forEach(item => {
+              if(!item.bom_num) {
+                item.bom_num = this.searchBomnum;
+              }
+            });// 새로 만든 칸에 bomnum을 같은 값으로 넣어줌
+            // console.log(this.bomBox);
+            // console.log(this.bomBox2);
+            for(let i =0; i<this.bomBox.length; i++){
+
+              if(i < this.bomBox2.length ){
+                if(this.bomBox[i]['material'] != this.bomBox2[i]['material'] || this.bomBox[i]['material_code'] != this.bomBox2[i]['material_code']
+                  || this.bomBox[i]['material_con'] != this.bomBox2[i]['material_con']
+                ){
+                  console.log('같지않음');
+                  // console.log(this.bomBox[i]);
+                  this.updateBomlist(this.bomBox[i]);
+                 }else{
+                  console.log('같은값');
+                 }
+
+              }else{
+                console.log('insert 해야하는 데이터');
+                console.log(this.bomBox[i]);
+                this.insertBomlist(this.bomBox[i]);
+              }
+            }
+          }
       }
   }
 </script>
@@ -148,7 +230,7 @@ div {
   margin-right: 10px;
 }
 span{
-  width: 100px;
+  width: 120px;
 }
 .ms-md-3 {
   margin-left: 15px;
