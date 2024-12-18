@@ -25,9 +25,10 @@ ORDER BY
 const clientlist = 
 `SELECT com_name 
 FROM client
+WHERE trade='판매'
 ORDER BY com_name`;
 
-//검색 조회
+//주문서 검색 조회
 const orderListInfo = 
 `SELECT o.orderlist_num,
 		o.orderlist_title,
@@ -47,6 +48,21 @@ ON o.client_num = c.client_num `;
 // AND (o.order_date >= ? OR ? IS NULL)
 // AND (o.order_date <= ? OR ? IS NULL)`;
 
+
+// 주문서 등록 가능한 직원만: 영업부서 
+const orderEmployees = 
+` select name
+  from employee
+  where job_num = 1`;
+
+//제품이름, 코드 전체 출력 
+const orderProduct =
+`SELECT product_code,
+       product_name
+FROM product
+ORDER BY product_code`;
+
+
 const orderListInsert = 
 `INSERT INTO orderlists
 SET ?
@@ -65,6 +81,8 @@ module.exports = {
     orderList,
 	clientlist,
     orderListInfo,
+	orderEmployees,
+	orderProduct,
     orderListInsert,
     orderListUpdate,
     orderListDelete

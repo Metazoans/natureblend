@@ -1,6 +1,6 @@
-const mysql = require('../database/mapper.js');
+const mysql = require('../../database/mapper.js');
 //주문서 
-//거래처 전체 조회 
+//판매 거래처 전체 조회 
 const getClientList = async ()=>{
     let list = await mysql.query('clientlist');
     return list;
@@ -67,7 +67,21 @@ const getOrderList = async (orderStatus, orderName, clientName, startDate, endDa
 }
 
 
+//영업사원 전체 조회
+const getEmpList = async ()=> {
+  let list = await mysql.query('orderEmployees');
+  return list;
+}
+
+//전체 제품코드, 이름 조회
+const getProductList = async()=>{
+  let list = await mysql.query('orderProduct');
+  return list;
+}
+
 module.exports = {
     getClientList,
     getOrderList,
+    getEmpList,
+    getProductList,
 }

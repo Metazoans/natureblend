@@ -31,23 +31,19 @@
                     <div class="col-sm-4">
                         <input 
                             id="clientSearch"  class="form-control border p-2"
-                            v-model="clientName" @click="openModal"/>
-                        <Modal :isShowModal="isShowModal" @closeModal="closeModal">
+                            v-model="searchCom.com_name" @click="openModal"/>
+                            <Modal
+                                :isShowModal="isShowModal"
+                                :modalTitle="'거래처선택'"
+                                :noBtn="'닫기'"
+                                :yesBtn="'선택'"
+                                @closeModal="closeModal()"
+                                @confirm="confirm()"
+                            >
                             <template v-slot:list>
-                                <!--모달 안에 거래처 목록 출력-->
-                                <div>
-                                    <ul>
-                                        <li v-for="client in clientList" :key="client.com_name">
-                                            <p class="btn btn-light" @click="selectClient(client.com_name)">
-                                                {{ client.com_name }}
-                                            </p>
-
-                                        </li>
-                                    </ul>
-                                </div>
-                                
+                                <ComList v-show="isShowModal" @selectclient="selectclient"/>
                             </template>
-                        </Modal>
+                            </Modal>
                     </div>    
                 </div>
                 <!--주문서명 검색 -->
@@ -95,8 +91,9 @@
 <script>
 import MaterialButton from "@/components/MaterialButton.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import ComList from "@/views/sales/Order/clientModal.vue";
 import orderList from "./orderList.vue";
-import axios from "axios";
+
 
  
 
@@ -105,6 +102,7 @@ export default{
     components:{
             MaterialButton,
             Modal,
+            ComList,
             orderList,
     },
     data(){
@@ -116,11 +114,12 @@ export default{
             pickedStatus:[], //체크박스 선택 값 저장
 
             //검색 필터 데이터
-            clientList:[], //거래처명 목록 저장
-            clientName : "", // 거래처명 선택한것 
             orderName:"", // 주문서명
             startDate:"", //주문날짜 시작 날짜
             endDate:"", //주문날짜 끝 날짜
+
+            searchCom:"", // 저장 될 거래처 명 
+            selectedCom: "", //선택된 거래처 명
 
             filters: [],
             
@@ -129,20 +128,17 @@ export default{
     
 
     methods:{
+        selectclient(client){
+            this.selectedCom = client; 
+        },
         async openModal(){
             console.log("modal 열림")
-            const response = await axios.get("/api/clients") //서버호출
-                                        .catch(err=> console.log(err));
-            this.clientList = response.data; //거래처목록 저장
             this.isShowModal = !this.isShowModal; //모달 열기 
         },
-        selectClient(client){
-            
-            this.clientName = client; // 선택된 거래처명 설정
-            console.log(client);
-            console.log("this.clientName:",this.clientName);
-            this.isShowModal = false;
-            
+        
+        confirm(){
+            this.searchCom = this.selectedCom;
+            this.closeModal();
         },
         closeModal() {
             this.isShowModal = false
