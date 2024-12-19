@@ -199,14 +199,130 @@ on p.product_code = o.product_code
 where l.orderlist_num = ?`;
 
 //주문 업데이트에서 추가 주문 
+/*DELIMITER //
+CREATE PROCEDURE orderUpdateInput
+(
+IN v_orderlist_num INT,
+IN v_product_code_json_array TEXT,
+IN v_product_num_json_array TEXT,
+IN v_per_price_json_array TEXT
+)
+BEGIN
+	DECLARE i INT DEFAULT 1;
+	DECLARE product_code_array_length INT;
+	DECLARE product_code_value TEXT;
+	DECLARE product_num_value TEXT;
+	DECLARE per_price_value TEXT;
+    DECLARE v_result_value INT;
+
+    -- 트렌젝션 시작
+    START TRANSACTION;
+    
+    SET product_code_array_length = JSON_LENGTH(v_product_code_json_array);
+	
+    -- 주문등록
+    WHILE i <= product_code_array_length DO
+    SET product_code_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_code_json_array , CONCAT('$[', i - 1, ']')));
+    SET product_num_value   = JSON_UNQUOTE(JSON_EXTRACT(v_product_num_json_array  , CONCAT('$[', i - 1, ']')));
+    SET per_price_value   = JSON_UNQUOTE(JSON_EXTRACT(v_per_price_json_array  , CONCAT('$[', i - 1, ']')));
+	INSERT INTO orders 
+				(orderlist_num,
+                order_amount,
+                per_price,
+                total_price,
+                product_code)
+	VALUES  (v_orderlist_num,
+			product_num_value,
+            per_price_value,
+            product_num_value*per_price_value,
+            product_code_value);
+	SET v_result_value = ROW_COUNT();
+		IF v_result_value != 1 THEN 
+				-- 오류 발생 시 롤백
+				rollback;
+		END IF;
+		SET i = i + 1;
+	END WHILE;
+    -- 문제없을때
+    COMMIT;
+    -- 문제있을때
+    ROLLBACK;
+END//
+DELIMITER ;
+CALL orderUpdateInput(2 (orderlist_num),'["P001", "P002"]' (product_code array),'[10, 20]'(order_amount array),'[1000, 2000]'(per_price array)
+);*/ 
 const updateAddOrder= 
 `
-`;
+CALL orderUpdateInput(? ,? ,? ,?);`;
 
-const orderListUpdate=
-`UPDATE orderlists
-SET ?
-WHERE orderlist_num =? `;
+//주문서, 주문 업데이트 
+/*
+DELIMITER //
+CREATE PROCEDURE orderUpdate
+(
+IN v_orderlist_num INT,
+IN v_orderlist_title VARCHAR(50),
+IN v_due_date DATETIME,
+
+IN v_product_code_json_array TEXT,
+IN v_product_num_json_array TEXT,
+IN v_per_price_json_array TEXT
+
+)
+BEGIN
+DECLARE v_result_value INT;
+
+DECLARE i INT DEFAULT 1;
+DECLARE product_code_array_length INT;
+DECLARE product_code_value TEXT;
+DECLARE product_num_value TEXT;
+DECLARE per_price_value TEXT;
+DECLARE v_change_num INT;
+
+-- 트렌젝션 시작
+START TRANSACTION;
+
+-- JSON 배열 길이 계산
+SET product_code_array_length = JSON_LENGTH(v_product_code_json_array);
+
+-- 주문서 수정 
+UPDATE orderlists
+SET orderlist_title = v_orderlist_title,
+	due_date = v_due_date
+WHERE orderlist_num = v_orderlist_num;
+
+-- 주문 수정 
+-- 반복으로  json 배열 요소 추출 
+WHILE i <= product_code_array_length DO
+	SET product_code_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_code_json_array , CONCAT('$[', i - 1, ']')));
+	SET product_num_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_num_json_array , CONCAT('$[', i - 1, ']')));
+    SET per_price_value   = JSON_UNQUOTE(JSON_EXTRACT(v_per_price_json_array  , CONCAT('$[', i - 1, ']')));
+    -- 주문정보 업데이트 
+    UPDATE orders
+	SET order_amount = product_num_value,
+		per_price = per_price_value,
+        total_price = product_num_value *  per_price_value
+	WHERE orderlist_num = v_orderlist_num AND product_code = product_code_value;
+    
+    -- 변경된 행 체크 
+    SET v_change_num = ROW_COUNT();
+			IF v_change_num != 1 THEN 
+						-- 오류 발생 시 롤백
+					rollback;
+			END IF;
+	  SET i = i + 1;
+	END WHILE;
+    -- 문제없을때
+    COMMIT;
+    -- 문제있을때
+    ROLLBACK;
+END//
+DELIMITER ; CALL orderUpdate(15,'오렌지나라','2025-01-03','["P006", "P008"]','[10, 20]','[1000, 2000]');
+*/ 
+const updateOrder=
+`CALL orderUpdate(?, ?, ?, ?, ?, ?)`;
+
+
 
 const orderListDelete = 
 `DELETE FROM orderlists
@@ -219,7 +335,8 @@ module.exports = {
 	orderEmployees,
 	orderProduct,
     orderListInsert,
-    orderListUpdate,
+    updateAddOrder,
+	updateOrder,
     orderListDelete,
 	orderInfo,
 

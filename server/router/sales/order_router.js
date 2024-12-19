@@ -42,4 +42,13 @@ router.get('/orderInfo/:no', async(req,res)=>{
   res.send(info);
 })
 
+//주문수정의 주문추가
+router.post('/orderUpdate/insert',async(req,res)=>{
+  let orderInfo = req.body;
+  let result = await orderService.updateAddOrder(orderInfo);
+  res.send(result);
+})
+
+//주문서,주문 수정 
+
 module.exports = router;
