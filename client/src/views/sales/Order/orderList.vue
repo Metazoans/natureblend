@@ -4,17 +4,25 @@
       :rowData="rowData"
       :columnDefs="columnDefs"
       :theme="theme"
-  >
-  </ag-grid-vue>
+      @grid-ready="onGridReady"
+      :noRowsOverlayComponent="noRowsOverlayComponent"
+      @rowClicked="onRowClicked"
+  />
+  
   </div>
+  <div style="display: none">
+      <CustomNoRowsOverlay/>
+    </div>
 </template>
 
 
 <script>
-import theme from "@/utils/agGridTheme";
 import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
+import theme from "@/utils/agGridTheme";
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
 
 
 export default {
@@ -25,27 +33,31 @@ export default {
         required: true,
     },
   },
+  components:{
+    CustomNoRowsOverlay
+  },
   
  
   data(){
     return {
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
       filterOrderlist : [],
       statusMap: {         // DB 상태값과 화면 상태명 매핑
         "update": "등록",
         "continue": "진행중",
         "done": "완료",
       },
-
+      
       theme : theme,
       rowData : [],
       columnDefs : [
-        { field : "주문서코드"},
-        { field : "주문서명"},
-        { field : "거래처명"},
-        { field : "담당자"},
-        { field : "주문일자"},
-        { field : "납기일자"},
-        { field : "진행상태"},
+        { headerName : "주문서코드", field:'orderListNum'},
+        { headerName : "주문서명", field:'orderName'},
+        { headerName : "거래처명",field:'clientName'},
+        { headerName : "담당자",field:'empName'},
+        { headerName : "주문일자",field:'orderDate'},
+        { headerName : "납기일자",field:'dueDate'},
+        { headerName : "진행상태",field:'orderStatus'},
 
       ],
 
@@ -60,7 +72,14 @@ export default {
       },
     },
   },
+  created(){
+    this.searchOrder() // 컴포넌트가 생성될 때 초기 검색
+  },
   methods:{
+    onGridReady(params) {
+      this.gridApi = params.api;
+      this.gridApi.sizeColumnsToFit();
+    },
     async searchOrder(){
       let obj = {
         orderStatus:this.filters.orderStatus,
@@ -78,13 +97,13 @@ export default {
 
         this.rowData = []; //초기화 
         for(let i=0; i < this.filterOrderlist.length; i++){
-          let tempData = {'주문서코드': this.filterOrderlist[i].orderlist_num,
-                           '주문서명':this.filterOrderlist[i].orderlist_title ,
-                           '거래처명':this.filterOrderlist[i].com_name,
-                           '담당자': this.filterOrderlist[i].name,
-                           '주문일자' : this.dateFormat(this.filterOrderlist[i].order_date, 'yyyy-MM-dd'),
-                           '납기일자' : this.dateFormat(this.filterOrderlist[i].due_date, 'yyyy-MM-dd'),
-                           '진행상태' : this.statusMap[this.filterOrderlist[i].orderlist_status] || this.filterOrderlist[i].orderlist_status
+          let tempData = {'orderListNum': this.filterOrderlist[i].orderlist_num,
+                           'orderName':this.filterOrderlist[i].orderlist_title ,
+                           'clientName':this.filterOrderlist[i].com_name,
+                           'empName': this.filterOrderlist[i].name,
+                           'orderDate' : this.dateFormat(this.filterOrderlist[i].order_date, 'yyyy-MM-dd'),
+                           'dueDate' : this.dateFormat(this.filterOrderlist[i].due_date, 'yyyy-MM-dd'),
+                           'orderStatus' : this.statusMap[this.filterOrderlist[i].orderlist_status] || this.filterOrderlist[i].orderlist_status
                         }
                         // console.log(tempData);
           this.rowData[i] = tempData; // 객체를 배열로 넣기 
@@ -92,16 +111,21 @@ export default {
         console.log(this.rowData);
         
         
-      },
+      },// searchOrder
+
       
     dateFormat(value, format) {
           return userDateUtils.dateFormat(value, format);
       },
+
+    onRowClicked(row) {
+        console.log('클릭된 셀 데이터:',row.data);
+        let order = row.data
+        this.$router.push({ name:'orderInfo', params : {no: order.orderListNum} })
+      },
     },//end-Method
     
-    created() {
-        this.searchOrder(); // 컴포넌트가 생성될 때 초기 검색
-    },
+   
 };
 </script>
 <style lang="scss" scoped>

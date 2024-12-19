@@ -121,6 +121,10 @@ import ComList from "@/views/sales/Order/clientModal.vue";
 import EmpList from "@/views/sales/Order/EmpModal.vue";
 import proList from "@/views/sales/Order/ProductModal.vue"
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import axios from "axios";
+import {ajaxUrl} from "@/utils/commons";
+
+
 export default{
     name:"orderForm",
     components:{
@@ -142,9 +146,7 @@ export default{
             productNum:'',
             perPrice:'',
 
-            materials:[
-            
-            ],
+            materials:[],
 
             //거래처 모달 
             searchCom:"", // 저장 될 거래처 명 
@@ -232,6 +234,7 @@ export default{
         }    
     },
 
+    
     deleteMaterial(index){
         //console.log("deleteMaterial실행");
         // let index = parseInt(this.value);
@@ -242,7 +245,7 @@ export default{
         
     },
 
-
+    //초기화
     resetSearch(){
         this.orderlistNum = "",
         this.orderName ="",
@@ -259,19 +262,60 @@ export default{
         this.searchCom=""
 
     },
-    insertOrder(){
-        console.log("save");
-        for(let i=0; i<this.materials.length; i++){
-            let productCode = this.materials[i]['productCode'];
-            let productName = this.materials[i]['productName'];
-            let productNum = this.materials[i]['productNum'];
-            let perPrice = this.materials[i]['perPrice'];
-            console.log(this.orderName,this.dueDate,this.searchEmpName,productCode,productName,productNum,perPrice);
+    //주문, 주문서 등록 
+    async insertOrder(){
+        // for(let i=0; i<this.materials.length; i++){
+        //     let productCode = this.materials[i]['productCode'];
+        //     let productName = this.materials[i]['productName'];
+        //     let productNum = this.materials[i]['productNum'];
+        //     let perPrice = this.materials[i]['perPrice'];
+        //     console.log(this.orderName,this.dueDate,this.searchEmpName,productCode,productName,productNum,perPrice);
             
+        // }
+
+        if (!this.orderName || !this.dueDate || !this.searchEmpName) {
+        this.$notify({ text: '필수 정보를 모두 입력하세요.', type: 'error' });
+        return;
         }
-       
-        
-    },
+        if (this.materials.length === 0) {
+            this.$notify({ text: '주문 품목을 추가하세요.', type: 'error' });
+            return;
+        }
+
+        let productCodes = []
+        let productNums = []
+        let perPrices = []
+        this.materials.forEach((orderInfo)=>{
+            productCodes.push(orderInfo.productCode);
+            productNums.push(orderInfo.productNum);
+            perPrices.push(orderInfo.perPrice);
+        })
+
+        let orderInfo = {
+            orderName : this.orderName,
+            dueDate : this.dueDate,
+            searchEmpName: this.searchEmpName.name,
+            searchCom: this.searchCom.com_name,
+            productCode: JSON.stringify(productCodes),
+            productNum : JSON.stringify(productNums),
+            perPrice : JSON.stringify(perPrices),
+        }
+
+        //console.log(orderInfo);
+
+        let result =
+            await axios.post(`${ajaxUrl}/orderForm/insert`,orderInfo)
+                        .catch(err => console.log(err));
+                        console.log(result);
+        if(result.statusText === 'OK'){
+        this.$notify({
+            text: `${this.orderName}이 등록되었습니다.`,
+            type: 'success',
+        });
+        this.resetSearch();  // 주문 등록 후 초기화   
+        }
+    }
+    
         
     }//end method
 }

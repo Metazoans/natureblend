@@ -38,18 +38,7 @@
               </div>
           </div>
 
-          <div class="grid-bom" >
-           <ag-grid-vue 
-             style ="width: 600px; height: 500px;"
-             :rowData="bomBox"
-             :columnDefs="columnBoms"
-             :theme="theme"
-             :pagination="true"
-             :paginationPageSize="10"
-             @grid-ready="onReady"
-         >
-          </ag-grid-vue>
-         </div>
+          
           <button type="button" @click="updateBom" class="btn btn-success">
               수정 완료
           </button>
@@ -59,69 +48,41 @@
           <button type="button" @click="insertBom" class="btn btn-danger">
             BOM 등록
           </button>
-        </div>
-        <div class="grid-container" >
-           <ag-grid-vue 
-             style ="width: 600px; height: 500px;"
-             :rowData="bomList"
-             :columnDefs="columnDefs"
-             :theme="theme"
-             :pagination="true"
-             :paginationPageSize="10"
-             @grid-ready="onReady"
-         >
-          </ag-grid-vue>
-         </div>
+      </div>
+      
+      <div class="table-container">
+          <div class="container">
+              <table class="table table-hover">
+                  <thead>
+                      <tr>
+                          <th>제품명</th>
+                          <th>용량</th>
+                          <th>제품코드</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr :key="i" v-for="(bom, i) in bomList">
+                          <td>{{ bom.product_name }}</td>
+                          <td>{{ bom.capacity }}</td>
+                          <td>{{ bom.product_code }}</td>
+                          <td><button type="button" @click="view(bom.product_name,bom.capacity,bom.bom_num,bom.material_code,bom.product_code)" class="btn btn-secondary">조회</button></td>
+                          <td><button type="button" @click="dele(bom.bom_num)" class="btn btn-warning">삭제</button></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+      </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios';
   import { ajaxUrl } from '@/utils/commons.js';
-  import theme from "@/utils/agGridTheme";
   
   export default { 
       name: 'BomManagement',
       data() {
         return { 
-          theme: theme,
-          rowData:[],
-          columnBoms: [
-            { headerName:"자재코드", field: "material_code" , editable: true },
-            { headerName:"자재" , field: "material" , editable: true },
-            { headerName:"수량" , field: "material_con" , editable: true}
-          ],
-          columnDefs: [
-         { headerName: "제품명", field: "product_name" , width : 150 },
-         { headerName: "용량", field: "capacity" , width : 150 },
-         {
-          width : 80,
-          editable: false,
-          cellRenderer: params => {
-            const button = document.createElement('button');
-            button.innerText = '조회';
-            button.addEventListener('click', () => {
-              console.log("레코드 확인 : ", JSON.stringify(params.data));
-              console.log(params.data.product_code);
-              this.view(params.data.product_name,params.data.capacity,params.data.bom_num,params.data.material,params.data.product_code);
-            });
-            return button;
-          }
-        },
-        {
-          width : 80,
-          editable: false,
-          cellRenderer: params => {
-            const button = document.createElement('button');
-            button.innerText = '삭제';
-            button.addEventListener('click', () => {
-              console.log("레코드 확인 : ", JSON.stringify(params.data));
-              this.dele(params.data.bom_num);
-            });
-            return button;
-          }
-        },
-       ],
           bomList: [],
           bomBox: [],
           bomBox2: [],
@@ -143,7 +104,6 @@
             let result = await axios.get(`${ajaxUrl}/bomview`);
             if (result && result.data) {
               this.bomList = result.data;
-              //this.rowData = result.data;
             } else {
               console.log("서버 연결 실패");
             }
@@ -197,7 +157,6 @@
               window.location.reload();
           },       
           view(productname,capa,bomnum,materialcode,productcode) {
-            console.log('데이터',materialcode);
             console.log('제품코드',productcode);
             console.log('제품번호',bomnum);
             this.getBom(bomnum);
@@ -252,9 +211,6 @@
                 }
               }
             }
-        },
-        onReady(param){
-          param.api.sizeColumnsToFit();
         }
     }
 </script>

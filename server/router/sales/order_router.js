@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const orderService = require('../service/sales/order_service.js');
+const orderService = require('../../service/sales/order_service.js');
 
 //판매 거래처 전체 조회
 router.get('/orderList/clients',async(req,res)=>{
@@ -27,5 +27,19 @@ router.get('/orderlist/products',async(req,res)=>{
   res.send(prdList); 
 })
 
+
+//주문서,주문 등록
+router.post('/orderForm/insert',async(req,res)=>{
+  let orderInfo = req.body;
+  let result = await orderService.addOrder(orderInfo);
+  res.send(result);
+})
+
+//주문서, 주문 정보 조회
+router.get('/orderInfo/:no', async(req,res)=>{
+  let orderlistNum = req.params.no;
+  let info = await orderService.getOrderInfo(orderlistNum);
+  res.send(info);
+})
 
 module.exports = router;

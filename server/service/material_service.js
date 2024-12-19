@@ -51,6 +51,19 @@ const materialInputQcList = async ()=>{
   return list;
 }
 
+// 가능 창고리스트 조회
+//allwarehouseList  // warehouse_list
+const allwarehouseList = async ()=>{
+  let list = await mysql.query('warehouse_list');
+  return list;
+}
+
+//로트번호 생성하기
+const lotNumInfo = async ()=>{
+  let list = await mysql.query('material_lot_num');
+  return list;
+}
+
 
 module.exports = {
   allmaterial,
@@ -59,5 +72,7 @@ module.exports = {
   fullClientInfo,
   inputOrder,
   materialInputQcList,
+  allwarehouseList,
+  lotNumInfo,
 
 };

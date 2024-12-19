@@ -53,6 +53,7 @@
     </template>
     <script>
     import axios from "axios";
+    import { ajaxUrl } from '@/utils/commons.js';
     
     
     
@@ -70,7 +71,7 @@
         },
         methods: {
             async getEmpList(){
-                let result = await axios.get(`/api/orderlist/emps`) //서버호출
+                let result = await axios.get(`${ajaxUrl}/orderlist/emps`) //서버호출
                                         .catch(err=> console.log(err));
                 this.empList = result.data; //직원목록 저장
                 console.log(this.empList);

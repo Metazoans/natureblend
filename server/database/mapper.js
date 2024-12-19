@@ -9,7 +9,6 @@ const connectionPool = mariadb.createPool({
   database : process.env.MYSQL_DB,
   connectionLimit : process.env.MYSQL_LIMIT,
 
-
   trace : true, //log
   logger: {
     query: (msg) => console.info(msg),

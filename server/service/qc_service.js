@@ -41,7 +41,25 @@ const findMeterialAllOrder = async ()=>{
   return list;
 }
 
+// const requestInspectionForM = async(insertObj)=>{
+//   let sql = 'inputQCMaterial';
+//   let arr = insertObj;
+//   try{
+//     for(let item of arr){
+//       let { orderCode, mName, ordQty, orderDate } = item
+
+//       let result = await mysql.query(sql, ( orderCode, mName, ordQty, orderDate ));
+//     }
+
+//   }catch{
+
+//   }
+//   return 
+
+// }
+
 module.exports = {
   findMeterialOrder,
-  findMeterialAllOrder
+  findMeterialAllOrder,
+  //requestInspectionForM
 };

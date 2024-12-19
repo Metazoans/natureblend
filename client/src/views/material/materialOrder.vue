@@ -23,6 +23,9 @@
                       생산계획코드
                     </th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                      생산번호
+                    </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                       생산계획명
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -36,9 +39,16 @@
                 <tbody>
                 <tr v-for="pdt in productorderlist" :key="pdt.order_code">
                   <td>
-                    <label><input type="checkbox" :value="pdt.plan_num" v-model="checked"></label>
+                    <label><input type="checkbox" :value="pdt.order_plan_num" v-model="checked"></label>
                   </td>
                   <td>
+                    <div class="d-flex px-2 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">{{ pdt.order_plan_num }}</h6>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="align-middle text-center text-sm">
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="mb-0 text-sm">{{ pdt.plan_num }}</h6>
@@ -48,7 +58,7 @@
                   <td class="align-middle text-center text-sm">
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">{{ pdt.plan_name }}</h6>
+                        <h6 class="mb-0 text-sm">{{ pdt.product_code }}</h6>
                       </div>
                     </div>
                   </td>
@@ -149,6 +159,7 @@ export default {
     // 체크된 정보 수정해서 전달 (1)
     materialSelect(checked){
       for (let planCode of checked) {
+        console.log(planCode);
         this.needMaterialOrder(planCode);
       }
     },

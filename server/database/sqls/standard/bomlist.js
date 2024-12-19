@@ -16,7 +16,8 @@ const bomList =
  const bomView = 
  `SELECT product_name,
          capacity,
-         bom_num
+         bom_num,
+         product_code
   FROM bom`;
  
  // BOM 조회 
@@ -24,6 +25,7 @@ const bomList =
 `SELECT b.bom_num,
         b.product_name,
         b.capacity,
+        b.product_code,
         bm.material_code,
         bm.material,
         bm.material_con
@@ -31,12 +33,14 @@ const bomList =
  on bm.bom_num = b.bom_num
  WHERE bom_num = ?;`;
 
-// 등록
+// bom등록
   const bomInsert =
 `INSERT INTO bom
- SET ? 
- INSERT INTO bom_material
  SET ?`;
+// // bom 자재 등록
+//   const materialInsert =
+//  `INSERT INTO bom_material
+//  SET ?`;
 
 // 수정
 const bomUpdate =
@@ -44,12 +48,20 @@ const bomUpdate =
 SET ? 
 WHERE bom_seq = ? `;
 
+// 자재등록 , 수정할때 자재추가
+const bomAddInsert =
+`INSERT INTO bom_material
+SET ?` ;
+
+
 // 삭제
-  const bomDelete =
+const materialDelete =
+`DELETE FROM bom_material
+WHERE bom_num = ?`;
+const bomDelete =
 `DELETE FROM bom
- WHERE bom_num = ?
- DELETE FROM bom_material
- WHERE bom_num = ?`;
+WHERE bom_num = ?`;
+
 
  module.exports = {
     bomList,
@@ -57,5 +69,8 @@ WHERE bom_seq = ? `;
     bomInsert,
     bomDelete,
     bomUpdate,
-    bomselectView
+    bomselectView,
+    bomAddInsert,
+    materialDelete,
+    // materialInsert
 }
