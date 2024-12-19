@@ -54,6 +54,7 @@
 </template>
 <script>
 import axios from "axios";
+import { ajaxUrl } from '@/utils/commons.js';
 
 
 
@@ -71,7 +72,7 @@ export default{
     },
     methods: {
         async getEmpList(){
-            let result = await axios.get(`/api/orderlist/products`) //서버호출
+            let result = await axios.get(`${ajaxUrl}/orderlist/products`) //서버호출
                                     .catch(err=> console.log(err));
             this.productList = result.data; //제품목록 저장
         },

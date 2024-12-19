@@ -146,9 +146,7 @@ export default{
             productNum:'',
             perPrice:'',
 
-            materials:[
-            
-            ],
+            materials:[],
 
             //거래처 모달 
             searchCom:"", // 저장 될 거래처 명 
@@ -236,6 +234,7 @@ export default{
         }    
     },
 
+    
     deleteMaterial(index){
         //console.log("deleteMaterial실행");
         // let index = parseInt(this.value);
@@ -246,7 +245,7 @@ export default{
         
     },
 
-
+    //초기화
     resetSearch(){
         this.orderlistNum = "",
         this.orderName ="",
@@ -263,6 +262,7 @@ export default{
         this.searchCom=""
 
     },
+    //주문, 주문서 등록 
     async insertOrder(){
         // for(let i=0; i<this.materials.length; i++){
         //     let productCode = this.materials[i]['productCode'];
