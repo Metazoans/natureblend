@@ -198,6 +198,10 @@ join product p
 on p.product_code = o.product_code
 where l.orderlist_num = ?`;
 
+//주문 업데이트에서 추가 주문 
+const updateAddOrder= 
+`
+`;
 
 const orderListUpdate=
 `UPDATE orderlists
