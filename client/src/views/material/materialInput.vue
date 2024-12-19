@@ -205,6 +205,7 @@ const lotMaking = async function(){
       warehouse1: nuwList.value[i].warehouse1,
       rjc_qnt: ( Number( nuwList.value[i].rjc_qnt.split(' ')[0] ) * 1000 ),
       warehouse2: nuwList.value[i].warehouse2,
+      emp_num: 1,   // 사원번호는 로그인한 세션으로 해야할꺼같음
     };
     //console.log(materialObj.value);
     //여기서 서버통신 시작함
