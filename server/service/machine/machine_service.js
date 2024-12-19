@@ -29,6 +29,23 @@ const createNewMachine = async (machineInfo) => {
   }
 }
 
+// 설비 수정
+const updateMachineInfo = async (no, updateInfo) => {
+  let datas = [updateInfo, no];
+  let result = await mariadb.query('machineUpdate', datas);
+  let sendData = {};
+  if(result.affectedRows == 1){
+    sendData.target = { 'machine_no' : no };
+    sendData.result = true;
+  }else{
+    sendData.result = false;
+  }
+  return sendData;
+}
+
+// 설비 삭제
+
+
 // 설비 분류 검색
 const findMachineType = async () => {
   let list = await mariadb.query('typeList');
@@ -41,5 +58,6 @@ module.exports = {
   findMachineType,
   findMachineInfo,
   findMachinePrdInfo,
+  updateMachineInfo,
   
 };
