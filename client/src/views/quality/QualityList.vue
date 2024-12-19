@@ -41,7 +41,7 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10">
       </ag-grid-vue>
 
     </div>
@@ -54,7 +54,7 @@
     <h4>신청내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10" @cell-clicked="onCellClicked">
       </ag-grid-vue>
 
     </div>
@@ -127,23 +127,23 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        {
-          field: "체크",
+        { headerName: "체크",
+          field: "check",
           resizable: false,
           editable: true,
           sortable: false,
         },
-        { field: "자재발주코드", resizable: false },
-        { field: "자재명", resizable: false },
-        { field: "발주수량", resizable: false },
-        { field: "발주신청일", resizable: false },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false },
+        { headerName: "자재명", field: "mName", resizable: false },
+        { headerName: "발주수량", field: "ordQty", resizable: false },
+        { headerName: "발주신청일", field: "orderDate", resizable: false },
       ],
       rowData2: [],   //신청 내역
       columnDefs2: [
-        { field: "자재발주코드", resizable: false },
-        { field: "자재명", resizable: false },
-        { headerName: "실제 수량", field: "발주수량", resizable: false },
-        { field: "발주신청일", resizable: false },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false },
+        { headerName: "자재명", field: "mName", resizable: false },
+        { headerName: "실제수량", field: "ordQty", resizable: false, editable: true,},
+        { headerName: "발주신청일", field: "orderDate", resizable: false },
         {
           cellRenderer: (params) => {
             return `
@@ -197,8 +197,8 @@ export default {
       this.rowData1 = []
       for (let i = 0; i < this.orderList.length; i++) {
         let col = {
-          "체크": false, "자재발주코드": this.orderList[i].order_code, "자재명": this.orderList[i].material_name,
-          "발주수량": this.orderList[i].ord_qty, "발주신청일": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
+          "check": false, "orderCode": this.orderList[i].order_code, "mName": this.orderList[i].material_name,
+          "ordQty": this.orderList[i].ord_qty, "orderDate": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
         };
         this.rowData1[i] = col;
       }
@@ -213,8 +213,8 @@ export default {
       this.rowData1 = []
       for (let i = 0; i < this.orderList.length; i++) {
         let col = {
-          "체크": false, "자재발주코드": this.orderList[i].order_code, "자재명": this.orderList[i].material_name,
-          "발주수량": this.orderList[i].ord_qty, "발주신청일": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
+          "check": false, "orderCode": this.orderList[i].order_code, "mName": this.orderList[i].material_name,
+          "ordQty": this.orderList[i].ord_qty, "orderDate": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
         }
         this.rowData1[i] = col;
       }
@@ -237,11 +237,15 @@ export default {
     // 체크한 항목을 rowData2(신청내역)에 추가
     addCheckedRows() {
       // 체크박스가 true인 항목만 필터링
-      const checkedRows = this.rowData1.filter(row => row["체크"] === true);
+      const checkedRows = this.rowData1.filter(row => row["check"] === true);
+      if(checkedRows.length==0){
+        alert('추가할 상품을 선택하고 눌러주세요.');
+        return;
+      }
 
       // 중복되지 않게 추가하기 위해 기존 rowData2와 병합
       const newRows = checkedRows.filter(row =>
-        !this.rowData2.some(existingRow => existingRow["자재발주코드"] === row["자재발주코드"])
+        !this.rowData2.some(existingRow => existingRow["orderCode"] === row["orderCode"])
       );
 
       this.rowData2 = [...this.rowData2, ...newRows]; // rowData2에 추가
@@ -262,12 +266,12 @@ export default {
       console.log('Raw rowData2:', rawData);
       this.rowData2.forEach((item, index) => {
         console.log(`Index ${index}:`, item);
-        console.log(`  자재발주코드: ${item.자재발주코드}`);
-        console.log(`  자재명: ${item.자재명}`);
-        console.log(`  발주수량: ${item.발주수량}`);
-        console.log(`  발주신청일: ${item.발주신청일}`);
+        console.log(`  자재발주코드: ${item.orderCode}`);
+        console.log(`  자재명: ${item.mName}`);
+        console.log(`  발주수량: ${item.ordQty}`);
+        console.log(`  발주신청일: ${item.orderDate}`);
       });
-      this.rowData1 = [];
+      this.rowData1 = []; // 저장된 항목 초기화
       this.rowData2 = []; // 저장된 항목 초기화
     },
 
@@ -277,20 +281,34 @@ export default {
     dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);
     },
-
-
-
+    //모달 열기
     openModal() {
+      if (this.rowData2.length == 0){
+        alert('신청내역이 비었습니다.');
+        return;
+      }
       this.isShowModal = !this.isShowModal
     },
+    //저장하면 입고검사테이블에 추가처리
+    async confirm() {
+      console.log(this.rowData2);
+      console.log('저장 완료');
+      
+      //let objs = []
+      const rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
+      console.log(rawData);
+      console.log(`${rawData[0].mName}`);
 
-    confirm() {
-      console.log('저장 완료')
-      this.closeModal()
+      let insertResult = await axios.post(`${ajaxUrl}/insertQCM`, rawData)
+        .catch(err => console.log(err));
+      console.log(insertResult.data);
+
+      this.closeModal();
+      
     },
-
+    //모달 닫기
     closeModal() {
-      this.isShowModal = false
+      this.isShowModal = false;
     }
   }
 };

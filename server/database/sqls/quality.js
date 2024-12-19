@@ -37,7 +37,14 @@ FROM material_order_head h INNER JOIN material_order_body b
 WHERE b.material_state LIKE 'a1'
 `;
 
+const inputQCMaterial =
+//사원번호, 발주번호, 자재명, 총 수량
+`
+CALL qc_material_input_qcmlist(?, ?, ?, ?, @v_result)
+`;
+
 module.exports = {
   searchMaterialOrder,
-  searchMaterialOrderWithConditions
+  searchMaterialOrderWithConditions,
+  inputQCMaterial
 };
