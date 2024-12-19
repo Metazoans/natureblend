@@ -82,6 +82,7 @@ import Modal from "@/views/material/materialInputModal.vue";
             button2.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
               //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
+              allInput(params.data);
             });
             return button2;
           }
@@ -135,10 +136,10 @@ const onReady = (param) => {
  const nuwList = ref([]);
 
 // allInput 클릭 이벤트 함수
-const allInput = () => {
-  const selectedRows = allInputData.value.getSelectedRows();  // 그리드에 전체선택된 값을 가져옴
+const allInput = (data = null) => {
+  const selectedRows = data ? [data] : allInputData.value.getSelectedRows();   // 그리드에 전체선택된 값을 가져옴
+  //const selectedRows = allInputData.value.getSelectedRows(); 
   //console.log('selectedRows :', selectedRows);
-  ///////// 여기서 데이터 가공해서 던저야하네
 
   //모달에 던져줄 녀석
   nuwList.value = selectedRows.map((val) => ({
@@ -209,9 +210,14 @@ const lotMaking = async function(){
     };
     //console.log(materialObj.value);
     //여기서 서버통신 시작함
-    inputMaterial(materialObj.value);
+    await inputMaterial(materialObj.value);
+    // await delay(3000);   //3초마다 포문 작동되게하기
   }
+  location.reload();  //페이지 새로고침
 }
+
+//3초마다 for문 작동되게 하기
+//const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 //const materialObjInput = ref([]);
 const inputMaterial = async function(materialObj){
@@ -219,7 +225,7 @@ const inputMaterial = async function(materialObj){
   let result = await axios.post(`${ajaxUrl}/material/inputMaterial`, materialObj)
                              .catch(err=>console.log(err));
   console.log(result.data);
-  ///material/inputMaterial
+  //실패시 여기서 브레이크 걸어야함 근데 다 성공한다고 믿고 가는거지뭐...
 }
 
 
