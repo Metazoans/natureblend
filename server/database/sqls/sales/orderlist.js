@@ -172,6 +172,33 @@ DELIMITER; */
 const orderListInsert = 
 `CALL orderlistInput(?, ?, ?, ?, ?, ?, ?);`;
 
+//주문서 단건 조회
+const orderInfo =
+`SELECT l.orderlist_num,
+	   l.orderlist_title,
+       l.order_Date,
+       l.due_date,
+       l.orderlist_status,
+       e.name,
+       c.com_name,
+       o.order_num,
+       o.order_amount,
+       o.total_price,
+       o.order_status,
+       o.per_price,
+       o.product_code,
+       p.product_name
+from orderlists l join orders o
+on l.orderlist_num = o.orderlist_num
+				   left join client c
+on l.client_num = c.client_num
+					left join employee e
+on l.emp_num = e.emp_num
+join product p 
+on p.product_code = o.product_code
+where l.orderlist_num = ?`;
+
+
 const orderListUpdate=
 `UPDATE orderlists
 SET ?
@@ -189,6 +216,7 @@ module.exports = {
 	orderProduct,
     orderListInsert,
     orderListUpdate,
-    orderListDelete
+    orderListDelete,
+	orderInfo,
 
 }

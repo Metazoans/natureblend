@@ -53,7 +53,7 @@
 </template>
 <script>
 import axios from "axios";
-
+import { ajaxUrl } from '@/utils/commons.js';
 
 export default{
     name : "ClientList",
@@ -69,7 +69,7 @@ export default{
     },
     methods: {
         async getClientList(){
-            let result = await axios.get(`/api/orderlist/clients`) //서버호출
+            let result = await axios.get(`${ajaxUrl}/orderlist/clients`) //서버호출
                                     .catch(err=> console.log(err));
             this.clientList = result.data; //거래처목록 저장
         },

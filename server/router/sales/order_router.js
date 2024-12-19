@@ -35,4 +35,11 @@ router.post('/orderForm/insert',async(req,res)=>{
   res.send(result);
 })
 
+//주문서, 주문 정보 조회
+router.get('/orderInfo/:no', async(req,res)=>{
+  let orderlistNum = req.params.no;
+  let info = await orderService.getOrderInfo(orderlistNum);
+  res.send(info);
+})
+
 module.exports = router;
