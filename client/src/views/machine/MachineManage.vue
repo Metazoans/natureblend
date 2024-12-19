@@ -167,11 +167,10 @@ export default {
     // 이미지 src로 저장?
     onFileChange(event) {
       console.log('이미지 src 변환?');
-      let file = event.target.result;
-      console.log('file obj');
-      console.log(file);
-      console.log('==============');
-      console.log('url');
+      let file = event.target.files[0];
+      let imageUrl = URL.createObjectURL(file);
+      this.machineData.machine_img = imageUrl;
+      console.log(this.machineData.machine_img);
     },
     /*
 import { ref } from 'vue';
