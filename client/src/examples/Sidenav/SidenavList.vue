@@ -77,6 +77,7 @@
             v-bind:collapse="true"
             collapseRef="mainpage"
             navText="자재 주문"
+            @click="movePage('materialList')"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
@@ -92,6 +93,7 @@
             v-bind:collapse="true"
             collapseRef="mainpage"
             navText="자재 입고"
+            @click="movePage('materialInput')"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
@@ -107,6 +109,7 @@
             v-bind:collapse="true"
             collapseRef="mainpage"
             navText="자재 재고"
+            @click="movePage('materialLotqty')"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
