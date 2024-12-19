@@ -134,15 +134,22 @@ const onReady = (param) => {
 
  //모달에 전달할 배열담는 그릇
  const nuwList = ref([]);
-
+ const selectedRows = ref([]);
+ 
 // allInput 클릭 이벤트 함수
 const allInput = (data = null) => {
-  const selectedRows = data ? [data] : allInputData.value.getSelectedRows();   // 그리드에 전체선택된 값을 가져옴
+  //const selectedRows = data ? [data] : allInputData.value.getSelectedRows();   // 그리드에 전체선택된 값을 가져옴
+  if(data.isTrusted){
+    selectedRows.value = allInputData.value.getSelectedRows();
+  }else{
+    selectedRows.value = [data];
+  }
+  console.log('selectedRows ', selectedRows.value);
   //const selectedRows = allInputData.value.getSelectedRows(); 
-  //console.log('selectedRows :', selectedRows);
+  console.log('data :', data);
 
   //모달에 던져줄 녀석
-  nuwList.value = selectedRows.map((val) => ({
+  nuwList.value = selectedRows.value.map((val) => ({
       order_code: val.order_code,
       material_name: val.material_name,
       warehouse1: '',
@@ -154,7 +161,7 @@ const allInput = (data = null) => {
 
   //console.log('nuwList.value :', nuwList.value);
 
-  if (selectedRows.length > 0) {
+  if (selectedRows.value.length > 0) {
     //console.log(JSON.stringify(selectedRows.value, null, 2));   // 해당값을 json형태로 만든다 null=데이터직렬화 , 2=들여쓰기2칸
   } else {
     console.log("선택된 항목이 없습니다.");
