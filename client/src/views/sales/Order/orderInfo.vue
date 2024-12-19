@@ -284,20 +284,26 @@ export default{
 
       updateOrder(){
         //추가주문 
-        // if(this.materials.length != 0){
-        //     let newProductCodes = []
-        //     let newProductNums = []
-        //     let newPerPrices = []
-        //     this.materials.forEach((newOrderInfo)=>{
-        //         newProductCodes.push(newOrderInfo.newProductCode);
-        //         newProductNums.push(newOrderInfo.newProductNum);
-        //         newPerPrices.push(newOrderInfo.newPerPrice);
-        //     })
-        //     let newOrderInfo = {
-        //         orderlistNum : this.orderInfo[0]['orderlist_num']
-
-        //     }
-        // }
+        if(this.materials.length != 0){
+            let newProductCodes = []
+            let newProductNums = []
+            let newPerPrices = []
+            this.materials.forEach((newOrderInfo)=>{
+                newProductCodes.push(newOrderInfo.newProductCode);
+                newProductNums.push(newOrderInfo.newProductNum);
+                newPerPrices.push(newOrderInfo.newPerPrice);
+            })
+            let newOrderInfo = {
+                orderlistNum : this.orderInfo[0]['orderlist_num'],
+                newProductCode : JSON.stringify(newProductCodes),
+                newProductNum : JSON.stringify(newProductNums),
+                newPerPrice : JSON.stringify(newPerPrices),
+            }
+            let result = 
+                await axios.post(`${ajaxUrl}/orderUpdate/insert`,newOrderInfo)
+                           .catch(err=> console.log(err));
+        }
+        
        
       },
         
