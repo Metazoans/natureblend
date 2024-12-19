@@ -22,20 +22,29 @@ UPH
   <div class="container">
     <!-- 설비 이름(설비 위치) / 설비 수정 버튼 / 설비 제거 버튼 -->
     <div class="row">
-      <div class="col-6">
+      <div class="col-8 mname">
         <h3>{{ machineData.machine_name }}({{ machineData.machine_location }})</h3>
       </div>
-      <div class="col-2">
+      <div class="col-2 mbtn">
         <button
           class="btn bg-gradient-warning w-100 mb-0 toast-btn"
           type="button"
           data-target="warningToast"
+          @click="machineUpdate"
           style="margin: 5px;"
         >
           설비 수정
         </button>
       </div>
-      <div class="col-2">
+      <MachineManage
+        :isShowModal="isShowModal"
+        :machineNo="machineNo"
+        :isUpdate="true"
+        @closeModal="closeModal"
+        @confirm="confirmModal"
+      />
+
+      <div class="col-2 mbtn">
         <button
           class="btn bg-gradient-warning w-100 mb-0 toast-btn"
           type="button"
@@ -50,13 +59,13 @@ UPH
     <!-- 이미지 / 설비 정보 항목-->
     <div class="row">
       <!-- 설비 이미지 -->
-      <div class="col-3">
+      <div class="col-3 mimg">
         이미지
         {{ machineData.machine_img }}
       </div>
 
       <!-- 설비 정보 항목 -->
-      <div class="col-9">
+      <div class="col-9 mdata">
         <div class="row">
           <div class="col">
             모델 번호 : 
@@ -92,11 +101,21 @@ UPH
             UPH : 
             {{ machineData.uph }}
           </div>
-          <div class="col">
+          <div class="col" v-if="machinePrdData.success_sum != null">
             생산량 : 
+            {{ (machinePrdData.success_sum / machinePrdData.hour_sum) * 24 }}
           </div>
-          <div class="col">
-            불량률
+          <div class="col" v-else>
+            생산량 : 
+            {{ machineData.upd }}
+          </div>
+          <div class="col" v-if="machinePrdData.success_sum != null">
+            불량률 : 
+            {{ (machinePrdData.fail_sum / (machinePrdData.success_sum + machinePrdData.fail_sum)) * 100 }}%
+          </div>
+          <div class="col" v-else>
+            불량률 : 
+            {{ 0 }}%
           </div>
         </div>
       </div>
@@ -113,44 +132,114 @@ UPH
 <script>
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
-
-// machine_name,
-// machine_location,
-// machine_img,
-// model_num,
-// machine_type,
-// machine_state,
-// client_num,
-// emp_num,
-// buy_date,
-// uph
-
-// const machinePrdInfo = shallowRef([]);
-// success_sum,
-// fail_sum,
-// hour_sum
+import userDateUtils from "@/utils/useDates.js";
+import MachineManage from "./MachineManage.vue";
 
 export default {
   name: "machineInfo",
   setup() {
   },
 
+  components: {
+    MachineManage,
+  },
   data() {
     return {
       machineData: {},
+      machinePrdData: {},
+      machineNo: 0,
+      isShowModal: false,
     }
   },
   beforeMount() {
     let selectNo = this.$route.params.mno;
     this.getMachineInfo(selectNo);
+    this.getMachinePrdInfo(selectNo);
   },
   methods: {
     async getMachineInfo(selectNo) {
       let result = await axios.get(`${ajaxUrl}/machine/machineInfo/${selectNo}`)
                               .catch(err => console.log(err));
       this.machineData = result.data;
-      console.log(this.machineData);
-    }
+      // this.allFormat(this.machineData);
+      this.machineNo = this.machineData.machine_num;
+    },
+    async getMachinePrdInfo(selectNo) {
+      let result = await axios.get(`${ajaxUrl}/machine/machinePrdInfo/${selectNo}`)
+                              .catch(err => console.log(err));
+      this.machinePrdData = result.data;
+    },
+
+    //설비 등록 모달
+    machineUpdate() {
+      this.isShowModal = !this.isShowModal;
+    },
+    confirmModal() {
+      console.log('상세페이지 업데이트 완료');
+      let selectNo = this.$route.params.mno;
+      this.getMachineInfo(selectNo);
+      this.getMachinePrdInfo(selectNo);
+      this.closeModal();
+    },
+    closeModal() {
+      this.isShowModal = false;
+    },
+
+    // 형변환 파트 작업중
+    // 전체 텍스트 변환
+    allFormat(data) {
+      // 날짜, 생산량, 거래처, 사원명 검색
+      // data.buy_date = this.dateFormat(data.buy_date, 'yyyy-MM-dd');
+
+      switch(data.machine_type){
+        case '세척기기':
+          data.uph = data.uph + ' 병';
+          data.upd = data.upd + ' 병';
+          break;
+        case '음료제작기기':
+          data.uph = data.uph + ' L';
+          data.upd = data.upd + ' L';
+          break;
+        case '포장기기':
+          data.uph = data.uph + ' 병';
+          data.upd = data.upd + ' 병';
+          break;
+        default:
+          console.log('설비 인식 실패');
+      }
+
+      // 거래처, 사원은 공정기준 등록 완성후 메소드 작성
+    },
+    // 날짜 변환
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    },
   }
 }
 </script>
+
+<style scoped lang="scss">
+.container {
+  height: 800px;
+}
+.container > .row {
+  padding: 5px 0;
+}
+.mname {
+  text-align: left;
+}
+.mdata .row {
+  align-items: center;
+}
+.mdata .row .col {
+  height: 60px;
+  // margin: 5px;
+  background-color: $gray-200;
+  margin: 5px;
+}
+.mimg {
+  background-color: $gray-200;
+  margin: 5px;
+  width: 23%;
+}
+</style>

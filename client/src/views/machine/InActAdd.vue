@@ -10,17 +10,20 @@
           <!-- 템플릿 input 컴포넌트 사용시 update:value 메소드 생성해야함 임시로 input 사용 -->
           <!-- <material-input id="text" placeholder="" @update:value="inputNum" /> -->
           <label for="machineNum">설비 번호</label>
-          <input type="number" id="machineNum" name="machineNum" v-model.number="inActData.machine_num"/>
+          <input type="number" id="machineNum" name="machineNum"
+                 v-model.number="inActData.machine_num" :readonly="machineCheck"/>
         </div>
 
         <div class="modalRow">
           <label for="machineName">설비 이름</label>
-          <input type="text" id="machineName" name="machineName" v-model="inActData.machine_name"/>
+          <input type="text" id="machineName" name="machineName"
+                 v-model="inActData.machine_name" :readonly="machineCheck"/>
         </div>
 
         <div class="modalRow">
           <label for="machineLocation">설비 위치</label>
-          <input type="text" id="machineLocation" name="machineLocation" v-model="inActData.machine_location"/>
+          <input type="text" id="machineLocation" name="machineLocation"
+                 v-model="inActData.machine_location" :readonly="machineCheck"/>
         </div>
 
         <div class="modalRow">
@@ -80,10 +83,12 @@ import axios from 'axios';
 
 export default {
   name: "inActAdd",
+  props: {
+    machineNo: Number,
+  },
   components: {
     ModalMachine,
   },
-  
   data() {
     return {
       inActData: {
@@ -96,13 +101,37 @@ export default {
         inact_info: '',
         inact_start_emp: 0,
         inact_end_emp: null,
-      }
+      },
+
+      // 설비 정보 확인
+      machineCheck: false,
+      machineData: {},
+
     }
   },
-  created() {
-    this.inActData.inact_start_time = this.getToday();  
+  updated() {
+    this.inActData.inact_start_time = this.getToday();
+    
+    // 설비 번호 있는 경우
+    if(this.machineNo > 0) {
+
+      this.machineCheck = true;
+      this.getMachinData();
+    }
   },
   methods: {
+    async getMachinData() {
+      let result = await axios.get(`${ajaxUrl}/machine/machineInfo/${this.machineNo}`)
+                              .catch(err => console.log(err));
+      this.machineData = result.data;
+
+      this.inActData.machine_num = this.machineNo;
+      this.inActData.machine_name = this.machineData.machine_name;
+      this.inActData.machine_location = this.machineData.machine_location;
+
+    },
+
+    // 버튼
     closeModal() {
       this.$emit('closeModal');
       this.deleteVal();
@@ -114,7 +143,10 @@ export default {
       }
       this.$emit('confirm');
       this.inActInsert();
+      this.deleteVal();
     },
+
+    // 모달 데이터 삭제
     deleteVal() {
       for(let key in this.inActData){
         this.inActData[key] = '';
@@ -124,7 +156,7 @@ export default {
     },
 
     // insert 동작
-    async inActInsert(){
+    async inActInsert() {
       let obj = {
         machine_num: this.inActData.machine_num,
         inact_start_time: this.inActData.inact_start_time,
@@ -141,7 +173,9 @@ export default {
                               .catch(err => console.log(err));
       let addRes = result.data;
       if(addRes.inact_num > 0){
-        alert('등록되었습니다.');
+        alert('등록 성공');
+      } else {
+        alert('등록 실패');
       }
     },
 

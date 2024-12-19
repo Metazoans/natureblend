@@ -18,15 +18,19 @@ ORDER BY machine_num
 
 // 설비 상세 정보 -> client_num의 경우 기준정보 거래처 제작 상황에 따라 변경 예정(거래처 이름과 같은 설비 등록에서 직접 입력한 데이터)
 const machineInfo = `
-SELECT machine_name,
+SELECT machine_num,
+       machine_name,
        machine_location,
        machine_img,
        model_num,
        machine_type,
+       machine_state,
        emp_num,
        client_num,
        buy_date,
-       uph
+       uph,
+       upd,
+       m.process_code
 FROM machine m JOIN process_based_information pbi
                ON (m.process_code = pbi.process_code)
 WHERE machine_num = ?
@@ -56,10 +60,17 @@ FROM process_based_information
 `;
 
 // 설비 수정
-
+const machineUpdate = `
+UPDATE machine
+SET ?
+WHERE machine_num = ?
+`;
 
 // 설비 삭제
-
+const machineDelete = `
+DELETE FROM machine
+WHERE machine_num = ?
+`;
 
 
 module.exports = {
@@ -67,5 +78,8 @@ module.exports = {
   machineInsert,
   typeList,
   machineInfo,
-  machinePrdInfo
+  machinePrdInfo,
+  machineUpdate,
+  machineDelete,
+  
 }
