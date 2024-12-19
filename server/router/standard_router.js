@@ -11,7 +11,7 @@ router.get('/boms/:bomnum', async (req, res)=>{
 });
 
 
-// 등록
+//등록
 router.post('/bomregist', async(req, res)=>{
   let bomInfo = req.body;
   let result = await bomService.createNewBom(bomInfo);
@@ -32,7 +32,7 @@ router.post('/bomupdate/:bomnum', async(req,res)=>{
 router.post('/bominsert/:bomnum', async(req,res)=>{
   let bomnum = req.params.bomnum;
   let insertInfo = req.body;
-  let result = await bomService.insertBom(bomnum, insertInfo);
+  let result = await bomService.insertBomList(bomnum, insertInfo);
   res.send(result);
 });
 
@@ -44,7 +44,20 @@ router.get('/bomview',async (req,res)=>{
     res.send(bomName);
 });
 
-// 삭제
+// // bom 자재 삭제
+// router.delete('/materialdelete/:bomnum',async(req,res)=>{
+//   let bomnum = req.params.bomnum;
+//   let result = await bomService.deleteMaterial(bomnum);
+//   res.send(result);
+// });
+
+// bom삭제
+router.delete('/bomdelete/:bomnum',async(req,res)=>{
+  let bomnum = req.params.bomnum;
+  let result = await bomService.deleteBom(bomnum);
+  res.send(result);
+});
+
 
 
 module.exports = router;
