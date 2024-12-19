@@ -9,33 +9,33 @@
         style="height: 800px;"
         :pagination="true"
         :paginationPageSize="8"
+        @cellClicked="cellClickFnc"
       ></ag-grid-vue>
     </div>
 
     <material-button
       color="warning"
-      @click="openModal"
+      @click="machineAddOpen"
       data-bs-toggle="modal"
       data-bs-target="#exampleModal"
     >
       설비 등록
     </material-button>
-    <MachineManage :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm"/>
+
+    <MachineManage
+      :isShowModal="isShowMachineAdd"
+      :isUpdate="false"
+      @closeModal="closeMachineAdd"
+      @confirm="confirmMachineAdd"
+    />
+    <InActAdd :isShowModal="isShowInActAdd" :machineNo="machineNo" @closeModal="closeInActAdd" @confirm="confirmInActAdd"/>
     
-    <material-button
-      color="warning"
-      @click="goToDetail(1)"
-    >
-      테스트 버튼
-    </material-button>
   </div>
 </template>
 
 <script>
 import MachineManage from "./MachineManage.vue";
-// import MaterialPagination from "@/components/MaterialPagination.vue";
-// import MaterialPaginationItem from "@/components/MaterialPaginationItem.vue";
-// import MaterialRadio from "@/components/MaterialRadio.vue";
+import InActAdd from "./InActAdd.vue";
 import MaterialButton from "@/components/MaterialButton.vue";
 
 import { ajaxUrl } from '@/utils/commons.js';
@@ -86,42 +86,66 @@ export default {
   },
   components: {
     MachineManage,
-    // MaterialPaginationItem,
-    // MaterialPagination,
-    // MaterialRadio,
+    InActAdd,
     MaterialButton,
   },
   
   data() {
     return {
-      isShowModal: false,
+      isShowMachineAdd: false,
+      isShowInActAdd: false,
       theme: theme,
+      inActClick: false,
+      machineNo: 0,
     };
   },
   beforeMount() {
     this.getMachineList();
   },
   methods: {
-    openModal() {
-      this.isShowModal = !this.isShowModal;
+    // 설비 등록 모달 열기
+    machineAddOpen() {
+      this.isShowMachineAdd = !this.isShowMachineAdd;
       this.getMachineList();
     },
-
-    confirm(check) {
-      this.closeModal();
+    // 설비 등록 성공시 설비 리스트 데이터 갱신
+    confirmMachineAdd(check) {
+      this.closeMachineAdd();
       if(check == true){
         this.getMachineList();
       }
-      console.log(check);
+    },
+    // 설비 등록 모달 닫기
+    closeMachineAdd() {
+      this.isShowMachineAdd = false;
     },
 
-    closeModal() {
-      this.isShowModal = false;
+    // 비동기 등록 모달 열기
+    inActAddOpen() {
+      this.isShowInActAdd = !this.isShowInActAdd;
+    },
+    // 비동기 등록 성공 체크
+    confirmInActAdd() {
+      this.closeInActAdd();
+    },
+    // 비동기 등록 모달 닫기
+    closeInActAdd() {
+      this.isShowInActAdd = false;
     },
 
-    goToDetail(mno) {
-      this.$router.push({name: 'machineInfo', params : {mno : mno}});
-    }
+    // 셀 클릭 : 작동상태 클릭시 비동기 모달, 이외의 경우 설비 상세 페이지로 이동
+    cellClickFnc(col) {
+      if(col.value == 'run') { // 작동중
+        this.machineNo = col.data.machine_num;
+        this.inActAddOpen();
+        console.log('stop으로 업데이트');
+      } else if(col.value == 'stop') { // 작동정지
+        console.log('run으로 업데이트');
+      } else { // 다른 셀 클릭
+        this.$router.push({name: 'machineInfo', params : {mno : col.data.machine_num}});
+      }
+    },
+
   }
 };
 </script>

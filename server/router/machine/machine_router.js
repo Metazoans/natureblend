@@ -29,11 +29,22 @@ router.post('/machineInsert', async(req, res) => {
   res.send(result);
 });
 
+// 설비 수정
+router.put('/machineUpdate/:mno', async(req, res) => {
+  let mno = req.params.mno;
+  let info = req.body;
+  let result = await machineService.updateMachineInfo(mno, info);
+  res.send(result);
+});
+
+// 설비 삭제
+
+
 // 설비 분류 검색
 router.get('/machineType', async (req, res) => {
   let machineTypeList = await machineService.findMachineType();
   res.send(machineTypeList);
-})
+});
 
 
 module.exports = router;
