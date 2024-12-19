@@ -293,15 +293,15 @@ export default{
                 newProductNums.push(newOrderInfo.newProductNum);
                 newPerPrices.push(newOrderInfo.newPerPrice);
             })
-            let newOrderInfo = {
-                orderlistNum : this.orderInfo[0]['orderlist_num'],
-                newProductCode : JSON.stringify(newProductCodes),
-                newProductNum : JSON.stringify(newProductNums),
-                newPerPrice : JSON.stringify(newPerPrices),
-            }
-            let result = 
-                await axios.post(`${ajaxUrl}/orderUpdate/insert`,newOrderInfo)
-                           .catch(err=> console.log(err));
+            // let newOrderInfo = {
+            //     orderlistNum : this.orderInfo[0]['orderlist_num'],
+            //     newProductCode : JSON.stringify(newProductCodes),
+            //     newProductNum : JSON.stringify(newProductNums),
+            //     newPerPrice : JSON.stringify(newPerPrices),
+            // }
+            // let result = 
+            //     await axios.post(`${ajaxUrl}/orderUpdate/insert`,newOrderInfo)
+            //                .catch(err=> console.log(err));
         }
         
        
