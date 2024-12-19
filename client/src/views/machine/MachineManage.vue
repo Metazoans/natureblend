@@ -15,7 +15,7 @@
         <!-- 이미지 안들어감 input file 데이터 바인딩 수정 필요 -->
         <div class="modalRow">
           <label for="machineImg">설비 이미지</label>
-          <input type="file" id="machineImg" name="machineImg" ref="image" @change="onFileChange"/>
+          <input type="file" id="machineImg" name="machineImg" @change="onFileChange($event)"/>
         </div>
 
         <div class="modalRow">
@@ -164,18 +164,29 @@ export default {
       this.typeSelect = result.data;
     },
 
-    // file binding
-    onFileChange() {
-      console.log('들어왔다');
-      let image = this.$refs['image'].files[0];
-
-      const url = URL.createObjectURL(image);
-      this.image = url;
-      console.log(url);
-      console.log(this.image);
-      this.machineData.machine_img = this.image + '';
+    // 이미지 src로 저장?
+    onFileChange(event) {
+      console.log('이미지 src 변환?');
+      let file = event.target.result;
+      console.log('file obj');
+      console.log(file);
+      console.log('==============');
+      console.log('url');
     },
-    // 이미지 바인딩 : <img v-bind:src="imgSrc" />
+    /*
+import { ref } from 'vue';
+
+const src = ref();
+
+const addImage = (e: Event) => {
+  const [file] = (e.target as HTMLInputElement).files;
+  console.log((e.target as HTMLInputElement).files);
+  if (file) {
+    src.value = URL.createObjectURL(file);
+  }
+};
+    */
+
 
     // 모달 동작
     closeModal() {
