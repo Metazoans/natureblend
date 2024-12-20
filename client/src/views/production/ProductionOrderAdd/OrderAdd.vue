@@ -285,6 +285,7 @@ export default {
         input {
           background-color: $white;
           width: 180px !important;
+          border-radius: 8px;
           &:read-only {
             background-color: $gray-100;
           }
