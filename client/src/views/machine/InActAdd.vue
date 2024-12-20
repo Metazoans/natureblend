@@ -154,7 +154,7 @@ export default {
       for(let key in this.inActData){
         this.inActData[key] = '';
       }
-      this.inActData.inact_start_emp = 0;
+      this.inActData.inact_start_emp = 1;
       this.inActData.inact_end_emp = 0;
     },
 
@@ -182,6 +182,7 @@ export default {
         this.$emit('confirm', this.isInsert);
       } else {
         alert('등록 실패');
+        this.$emit('confirm', this.isInsert);
       }
     },
 
@@ -216,8 +217,8 @@ export default {
     inActData: {
       handler(newVal) {
         let btnActive = true;
+        console.log(newVal);
         for(let key in newVal) {
-          // console.log(key);
           switch(key) {
             case 'inact_end_time':
               break;
