@@ -5,6 +5,32 @@ SELECT h.order_code,
        e.name,
        h.order_date,
        b.ord_qty,
+       b.material_code,
+       m.material_name
+FROM material_order_head h
+INNER JOIN material_order_body b
+    ON h.order_code = b.order_code
+JOIN material m
+    ON b.material_code = m.material_code
+JOIN employee e
+    ON h.emp_num = e.emp_num
+WHERE b.material_state LIKE 'a1'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM qc_material q
+      WHERE q.order_code = h.order_code
+        AND q.material_code = b.material_code
+  )
+ORDER BY h.order_code
+`;
+/*
+SELECT h.order_code,
+       h.client_num,
+       h.emp_num,
+       e.name,
+       h.order_date,
+       b.ord_qty,
+       b.material_code,
        m.material_name
 FROM material_order_head h INNER JOIN material_order_body b
                                  ON h.order_code = b.order_code
@@ -14,8 +40,7 @@ FROM material_order_head h INNER JOIN material_order_body b
                                  ON h.emp_num = e.emp_num
 WHERE b.material_state LIKE 'a1'
 ORDER BY h.order_code
-`;
-
+*/
 
 
 
@@ -27,6 +52,32 @@ SELECT h.order_code,
        e.name,
        h.order_date,
        b.ord_qty,
+       b.material_code,
+       m.material_name
+FROM material_order_head h
+INNER JOIN material_order_body b
+    ON h.order_code = b.order_code
+JOIN material m
+    ON b.material_code = m.material_code
+JOIN employee e
+    ON h.emp_num = e.emp_num
+WHERE b.material_state LIKE 'a1'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM qc_material q
+      WHERE q.order_code = h.order_code
+        AND q.material_code = b.material_code
+  )
+`;
+
+/*
+SELECT h.order_code,
+       h.client_num,
+       h.emp_num,
+       e.name,
+       h.order_date,
+       b.ord_qty,
+       b.material_code,
        m.material_name
 FROM material_order_head h INNER JOIN material_order_body b
                                  ON h.order_code = b.order_code
@@ -35,7 +86,7 @@ FROM material_order_head h INNER JOIN material_order_body b
                                  JOIN employee e
                                  ON h.emp_num = e.emp_num
 WHERE b.material_state LIKE 'a1'
-`;
+*/
 
 const inputQCMaterial =
 //사원번호, 발주번호, 자재명, 총 수량
