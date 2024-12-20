@@ -15,18 +15,22 @@
         <!-- 이미지 안들어감 input file 데이터 바인딩 수정 필요 -->
         <div class="modalRow">
           <label for="machineImg">설비 이미지</label>
-          <input type="file" id="machineImg" name="machineImg" ref="image" @change="onFileChange"/>
+          <!-- 파일 node로 저장(url return받음) -->
+          <input type="file" id="machineImg" name="machineImg"/>
+          <!-- 이미지 url 불러오기(미리보기) -->
+          <img :src="machineData.machine_img" height="50px" width="50px" />
+
         </div>
 
         <div class="modalRow">
           <a for="machineState">사용 여부</a>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="machineState" id="machineState1"
+            <input class="form-check-input" type="radio" name="machineState"
                    value="run" v-model="machineData.machine_state" checked>
             <label class="form-check-label" for="flexRadioDefault1">사용</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="machineState" id="machineState2"
+            <input class="form-check-input" type="radio" name="machineState"
                    value="stop" v-model="machineData.machine_state">
             <label class="form-check-label" for="flexRadioDefault2">미사용</label>
           </div>
@@ -78,21 +82,24 @@
 
         <div class="modalRow">
           <label for="buyDate">구매 일자</label>
-          <input type="datetime-local" id="buyDate" name="buyDate" v-model="machineData.buy_date"/>
+          <input type="datetime-local" id="buyDate" name="buyDate" v-model="machineData.buy_date" v-bind:readonly="isUpdate"/>
         </div>
       </div>
     </template>
     
     <template v-slot:footer>
+
       <button
         class="btn bg-gradient-warning w-100 mb-0 toast-btn"
         type="button"
         data-target="warningToast"
         @click="confirm"
+        v-bind:disabled="!fullInput"
       >
         <a v-if="isUpdate">수정</a>
         <a v-else>등록</a>
       </button>
+
       <button
         class="btn bg-gradient-warning w-100 mb-0 toast-btn"
         type="button"
@@ -116,6 +123,7 @@ import axios from 'axios';
 
 export default {
   name: "MachineManage",
+
   props: {
     machineNo: Number,
     isUpdate: Boolean,
@@ -128,20 +136,21 @@ export default {
       machineData: {
         // 입력
         machine_name: '',
-        machine_img: '',
+        machine_img: 'null',
         model_num: '',
         machine_state: 'run',
         client_num: '',
         machine_location: '',
         uph: '',
         buy_date: '',
+        process_code: '',
         
         // 자동
         emp_num: 0,
-        process_code: '0',
       },
       typeSelect: [], // 설비 분류 객체
       isInsert: false, // 등록 성공 여부,
+      fullInput: false,
     }
   },
   beforeMount() {
@@ -155,6 +164,7 @@ export default {
       //수정
       this.getMachineInfo(this.machineNo);
     }
+    this.machineData.buy_date = this.getToday();
   },
   methods: {
     // 선택지 정보 가져오기
@@ -164,18 +174,27 @@ export default {
       this.typeSelect = result.data;
     },
 
-    // file binding
-    onFileChange() {
-      console.log('들어왔다');
-      let image = this.$refs['image'].files[0];
 
-      const url = URL.createObjectURL(image);
-      this.image = url;
-      console.log(url);
-      console.log(this.image);
-      this.machineData.machine_img = this.image + '';
-    },
-    // 이미지 바인딩 : <img v-bind:src="imgSrc" />
+    // 이미지 src로 저장?
+    // onFileChange(file) {
+    //   if(!file) {
+    //     return;
+    //   }
+
+    //   // 파일 전송 형식 = FormData
+    //   const formData = new FormData();
+
+    //   formData.append('fileData', file);
+    //   const reader = new FileReader();
+      
+    //   // 파일 url 가져오기
+    //   reader.onload = (e) => {
+    //     this.machineData.machine_img = e.target.result;
+    //   };
+    //   reader.readAsDataURL(file);
+
+    //   axios()
+    // },
 
     // 모달 동작
     closeModal() {
@@ -197,8 +216,8 @@ export default {
       for(let key in this.machineData){
         this.machineData[key] = '';
       }
+      this.machineData.machine_state = 'run';
       this.machineData.emp_num = 0;
-      this.machineData.process_code = '0';
     },
 
     // insert
@@ -215,9 +234,7 @@ export default {
         machine_location: this.machineData.machine_location,// 설비 위치
         buy_date: this.machineData.buy_date,
         process_code: this.machineData.process_code,
-        
-        // 자동
-        emp_num: 0     // 등록자
+        emp_num: this.machineData.emp_num     // 등록자
       }
 
       obj.upd = Number(this.machineData.uph) * 24;     // uph * 24
@@ -287,12 +304,33 @@ export default {
       }
     },
 
+
     // 날짜 관련
     getToday() {
       return this.dateFormat(null, 'yyyy-MM-dd hh:mm:ss');
     },
     dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);
+    },
+
+
+    // 유효성 체크 : 설비 이름, 모델 번호, 설비 분류, 제작업체, uph, 설비 위치, 등록자
+    
+  },
+  watch: {
+    machineData: {
+      handler(newVal, oldVal) {
+        console.log(oldVal);
+        let btnActive = true;
+        for(let key in newVal) {
+          if(newVal[key] == '') {
+            btnActive = false;
+            break;
+          }
+        }
+        this.fullInput = btnActive;
+      },
+      deep: true
     }
   }
 };

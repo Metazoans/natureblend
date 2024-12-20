@@ -58,6 +58,7 @@
           type="button"
           data-target="warningToast"
           @click="confirm"
+          v-bind:disabled="!fullInput"
         >
           등록
         </button>
@@ -96,17 +97,19 @@ export default {
         machine_name: '',
         machine_location: '',
         inact_start_time: '',
-        inact_end_time: '',
+        inact_end_time: '', // null 허용
         inact_type: '',
-        inact_info: '',
-        inact_start_emp: 0,
-        inact_end_emp: null,
+        inact_info: '', // type이 기타인 경우만 체크
+        inact_start_emp: 1, // 현재 작업자
+        inact_end_emp: 0,
       },
 
       // 설비 정보 확인
       machineCheck: false,
       machineData: {},
 
+      fullInput: false,
+      isInsert: false,
     }
   },
   updated() {
@@ -152,7 +155,7 @@ export default {
         this.inActData[key] = '';
       }
       this.inActData.inact_start_emp = 0;
-      this.inActData.inact_end_emp = null;
+      this.inActData.inact_end_emp = 0;
     },
 
     // insert 동작
@@ -174,18 +177,65 @@ export default {
       let addRes = result.data;
       if(addRes.inact_num > 0){
         alert('등록 성공');
+        this.inActUpdate();
+        this.isInsert = true;
+        this.$emit('confirm', this.isInsert);
       } else {
         alert('등록 실패');
       }
     },
 
+    // 비가동으로 변경
+    async inActUpdate() {
+      let obj = {
+        machine_state: 'stop',
+      }
+      
+      let result = await axios.put(`${ajaxUrl}/machine/machineUpdate/${this.machineNo}`, obj)
+                              .catch(err => console.log(err));
+      let updateRes = result.data;
+
+      if(updateRes.result) {
+        console.log('수정 성공');
+      } else {
+        console.log('수정 실패');
+      }
+    },
+
+    
     // 날짜 관련
-    getToday(){
+    getToday() {
       return this.dateFormat(null, 'yyyy-MM-dd hh:mm:ss');
     },
     dateFormat(value, format) {
       return userDateUtils.dateFormat(value, format);
     }
+  },
+  watch: {
+    // 유효성 체크
+    inActData: {
+      handler(newVal) {
+        let btnActive = true;
+        for(let key in newVal) {
+          // console.log(key);
+          switch(key) {
+            case 'inact_end_time':
+              break;
+            case 'inact_end_emp':
+              break;
+            case 'inact_info':
+              if(newVal['inact_type'] == '기타' && newVal[key] == '') btnActive = false;
+              break;
+            default:
+              // console.log('공백 체크 : ', key);
+              
+              if(newVal[key] == '') btnActive = false;
+          }
+        }
+        this.fullInput = btnActive;
+      },
+      deep: true
+    },
   }
 };
 </script>
