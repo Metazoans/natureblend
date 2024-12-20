@@ -59,21 +59,27 @@
      @grid-ready="onReady"
      style="height: 513px;"
      rowSelection="multiple"
-     :noRowsOverlayComponent="noRowsOverlayComponent"
   >
   </ag-grid-vue>
+</div>
+<div>
+   <Modal :isShowModal="isShowModal" :deleteList="deleteList" @closeModal="closeModal" @confirm="confirm">
+   </Modal>
 </div>
 </template>
 <script setup>
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
-//import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 
-//import Modal from "@/views/material/materialInputModal.vue";
+import Modal from "@/views/material/materialOrderListModal.vue";
 
 import theme from "@/utils/agGridTheme";
 import { ref, onBeforeMount } from 'vue'; //onBeforeMount
+
+import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
+const { notify } = useNotification();  // 노티 내용변수입니다
+
 
 
 const materialCode = ref('');   //자재명
@@ -82,6 +88,8 @@ const POListCode = ref('');  //자재발주코드
 const startDate = ref('');   //시작일
 const endDate = ref('');  //종료일
 const seachcondition = ref({}); //서치조건 담는 배열
+
+const deleteList = ref([]);   //모달에 보내줄 값
 
 // 리셋
 const reSet = () => {
@@ -99,6 +107,15 @@ const reSet = () => {
    endDate: ''
   }
   matrialOrderList2();   //초기화버튼 누르면 이거 실행
+
+  //this.$notify({ text: '필수 정보를 모두 입력하세요.', type: 'error' });
+
+  notify({
+      title: "알림 제목",
+      text: "초기화 완료 했습니다.",
+      type: "success", // success, warn, error 가능
+   });
+
 };
 
 // 조회
@@ -157,6 +174,9 @@ const columnDefs = ref([
          button2.addEventListener('click', () => {
             console.log("레코드 확인 : ", JSON.stringify(params.data));
             //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
+            deleteList.value = params.data;
+            console.log('모달 오픈');
+            isShowModal.value = true;
          });
          return button2;
          }
@@ -164,6 +184,55 @@ const columnDefs = ref([
   },
 ]);
 
+//모달 여는 변수
+const isShowModal = ref(false);
+// 모달 취소
+const closeModal = () => {
+   isShowModal.value = false;
+   notify({
+      title: "취소를 취소함",
+      text: "취소 모달을 닫았습니다.",
+      type: "error", // success, warn, error 가능
+   });
+};
+// 모달 확인
+//const deleteNum = ref();
+const confirm = (deleteNum) => {
+   console.log("모달 확인 버튼 클릭됨", deleteList.value);
+   console.log("deleteNum : ", deleteNum);
+   isShowModal.value = false; // 모달 닫기
+   if(!deleteNum){
+      notify({
+         title: "취소 완료",
+         text: "값이 정상적으로 넘어오지 않았습니다",
+         type: "error", // success, warn, error 가능
+      });
+   }else{
+      // 1=전체취소 // 2=단건취소
+      const materialObj = {
+         deleteNum: deleteNum,
+         body_num: deleteList.value.body_num,
+         order_code: deleteList.value.order_code,
+      }
+      poList_delete(materialObj);
+   }
+};  
+
+// 주문 취소 처리하기
+const poList_delete = async function(materialObj){
+  console.log(materialObj);
+  let result = await axios.post(`${ajaxUrl}/material/poListDelete`, materialObj)
+                             .catch(err=>console.log(err));
+  console.log(result.data);
+  if(result.data.affectedRows >= 1){
+      notify({
+         title: "알림 제목",
+         text: "삭제 완료 했습니다.",
+         type: "success", // success, warn, error 가능
+      });
+      matrialOrderList2(); //결과가 있을때만 새로고침
+  }
+}
 
 // 엔터키 누르면 하는거
 const enterkey = (event) => {

@@ -85,4 +85,12 @@ router.put('/material/polistorder2', async(req,res)=>{
   res.send(result);
 });
 
+// 발주서 전체취소 또는 개별 취소
+router.post('/material/poListDelete', async(req,res)=>{
+  //console.log(req.body);
+  let {deleteNum, body_num, order_code} = req.body;
+  let result = await materialService.poListDelete(deleteNum, body_num, order_code);
+  res.send(result);
+});
+
 module.exports = router;

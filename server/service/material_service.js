@@ -140,6 +140,18 @@ const materialOrderList2 = async (materialCode, clientName, POListCode, startDat
   return result;
 }
 
+// 발주 전체취소 또는 개별취소
+const poListDelete = async (deleteNum, body_num, order_code)=>{
+  let querywhere = '';
+  if(deleteNum == 2){
+    querywhere += ` WHERE body_num = \'${body_num}\' `;
+  }else{
+    querywhere += ` WHERE order_code = \'${order_code}\' `;
+  }
+  //console.log(querywhere);
+  let result = await mysql.query('material_cance',querywhere);
+  return result;
+}
 
 module.exports = {
   allmaterial,
@@ -153,5 +165,6 @@ module.exports = {
   inputLotInfoGo,
   materialOrderList,
   materialOrderList2,
+  poListDelete,
 
 };
