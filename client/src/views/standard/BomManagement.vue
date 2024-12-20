@@ -9,21 +9,21 @@
               </div>
               <div class="d-flex align-items-center">
                   <span>제품코드</span>
-                  <input v-model="searchProductcode"  id="search-productcode" type="text" class="form-control"/>
+                  <input v-model="searchProductcode"  id="search-productcode" type="text" class="form-control" @click = "openModal('productCodeModal')" />
               </div>
           </div>
           <div class="search pe-md-3 d-flex align-items-center ms-md-auto">
               <div class="d-flex align-items-center">
                   <span>제품명</span>
-                  <input v-model="searchProduct" id="product-search" type="text" class="form-control"/>
+                  <input v-model="searchProduct" id="product-search" type="text" class="form-control" readonly/>
               </div>
               <div class="d-flex align-items-center ms-md-3">
                   <span>용량</span>
-                  <input v-model="searchCapacity" id="capacity-search" type="text" class="form-control"/>
+                  <input v-model="searchCapacity" id="capacity-search" type="text" class="form-control" readonly/>
               </div>
           </div>
           
-          <div class="search pe-md-3 d-flex align-items-center ms-md-auto" v-for="(item, index) in bomBox" :key="index">
+          <!-- <div class="search pe-md-3 d-flex align-items-center ms-md-auto" v-for="(item, index) in bomBox" :key="index">
             <div class="d-flex align-items-center ms-md-3">
                   <span>자재코드</span>
                   <input v-model="item.material_code" :id="'materialcode-' + index" type="text" class="form-control"/>
@@ -36,7 +36,7 @@
                   <span>단위</span>
                   <input v-model="item.material_con" :id="'unit-' + index" type="text" class="form-control"/>
               </div>
-          </div>
+          </div> -->
 
           <div class="grid-bom" >
            <ag-grid-vue 
@@ -47,6 +47,8 @@
              :pagination="true"
              :paginationPageSize="10"
              @grid-ready="onReady"
+             @cellEditingStopped="onCellEditingStopped"
+             @rowSelection="rowSelection"
          >
           </ag-grid-vue>
          </div>
@@ -60,6 +62,7 @@
             BOM 등록
           </button>
         </div>
+        <!-- 조회 그리드 -->
         <div class="grid-container" >
            <ag-grid-vue 
              style ="width: 600px; height: 500px;"
@@ -73,37 +76,59 @@
           </ag-grid-vue>
          </div>
   </div>
+  <div>
+  <!-- 모달 -->
+  <Modal :isShowModal="isShowModal"
+   @closeModal="closeModal" 
+   @confirm="confirm" 
+   :modalTitle="modalTitle"
+   @selectItem = "setSelectProduct"
+   >
+    <!-- <template v-slot:list> -->
+      <!-- <div v-if="modalType === 'productCodeModal'"></div>
+      <div v-if="modalType === 'productNameModal'"></div>
+      <div v-if="modalType === 'capacityModal'"></div> -->
+    <!-- </template> -->
+
+  </Modal>
+  </div>  
 </template>
 
 <script>
   import axios from 'axios';
   import { ajaxUrl } from '@/utils/commons.js';
   import theme from "@/utils/agGridTheme";
+  import Modal from "@/views/standard/Modal.vue";
+
   
   export default { 
       name: 'BomManagement',
+      components: {Modal},
       data() {
         return { 
+          isShowModal: false,
+          modalType:'',
+          modalTitle:'제품 코드 선택',
           theme: theme,
           rowData:[],
           columnBoms: [
-            { headerName:"자재코드", field: "material_code" , editable: true },
+            { headerName:"자재코드", field : "material_code" , editable: true },
             { headerName:"자재" , field: "material" , editable: true },
             { headerName:"수량" , field: "material_con" , editable: true}
           ],
           columnDefs: [
-         { headerName: "제품명", field: "product_name" , width : 150 },
-         { headerName: "용량", field: "capacity" , width : 150 },
-         {
-          width : 80,
-          editable: false,
-          cellRenderer: params => {
-            const button = document.createElement('button');
-            button.innerText = '조회';
-            button.addEventListener('click', () => {
-              console.log("레코드 확인 : ", JSON.stringify(params.data));
-              console.log(params.data.product_code);
-              this.view(params.data.product_name,params.data.capacity,params.data.bom_num,params.data.material,params.data.product_code);
+            { headerName: "제품명", field: "product_name" , width : 150 },
+            { headerName: "용량", field: "capacity" , width : 150 },
+            {
+            width : 80,
+            editable: false,
+            cellRenderer: params => {
+              const button = document.createElement('button');
+              button.innerText = '조회';
+              button.addEventListener('click', () => {
+                console.log("레코드 확인 : ", JSON.stringify(params.data));
+                console.log(params.data.product_code);
+                this.view(params.data.product_name,params.data.capacity,params.data.bom_num,params.data.material,params.data.product_code);
             });
             return button;
           }
@@ -126,6 +151,7 @@
           bomBox: [],
           bomBox2: [],
           newList: [],
+          newData: {},
 
           searchBomnum: '',  // BOM 번호
           searchProductcode: '', // 제품코드
@@ -139,6 +165,59 @@
         this.getBomList();
       },
       methods: {
+        openModal(modalType) {
+          this.modalType = modalType;  // Set the modal type
+          this.modalTitle = '제품 코드 선택';
+
+          this.isShowModal = true;  // Show modal
+          },
+
+        confirm() {
+          console.log('값 저장')
+          this.closeModal()
+        },
+        setSelectedProduct(productCode) {
+        // 모달에서 선택한 데이터가 부모로 전달되면 이를 입력상자에 반영
+        this.searchProductcode = productCode;  // 선택한 제품코드를 인풋 박스에 설정
+        this.closeModal();
+        },
+        closeModal() {
+          this.isShowModal = false
+        },
+        rowSelection(event){
+          console.log('이벤트발생',event);
+        },
+        onCellEditingStopped(event) {
+              // 현재 편집된 행 데이터 가져오기
+              const updatedRowData = event.data;
+              console.log(updatedRowData);
+              if(updatedRowData.material_con != ''){
+                this.newData = {
+                  bom_num:this.bomBox[0]['bom_num'],
+                  material_code:updatedRowData.material_code,
+                  material:updatedRowData.material,
+                  material_con:updatedRowData.material_con ,
+                }
+                console.log(this.newData);
+                // this.bomBox.push(this.newData);
+
+              }
+
+
+
+              // const newData = {
+              //   bom_num:'',
+              //   material_code:updatedRowData.material_code,
+              //   material:updatedRowData.material,
+              //   material_con:updatedRowData.material_con ,
+              // }
+
+
+
+              //this.bomBox = [...this.bomBox];
+              //{bom_num: '', material_code: 'M005', material: 'AA', material_con: 'BB'}
+
+            },
         async getBomList() {
             let result = await axios.get(`${ajaxUrl}/bomview`);
             if (result && result.data) {
@@ -215,7 +294,8 @@
             console.log(result2);
           },
           addMaterial() {
-            this.bomBox.push({ bom_num:'', material_code: '', material: '', material_con: '' });
+            this.bomBox.push({ bom_num:this.searchBomnum, material_code: '', material: '', material_con: '' });
+            this.bomBox = [...this.bomBox];
           },
           goToDetail(bomNum) {
             this.$router.push({ name : 'bomInfo', params : { bomno : bomNum }});
