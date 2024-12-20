@@ -1,8 +1,8 @@
 <template>
+  <!-- 검사조건 부분 시작 -->
   <div class="px-4 py-4">
     <h1>입고검사-검사신청</h1>
     <hr>
-    <!-- 검사조건 부분 시작 -->
     <div class="row align-items-center mb-3">
       <div class="col-2">
         <h3 class="mr-3">검색조건</h3>
@@ -14,16 +14,16 @@
 
     <div class="row">
       <label for="startDate" class="mr-2">날짜범위</label>
-      <div class="col-sm">
-        <input type="date" placeholder="Date" v-model="searchInfo.startDate" />
+      <div class="input-group w-auto h-25">
+        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date" v-model="searchInfo.startDate" />
       </div>
-      <div class="col-sm">
-        <input type="date" placeholder="Date" v-model="searchInfo.endDate" />
+      <div class="input-group w-auto h-25">
+        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date" v-model="searchInfo.endDate" />
       </div>
-      <div class="col-sm">
-        <input label="자재명" placeholder="자재명" type="search" v-model="searchInfo.mName" />
+      <div class="input-group w-auto h-25">
+        <input label="자재명" class="form-control border p-2 cursor-pointer" placeholder="자재명" type="search" v-model="searchInfo.mName" />
       </div>
-      <div class="col-sm">
+      <div class="input-group w-auto h-25">
         <material-button size="md" v-on:click="searchOrder">검색</material-button>
       </div>
     </div>
@@ -102,7 +102,7 @@ import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 
 
 export default {
-  name: "입고검사",
+  name: "입고검사신청",
   components: { MaterialButton, Modal },
 
   data() {
@@ -168,6 +168,7 @@ export default {
 
 
   methods: {
+    //날짜형식
     formatDate(date) {
       // 날짜를 YYYY-MM-DD 형식으로 변환
       const year = date.getFullYear();
@@ -271,7 +272,8 @@ export default {
         console.log(`  발주수량: ${item.ordQty}`);
         console.log(`  발주신청일: ${item.orderDate}`);
       });
-      this.rowData1 = []; // 저장된 항목 초기화
+      this.searchOrderAll()
+      //this.rowData1 = []; // 저장된 항목 초기화
       this.rowData2 = []; // 저장된 항목 초기화
     },
 
@@ -291,17 +293,22 @@ export default {
     },
     //저장하면 입고검사테이블에 추가처리
     async confirm() {
+      console.log('rowData2');
       console.log(this.rowData2);
-      console.log('저장 완료');
       
       //let objs = []
       const rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
-      console.log(rawData);
-      console.log(`${rawData[0].mName}`);
+      // console.log(rawData);
+      // console.log(`${rawData[0].mName}`);
 
       let insertResult = await axios.post(`${ajaxUrl}/insertQCM`, rawData)
         .catch(err => console.log(err));
-      console.log(insertResult.data);
+      console.log(`${insertResult.data.successNum}개 입력됨`);
+      alert(`${insertResult.data.successNum}개 입력됨`);
+      this.searchOrderAll() // 저장된 항목 초기화
+      this.rowData2 = []; // 저장된 항목 초기화
+
+
 
       this.closeModal();
       
@@ -310,7 +317,11 @@ export default {
     closeModal() {
       this.isShowModal = false;
     }
-  }
+  },
+  //기본테이블출력
+  created(){
+    this.searchOrderAll();
+  },
 };
 </script>
 
