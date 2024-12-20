@@ -24,6 +24,7 @@
                 :pagination="true"
                 :paginationPageSize="10"
                 @grid-ready="onReady"
+                @rowClicked="onRowClicked"
             >
               </ag-grid-vue>
             </div>
@@ -76,6 +77,15 @@ export default {
   methods: {
     closeModal() {
       this.$emit('closeModal')
+    },
+    onRowClicked(row) {
+      console.log('클릭된 데이터 : ', row.data);
+      let bom = row.data;
+      this.$router.push({ name:'BomManagement', params: { code : bom.product_code,
+                                                          name : bom.product_name,
+                                                          capaticy : bom.capaticy
+        }
+      })
     },
 
     confirm() {
