@@ -9,7 +9,13 @@ router.get('/boms/:bomnum', async (req, res)=>{
     res.send(bomList); 
     console.log(bomList);
 });
-
+// product 테이블 조회
+router.get('/bomproduct',async(req,res)=>{
+  let searchs = req.query;
+  let productSelect = await bomService.findProduct(searchs);
+  res.send(productSelect);
+  console.log(productSelect);
+})
 
 //등록
 router.post('/bomregist', async(req, res)=>{
