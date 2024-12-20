@@ -58,13 +58,13 @@
                             <div class="col-sm-2">
                                 <label class="col-form-label fw-bold" for="orderNum">주문수량</label>
                                 <div class="input-group">
-                                <input type="text" class="form-control" id="orderNum" v-model="order.order_amount">
+                                <input type="text" class="form-control" id="orderNum" v-model="order.order_amount" :readonly="order.order_status !== 'preparing'">
                                 </div>
                             </div>
                             <div class="col-sm-2">
                                 <label class="col-form-label fw-bold"  for="perSale">개당가격</label>
                                 <div class="input-group">
-                                <input type="text" class="form-control" id="perSale" v-model="order.per_price">
+                                <input type="text" class="form-control" id="perSale" v-model="order.per_price" :readonly="order.order_status !== 'preparing'">
                                 </div>
                             </div>
                             <div class="col-sm-2">
@@ -135,7 +135,7 @@
                         </form>
                     </div>
                 <div class="col-auto mt-5 text-center">
-                        <material-button type="button" class="btn btn-warning" >수정</material-button>
+                        <material-button type="button" class="btn btn-warning" @click="updateOrder">수정</material-button>
                         <material-button type="button" class="btn btn-warning" >삭제</material-button>
                 </div>
             </div>
@@ -167,17 +167,7 @@ export default{
     data(){
         return{
             
-            orderInfo: {
-                orderlist_num : '',
-                orderlist_title:'',
-                due_date : '',
-                
-                order_num:'',
-                per_price:'',
-                order_amount:'',
-
-
-            },
+            orderInfo: {},
 
             
 
@@ -196,11 +186,7 @@ export default{
         }
     },
 
-    computed:{
-        changeDateFormate : function(){
-            return this.dateFormat(this.orderInfo.due_date,'yyyy-MM-dd');
-        }
-    },
+  
 
     created(){
         let searchNo = this.$route.params.no;
@@ -282,22 +268,75 @@ export default{
       },
 
 
-      updateOrder(){
+      async updateOrder(){
         //추가주문 
-        // if(this.materials.length != 0){
-        //     let newProductCodes = []
-        //     let newProductNums = []
-        //     let newPerPrices = []
-        //     this.materials.forEach((newOrderInfo)=>{
-        //         newProductCodes.push(newOrderInfo.newProductCode);
-        //         newProductNums.push(newOrderInfo.newProductNum);
-        //         newPerPrices.push(newOrderInfo.newPerPrice);
-        //     })
-        //     let newOrderInfo = {
-        //         orderlistNum : this.orderInfo[0]['orderlist_num']
+        if(this.materials.length != 0){
+            let newProductCodes = []
+            let newProductNums = []
+            let newPerPrices = []
+            // materials 배열을 순회하면서 새 주문 정보를 추출
+            this.materials.forEach((newOrderInfo)=>{
+                newProductCodes.push(newOrderInfo.newProductCode);
+                newProductNums.push(newOrderInfo.newProductNum);
+                newPerPrices.push(newOrderInfo.newPerPrice);
+            })
+            // 새 주문 정보 객체
+            let newOrderInfo = {
+                orderlistNum : this.orderInfo[0]['orderlist_num'],
+                newProductCode : JSON.stringify(newProductCodes),
+                newProductNum : JSON.stringify(newProductNums),
+                newPerPrice : JSON.stringify(newPerPrices),
+            }
+            // newProductNum 또는 newPerPrice가 비어 있으면 경고
+            if (newProductNums.some(num => num === '' || num === null) || newPerPrices.some(price => price === '' || price === null)) {
+                this.$notify({
+                    text: `주문 수량과 가격을 입력해주세요.`,
+                    type: 'error',
+                });
+                return;  // 추가 작업 진행하지 않음
+            }
+            await axios.post(`${ajaxUrl}/orderUpdate/insert`,newOrderInfo)
+                        .then(Response =>{
+                            if(Response.statusText === 'OK'){
+                                console.log("추가등록완료");
+                            }
+                        })
+                        .catch(err => console.log(err));  
+        }
 
-        //     }
+        // 주문상태가 preparing 인 경우 
+        //주문,주문서 업데이트
+        //업데이트 해야 하는 주문서 내용 
+        // let obj = {
+        //     orderlist_title : this.orderInfo[0]['orderlist_title'],
+        //     due_date: this.orderInfo[0]['due_date'],
         // }
+        //업데이트 해야 하는 주문 내용 (배열형성)
+        let orderAmounts = []
+        let perPrices = []
+        let productCodes = []
+        for(let i=0; i<this.orderInfo.length; i++){
+            if(this.orderInfo[i]['order_status'] === 'preparing'){
+                orderAmounts.push(this.orderInfo[i]['order_amount']);
+                productCodes.push(this.orderInfo[i]['product_code'])
+                perPrices.push(this.orderInfo[i]['per_price']);
+            }
+        }
+        
+
+        let updateOrderInfo = {
+            orderAmount : JSON.stringify(orderAmounts),
+            productCode :JSON.stringify(productCodes),
+            perPrice : JSON.stringify(perPrices),
+            orderlist_title : this.orderInfo[0]['orderlist_title'],
+            due_date: this.orderInfo[0]['due_date'],
+        }
+
+        console.log(updateOrderInfo);
+        let result = await axios.put(`${ajaxUrl}/orderUpdate/update/${this.orderInfo[0]['orderlist_num']}`,updateOrderInfo)
+                                    .catch(err=>console.log(err));
+            console.log(result.data);
+
        
       },
         
