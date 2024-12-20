@@ -145,15 +145,15 @@ export default{
             ],
             //주문조회
             rowDataOrder : [],
-            columnOrder : [
-                {headerName :"주문코드",field: order_num},
-                {headerName :"제품코드",field: product_code},
-                {headerName :"제품명",field: product_name},
-                {headerName :"주문수량",field: order_amount},
-                {headerName :"출고량",field: output_amount},
-                {headerName :"미출고량",field: disorder_amount}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
-                {headerName :"상태여부",field: order_status}
-            ],
+            // columnOrder : [
+            //     {headerName :"주문코드",field: order_num},
+            //     {headerName :"제품코드",field: product_code},
+            //     {headerName :"제품명",field: product_name},
+            //     {headerName :"주문수량",field: order_amount},
+            //     {headerName :"출고량",field: output_amount},
+            //     {headerName :"미출고량",field: disorder_amount}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
+            //     {headerName :"상태여부",field: order_status}
+            // ],
            
 
             
@@ -222,7 +222,7 @@ export default{
 
         onRowClicked(row) {
             console.log("클릭된 셀 데이터:",row.data);
-            let order = row.data;
+            // let order = row.data;
             
         },
                 
