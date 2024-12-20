@@ -322,6 +322,11 @@ SET
 		material_state = 'a3' 
 `;
 
+
+const matr_input_list =
+``;
+
+
 module.exports = {
    material_order_head,
    need_order_material,
@@ -334,5 +339,6 @@ module.exports = {
    input_lot_material,
    material_order_list,
 	material_cance,
+	matr_input_list,
 
 };
