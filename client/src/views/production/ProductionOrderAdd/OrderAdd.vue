@@ -43,15 +43,64 @@
           </div>
         </div>
       </div>
+      <div class="grid-container1" >
+        <ag-grid-vue
+            :rowData="rowDataNeed"
+            :columnDefs="columnDefsNeed"
+            :theme="theme"
+            @grid-ready="onGridReady"
+        />
+      </div>
+      <div class="grid-container2" >
+        <ag-grid-vue
+            :rowData="rowDataStock"
+            :columnDefs="columnDefsStock"
+            :theme="theme"
+            @grid-ready="onGridReady"
+        />
+      </div>
     </div>
   </div>
 </template>
 <script>
 import MaterialButton from "@/components/MaterialButton.vue";
+import theme from "@/utils/agGridTheme";
 
 export default {
   name: "OrderAdd" ,
-  components: {MaterialButton}
+  computed: {
+    theme() {
+      return theme
+    }
+  },
+  components: {MaterialButton},
+
+  data() {
+    return {
+      rowDataNeed: [{'needMaterialName': '1'}, {'needAmount': '1'}],
+      columnDefsNeed: [
+        { headerName: "자재명", field: 'needMaterialName'},
+        { headerName: "용량", field: 'needAmount' },
+      ],
+
+      rowDataStock: [{'lot': '1'}, {'stockMaterialName': '1'}, {'stockAmount': '1'}, {'expiryDate': '1'}, {'useBtn': '1'}],
+      columnDefsStock: [
+        { headerName: "자재Lot번호", field: 'lot'},
+        { headerName: "자재명", field: 'stockMaterialName' },
+        { headerName: "용량", field: 'stockAmount' },
+        { headerName: "유통기한", field: 'expiryDate' },
+        { headerName: "사용", field: 'useBtn' },
+      ],
+    }
+  },
+
+  methods: {
+    onGridReady(params) {
+      this.gridApi = params.api;
+      this.gridApi.sizeColumnsToFit();
+    },
+  }
+
 }
 </script>
 
@@ -69,6 +118,7 @@ export default {
     }
   }
   .main-container {
+    display: flex;
     justify-content: space-between;
     width: 100%;
     padding: 40px;
@@ -127,6 +177,27 @@ export default {
         }
       }
     }
+    .grid-container1 {
+      height: 300px;
+      width: 30%;
+      padding: 0 20px 20px 28px;
+      > div {
+        height: 300px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+      }
+    }
+    .grid-container2 {
+      height: 300px;
+      width: 60%;
+      padding: 0 0 20px 20px;
+      > div {
+        height: 300px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+      }
+    }
+
   }
 }
 
