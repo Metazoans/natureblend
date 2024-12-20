@@ -1,6 +1,6 @@
 <template>
   <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" :style="{ maxWidth: width + 'px' }">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exampleModalLabel">{{ modalTitle }}</h1>
@@ -26,6 +26,7 @@ export default {
     modalTitle: String,
     noBtn: String,
     yesBtn: String,
+    width: Number
   },
 
   data() {
