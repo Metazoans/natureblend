@@ -1,164 +1,218 @@
 <template>
-  <div class="container-fluid py-4">
-    <h1>입고검사-관리</h1>
-    <div class="row">
-      <h4>검색조건</h4>
-      <div class="col-sm"><material-input type="date" placeholder="Date" value="2024-12-13" /></div>
-      <div class="col-sm"><material-input type="date" placeholder="Date" value="2024-12-13" /></div>
-      <div class="col-sm"><material-input type="search" placeholder="Search" value="Creative Tim" /></div>
-      <div class="col-sm"><material-button size="md">검색</material-button></div>
+  <div class="px-4 py-4">
+    <h1>입고검사-입고검사관리</h1>
+    <hr>
+    <!-- 검사조건 부분 시작 -->
+    <div class="row align-items-center mb-3">
+      <div class="col-2">
+        <h3 class="mr-3">검색조건</h3>
+      </div>
+      <div class="col">
+        <material-button class="btn-search" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
+      </div>
     </div>
-  </div>
-  <div class="container-fluid py-4">
-    <h4>입고상세정보</h4>
+
     <div class="row">
-      <div class="col-12">
-        <table class="table align-items-center mb-0">
-          <thead>
-            <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                체크
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                입고검사번호
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                자재발주코드
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                자재명
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                담당자번호
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                총 수량
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                합격량
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                불합격량
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                검사시작시각
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                검사완료시각
-              </th>
-              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                검사상태
-              </th>
-              <th class="text-secondary opacity-7"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <material-checkbox id="checkboxId" />
-                </div>
-              </td>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">(입고검사번호)</h6>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">(자재발주코드)</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <h6 class="mb-0 text-sm">오렌지(18kg)</h6>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">(담당자번호/이름)</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">100</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">90</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">10</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">25/01/19</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">25/01/19</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="badge badge-sm bg-gradient-warning">검사요청완료</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <material-checkbox id="checkboxId" />
-                </div>
-              </td>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">(입고검사번호)</h6>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">(자재발주코드)</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <h6 class="mb-0 text-sm">병(1.5L)</h6>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">(담당자번호/이름)</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">500</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">500</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">0</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">25/01/19</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">25/01/19</span>
-              </td>
-              <td class="align-middle text-center">
-                <span class="badge badge-sm bg-gradient-warning">검사요청완료</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <label for="startDate" class="mr-2">날짜범위</label>
+      <div class="input-group w-auto h-25">
+        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date" v-model="searchInfo.startDate" />
+      </div>
+      <div class="input-group w-auto h-25">
+        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date" v-model="searchInfo.endDate" />
+      </div>
+      <div class="input-group w-auto h-25">
+        <input label="자재명" class="form-control border p-2 cursor-pointer" placeholder="자재명" type="search" v-model="searchInfo.mName" />
+      </div>
+      <div class="input-group w-auto h-25">
+        <material-button size="md" v-on:click="searchOrder">검색</material-button>
       </div>
     </div>
   </div>
+  <!-- 검사조건 부분 끝 -->
 
+  <hr>
+  <!-- 검사결과 시작 -->
+  <div class="container-fluid py-4">
+    <h4>입고상세정보</h4>
+
+    <div class="grid-container">
+      <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10">
+      </ag-grid-vue>
+
+    </div>
+    <material-button size="md" class="mt-3" v-on:click="addSelectedRows">선택된 행 추가</material-button>
+  </div>
+  <!-- 검사결과 끝 -->
+
+  <hr>
+
+
+
+  <!-- 불량상세 시작 -->
+  <div class="container-fluid py-4">
+    <h4>불량상세</h4>
+
+    <div class="grid-container">
+      <!-- <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10">
+      </ag-grid-vue> -->
+
+    </div>
+  </div>
+  <!-- 불량상세 끝 -->
   
+
+
 </template>
 
 <script>
-import MaterialCheckbox from "@/components/MaterialCheckbox.vue";
-import MaterialInput from "@/components/MaterialInput.vue";
+import { toRaw } from 'vue';
+
 import MaterialButton from "@/components/MaterialButton.vue";
+
+import axios from 'axios';
+import { ajaxUrl } from '@/utils/commons.js';
+import userDateUtils from '@/utils/useDates.js';
+
+import theme from "@/utils/agGridTheme";
+
+
 
 export default {
   name: "입고검사",
-  components: { MaterialInput, MaterialButton, MaterialCheckbox,   },      
+  components: { MaterialButton,  },
+  data() {
+    return {
+      searchInfo: {
+        mName: '',
+        //범위 : 일주일전부터 오늘
+        startDate: this.formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+        endDate: this.formatDate(new Date())
+      },
+
+      searchList: [],
+
+      //ag grid 관련
+      theme: theme,
+      rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
+      columnDefs: [ //검색 결과 열
+        { headerName: "체크",
+          field: "check",
+          resizable: false,
+          editable: true,
+          sortable: false,
+        },
+        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false },
+        { headerName: "자재명", field: "mName", resizable: false },
+        { headerName: "검사담당자", field: "eName", resizable: false },
+        { headerName: "총 수량", field: "totalQnt", resizable: false },
+        { headerName: "합격량", field: "passQnt", resizable: false, editable: true, },
+        { headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, },
+        { headerName: "검사시작시각", field: "inspecStart", resizable: false },
+        { headerName: "검사상태", field: "inspecStatus", resizable: false },
+
+      ],
+      
+      defaultColDef: {
+        headerClass: "header-center"
+      },
+
+
+      inspecData: [],
+    }
+
+  },
+  methods: {
+    formatDate(date) {
+      // 날짜를 YYYY-MM-DD 형식으로 변환(검색창용)
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
+    // 날짜를 YYYY-MM-DD 형식으로 변환
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    },
+
+
+    //검색창 관련    
+    async searchOrder() {
+      if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
+        alert("시작 날짜는 종료 날짜보다 이전이어야 합니다.");
+        return;
+      }
+
+      const name = this.searchInfo.mName.replace(/\s+/g, "");
+      const result = {
+        mName: name.length != 0 ? name : "",
+        startDate: this.searchInfo.startDate,
+        endDate: this.searchInfo.endDate
+      };
+      let searchResult = await axios.post(`${ajaxUrl}/requestQCM`, result)
+        .catch(err => console.log(err));
+      this.searchList = searchResult.data;
+
+      // ag grid에 결과값 넣기
+      this.rowData1 = []
+      for (let i = 0; i < this.searchList.length; i++) {
+        let col = {
+          "check": false, "qcMaterialId": this.searchList[i].qc_material_id,"orderCode": this.searchList[i].order_code,
+          "mName": this.searchList[i].material_name, "eName":this.searchList[i].name, "totalQnt" : this.searchList[i].total_qnt,
+          "passQnt" : this.searchList[i].pass_qnt, "rjcQnt" : this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus" : this.searchList[i].inspec_status
+
+        }
+        this.rowData1[i] = col;
+      }
+    },
+    //전체 조회
+    async searchRequestAll() {
+      let searchResult = await axios.get(`${ajaxUrl}/requestQCMAll`)
+        .catch(err => console.log(err));
+      this.searchList = searchResult.data;
+
+      // ag grid에 결과값 넣기
+      this.rowData1 = []
+      for (let i = 0; i < this.searchList.length; i++) {
+        let col = {
+          "check": false, "qcMaterialId": this.searchList[i].qc_material_id,"orderCode": this.searchList[i].order_code,
+          "mName": this.searchList[i].material_name, "eName":this.searchList[i].name, "totalQnt" : this.searchList[i].total_qnt,
+          "passQnt" : this.searchList[i].pass_qnt, "rjcQnt" : this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus" : this.searchList[i].inspec_status
+
+        }
+        this.rowData1[i] = col;
+      }
+    },
+    addSelectedRows() {
+      const selectedRows = this.rowData1.filter(row => row.check === true); // 체크된 행 필터링
+      this.inspecData.push(...selectedRows); // inspecData에 추가
+      alert(`${selectedRows.length}개의 행이 추가되었습니다.`);
+      const rawData =  toRaw(this.inspecData);
+      console.log(rawData);
+    },
+    
+  },
+  created(){
+    this.searchRequestAll();
+  }
+  
+
 };
 </script>
+
+
+
+
 <style scoped lang="scss">
 .pagination {
   display: flex;
   justify-content: center;
 }
+
 .container-fluid {
   min-height: 500px;
 

@@ -12,7 +12,7 @@
       ></i>
       <a class="m-0 navbar-brand" href="/">
         <span class="text-2xl font-weight-bold text-white"
-          >Nature Blend</span
+          ><img src="http://yeonsus.com/moive/jussionejo.png" width="35" alt="Nature Blend" class="logimg">Nature Blend</span
         >
       </a>
     </div>
@@ -45,5 +45,9 @@ export default {
 </script>
 
 <style scoped>
-
+  .logimg {
+    position: relative;
+    top: -5px;
+    left: -9px;
+  }
 </style>
