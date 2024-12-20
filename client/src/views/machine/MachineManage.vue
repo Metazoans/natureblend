@@ -15,7 +15,11 @@
         <!-- 이미지 안들어감 input file 데이터 바인딩 수정 필요 -->
         <div class="modalRow">
           <label for="machineImg">설비 이미지</label>
-          <input type="file" id="machineImg" name="machineImg" @change="onFileChange($event)"/>
+          <!-- 파일 node로 저장(url return받음) -->
+          <input type="file" id="machineImg" name="machineImg" @change="onFileChange"/>
+          <!-- 이미지 url 불러오기(미리보기) -->
+          <img :src="machineData.machine_img" height="50px" width="50px" />
+
         </div>
 
         <div class="modalRow">
@@ -116,6 +120,7 @@ import axios from 'axios';
 
 export default {
   name: "MachineManage",
+
   props: {
     machineNo: Number,
     isUpdate: Boolean,
@@ -164,28 +169,28 @@ export default {
       this.typeSelect = result.data;
     },
 
+
+
     // 이미지 src로 저장?
-    onFileChange(event) {
-      console.log('이미지 src 변환?');
-      let file = event.target.files[0];
-      let imageUrl = URL.createObjectURL(file);
-      this.machineData.machine_img = imageUrl;
-      console.log(this.machineData.machine_img);
+    onFileChange(file) {
+      if(!file) {
+        return;
+      }
+
+      // 파일 전송 형식 = FormData
+      const formData = new FormData();
+
+      formData.append('fileData', file);
+      const reader = new FileReader();
+      
+      // 파일 url 가져오기
+      reader.onload = (e) => {
+        this.machineData.machine_img = e.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      axios()
     },
-    /*
-import { ref } from 'vue';
-
-const src = ref();
-
-const addImage = (e: Event) => {
-  const [file] = (e.target as HTMLInputElement).files;
-  console.log((e.target as HTMLInputElement).files);
-  if (file) {
-    src.value = URL.createObjectURL(file);
-  }
-};
-    */
-
 
     // 모달 동작
     closeModal() {

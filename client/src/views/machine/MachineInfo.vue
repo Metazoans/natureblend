@@ -61,7 +61,8 @@ UPH
       <!-- 설비 이미지 -->
       <div class="col-3 mimg">
         이미지
-        <img v-bind:src="machineData.machine_img" />
+        
+        <img v-if="machineData.machine_img" :src="machineData.machine_img" />
       </div>
 
       <!-- 설비 정보 항목 -->
