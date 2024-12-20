@@ -1,13 +1,192 @@
 <template>
-  <div>
-    <h1>QualityList Page3</h1>
+  <div class="px-4 py-4">
+    <h1>입고검사-검사기록조회</h1>
+    <hr>
+    <!-- 검사조건 부분 시작 -->
+    <div class="row align-items-center mb-3">
+      <div class="col-2">
+        <h3 class="mr-3">검색조건</h3>
+      </div>
+      <div class="col">
+        <material-button class="btn-search" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
+      </div>
+    </div>
+
+    <div class="row">
+      <label for="startDate" class="mr-2">날짜범위</label>
+      <div class="input-group w-auto h-25">
+        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date" v-model="searchInfo.startDate" />
+      </div>
+      <div class="input-group w-auto h-25">
+        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date" v-model="searchInfo.endDate" />
+      </div>
+      <div class="input-group w-auto h-25">
+        <input label="자재명" class="form-control border p-2 cursor-pointer" placeholder="자재명" type="search" v-model="searchInfo.mName" />
+      </div>
+      <div class="input-group w-auto h-25">
+        <material-button size="md" v-on:click="searchOrder">검색</material-button>
+      </div>
+    </div>
   </div>
+  <!-- 검사조건 부분 끝 -->
+
+  <hr>
+  <!-- 검사결과 시작 -->
+  <div class="container-fluid py-4">
+    <h4>입고상세정보</h4>
+
+    <div class="grid-container">
+      <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10">
+      </ag-grid-vue>
+
+    </div>
+  </div>
+  <!-- 검사결과 끝 -->
+
+  <hr>
+
+
+
+  
+
+
 </template>
+
+<script>
+import MaterialButton from "@/components/MaterialButton.vue";
+
+import axios from 'axios';
+import { ajaxUrl } from '@/utils/commons.js';
+import userDateUtils from '@/utils/useDates.js';
+
+import theme from "@/utils/agGridTheme";
+
+export default {
+  name: "입고검사",
+  components: { MaterialButton,  },
+  data() {
+    return {
+      searchInfo: {
+        mName: '',
+        //범위 : 일주일전부터 오늘
+        startDate: this.formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+        endDate: this.formatDate(new Date())
+      },
+
+      searchList: [],
+
+      //ag grid 관련
+      theme: theme,
+      rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
+      columnDefs: [ //검색 결과 열
+        { headerName: "체크",
+          field: "check",
+          resizable: false,
+          editable: true,
+          sortable: false,
+        },
+        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false },
+        { headerName: "자재명", field: "mName", resizable: false },
+        { headerName: "검사담당자", field: "eName", resizable: false },
+        { headerName: "총 수량", field: "totalQnt", resizable: false },
+        { headerName: "합격량", field: "passQnt", resizable: false },
+        { headerName: "불합격량", field: "rjcQnt", resizable: false },
+        { headerName: "검사시작시각", field: "inspecStart", resizable: false },
+        { headerName: "검사상태", field: "inspecStatus", resizable: false },
+
+      ],
+      
+      defaultColDef: {
+        headerClass: "header-center"
+      },
+
+
+    }
+
+  },
+  methods: {
+    formatDate(date) {
+      // 날짜를 YYYY-MM-DD 형식으로 변환(검색창용)
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
+    // 날짜를 YYYY-MM-DD 형식으로 변환
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    },
+
+
+    //검색창 관련    
+    async searchOrder() {
+      if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
+        alert("시작 날짜는 종료 날짜보다 이전이어야 합니다.");
+        return;
+      }
+
+      const name = this.searchInfo.mName.replace(/\s+/g, "");
+      const result = {
+        mName: name.length != 0 ? name : "",
+        startDate: this.searchInfo.startDate,
+        endDate: this.searchInfo.endDate
+      };
+      let searchResult = await axios.post(`${ajaxUrl}/requestQCM`, result)
+        .catch(err => console.log(err));
+      this.searchList = searchResult.data;
+
+      // ag grid에 결과값 넣기
+      this.rowData1 = []
+      for (let i = 0; i < this.searchList.length; i++) {
+        let col = {
+          "check": false, "qcMaterialId": this.searchList[i].qc_material_id,"orderCode": this.searchList[i].order_code,
+          "mName": this.searchList[i].material_name, "eName":this.searchList[i].name, "totalQnt" : this.searchList[i].total_qnt,
+          "passQnt" : this.searchList[i].pass_qnt, "rjcQnt" : this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus" : this.searchList[i].inspec_status
+
+        }
+        this.rowData1[i] = col;
+      }
+    },
+    //전체 조회
+    async searchRequestAll() {
+      let searchResult = await axios.get(`${ajaxUrl}/requestQCMAll`)
+        .catch(err => console.log(err));
+      this.searchList = searchResult.data;
+
+      // ag grid에 결과값 넣기
+      this.rowData1 = []
+      for (let i = 0; i < this.searchList.length; i++) {
+        let col = {
+          "check": false, "qcMaterialId": this.searchList[i].qc_material_id,"orderCode": this.searchList[i].order_code,
+          "mName": this.searchList[i].material_name, "eName":this.searchList[i].name, "totalQnt" : this.searchList[i].total_qnt,
+          "passQnt" : this.searchList[i].pass_qnt, "rjcQnt" : this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus" : this.searchList[i].inspec_status
+
+        }
+        this.rowData1[i] = col;
+      }
+    },
+  },
+  created(){
+    this.searchRequestAll();
+  }
+  
+
+};
+</script>
+
+
+
+
 <style scoped lang="scss">
 .pagination {
   display: flex;
   justify-content: center;
 }
+
 .container-fluid {
   min-height: 500px;
 

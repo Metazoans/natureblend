@@ -17,20 +17,32 @@ router.post('/meterialOrderQC', async (req, res)=>{
 
 // 자재품질검사 신청(입력)
 router.post('/insertQCM', async (req, res)=>{
-  console.log(req.body);
+  //console.log(req.body);
   let insertObj = []
   for(let i=0;i<req.body.length;i++){
     let { orderCode, mName, ordQty, orderDate} = req.body[i];
     insertObj[i] = { orderCode, mName, ordQty, orderDate };
   }
-  res.send(insertObj);
-
-  // let result = await qc_service.requestInspectionForM(insertObj);
-  // //console.log(result);
-  // res.send(result);
-
-
+  let result =await qc_service.requestInspectionForM(insertObj);
+   res.send(result);
 });
+
+
+
+
+//자재검사관리-검사할 요청 전체 조회 및 선택검색
+router.get('/requestQCMAll', async (req, res)=>{
+  let list = await qc_service.findAllRequestForQCM();
+  res.send(list);
+});
+router.post('/requestQCM', async (req, res)=>{
+  let {mName, startDate, endDate} = req.body;
+  let list = await qc_service.findRequestForQCM(mName, startDate, endDate);
+  res.send(list);
+});
+
+//자재검사관리- 검사완료처리
+
 
 
 
