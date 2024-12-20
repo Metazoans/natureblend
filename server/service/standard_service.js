@@ -5,14 +5,19 @@ const mysql = require('../database/mapper.js');
 const findAllBom = async (bomnum)=>{
     let list = await mysql.query('bomList', [bomnum]);
     return list;
-    }
+}
+// product 테이블 조회
+const findProduct = async ()=>{
+    let list = await mysql.query('productSelect');
+    return list;
+}
 
 // 등록
 const createNewBom = async (bomInfo)=>{
   console.log('받아오는 데이터 확인',bomInfo);
     let result = await mysql.query('bomInsert', bomInfo);
     return result;
-  }
+}
 
 // BOM 수정
 const updateBom = async (num , updateInfo) => {
@@ -58,5 +63,6 @@ module.exports = {
     deleteBom,
     updateBom,
     insertBomList,
+    findProduct,
     // deleteMaterial,
 }

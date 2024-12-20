@@ -92,6 +92,26 @@ const getOrderInfo = async(no)=>{
   return list;
 }
 
+//주문수정_추가주문처리 
+const updateAddOrder = async(orderInfo)=>{
+  let result = await mysql.query('updateAddOrder',Object.values(orderInfo));
+  // 결과가 배열일 경우 처리(여러값인 경우 )
+  if (Array.isArray(result) && result[0] && result[0][0]) {
+    return { message: result[0][0].result };
+  } 
+  // 배열이 아닐 경우 처리
+  else if (result && result.result) {
+    return { message: result.result };
+  } else {
+    // 결과가 없을 경우
+    return {};
+  }
+
+} 
+
+//주문,주문서 수정 
+
+
 
 module.exports = {
     getClientList,
@@ -100,4 +120,5 @@ module.exports = {
     getProductList,
     addOrder,
     getOrderInfo,
+    updateAddOrder,
 }

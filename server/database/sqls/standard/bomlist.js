@@ -11,6 +11,12 @@ const bomList =
  on bm.bom_num = b.bom_num
  WHERE bm.bom_num = ?
  ORDER BY bm.bom_seq;`;
+ // product 테이블에서 제품 조회 하는 쿼리
+const productSelect =
+`SELECT product_code,
+        product_name,
+        capacity
+ FROM product`
 
  // BOM 제품 리스트 조회
  const bomView = 
@@ -72,5 +78,6 @@ WHERE bom_num = ?`;
     bomselectView,
     bomAddInsert,
     materialDelete,
+    productSelect,
     // materialInsert
 }

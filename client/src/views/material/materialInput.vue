@@ -31,6 +31,9 @@ import Modal from "@/views/material/materialInputModal.vue";
  import theme from "@/utils/agGridTheme";
  import { ref, onBeforeMount } from 'vue';
 
+import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
+const { notify } = useNotification();  // 노티 내용변수입니다
+
  //import { ref, shallowRef, computed, onBeforeMount } from 'vue';
  //import { useRouter } from 'vue-router';
 
@@ -82,6 +85,7 @@ import Modal from "@/views/material/materialInputModal.vue";
             button2.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
               //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
+              allInput(params.data);
             });
             return button2;
           }
@@ -133,15 +137,22 @@ const onReady = (param) => {
 
  //모달에 전달할 배열담는 그릇
  const nuwList = ref([]);
-
+ const selectedRows = ref([]);
+ 
 // allInput 클릭 이벤트 함수
-const allInput = () => {
-  const selectedRows = allInputData.value.getSelectedRows();  // 그리드에 전체선택된 값을 가져옴
-  //console.log('selectedRows :', selectedRows);
-  ///////// 여기서 데이터 가공해서 던저야하네
+const allInput = (data = null) => {
+  //const selectedRows = data ? [data] : allInputData.value.getSelectedRows();   // 그리드에 전체선택된 값을 가져옴
+  if(data.isTrusted){
+    selectedRows.value = allInputData.value.getSelectedRows();
+  }else{
+    selectedRows.value = [data];
+  }
+  console.log('selectedRows ', selectedRows.value);
+  //const selectedRows = allInputData.value.getSelectedRows(); 
+  console.log('data :', data);
 
   //모달에 던져줄 녀석
-  nuwList.value = selectedRows.map((val) => ({
+  nuwList.value = selectedRows.value.map((val) => ({
       order_code: val.order_code,
       material_name: val.material_name,
       warehouse1: '',
@@ -153,7 +164,7 @@ const allInput = () => {
 
   //console.log('nuwList.value :', nuwList.value);
 
-  if (selectedRows.length > 0) {
+  if (selectedRows.value.length > 0) {
     //console.log(JSON.stringify(selectedRows.value, null, 2));   // 해당값을 json형태로 만든다 null=데이터직렬화 , 2=들여쓰기2칸
   } else {
     console.log("선택된 항목이 없습니다.");
@@ -196,6 +207,12 @@ const lotMaking = async function(){
     //console.log( (numberPart.value + 1).toString().padStart(3, '0') );
   }
 
+  notify({
+      title: "입고",
+      text: "입고중입니다 잠시만 기다려주세요.",
+      type: "success", // success, warn, error 가능
+   });
+
   for(let i=0; i<nuwList.value.length; i++){
     materialObj.value = {
       lot_code: prefix.value + ( (numberPart.value + i).toString().padStart(3, '0') ),
@@ -209,9 +226,15 @@ const lotMaking = async function(){
     };
     //console.log(materialObj.value);
     //여기서 서버통신 시작함
-    inputMaterial(materialObj.value);
+    await inputMaterial(materialObj.value);
+    // await delay(3000);   //3초마다 포문 작동되게하기
   }
+  matrialQcInput(); //그냥 처리 끝나면 새로 DB받아옴
+  //location.reload();  //페이지 새로고침
 }
+
+//3초마다 for문 작동되게 하기
+//const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 //const materialObjInput = ref([]);
 const inputMaterial = async function(materialObj){
@@ -219,7 +242,7 @@ const inputMaterial = async function(materialObj){
   let result = await axios.post(`${ajaxUrl}/material/inputMaterial`, materialObj)
                              .catch(err=>console.log(err));
   console.log(result.data);
-  ///material/inputMaterial
+  //실패시 여기서 브레이크 걸어야함 근데 다 성공한다고 믿고 가는거지뭐...
 }
 
 
@@ -230,7 +253,12 @@ const confirm = () => {
     // console.log('엄마컴포넌트 : ', nuwList.value[i]['warehouse1']);
     // console.log('엄마컴포넌트 : ', nuwList.value[i]['warehouse2']);
     if(!nuwList.value[i]['warehouse1'] || !nuwList.value[i]['warehouse2']){
-      alert('창고선택이 덜 됐음 noti 해야하는데... 다영이한테 다시 물어보기');
+      //alert('창고선택이 덜 됐음 noti 해야하는데... 다영이한테 다시 물어보기');
+      notify({
+          title: "창고선택",
+          text: "창고선택을 완료한후에 작업을 시작해주세요.",
+          type: "success", // success, warn, error 가능
+      });
       break;
     }
     if(i == nuwList.value.length-1){

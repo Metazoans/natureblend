@@ -75,7 +75,7 @@ JOIN
 JOIN
     material mat
     ON bm.material_code = mat.material_code	
-JOIN
+LEFT JOIN
     stok_qty_cte stok
     ON stok.material_code = bm.material_code
 WHERE 
@@ -270,6 +270,58 @@ FROM
 ORDER BY lot_seq LIMIT 1
 `;
 
+// 자재 입고 처리 하기 (LOT 부여)
+const input_lot_material =
+`
+CALL material_lot_input(?, ?, ?, ?, ?, ?, ?, 1, @v_result)
+`;
+//CALL material_lot_input('19Z24004', 'PO241218004', '식용색소', 999000, 'W001', 1000, 'W002', 1, @v_result)
+//CALL material_lot_input(?, ?, ?, ?, ?, ?, ?, ?, @v_result)
+
+
+
+// 자재 발주서 (전체) 조회 하기 (이건 돌려쓰는거라 삭제금지!!)
+const material_order_list =
+`
+SELECT 
+		mob.body_num,
+		mob.order_code,
+		mat.material_name,
+		cli.com_name,
+		mob.ord_qty,
+		moh.order_date,
+		mob.limit_date,
+		mob.unit_price,
+		mob.total_price,
+		emp.name,
+		CASE WHEN mob.material_state = 'a1' THEN '발주등록'
+				WHEN mob.material_state = 'a3' THEN '취소'
+				WHEN mob.material_state = 'a4' THEN '입고완료'
+		END AS material_state
+FROM
+	material_order_body mob
+	JOIN	
+		material_order_head moh
+		ON	mob.order_code = moh.order_code
+	JOIN
+		material mat
+		ON mob.material_code = mat.material_code
+	JOIN
+		client cli
+		ON moh.client_num = cli.client_num
+	JOIN
+		employee emp
+		ON moh.emp_num = emp.emp_num
+`;
+
+const material_cance =
+`
+UPDATE 
+		material_order_body 
+SET 
+		material_state = 'a3' 
+`;
+
 module.exports = {
    material_order_head,
    need_order_material,
@@ -279,5 +331,8 @@ module.exports = {
    material_input_qc_list,
    warehouse_list,
    material_lot_num,
+   input_lot_material,
+   material_order_list,
+	material_cance,
 
 };

@@ -63,11 +63,34 @@ router.get('/material/lotNum', async (req, res)=>{
 //자재 입고 처리 하기
 router.post('/material/inputMaterial', async (req, res)=>{
   let materialObj = req.body;
-  console.log(materialObj);
-  // let inputPoLIstinfo = await materialService.inputOrder(materialObj);
-  // console.log(inputPoLIstinfo);
-  // res.send(inputPoLIstinfo);
+  //console.log(materialObj);
+  let inputLotInfo = await materialService.inputLotInfoGo(materialObj);
+  console.log(inputLotInfo);
+  res.send(inputLotInfo);
 });
 
+
+//자재 발주 리스트 조회 ( 현재 사용 안함 삭제해도됨 )
+// material_order_list 쿼리 문 // materialOrderList 함수명
+router.get('/material/polistorder', async (req, res)=>{
+  let poOrderList = await materialService.materialOrderList();
+  res.send(poOrderList);
+});
+
+//자재 발주 리스트 조회2
+router.put('/material/polistorder2', async(req,res)=>{
+  console.log(req.body);
+  let {materialCode, clientName, POListCode, startDate, endDate} = req.body;
+  let result = await materialService.materialOrderList2(materialCode, clientName, POListCode, startDate, endDate);
+  res.send(result);
+});
+
+// 발주서 전체취소 또는 개별 취소
+router.post('/material/poListDelete', async(req,res)=>{
+  //console.log(req.body);
+  let {deleteNum, body_num, order_code} = req.body;
+  let result = await materialService.poListDelete(deleteNum, body_num, order_code);
+  res.send(result);
+});
 
 module.exports = router;
