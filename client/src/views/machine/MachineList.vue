@@ -1,5 +1,8 @@
 <template>
   <div class="container-fluid py-4">
+    <!-- 검색창 -->
+    <input type="text" placeholder="전체 검색">
+    
     <div class="grid-container" >
       <ag-grid-vue
         :rowData="rowData"
@@ -10,6 +13,7 @@
         :pagination="true"
         :paginationPageSize="8"
         @cellClicked="cellClickFnc"
+        :gridOptions="gridOptions"
       ></ag-grid-vue>
     </div>
 
@@ -53,6 +57,12 @@ export default {
     const columnDefs = shallowRef([
       /*
       번호, 공정코드, 공정명, 모델번호, 설비분류, 설비 이름, 설비 위치, 작동상태
+      field: 'country',
+        valueFormatter: countryValueFormatter,
+        filter: 'agSetColumnFilter',
+        filterParams: {
+            valueFormatter: countryValueFormatter,
+        },
       */
       { headerName: '번호', field: 'machine_num' },
       { headerName: '공정코드', field: 'process_code' },
@@ -97,10 +107,17 @@ export default {
       theme: theme,
       inActClick: false,
       machineNo: 0,
+
     };
   },
   beforeMount() {
     this.getMachineList();
+    this.GridOptions = {
+        enableColResize: true,
+        enableSorting: true,
+        enableFilter: true,
+        animateRows: false
+    }
   },
   methods: {
     // 설비 등록 모달 열기
@@ -125,8 +142,11 @@ export default {
       this.isShowInActAdd = !this.isShowInActAdd;
     },
     // 비동기 등록 성공 체크
-    confirmInActAdd() {
+    confirmInActAdd(check) {
       this.closeInActAdd();
+      if(check == true){
+        this.getMachineList();
+      }
     },
     // 비동기 등록 모달 닫기
     closeInActAdd() {
