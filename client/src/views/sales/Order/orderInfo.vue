@@ -136,7 +136,7 @@
                     </div>
                 <div class="col-auto mt-5 text-center">
                         <material-button type="button" class="btn btn-warning" @click="updateOrder">수정</material-button>
-                        <material-button type="button" class="btn btn-warning" >삭제</material-button>
+                        <material-button type="button" class="btn btn-warning" @click="deleteOrder(this.orderInfo[0]['orderlist_num'])" >삭제</material-button>
                 </div>
             </div>
         </div>
@@ -304,7 +304,7 @@ export default{
                         .catch(err => console.log(err));  
         }
 
-        // 주문상태가 preparing 인 경우 
+        
         //주문,주문서 업데이트
         //업데이트 해야 하는 주문서 내용 
         // let obj = {
@@ -315,35 +315,79 @@ export default{
         let orderAmounts = []
         let perPrices = []
         let productCodes = []
+        let orderCodes =[]
         for(let i=0; i<this.orderInfo.length; i++){
             if(this.orderInfo[i]['order_status'] === 'preparing'){
-                orderAmounts.push(this.orderInfo[i]['order_amount']);
+                 // 주문상태가 preparing 인 경우 만 배열에 넣기 
+                orderAmounts.push(Number(this.orderInfo[i]['order_amount']));
                 productCodes.push(this.orderInfo[i]['product_code'])
                 perPrices.push(this.orderInfo[i]['per_price']);
+                orderCodes.push(this.orderInfo[i]['order_num']);
             }
         }
         
 
         let updateOrderInfo = {
-            orderAmount : JSON.stringify(orderAmounts),
-            productCode :JSON.stringify(productCodes),
-            perPrice : JSON.stringify(perPrices),
             orderlist_title : this.orderInfo[0]['orderlist_title'],
             due_date: this.orderInfo[0]['due_date'],
+            orderCode: JSON.stringify(orderCodes),
+            productCode :JSON.stringify(productCodes),
+            orderAmount : JSON.stringify(orderAmounts),
+            perPrice : JSON.stringify(perPrices),
         }
 
         console.log(updateOrderInfo);
         let result = await axios.put(`${ajaxUrl}/orderUpdate/update/${this.orderInfo[0]['orderlist_num']}`,updateOrderInfo)
                                     .catch(err=>console.log(err));
-            console.log(result.data);
+            console.log(result);
+        if(result.statusText === 'OK'){
+            this.$notify({
+                text: `${this.orderInfo[0]['orderlist_title']}이 수정되었습니다.`,
+                type: 'success',
+            });  
+        }
 
        
       },
-        
 
-
-
-   
+      
+      async deleteOrder(orderlistNum){
+        console.log("삭제 실행 ");
+        if(this.orderInfo[0]['orderlist_status'] === 'update'){
+            for(let i=0; i<this.orderInfo.length; i++){
+                if(this.orderInfo[i]['order_status'] === 'preparing'){
+                    let result = await axios.delete(`${ajaxUrl}/orderlist/delete/${orderlistNum}`)
+                                        .catch(err => console.log(err));
+                    console.log(result);
+                    if(result.data.result === 'success'){
+                        this.$notify({
+                            text: `${this.orderInfo[0]['orderlist_title']}이 삭제되었습니다.` ,
+                            type: 'success',
+                        });  
+                        this.$router.push({name :'orderlistSearch'});
+                        break;
+                    }else if (result.data.result === 'fail'){
+                        this.$notify({
+                            text: '삭제 오류 발생',
+                            type: 'error',
+                        });
+                        break;
+                    }
+                 }
+                 this.$notify({
+                        text: '현재 출고 진행 중인 건이 있습니다.',
+                        type: 'error',
+                    });
+                    break;
+            }
+        }else if (this.orderInfo[0]['orderlist_status'] === 'continue' || this.orderInfo[0]['orderlist_status'] === 'done'){
+            this.$notify({
+                    text: '현재 출고 진행 중인 건이 있습니다.',
+                    type: 'error',
+                });
+        }
+       
+      }, 
         
     }//end method
 }

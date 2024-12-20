@@ -7,6 +7,8 @@
       @grid-ready="onGridReady"
       :noRowsOverlayComponent="noRowsOverlayComponent"
       @rowClicked="onRowClicked"
+      :pagination="true"
+      :paginationPageSize="10"
   />
   
   </div>
@@ -88,6 +90,8 @@ export default {
         startDate:this.filters.startDate,
         endDate:this.filters.endDate 
       }
+
+      console.log(obj.clientName);
       //서버에 검색 필터 데이터 전송
         let result = await axios.put(`${ajaxUrl}/orderlist/search`,obj)
                                 .catch(err=> console.log(err));

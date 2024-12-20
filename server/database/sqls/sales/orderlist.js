@@ -256,14 +256,14 @@ const updateAddOrder=
 CALL orderUpdateInput(? ,? ,? ,?);`;
 
 //주문서, 주문 업데이트 
-/*
-DELIMITER //
+/*DELIMITER //
 CREATE PROCEDURE orderUpdate
 (
 IN v_orderlist_num INT,
 IN v_orderlist_title VARCHAR(50),
 IN v_due_date DATETIME,
 
+IN v_order_code_json_array TEXT,
 IN v_product_code_json_array TEXT,
 IN v_product_num_json_array TEXT,
 IN v_per_price_json_array TEXT
@@ -274,9 +274,9 @@ DECLARE v_result_value INT;
 
 DECLARE i INT DEFAULT 1;
 DECLARE product_code_array_length INT;
-DECLARE product_code_value TEXT;
 DECLARE product_num_value TEXT;
 DECLARE per_price_value TEXT;
+DECLARE order_code_value TEXT;
 DECLARE v_change_num INT;
 
 -- 트렌젝션 시작
@@ -294,15 +294,15 @@ WHERE orderlist_num = v_orderlist_num;
 -- 주문 수정 
 -- 반복으로  json 배열 요소 추출 
 WHILE i <= product_code_array_length DO
-	SET product_code_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_code_json_array , CONCAT('$[', i - 1, ']')));
 	SET product_num_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_num_json_array , CONCAT('$[', i - 1, ']')));
     SET per_price_value   = JSON_UNQUOTE(JSON_EXTRACT(v_per_price_json_array  , CONCAT('$[', i - 1, ']')));
+    SET order_code_value = JSON_UNQUOTE(JSON_EXTRACT(v_order_code_json_array  , CONCAT('$[', i - 1, ']')));
     -- 주문정보 업데이트 
     UPDATE orders
 	SET order_amount = product_num_value,
 		per_price = per_price_value,
         total_price = product_num_value *  per_price_value
-	WHERE orderlist_num = v_orderlist_num AND product_code = product_code_value;
+	WHERE orderlist_num = v_orderlist_num AND order_num = order_code_value;
     
     -- 변경된 행 체크 
     SET v_change_num = ROW_COUNT();
@@ -317,16 +317,53 @@ WHILE i <= product_code_array_length DO
     -- 문제있을때
     ROLLBACK;
 END//
-DELIMITER ; CALL orderUpdate(15,'오렌지나라','2025-01-03','["P006", "P008"]','[10, 20]','[1000, 2000]');
-*/ 
+DELIMITER ;
+CALL orderUpdate(14,'오렌지나라','2025-01-03','[15, 16]','["P008", "P008"]','[30, 40]','[1000, 2000]'
+);*/ 
 const updateOrder=
-`CALL orderUpdate(?, ?, ?, ?, ?, ?)`;
+`CALL orderUpdate(?, ?, ?, ?, ?, ?, ?)`;
 
 
+// 주문 주문서 삭제 
+/**DELIMITER //
+CREATE PROCEDURE orderlistDelete(
+IN v_orderlist_num INT 
+)
 
+BEGIN
+-- 변수 선언
+
+DECLARE vo_change_num INT;
+DECLARE vl_change_num INT;
+
+-- 트랜잭션 시작
+START TRANSACTION;
+
+DELETE FROM orderlists 
+WHERE orderlist_num = v_orderlist_num;
+
+-- 변경된 행 체크 
+SET vl_change_num = ROW_COUNT();
+IF vl_change_num = 1 THEN 
+	DELETE FROM orders 
+	WHERE orderlist_num = v_orderlist_num;
+
+
+	SET vo_change_num = ROW_COUNT();
+END IF;
+	-- 트랜잭션 커밋 또는 롤백 처리
+	IF vl_change_num = 1 AND vo_change_num >= 1 THEN -- `orders`에서 최소 1개 이상의 행이 삭제되었다면 커밋
+		-- 트랜잭션 커밋
+			COMMIT;
+	ELSE
+    -- 주문서 등록 실패 시 롤백
+        ROLLBACK;
+	END IF;
+END//
+DELIMITER ;
+CALL orderlistDelete(21);*/
 const orderListDelete = 
-`DELETE FROM orderlists
-WHERE orderlist_num =? `;
+`CALL orderlistDelete(?)`;
 
 module.exports = {
     orderList,

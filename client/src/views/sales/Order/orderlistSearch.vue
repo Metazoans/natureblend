@@ -121,6 +121,8 @@ export default{
             searchCom:"", // 저장 될 거래처 명 
             selectedCom: "", //선택된 거래처 명
 
+            
+
             filters: [],
             
         };
@@ -163,7 +165,7 @@ export default{
             const dbStatus = this.pickedStatus.map(status=>statusMap[status]);
             this.filters = {
                 orderStatus : dbStatus,
-                clientName : this.clientName,
+                clientName : this.searchCom,
                 orderName : this.orderName,
                 startDate : this.startDate,
                 endDate : this.endDate,
