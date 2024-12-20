@@ -75,7 +75,7 @@ JOIN
 JOIN
     material mat
     ON bm.material_code = mat.material_code	
-JOIN
+LEFT JOIN
     stok_qty_cte stok
     ON stok.material_code = bm.material_code
 WHERE 
@@ -314,6 +314,13 @@ FROM
 		ON moh.emp_num = emp.emp_num
 `;
 
+const material_cance =
+`
+UPDATE 
+		material_order_body 
+SET 
+		material_state = 'a3' 
+`;
 
 module.exports = {
    material_order_head,
@@ -326,5 +333,6 @@ module.exports = {
    material_lot_num,
    input_lot_material,
    material_order_list,
+	material_cance,
 
 };

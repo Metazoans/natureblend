@@ -28,13 +28,13 @@
       <div class="row gx-3 gy-2 mt-2">
          <!-- 납기일자 -->
          <div class="col-sm-2">
-            <label class="col-form-label fw-bold" for="startDate">입고일(부터)</label>
+            <label class="col-form-label fw-bold" for="startDate">입고 시작 범위</label>
             <div class="input-group">
                <input type="date" class="form-control" style="background-color: white; padding-left: 20px;" id="startDate" v-model="startDate">
             </div>
          </div>
          <div class="col-sm-2">
-            <label class="col-form-label fw-bold" for="endDate">입고일(까지)</label>
+            <label class="col-form-label fw-bold" for="endDate">입고 끝 범위</label>
             <div class="input-group">
                <input type="date" class="form-control" style="background-color: white; padding-left: 20px;" id="endDate" v-model="endDate">
             </div>
@@ -112,7 +112,6 @@ const columnDefs = ref([
    { headerName: "불량수량", field: "rjc_qnt" },
    { headerName: "창고", field: "chang2" },
    { headerName: "입고일자", field: "input_date" },
-   { headerName: "입고담당", field: "emp_name" },
    {  
       headerName: "입고검사", 
       field: "비고", 
