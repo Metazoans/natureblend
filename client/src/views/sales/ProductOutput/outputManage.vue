@@ -60,8 +60,8 @@
                 </div>
             </div>
         </div>
-
-        <div class="grid-container" >
+        <!-- <div class="grid-container" v-show="rowData.length != 0"> -->
+        <div class="grid-container">
             <ag-grid-vue
             :rowData="rowData"
             :columnDefs="columnOrderlist"
@@ -76,8 +76,9 @@
         <div style="display: none">
             <CustomNoRowsOverlay/>
         </div>
-        <div class="grid-container" >
+        <div class="grid-container">
             <ag-grid-vue
+            style ="width: 850px; height: 500px;"
             :rowData="rowDataOrder"
             :columnDefs="columnOrder"
             :theme="theme"
