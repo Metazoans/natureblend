@@ -3,80 +3,83 @@
         <!--검색 폼 -->
         <h2>주문서 조회</h2>
             <div class= "main-container">
-                 <!--주문서 상태 체크 박스-->
-                    <div class="mb-3">
-                        <label class="col-sm-2 col-form-label fw-bold">주문상태</label>
-                        <div>
-                            <label class="me-3" v-for="status in statusList" :key="status">
-                                {{ status }}
-                            <input 
-                                :value="status"
-                                type="checkbox"
-                                v-model="pickedStatus"
-                            >
-                            </label>
+                <div class="pt-2 pb-3">
+                        <!--주문서 상태 체크 박스-->
+                        <div class="mb-3">
+                            <label class="col-sm-2 col-form-label fw-bold">주문상태</label>
+                            <div>
+                                <label class="me-3" v-for="status in statusList" :key="status">
+                                    {{ status }}
+                                <input 
+                                    :value="status"
+                                    type="checkbox"
+                                    v-model="pickedStatus"
+                                >
+                                </label>
+                        </div>
+                        <!--체크박스 선택 상태 값 -->
+                        <div class="mt-3">
+                            <p>선택된 상태</p>
+                            <ul>
+                                <li v-for="(item,index) in pickedStatus" :key="index">{{ item }}</li>
+                            </ul>
+                        </div>
                     </div>
-                    <!--체크박스 선택 상태 값 -->
-                    <div class="mt-3">
-                        <p>선택된 상태</p>
-                        <ul>
-                            <li v-for="(item,index) in pickedStatus" :key="index">{{ item }}</li>
-                        </ul>
-                    </div>
-                </div>
 
-                <!--거래처명 검색-->
-                <div class="row align-items-center mb-3">
-                    <label class="col-sm-2 col-form-label fw-bold" >거래처명</label>
-                    <div class="col-sm-4">
-                        <input 
-                            id="clientSearch"  class="form-control border p-2"
-                            v-model="searchCom.com_name" @click="openModal"/>
-                            <Modal
-                                :isShowModal="isShowModal"
-                                :modalTitle="'거래처선택'"
-                                :noBtn="'닫기'"
-                                :yesBtn="'선택'"
-                                @closeModal="closeModal()"
-                                @confirm="confirm()"
-                            >
-                            <template v-slot:list>
-                                <ComList v-show="isShowModal" @selectclient="selectclient"/>
-                            </template>
-                            </Modal>
-                    </div>    
-                </div>
-                <!--주문서명 검색 -->
-                <div  class="row align-items-center mb-3">
-                    <label class="col-sm-2 col-form-label fw-bold">주문서명</label>
-                    <div class="col-sm-6">
-                        <input 
-                        id="orderSearch" class="form-control border p-2"
-                        v-model="orderName" />
+                    <!--거래처명 검색-->
+                    <div class="row align-items-center mb-3">
+                        <label class="col-sm-2 col-form-label fw-bold" >거래처명</label>
+                        <div class="col-sm-4">
+                            <input 
+                                id="clientSearch"  class="form-control border p-2"
+                                v-model="searchCom.com_name" @click="openModal"/>
+                                <Modal
+                                    :isShowModal="isShowModal"
+                                    :modalTitle="'거래처선택'"
+                                    :noBtn="'닫기'"
+                                    :yesBtn="'선택'"
+                                    @closeModal="closeModal()"
+                                    @confirm="confirm()"
+                                >
+                                <template v-slot:list>
+                                    <ComList v-show="isShowModal" @selectclient="selectclient"/>
+                                </template>
+                                </Modal>
+                        </div>    
                     </div>
-                </div>
-                <!--주문일자 검색 -->
-                <div class="row align-items-center mb-5">
-                    <label class="col-sm-2 col-form-label fw-bold">주문일자</label>
-                    <div class="col-sm-4">
-                        <input 
-                        type="date" 
-                        id="startDate" class="form-control border p-2"
-                        v-model="startDate"/>
+                    <!--주문서명 검색 -->
+                    <div  class="row align-items-center mb-3">
+                        <label class="col-sm-2 col-form-label fw-bold">주문서명</label>
+                        <div class="col-sm-6">
+                            <input 
+                            id="orderSearch" class="form-control border p-2"
+                            v-model="orderName" />
+                        </div>
                     </div>
-                    <div class="col-sm-1 text-center">~</div>
-                    <div class="col-sm-4">
-                        <input 
-                        type="date" 
-                        id="endDate" class="form-control border p-2"
-                        v-model="endDate" />
+                    <!--주문일자 검색 -->
+                    <div class="row align-items-center mb-5">
+                        <label class="col-sm-2 col-form-label fw-bold">주문일자</label>
+                        <div class="col-sm-4">
+                            <input 
+                            type="date" 
+                            id="startDate" class="form-control border p-2"
+                            v-model="startDate"/>
+                        </div>
+                        <div class="col-sm-1 text-center">~</div>
+                        <div class="col-sm-4">
+                            <input 
+                            type="date" 
+                            id="endDate" class="form-control border p-2"
+                            v-model="endDate" />
+                        </div>
                     </div>
                 </div>
             </div>
+                 
         <!--검색 및 초기화-->
-        <div class="mb-3 text-center">
-            <material-button size="sm" color="warning" class="button" @click="searchOrderlists">검색</material-button>
-            <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
+        <div class="mb-3 pt-2 text-center">
+            <material-button  color="warning" class="button" @click="searchOrderlists">검색</material-button>
+            <material-button color="warning" class="button" @click="resetSearch">초기화</material-button>
         </div>
         <!--추가 -->
         <!-- <button type="button" class="btn btn-secondary" @click="addOrder">추가</button> -->

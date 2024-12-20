@@ -1,6 +1,7 @@
 <template>
-  <div class="grid-container" >
+  <div class="grid-container">
     <ag-grid-vue
+      style ="height: 800px;"
       :rowData="rowData"
       :columnDefs="columnDefs"
       :theme="theme"
