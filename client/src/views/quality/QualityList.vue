@@ -41,7 +41,7 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
       </ag-grid-vue>
 
     </div>
@@ -54,7 +54,7 @@
     <h4>신청내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10" @cell-clicked="onCellClicked">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
       </ag-grid-vue>
 
     </div>
