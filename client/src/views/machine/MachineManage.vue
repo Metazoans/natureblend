@@ -16,10 +16,10 @@
         <div class="modalRow">
           <label for="machineImg">설비 이미지</label>
           <!-- 파일 node로 저장(url return받음) -->
-          <input type="file" id="machineImg" name="machineImg"/>
+          <input type="file" id="machineImg" name="machineImg" @change="handleFileChange"/>
           <!-- 이미지 url 불러오기(미리보기) -->
           <img :src="machineData.machine_img" height="50px" width="50px" />
-
+          <img v-if="imagePreview" :src="imagePreview" height="50px" width="50px" />
         </div>
 
         <div class="modalRow">
@@ -136,7 +136,7 @@ export default {
       machineData: {
         // 입력
         machine_name: '',
-        machine_img: 'null',
+        machine_img: '',
         model_num: '',
         machine_state: 'run',
         client_num: '',
@@ -151,6 +151,7 @@ export default {
       typeSelect: [], // 설비 분류 객체
       isInsert: false, // 등록 성공 여부,
       fullInput: false,
+      imagePreview: null,
     }
   },
   beforeMount() {
@@ -174,35 +175,15 @@ export default {
       this.typeSelect = result.data;
     },
 
-
-    // 이미지 src로 저장?
-    // onFileChange(file) {
-    //   if(!file) {
-    //     return;
-    //   }
-
-    //   // 파일 전송 형식 = FormData
-    //   const formData = new FormData();
-
-    //   formData.append('fileData', file);
-    //   const reader = new FileReader();
-      
-    //   // 파일 url 가져오기
-    //   reader.onload = (e) => {
-    //     this.machineData.machine_img = e.target.result;
-    //   };
-    //   reader.readAsDataURL(file);
-
-    //   axios()
-    // },
-
     // 모달 동작
     closeModal() {
       this.$emit('closeModal');
       this.deleteVal();
     },
     confirm() {
+      console.log('confirm 동작 : ', this.machineData);
       this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
+
 
       if(this.isUpdate) {
         this.machineUpdate();
@@ -313,14 +294,42 @@ export default {
       return userDateUtils.dateFormat(value, format);
     },
 
+    // 이미지 관련
+    handleFileChange(event) {
+      const file = event.target.files[0];
+      if(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.imagePreview = e.target.result;
+        };
+        reader.readAsDataURL(file);
 
-    // 유효성 체크 : 설비 이름, 모델 번호, 설비 분류, 제작업체, uph, 설비 위치, 등록자
-    
+        this.uploadImage(file);
+      }
+
+    },
+    async uploadImage(file) {
+      const formData = new FormData();
+      formData.append('machineImg', file);
+
+      try {
+        const response = await axios.post(`${ajaxUrl}/machine/uploadImg`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        console.log('가져온 경로 : ', response.data.filePath);
+        this.machineData.machine_img = response.data.filePath;
+      } catch (error) {
+        console.error('이미지 업로드 실패:', error);
+      }
+
+      console.log('저장한 값 : ', this.machineData.machine_img);
+    },
+
   },
+  // 유효성 체크 : 설비 이름, 모델 번호, 설비 분류, 제작업체, uph, 설비 위치, 등록자
   watch: {
     machineData: {
-      handler(newVal, oldVal) {
-        console.log(oldVal);
+      handler(newVal) {
         let btnActive = true;
         for(let key in newVal) {
           if(newVal[key] == '') {

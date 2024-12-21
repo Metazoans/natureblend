@@ -2,6 +2,17 @@ const express = require('express');
 const router = express.Router();
 const machineService = require('../../service/machine/machine_service.js');
 
+//이미지
+const upload = require('./img_router.js');
+router.post('/uploadImg', upload, async (req, res) => {
+  if(req.file) {
+    const imagePath = `/images/${req.file.filename}`;
+    res.send({filePath : imagePath});
+  } else {
+    res.status(400).send({error: '이미지 업로드 실패'});
+  }
+});
+
 // 전체조회
 router.get('/machineList', async (req, res) => {
   let machineList = await machineService.findAllMachines();
