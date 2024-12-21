@@ -3,6 +3,9 @@
 //자재 주문관리
 import MaterialList from '@/views/material/materialOrder.vue';
 
+//자재 주문관리 (★리뉴얼)
+import MaterialList2 from '@/views/material/newMaterialOrder.vue';
+
 //자재 주문조회
 import MaterialOrderList from '@/views/material/materialOrderList.vue';
 
@@ -25,12 +28,17 @@ import Tabletest from '@/views/material/Tables.vue';
 const materialRoute = [
   {
     path: '',
-    redirect : { name : 'materialList'}
+    redirect : { name : 'materialList2'}
   },
   {
     path: 'order',
     name: 'materialList',
     component: MaterialList
+  },
+  {
+    path: 'newOrder',
+    name: 'materialList2',
+    component: MaterialList2
   },
   {
     path: 'orderlist',

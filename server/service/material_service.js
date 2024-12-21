@@ -153,6 +153,61 @@ const poListDelete = async (deleteNum, body_num, order_code)=>{
   return result;
 }
 
+// 발주 입고리스트 조회 (조건 또는 전체)
+const materialInputList = async (materialCode, clientName, POListCode, startDate, endDate)=>{
+  console.log(materialCode);
+  console.log(clientName);
+  console.log(POListCode);
+  console.log(startDate);
+  console.log(endDate);
+  let searchList = [];
+  if(materialCode  != undefined && materialCode != null && materialCode != ''){
+    let search = `mat.material_name LIKE \'%${materialCode}%\' `;
+    searchList.push(search);
+  }
+
+  if(clientName  != undefined && clientName != null && clientName != ''){
+    let search = `cli.com_name LIKE \'%${clientName}%\' `;
+    searchList.push(search);
+  }
+
+  if(POListCode  != undefined && POListCode != null && POListCode != ''){
+    let search = `mi.order_code LIKE \'%${POListCode}%\' `;
+    searchList.push(search);
+  }
+
+  if(startDate  != undefined && startDate != null && startDate != ''){
+    let search = `mi.inset_lot_date >= \'${startDate}\' `;
+    searchList.push(search);
+  }
+
+  if(endDate  != undefined && endDate != null && endDate != ''){
+    let search = `mi.inset_lot_date <= \'${endDate}\' `;
+    searchList.push(search);
+  }
+
+  // 조건을 기반으로 WHERE절 최종 구성
+  let querywhere = '';
+  for(let i = 0 ; i < searchList.length; i++){
+    let search  = searchList[i];
+    querywhere+= (i == 0 ? ` `:` AND `) + search;  
+  };
+
+  querywhere = searchList.length == 0 ? "" : `WHERE ${querywhere}`;
+  querywhere += ` ORDER BY mi.input_num DESC `;
+  console.log('selected Query', querywhere);
+
+  let result = await mysql.query('material_input_list',querywhere);
+  return result;
+}
+
+// 입고번호로 로트번호 조회해서 보여주기 ( 입고 조회 메뉴 )
+//lotinfo     //lotQtyInfomation
+const lotQtyInfomation = async (inputNum)=>{
+  let list = await mysql.query('lot_qty_info', [inputNum]);
+  return list;
+}
+
 module.exports = {
   allmaterial,
   needOrderMaterial,
@@ -166,5 +221,7 @@ module.exports = {
   materialOrderList,
   materialOrderList2,
   poListDelete,
+  materialInputList,
+  lotQtyInfomation,
 
 };

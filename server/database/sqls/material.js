@@ -6,12 +6,15 @@ const material_order_head =
 		opr.plan_num,
 		opr.product_code,
 		pp.plan_create_date,
-		opr.plan_qty
+		opr.plan_qty,
+		pro.product_name
 FROM production_plan pp
 		JOIN order_plan_relation opr
 				ON pp.plan_num = opr.plan_num
 		JOIN orders orde
 				ON opr.order_num = orde.order_num
+		JOIN product pro
+				ON opr.product_code = pro.product_code
 WHERE pp.plan_status = 'plan_waiting'
 AND orde.order_status != 'shipped'
 `;
@@ -34,11 +37,11 @@ WITH stok_qty_cte AS (
         material_code
 )
 SELECT
-	 bm.material_code AS material_code,
+	bm.material_code AS material_code,
     bm.material AS material,
     COALESCE(stok.stok_qty, 0) AS stok_qty,
-    mat.safety_inventory AS safety_inventory,
-    (bm.material_con * opr.plan_qty) AS plan_qty,
+    COALESCE(mat.safety_inventory, 0) AS safety_inventory,
+    COALESCE((bm.material_con * opr.plan_qty), 0) AS plan_qty,
     COALESCE(
 		 (
 	        SELECT SUM(ord_qty)
@@ -47,22 +50,24 @@ SELECT
 	          AND material_state = 'a1'
 	    ),
 	 0)  AS ordering_qty,
-    GREATEST(
-        (
-            (bm.material_con * opr.plan_qty) 
-            + mat.safety_inventory 
-            - COALESCE(stok.stok_qty, 0) 
-            - COALESCE(
-                (SELECT SUM(ord_qty)
-                 FROM material_order_body
-                 WHERE material_code = bm.material_code
-                   AND material_state = 'a1'
-                ), 
-                0
-            )
-        ), 
-        0
-    ) AS need_qty,				
+    COALESCE(
+		GREATEST(
+			(
+				(bm.material_con * opr.plan_qty) 
+				+ mat.safety_inventory 
+				- COALESCE(stok.stok_qty, 0) 
+				- COALESCE(
+					(SELECT SUM(ord_qty)
+					FROM material_order_body
+					WHERE material_code = bm.material_code
+					AND material_state = 'a1'
+					), 
+					0
+				)
+			), 
+			0
+		),
+	0) AS need_qty,				
     opr.plan_num AS 생산계획코드,
     opr.plan_qty AS 생산수량,
     b.bom_num AS 레시피코드
@@ -323,9 +328,68 @@ SET
 `;
 
 
-const matr_input_list =
-``;
+const material_input_list =
+`
+SELECT 
+		mi.input_num,	-- 입고번호
+		mi.order_code,	-- 자재발주코드
+		mat.material_name,	-- 자재명
+		cli.com_name,		--	업체명
+		mob.ord_qty,		--	주문수량
+		(COALESCE(mlq.in_qty, 0) + COALESCE(mlq2.in_qty, 0)) AS in_qty,	-- 실제 입고수량
+		COALESCE(mlq.in_qty, 0) AS pass_qty,	-- 합격 정상수량
+		COALESCE(ware.warehouse_name, '-') AS pass_warehouse_name,			-- 합격 창고 이름
+		COALESCE(mlq2.in_qty, 0) AS reject_qty,	-- 불합격 정상수량
+		COALESCE(ware2.warehouse_name, '-') AS reject_warehouse_name,	-- 불합격 창고 이름
+		mi.inset_lot_date,		-- 입고일자
+		emp.name			-- 입고 담당자
+FROM
+		material_input mi
+	LEFT JOIN
+		material_lot_qty1 mlq
+		ON mi.input_num = mlq.input_num
+		AND mlq.material_nomal = 'b1'
+	LEFT JOIN
+		material_lot_qty1 mlq2
+		ON mi.input_num = mlq2.input_num
+		AND mlq2.material_nomal = 'b2'
+	JOIN	
+		material mat
+		ON	mi.material_code = mat.material_code
+	JOIN
+		client cli
+		ON	mi.client_num = cli.client_num
+	JOIN
+		material_order_body mob
+		ON mi.order_code = mob.order_code
+	LEFT JOIN
+		warehouse ware
+		ON mlq.warehouse_code = ware.warehouse_code
+	LEFT JOIN
+		warehouse ware2
+		ON mlq2.warehouse_code = ware2.warehouse_code
+	JOIN
+		employee emp
+		ON mi.emp_num = emp.emp_num
+`;
 
+const lot_qty_info =
+`
+SELECT
+		mlq1.lot_code,
+		COALESCE(mlq1.stok_qty, 0) AS pass_stok_qty,
+		COALESCE(mlq2.stok_qty, 0) AS reject_stok_qty
+FROM
+		material_lot_qty1 mlq1
+		left JOIN
+			material_lot_qty1 mlq2
+			ON mlq1.input_num = mlq2.input_num
+			AND mlq2.material_nomal = 'b2'
+WHERE
+		mlq1.material_nomal = 'b1'	
+AND
+		mlq1.input_num = ?
+`;
 
 module.exports = {
    material_order_head,
@@ -339,6 +403,7 @@ module.exports = {
    input_lot_material,
    material_order_list,
 	material_cance,
-	matr_input_list,
+	material_input_list,
+	lot_qty_info,
 
 };

@@ -93,4 +93,24 @@ router.post('/material/poListDelete', async(req,res)=>{
   res.send(result);
 });
 
+
+// 입고완료 내역 조회
+router.put('/material/materialInputList', async(req,res)=>{
+  //console.log(req.body);
+  let {materialCode, clientName, POListCode, startDate, endDate} = req.body;
+  let result = await materialService.materialInputList(materialCode, clientName, POListCode, startDate, endDate);
+  res.send(result);
+});
+
+
+// 입고번호로 로트번호 조회해서 보여주기 ( 입고 조회 메뉴 )
+//lotinfo
+router.get('/material/lotinfo/:inputNum', async (req, res)=>{
+  let inputNum = req.params.inputNum;
+  let lotQtyInfo = await materialService.lotQtyInfomation(inputNum);
+  res.send(lotQtyInfo);
+});
+
+
+
 module.exports = router;

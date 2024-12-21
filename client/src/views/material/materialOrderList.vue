@@ -111,7 +111,7 @@ const reSet = () => {
   //this.$notify({ text: '필수 정보를 모두 입력하세요.', type: 'error' });
 
   notify({
-      title: "알림 제목",
+      title: "검색조건",
       text: "초기화 완료 했습니다.",
       type: "success", // success, warn, error 가능
    });
@@ -157,6 +157,17 @@ const columnDefs = ref([
      cellRenderer: params => {
      const button = document.createElement('button');
      button.innerText = '발주서';
+     button.style.marginRight = '10px';
+     button.style.cursor = 'pointer';
+     button.style.backgroundColor = '#f7b84d';
+     button.style.width = '60px';
+     button.style.height = '30px';
+     button.style.color = 'white';
+     button.style.border = 'none';
+     button.style.padding = '0';
+     button.style.borderRadius = '4px';
+     button.style.textAlign = 'center';
+     button.style.lineHeight = '30px';
      button.addEventListener('click', () => {
         console.log("레코드 확인 : ", JSON.stringify(params.data));
      });
@@ -171,6 +182,17 @@ const columnDefs = ref([
       if(params.data.material_state === "발주등록"){
          const button2 = document.createElement('button');
          button2.innerText = '취소';
+         button2.style.marginRight = '10px';
+         button2.style.cursor = 'pointer';
+         button2.style.backgroundColor = '#595959';
+         button2.style.width = '60px';
+         button2.style.height = '30px';
+         button2.style.color = 'white';
+         button2.style.border = 'none';
+         button2.style.padding = '0';
+         button2.style.borderRadius = '4px';
+         button2.style.textAlign = 'center';
+         button2.style.lineHeight = '30px';
          button2.addEventListener('click', () => {
             console.log("레코드 확인 : ", JSON.stringify(params.data));
             //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
@@ -190,8 +212,8 @@ const isShowModal = ref(false);
 const closeModal = () => {
    isShowModal.value = false;
    notify({
-      title: "취소를 취소함",
-      text: "취소 모달을 닫았습니다.",
+      title: "취소",
+      text: "적용 취소 하였습니다.",
       type: "error", // success, warn, error 가능
    });
 };
@@ -203,7 +225,7 @@ const confirm = (deleteNum) => {
    isShowModal.value = false; // 모달 닫기
    if(!deleteNum){
       notify({
-         title: "취소 완료",
+         title: "관리자문의요망",
          text: "값이 정상적으로 넘어오지 않았습니다",
          type: "error", // success, warn, error 가능
       });
