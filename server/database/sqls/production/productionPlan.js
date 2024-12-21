@@ -166,7 +166,7 @@ const productStock = `CALL get_stock(?)`;
 // ROLLBACK;
 // SET  v_result_value = 'production_plan insert fail';
 // END if;
-//SET  v_result_value = 'success';
+// SET  v_result_value = 'success';
 // select v_result_value as result;
 // COMMIT;
 // END$$

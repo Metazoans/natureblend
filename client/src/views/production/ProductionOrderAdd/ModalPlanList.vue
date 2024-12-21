@@ -53,29 +53,25 @@
                     v-for="(plan) in planList"
                     :key="plan.rownum"
                     class="plan"
-                    :class="{ selected: selectedNum === plan.plan_num, 'bold-border': plan.rownum_by_plan === 1 }"
+                    :class="{ selected: selectedNum === plan.rownum, 'bold-border': plan.rownum_by_plan === 1 }"
                     @click="selectPlan(plan)"
                 >
-                  <td v-if="plan.rownum_by_plan === 1">
+                  <td>
                     <div class="d-flex px-2">
                       <div class="my-auto">
                         <h6 class="mb-0 text-sm">{{ plan.plan_num }}</h6>
                       </div>
                     </div>
                   </td>
-                  <td v-else></td>
-                  <td v-if="plan.rownum_by_plan === 1">
+                  <td>
                     <p class="text-sm font-weight-bold mb-0">{{ plan.plan_name }}</p>
                   </td>
-                  <td v-else></td>
-                  <td v-if="plan.rownum_by_plan === 1">
+                  <td>
                     <p class="text-sm font-weight-bold mb-0">{{ plan.plan_start_date.split('T')[0] }}</p>
                   </td>
-                  <td v-else></td>
-                  <td v-if="plan.rownum_by_plan === 1">
+                  <td>
                     <p class="text-sm font-weight-bold mb-0">{{ plan.plan_end_date.split('T')[0] }}</p>
                   </td>
-                  <td v-else></td>
                   <td>
                     <p class="text-sm font-weight-bold mb-0">{{ plan.product_code }}</p>
                   </td>
@@ -129,7 +125,7 @@ export default {
     },
 
     selectPlan(plan) {
-      this.selectedNum = plan.plan_num
+      this.selectedNum = plan.rownum
       this.$emit('selectPlan', plan)
     },
   }
