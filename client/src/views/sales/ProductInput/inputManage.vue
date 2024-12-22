@@ -365,8 +365,9 @@ export default{
                 (item) => item.qtId === selectedData.qtId && item.tempProductCode === selectedData.tempProductCode
             );
             if(!isDuplicate){
-                //tempInput 데이터 추가
-                this.tempInput.push(selectedData);
+                //tempInput 데이터 추가 (배열 객체를 풀어서 다시 객체 추가 후 배열 지정 )
+                this.tempInput = [...this.tempInput,selectedData];
+                //this.tempInput.push(selectedData);
                 console.log("데이터추가:",selectedData);
             }else{
                 this.$notify({
