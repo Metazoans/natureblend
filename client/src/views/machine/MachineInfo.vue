@@ -62,7 +62,7 @@ UPH
       <div class="col-3 mimg">
         이미지
         
-        <img v-if="machineData.machine_img" :src="machineData.machine_img" />
+        <img v-if="machineData.machine_img" :src="`http://localhost:3000${machineData.machine_img}`" />
       </div>
 
       <!-- 설비 정보 항목 -->

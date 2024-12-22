@@ -16,10 +16,9 @@
         <div class="modalRow">
           <label for="machineImg">설비 이미지</label>
           <!-- 파일 node로 저장(url return받음) -->
-          <input type="file" id="machineImg" name="machineImg" @change="handleFileChange"/>
+          <input type="file" id="machineImg" name="machineImg" @change="uploadImage"/>
           <!-- 이미지 url 불러오기(미리보기) -->
-          <img :src="machineData.machine_img" height="50px" width="50px" />
-          <img v-if="imagePreview" :src="imagePreview" height="50px" width="50px" />
+          <img :src="`http://localhost:3000${machineData.machine_img}`"/>
         </div>
 
         <div class="modalRow">
@@ -133,6 +132,7 @@ export default {
   },
   data() {
     return {
+      imgUrlTest: '',
       machineData: {
         // 입력
         machine_name: '',
@@ -295,20 +295,8 @@ export default {
     },
 
     // 이미지 관련
-    handleFileChange(event) {
+    async uploadImage(event) {
       const file = event.target.files[0];
-      if(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.imagePreview = e.target.result;
-        };
-        reader.readAsDataURL(file);
-
-        this.uploadImage(file);
-      }
-
-    },
-    async uploadImage(file) {
       const formData = new FormData();
       formData.append('machineImg', file);
 
