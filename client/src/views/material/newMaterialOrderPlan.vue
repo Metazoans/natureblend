@@ -1,3 +1,4 @@
+<!-- 자재 발주 관리 메뉴 리메이크 의 미지시생산계획 리스트 컴포넌트 -->
 <template>
     <div>
       <h4 style="margin-bottom: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;미지시 생산계획 확인</h4>
@@ -144,11 +145,11 @@ export default {
 
             this.needMaterialList = this.needMaterialList.map((col) => ({
                 ...col,
-                stok_qty: col.material.includes('병') ? Number(col.stok_qty) : (col.stok_qty * 0.001),
-                safety_inventory: col.material.includes('병') ? Number(col.safety_inventory) : (col.safety_inventory * 0.001),
-                plan_qty: col.material.includes('병') ? Number(col.plan_qty) : (col.plan_qty * 0.001),
-                ordering_qty: col.material.includes('병') ? Number(col.ordering_qty) : (col.ordering_qty * 0.001),
-                need_qty: col.material.includes('병') ? Number(col.need_qty) : (col.need_qty * 0.001),
+                stok_qty: col.material.includes('병') ? Number(col.stok_qty) : Math.ceil(col.stok_qty * 0.001),
+                safety_inventory: col.material.includes('병') ? Number(col.safety_inventory) : Math.ceil(col.safety_inventory * 0.001),
+                plan_qty: col.material.includes('병') ? Number(col.plan_qty) : Math.ceil(col.plan_qty * 0.001),
+                ordering_qty: col.material.includes('병') ? Number(col.ordering_qty) : Math.ceil(col.ordering_qty * 0.001),
+                need_qty: col.material.includes('병') ? Number(col.need_qty) : Math.ceil(col.need_qty * 0.001),
             }));
 
             console.log('결과 : ',this.needMaterialList);

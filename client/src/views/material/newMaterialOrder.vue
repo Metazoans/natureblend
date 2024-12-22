@@ -1,6 +1,7 @@
+<!-- 자재 발주 관리 메뉴 리메이크 (이걸로 사용중)-->
 <template>
     <div>
-        <h3>&nbsp;&nbsp;자재 주문 관리 (리뉴얼)</h3>
+        <h3>&nbsp;&nbsp;자재 발주 관리 (리뉴얼)</h3>
     </div>
     <div class="d-flex">
         <div class="p-2 flex-fill">
@@ -12,7 +13,7 @@
         </div>
     </div>
    <!-- 위에서 만들어진거 요기에 보냄-->
-   <newMaterialOrderOffer :planMaterialList="planMaterialList" :clientList="clientList" @seachClient="seachClienting"/>
+   <newMaterialOrderOffer :planMaterialList="planMaterialList" :clientList="clientList" @seachClient="seachClienting" @goPOlist="letGoPoList"/>
 </template>
 <script>
 import axios from 'axios';
@@ -36,6 +37,8 @@ export default {
             material_code: '',
             material_name: '',
             clientList: [],
+            polist: [],
+            my_result: 'OK',
         };
     },
     computed: {
@@ -65,6 +68,40 @@ export default {
             this.material_code = '';
             this.material_name = '';
         },
+        //그래도 마지막은 자식보단 부모에서 작업해야지 [ 발주 등록 처리 ]
+        async letGoPoList(data) {
+            this.polist = data;
+            console.log('부모한테 받은 발주서 : ', this.polist);
+
+            // 담당사원번호는 나중에 세션에서
+            this.polist = this.polist.map((val) => ({
+                ...val,
+                emp_num: 1,
+                go_qty: Number(val.go_qty)*1000,
+                go_price: Number(val.go_price)*1000,
+                go_total_price: val.go_total_price*1000,
+            }));
+
+            let artificial_head = new Date();
+            artificial_head = artificial_head.getTime();
+            for(let i=0; i<this.polist.length; i++){
+                await this.inputpolist(artificial_head, this.polist[i]);
+            }
+            if( this.my_result === 'OK' ){
+                this.$notify({ title:'발주성공', text: '발주 등록에 성공 하셨습니다.', type: 'success' });    // success, warn, error 가능
+                this.$router.push({ name : 'materialOrderList' });
+            }else{
+                this.$notify({ title:'발주오류', text: this.my_result+'오류 관리자 호출요망!', type: 'error' });    // success, warn, error 가능
+            }
+        },
+        async inputpolist(key, data){
+            let result = await axios.post(`${ajaxUrl}/material/inputPoLIst2/${key}`, data)
+                            .catch(err => console.log(err));
+            this.productorderlist = result.data;
+            if( this.productorderlist[0][0]['v_result'] !== 'OK' ){
+                this.my_result = this.productorderlist[0][0]['v_result'];
+            }
+        }
     },
 
     //생성될떄 작업하는거

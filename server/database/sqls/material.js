@@ -18,7 +18,6 @@ FROM production_plan pp
 WHERE pp.plan_status = 'plan_waiting'
 AND orde.order_status != 'shipped'
 `;
-//` SELECT * FROM production_plan WHERE plan_status = 'plan_waiting' `;
 
 
 //발주계획 필요 자재 조회
@@ -88,72 +87,6 @@ WHERE
 AND 
     bm.material_code != 'M035'
 `;
-/*
-`
-WITH stok_qty_cte AS (
-    SELECT
-        material_code,
-        SUM(stok_qty) AS stok_qty
-    FROM 
-        material_lot_qty1
-    WHERE
-        material_nomal = 'b1'
-        AND material_lot_state = 'c1'
-    GROUP BY
-        material_code
-)
-SELECT
-    bm.material_code AS material_code,
-    bm.material AS material,
-    COALESCE(stok.stok_qty, 0) AS stok_qty,
-    mat.safety_inventory AS safety_inventory,
-    (bm.material_con * pp.plan_qty) AS plan_qty,		
-    COALESCE(
-		 (
-	        SELECT SUM(ord_qty)
-	        FROM material_order_body
-	        WHERE material_code = bm.material_code
-	          AND material_state = 'a1'
-	    ),
-	 0)  AS ordering_qty,
-    GREATEST(
-        (
-            (bm.material_con * pp.plan_qty) 
-            + mat.safety_inventory 
-            - COALESCE(stok.stok_qty, 0) 
-            - COALESCE(
-                (SELECT SUM(ord_qty)
-                 FROM material_order_body
-                 WHERE material_code = bm.material_code
-                   AND material_state = 'a1'
-                ), 
-                0
-            )
-        ), 
-        0
-    ) AS need_qty,				
-    pp.plan_num AS 생산계획코드,
-    pp.plan_qty AS 생산수량,
-    b.bom_num AS 레시피코드
-FROM production_plan pp
-JOIN
-    bom b
-    ON pp.product_code = b.product_code
-JOIN
-    bom_material bm
-    ON b.bom_num = bm.bom_num
-JOIN
-    material mat
-    ON bm.material_code = mat.material_code	
-JOIN
-    stok_qty_cte stok
-    ON stok.material_code = bm.material_code
-WHERE 
-    pp.plan_num = ?
-AND 
-    bm.material_code != 'M035'
-`;
-*/
 
 //거래처 전체선택
 const full_client =
@@ -185,6 +118,12 @@ and com_name like IFNULL(?, '%')
 const input_order =
 `
     CALL material_input_polist(?, ?, ?, ?, ?, ?, ?, @result);
+`;
+
+// ★상품등록 트렌젝션2 [리뉴얼]
+const input_order2 =
+`
+    CALL material_input_polist_rmk(?, ?, ?, ?, ?, ?, ?, ?, @v_result);
 `;
 
 // 자재입고 메뉴에 사용될 쿼리 (전체리스트 검사완료된 전체리스트 가져옴)
@@ -391,12 +330,63 @@ AND
 		mlq1.input_num = ?
 `;
 
+//로트 재고 조회 페이지에서 사용하는 전체조회 또는 선택조회 
+const lot_qty_list =
+`
+SELECT
+		mlq.lot_seq,
+		mlq.lot_code,
+		mat.material_name,
+		COALESCE(cli.com_name, 'NO_CLIENT') AS com_name,
+		mlq.in_qty,
+		COALESCE(emp.name, 'NO_EMP')	AS name,
+		mlq.stok_qty,
+		'0' AS hold_qty,
+		mlq.out_qty,
+		COALESCE(mi.inset_lot_date, '9999-12-31 23:59:59') AS inset_lot_date,
+		mlq.limit_date,
+		COALESCE(ware.warehouse_name, 'NO_WARE') AS warehouse_name,
+		CASE 
+			WHEN mlq.material_lot_state = 'c1' 
+				THEN '정상'
+			ELSE '폐기'
+		END AS material_lot_state,
+		CASE 
+			WHEN mlq.material_nomal = 'b1' 
+				THEN '정상'
+			ELSE '불량'
+		END AS material_nomal
+FROM
+		material_lot_qty1 mlq
+		JOIN
+			material mat
+			ON
+				mlq.material_code = mat.material_code
+		left JOIN
+			material_input mi
+			ON
+				mlq.input_num = mi.input_num
+		left JOIN
+			client cli
+			ON
+				mi.client_num = cli.client_num
+		left JOIN
+			employee emp
+			ON
+				mi.emp_num = emp.emp_num
+		LEFT JOIN
+			warehouse ware
+			ON
+				mlq.warehouse_code = ware.warehouse_code
+`;
+
 module.exports = {
    material_order_head,
    need_order_material,
    full_client,
    full_client_info,
    input_order,
+   input_order2,
    material_input_qc_list,
    warehouse_list,
    material_lot_num,
@@ -405,5 +395,6 @@ module.exports = {
 	material_cance,
 	material_input_list,
 	lot_qty_info,
+	lot_qty_list,
 
 };

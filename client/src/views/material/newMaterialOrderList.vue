@@ -1,3 +1,4 @@
+<!-- 자재 발주 관리 메뉴 리메이크 의 회사선정 리스트 컴포넌트 -->
 <template>
    <div>
      <h4 v-show="isVisible2" style="margin-bottom: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;[{{ material_name }}] 발주업체 선정</h4>

@@ -1,3 +1,4 @@
+<!-- 자재 발주 관리 메뉴 리메이크 의 BOM기반 발주서 리스트 컴포넌트 -->
 <template>
     <div>
       <h4 style="margin-bottom: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;자재주문</h4>
@@ -266,11 +267,23 @@ export default {
         allInput2(){
             const selectedRows = this.gridApi.getSelectedRows();
             console.log(selectedRows);
-            selectedRows.forEach( val => console.log(val.com_name));
-            //★해야하는거
-            // 회사명, 발주수량, 단가, 납기일 없으면 캇
-            // 거래처 코드가 같은것끼리 하나로 볼수있게 엮는 방법 찾기
-            // 이후엔 발주서발행하기
+            
+            let NOOK = 'OK';
+            selectedRows.forEach(val => {
+                if(val.limit_date){
+                    const date2 = new Date(val.limit_date);
+                    val.limit_date = date2.toISOString().split('T')[0];
+                }
+                if (!val.com_name || !val.go_qty || !val.go_price || !val.limit_date) {
+                    this.$notify({ title:'값이 없음', text: '선택한 행의 값을 모두 채워주세요.', type: 'error' });
+                    NOOK = 'NO';
+                    return;
+                }
+            });
+            if(NOOK==='OK'){
+                this.$notify({ title:'발주성공', text: '발주처리중 잠시 기다려주세요.', type: 'success' });    //error , success
+                this.$emit('goPOlist', selectedRows);
+            }
         }
     },
 };

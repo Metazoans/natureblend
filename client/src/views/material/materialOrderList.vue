@@ -1,6 +1,7 @@
+<!-- 자재 발주 조회 메뉴 -->
 <template>
   <div>
-     <h3>&nbsp;&nbsp;자재 주문 조회</h3>
+     <h3>&nbsp;&nbsp;자재 발주 조회</h3>
   </div>
 <!-- 검색 메뉴 레이아웃 -->
 <div class="main-container">
@@ -23,6 +24,16 @@
            <label class="col-form-label fw-bold" for="POListCode">자재발주코드</label>
            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="POListCode" v-model="POListCode" @keydown.enter="enterkey">
         </div>
+
+         <!-- 발주 상태 -->
+         <div class="col-sm-2">
+            <label class="col-form-label fw-bold" for="materialState">발주 상태</label>
+            <div id="materialState" style="padding-left: 20px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="a1" v-model="materialState" />&nbsp;&nbsp;발주등록</label>
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="a3" v-model="materialState" />&nbsp;&nbsp;발주취소</label>
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="a4" v-model="materialState" />&nbsp;&nbsp;발주완료</label>
+            </div>
+         </div>
      </form>
 
      <div class="row gx-3 gy-2 mt-2">
@@ -87,6 +98,8 @@ const clientName = ref('');  //업체명
 const POListCode = ref('');  //자재발주코드
 const startDate = ref('');   //시작일
 const endDate = ref('');  //종료일
+const materialState = ref([]);   //처리상태를 담는 배열
+
 const seachcondition = ref({}); //서치조건 담는 배열
 
 const deleteList = ref([]);   //모달에 보내줄 값
@@ -98,13 +111,15 @@ const reSet = () => {
   POListCode.value = '';
   startDate.value = '';
   endDate.value = '';
+  materialState.value = [];
 
   seachcondition.value = {
    materialCode: '',
    clientName: '',
    POListCode: '',
    startDate: '',
-   endDate: ''
+   endDate: '',
+   materialState: [],
   }
   matrialOrderList2();   //초기화버튼 누르면 이거 실행
 
@@ -125,13 +140,15 @@ const seachPoList = () => {
   console.log(POListCode.value);
   console.log(startDate.value);
   console.log(endDate.value);
+  console.log(materialState.value);
 
   seachcondition.value = {
    materialCode: materialCode.value,
    clientName: clientName.value,
    POListCode: POListCode.value,
    startDate: startDate.value,
-   endDate: endDate.value
+   endDate: endDate.value,
+   materialState: materialState.value,
   }
 
   matrialOrderList2();

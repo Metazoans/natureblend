@@ -1,7 +1,7 @@
+<!--자재 입고 메뉴-->
 <template>
    <div>
       <h3>&nbsp;&nbsp;자재 입고</h3>
-      <!--<button class="btn" @click="allInput">전체입고</button>-->
    </div>
     <div class="grid-container">
       <ag-grid-vue
@@ -12,6 +12,7 @@
         :paginationPageSize="10"
         @grid-ready="onReady"
         style="height: 700px;"
+        :quickFilterText="clientNamesearch"
         rowSelection="multiple"
         >
     </ag-grid-vue>
@@ -145,6 +146,8 @@ const warehouseInfo = async function(){
   whList.value = result.data;
 }
 
+//검색 기능 변수
+const clientNamesearch = ref('');
 
 //ag-grid 메소드 API가 준비된 후 발생하는 이벤트
 const onReady = (param) => {
@@ -154,6 +157,13 @@ const onReady = (param) => {
   // 페이징 영역에 버튼 만들기
   const paginationPanel = document.querySelector('.ag-paging-panel');
   if (paginationPanel) {
+
+    // 컨테이너 생성
+    const container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.gap = '5px'; // 버튼과 입력 필드 간격
+
     // 버튼 생성
     const button = document.createElement('button');
     button.textContent = '선택입고';
@@ -172,8 +182,31 @@ const onReady = (param) => {
       allInput();
     });
 
+    // 입력 필드 생성
+    const inputText = document.createElement('input');
+    inputText.type = 'text';
+    inputText.placeholder = ' 검색';
+    inputText.style.padding = '5px';
+    inputText.style.width = '200px';
+    inputText.style.border = '1px solid #ccc';
+    inputText.style.borderRadius = '4px';
+    inputText.style.position = 'absolute';
+    inputText.style.left = '110px';
+
+    // 텍스트만 계속 가져다 바치면 ag그리드가 알아서 해줌
+    inputText.addEventListener('input', (event) => {
+          const value = event.target.value;
+          //console.log('입력된 값:', value);
+          // 검색 로직 추가 가능
+          clientNamesearch.value = value;
+    });
+
+    // 컨테이너에 버튼과 입력 필드 추가
+    container.appendChild(button);
+    container.appendChild(inputText);
+
     // 버튼을 페이지네이션 패널의 제일 앞에 추가
-    paginationPanel.insertBefore(button, paginationPanel.firstChild);
+    paginationPanel.insertBefore(container, paginationPanel.firstChild);
   }
 
 }

@@ -1,3 +1,4 @@
+<!--자재 입고 조회 메뉴 [조회]모달 -->
 <template>
    <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

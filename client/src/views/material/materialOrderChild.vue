@@ -1,3 +1,4 @@
+<!--리뉴얼로 사용 안하는 페이지-->
 <!-- 자재 주문 -->
 <template>
   <div class="container-fluid pl-4 pr-4 pt-0 pm-0"><!--py-4-->

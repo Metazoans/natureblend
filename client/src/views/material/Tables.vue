@@ -1,3 +1,4 @@
+<!-- 모달 샘플 -->
 <template>
   <div class="container-fluid py-4">
     <h1>생산등록</h1>
