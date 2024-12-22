@@ -1,15 +1,101 @@
 <template>
   <div class="container-fluid py-4">
-    <!-- 검색창 -->
-    <input type="text" placeholder="전체 검색">
+
+    <!-- 설비 검색 -->
+    <!--
+    // 검색 데이터
+    statusList: ["전체", "작동중", "작동정지"], // 작동 상태 옵션
+    pickedStatus: [], // 작동상태 선택
+    machineType: ["전체", "세척기기", "음료제작기기", "포장기기"], // 설비 분류 옵션
+    pickedType: [], // 설비 분류 선택
+    searchType: ["전체", "공정명", "설비이름"], // 검색 옵션
+    selectType: "", // 선택된 검색 옵션
+    searchData: "", // 검색 내용
+
+    filters: [],
+    -->
+    <div class="main-container">
+      <!-- 작동 상태 -->
+      <div class="mb-3">
+        <label class="col-sm-2 col-form-label fw-bold">작동 상태</label>
+        <div>
+          <label v-for="status in statusList" :key="status" class="me-3">
+            {{ status }}
+            <input
+              type="radio"
+              name="status"
+              :value="status"
+              v-model="pickedStatus"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- 설비 분류 -->
+      <div class="mb-3">
+        <label class="col-sm-2 col-form-label fw-bold">설비 분류</label>
+        <div>
+          <label v-for="type in machineType" :key="type" class="me-3">
+            {{ type }}
+            <input
+              type="checkbox"
+              :value="type"
+              v-model="pickedType"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- 검색 옵션 -->
+      <div class="mb-3">
+        <label class="col-sm-2 col-form-label fw-bold">검색 옵션</label>
+        <select v-model="selectSearchType" class="form-select">
+          <option v-for="option in searchType" :key="option" :value="option">
+            {{ option }}
+          </option>
+        </select>
+      </div>
+
+      <!-- 검색 텍스트 -->
+      <div class="mb-3">
+        <label class="col-sm-2 col-form-label fw-bold">검색 내용</label>
+        <input
+          type="text"
+          v-model="searchData"
+          placeholder="검색 내용을 입력하세요"
+          class="form-control"
+        />
+      </div>
+
+      <!-- 검색 및 초기화 버튼 -->
+      <div class="mb-3 text-center">
+        <material-button
+          size="sm"
+          color="warning"
+          @click="updateFilter"
+        >
+          검색
+        </material-button>
+        <material-button
+          size="sm"
+          color="warning"
+          @click="resetSearch"
+        >
+          초기화
+        </material-button>
+      </div>
+    </div>
     
+    
+
+    <!-- 설비 리스트 -->
     <div class="grid-container" >
       <ag-grid-vue
         :rowData="rowData"
         :columnDefs="columnDefs"
         :theme="theme"
        	@grid-ready="onReady"
-        style="height: 800px;"
+        style="height: 450px;"
         :pagination="true"
         :paginationPageSize="8"
         @cellClicked="cellClickFnc"
@@ -79,7 +165,6 @@ export default {
                               .catch(err => console.log(err));
       machineList.value = result.data;
       rowData.value = result.data;
-      
     }
 
     const onReady = (params) => {
@@ -107,6 +192,17 @@ export default {
       theme: theme,
       inActClick: false,
       machineNo: 0,
+
+      // 검색 데이터
+      statusList: ["전체", "작동중", "작동정지"], // 작동 상태 옵션
+      pickedStatus: "", // 작동상태 선택
+      machineType: ["세척기기", "음료제작기기", "포장기기"], // 설비 분류 옵션
+      pickedType: [], // 설비 분류 선택
+      searchType: ["전체", "공정명", "설비이름"], // 검색 옵션
+      selectSearchType: "", // 선택된 검색 옵션
+      searchData: "", // 검색 내용
+
+      filters: [],
 
     };
   },
@@ -166,7 +262,69 @@ export default {
       }
     },
 
-  }
+    // 검색 파트 동작
+    resetSearch() {
+      this.pickedStatus = "";
+      this.pickedType = [];
+      this.selectSearchType = "";
+      this.searchData = "";
+      this.filters = [];
+    },
+    updateFilter() {
+      const typeMap = {
+        "세척기기" : "p1",
+        "음료제작기기" : "p2",
+        "포장기기" : "p3",
+      }
+      const dbType = this.pickedType.map(type => typeMap[type]);
+      this.filters = {
+        pickedStatus : this.pickedStatus,
+        pickedType : dbType,
+        selectSearchType : this.selectSearchType,
+        searchData : this.searchData,
+      }
+      switch(this.filters.pickedStatus) {
+        case "전체":
+          this.filters.pickedStatus = "";
+          break;
+        case "작동중":
+          this.filters.pickedStatus = "run";
+          break;
+        case "작동정지":
+          this.filters.pickedStatus = "stop";
+          break;
+      }
+      switch(this.filters.selectSearchType) {
+        case "전체":
+          this.filters.selectSearchType = "all";
+          break;
+        case "공정명":
+          this.filters.selectSearchType = "process_name";
+          break;
+        case "설비이름":
+          this.filters.selectSearchType = "machine_name";
+          break;
+      }
+      console.log(this.filters);
+      this.searchMachines();
+    },
+
+    // 검색 동작
+    async searchMachines() {
+      let obj = {
+        machine_state : this.filters.pickedStatus,
+        process_code : this.filters.pickedType,
+        selectSearchType : this.filters.selectSearchType,
+        searchData : this.filters.searchData
+      }
+
+      let result = await axios.put(`${ajaxUrl}/machine/search`, obj)
+                              .catch(err => console.log(err));
+      this.machineList = result.data;
+      console.log(this.machineList);
+      this.rowData = result.data;
+    },
+  },
 };
 </script>
 

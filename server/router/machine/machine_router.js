@@ -57,5 +57,12 @@ router.get('/machineType', async (req, res) => {
   res.send(machineTypeList);
 });
 
+// 설비 검색 리스트
+router.put('/search', async (req, res) => {
+  let {machine_state, process_code, selectSearchType, searchData} = req.body;
+  let result = await machineService.searchMachineList(machine_state, process_code, selectSearchType, searchData);
+  res.send(result);
+})
+
 
 module.exports = router;

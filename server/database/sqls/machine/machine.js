@@ -45,7 +45,6 @@ WHERE machine_num = 2
   AND success_qty IS NOT NULL;
 `;
 
-
 // 설비 등록
 const machineInsert = `
 INSERT INTO machine 
@@ -72,6 +71,20 @@ DELETE FROM machine
 WHERE machine_num = ?
 `;
 
+// 설비 검색 조회
+const searchMachineList = `
+SELECT machine_num,
+       m.process_code,
+       process_name,
+       model_num,
+       machine_type,
+       machine_name,
+       machine_location,
+       machine_state,
+       buy_date
+FROM machine m JOIN process_based_information pbi
+               ON (m.process_code = pbi.process_code) 
+`;
 
 module.exports = {
   machineList,
@@ -81,5 +94,6 @@ module.exports = {
   machinePrdInfo,
   machineUpdate,
   machineDelete,
-  
+  searchMachineList,
+
 }
