@@ -35,6 +35,36 @@ const getOutputOrderList = async (orderName,clientName, startDate, endDate)=>{
         return result;
 }
 
+//미출고 주문 보기 (다수의 주문)
+const getDisoutputOrder = async(no)=>{
+  let list = await mysql.query('disoutputOrder',[no]);
+  return list;
+}
+
+//제품 별 다수의 lot 건 조회
+const getLotBaseProduct = async(no)=>{
+  let list = await mysql.query('getLotBaseProduct',[no]);
+  return list;
+}
+
+//출고등록 
+const addOutput = async(outputInfo)=>{
+  let datas= [ ...Object.values(outputInfo)];
+  console.log(datas);
+  let result = await mysql.query('outputOrders', datas);
+  console.log("결과:",result);
+  if (Array.isArray(result) && result[0] && result[0][0]) {
+    return { message: result[0][0].result };
+  } 
+  // 배열이 아닐 경우 처리
+  else if (result && result.result) {
+    return { message: result.result };
+  } else {
+    // 결과가 없을 경우
+    return {};
+  }
+}
+
 
 
 
@@ -44,4 +74,7 @@ const getOutputOrderList = async (orderName,clientName, startDate, endDate)=>{
 
 module.exports = {
     getOutputOrderList,
+    getDisoutputOrder,
+    getLotBaseProduct,
+    addOutput,
 }

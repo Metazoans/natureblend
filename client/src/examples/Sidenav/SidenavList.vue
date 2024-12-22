@@ -51,8 +51,23 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">제품입고등록</li>
+            <li class="sub-item" @click="movePage('inputManage')">제품입고등록</li>
             <li class="sub-item">제품입고조회</li>
+          </template>
+        </sidenav-collapse>
+        <sidenav-collapse
+          url="#"
+          :aria-controls="''"
+          v-bind:collapse="true"
+          collapseRef="mainpage"
+          navText="제품반품"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item">제품반품등록</li>
+            <li class="sub-item">제품반품조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
