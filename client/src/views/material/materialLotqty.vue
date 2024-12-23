@@ -40,7 +40,7 @@
  
           <!-- 입고 상태 -->
           <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="materialNomal">입고 상태</label>
+             <label class="col-form-label fw-bold" for="materialNomal">입고 상태</label><br>
              <div id="materialNomal" style="padding-left: 20px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
                 <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="b1" v-model="materialNomal" />&nbsp;&nbsp;정상자재</label>
                 <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="b2" v-model="materialNomal" />&nbsp;&nbsp;불량자재</label>
@@ -49,7 +49,7 @@
 
           <!-- 폐기상태 상태 -->
           <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="materialLotState">폐기 상태</label>
+             <label class="col-form-label fw-bold" for="materialLotState">폐기 상태</label><br>
              <div id="materialLotState" style="padding-left: 20px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
                 <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="c1" v-model="materialLotState" />&nbsp;&nbsp;정상자재</label>
                 <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="c2" v-model="materialLotState" />&nbsp;&nbsp;폐기자재</label>
