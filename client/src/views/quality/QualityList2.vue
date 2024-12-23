@@ -81,7 +81,7 @@
         <label for="reason">불량 사유 {{ index + 1 }}:</label>
         <select v-model="detail.reason" :id="'reason' + index">
           <option v-for="reason in defectReasons" :key="reason.code" :value="reason.code">
-            {{ reason.name }}
+            {{ reason.name }} 
           </option>
         </select>
         <label for="defectQty">불량 수량 {{ index + 1 }}:</label>
@@ -117,6 +117,8 @@ import theme from "@/utils/agGridTheme";
 
 import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 
+import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
+const { notify } = useNotification();  // 노티 내용변수입니다
 
 export default {
   name: "입고검사관리",
@@ -129,6 +131,8 @@ export default {
         startDate: this.dateFormat(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
         endDate: this.dateFormat(new Date(), 'yyyy-MM-dd')
       },
+
+      
 
       searchList: [],
 
@@ -157,11 +161,11 @@ export default {
       showModalRJC: false, // (불량항목)모달 표시 여부
       selectedRow: {}, // 선택된 행 데이터
       defectDetails: [], // 불량 항목(불량코드) 여러 개 관리
-      defectReasons: [
-        { code: "D001", name: "파손" },
-        { code: "D002", name: "오염" },
-        { code: "D003", name: "불량품" },
-      ], // 불량 사유 리스트
+      defectReasons: [    // 불량 사유 리스트
+        // { code: "D001", name: "파손" },
+        // { code: "D002", name: "오염" },
+        // { code: "D003", name: "불량품" },
+      ], 
       selectedReason: "", // 선택된 불량 사유 코드
       defectQty: 0, // 불량 수량
       /// db에 보낼 자재 한건의 불량항목및 수량
@@ -190,7 +194,11 @@ export default {
     //조건 검색 시작  
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
-        alert("시작 날짜는 종료 날짜보다 이전이어야 합니다.");
+        `${notify({
+            title: "검색실패",
+            text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
+            type: "error", // success, warn, error 가능
+        })}`;
         return;
       }
 
@@ -283,13 +291,21 @@ export default {
     saveDefectDetailsForRow(qcMaterialId, total) {
       const defectDetails = this.defectDetailsMap[qcMaterialId] || [];
       if (defectDetails.some(detail => !detail.reason || detail.qty <= 0)) {
-        alert("모든 불량 항목에 대해 불량 사유와 수량을 입력하세요.");
+        notify({
+            title: "입력실패",
+            text: "모든 불량 항목에 대해 불량 사유와 수량을 입력하세요.",
+            type: "warn", // success, warn, error 가능
+        });
         return;
       }
 
       const rjcQntSum = defectDetails.reduce((sum, detail) => sum + detail.qty, 0);
       if (rjcQntSum > total) {
-        alert('불량 총합량이 총합량보다 클 수 없습니다!');
+        notify({
+            title: "입력실패",
+            text: "불량 총합량이 총합량보다 클 수 없습니다.",
+            type: "warn", // success, warn, error 가능
+        });
         return;
       }
 
@@ -334,10 +350,24 @@ export default {
       console.log(this.defectDetailsMap);
     },
 
+    //불량코드 불러오기
+    async callFaultyCode(){
+      let faultyCodeList = await axios.get(`${ajaxUrl}/faultyCode`)
+        .catch(err => console.log(err));
+      this.faultyCodeList = faultyCodeList.data;
+      const arrData = [];
+      this.faultyCodeList.forEach((element, index) => {
+        arrData[index] = { "code":element.faulty_code, "name": element.faulty_reason };
+        
+      });
+      this.defectReasons = arrData;
+    }
+
 
   },
   created() {
     this.searchRequestAll();
+    this.callFaultyCode();
 
   }
 

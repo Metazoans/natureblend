@@ -99,6 +99,7 @@ const findRequestForQCM = async (mName, startDate, endDate)=>{
     return result;
   
 };
+
 //검사완료
 // const requestProcessingQCM = async ()=>{
 //   let sql = 'updateQCM';
@@ -107,11 +108,20 @@ const findRequestForQCM = async (mName, startDate, endDate)=>{
 // };
 
 
+//불량코드(1~5)
+const findFaultyCodeOneToFive = async()=>{
+  let sql = 'selectFaultyCodeOneToFive';
+  let list = await mysql.query(sql);
+  return list;
+};
+
+
 module.exports = {
   findMeterialOrder,
   findMeterialAllOrder,
   requestInspectionForM,
   findAllRequestForQCM,
   findRequestForQCM,
-  //requestProcessingQCM
+  //requestProcessingQCM,
+  findFaultyCodeOneToFive,
 };

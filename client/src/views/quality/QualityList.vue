@@ -102,6 +102,9 @@ import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 
 import { AgGridVue } from "ag-grid-vue3";
 
+import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
+const { notify } = useNotification();  // 노티 내용변수입니다
+
 
 export default {
   name: "입고검사신청",
@@ -174,7 +177,11 @@ export default {
     //검색창 관련    
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
-        alert("시작 날짜는 종료 날짜보다 이전이어야 합니다.");
+        `${notify({
+            title: "검색실패",
+            text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
+            type: "error", // success, warn, error 가능
+        })}`;
         return;
       }
 
@@ -238,7 +245,11 @@ export default {
       // 체크박스가 true인 항목만 필터링
       const checkedRows = this.rowData1.filter(row => row["check"] === true);
       if(checkedRows.length==0){
-        alert('추가할 상품을 선택하고 눌러주세요.');
+        notify({
+            title: "등록오류",
+            text: "추가할 상품을 선택하고 눌러주세요.",
+            type: "error", // success, warn, error 가능
+        });
         return;
       }
 
@@ -285,7 +296,11 @@ export default {
     //모달 열기
     openModal() {
       if (this.rowData2.length == 0){
-        alert('신청내역이 비었습니다.');
+        notify({
+            title: "등록실패",
+            text: "신청내역이 비었습니다.",
+            type: "error", // success, warn, error 가능
+        });
         return;
       }
       this.isShowModal = !this.isShowModal
@@ -303,7 +318,11 @@ export default {
       let insertResult = await axios.post(`${ajaxUrl}/insertQCM`, rawData)
         .catch(err => console.log(err));
       console.log(`${insertResult.data.successNum}개 입력됨`);
-      alert(`${insertResult.data.successNum}개 입력됨`);
+      notify({
+            title: "신청완료",
+            text: `${insertResult.data.successNum}건이 신청되었습니다`,
+            type: "success", // success, warn, error 가능
+      });
       this.searchOrderAll() // 저장된 항목 초기화
       this.rowData2 = []; // 저장된 항목 초기화
 
@@ -331,7 +350,11 @@ export default {
       console.log(qty);
       console.log(this.selectedRow);
       if(qty <=0){
-        alert('유효하지않는 값입니다.');
+        notify({
+            title: "입력 오류",
+            text: "유효하지 않은 값입니다.",
+            type: "warn", // success, warn, error 가능
+        });
         return;
       }
       const targetIndex = this.rowData2.findIndex(row => row.orderCode === orderCD);
