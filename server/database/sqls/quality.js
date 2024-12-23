@@ -95,11 +95,22 @@ SET (pass_qnt = ?, rjc_qnt = ?, inspec_end = CURRENT_TIMESTAMP, inspec_status = 
 WHERE qc_material_id = ?
 `;
 
+//불량코드 가져오기(1~5)
+const selectFaultyCodeOneToFive =
+`
+SELECT faulty_code, faulty_reason
+FROM faulty_code
+WHERE RIGHT(faulty_code, 3) IN ('001', '002', '003', '004', '005')
+`;
+
+
 module.exports = {
   searchMaterialOrder,
   searchMaterialOrderWithConditions,
   inputQCMaterial,
   selectedQCMAll,
   selectQCMWithConditions,
-  updateQCM
+  updateQCM,
+  selectFaultyCodeOneToFive,
+  
 };
