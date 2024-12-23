@@ -63,8 +63,8 @@
                     @grid-ready="onReady"
                     :quickFilterText="inputListsearch"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
-                    @rowClicked="onClickedWh"
-                    :row-selection="'multiple'"
+                    @cellClicked="onClickedWh"
+                    :row-selection="multiple"
                     :pagination="true"
                     :paginationPageSize="20"
                 />
@@ -73,11 +73,20 @@
                     <CustomNoRowsOverlay/>
                 </div>
         </div>
-       
-               
-
-        
-
+    </div>
+    <div>
+        <Modal
+            :isShowModal="isShowModal.warehouse"
+            :modalTitle="'창고선택'"
+            :noBtn="'닫기'"
+            :yesBtn="'선택'"
+            @closeModal="closeModal('warehouse')"
+            @confirm="confirm('warehouse')"
+        >
+        <template v-slot:list>
+            <WarList v-show="isShowModal.warehouse" @selectwarehouse="selectwarehouse"/>
+        </template>
+        </Modal>
     </div>
         
     
@@ -87,7 +96,7 @@
 import MaterialButton from "@/components/MaterialButton.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import proList from "@/views/sales/Order/ProductModal.vue"
-//import WarList from "@/views/sales/ProductInput/warehouseModal.vue";
+import WarList from "@/views/sales/ProductInput/warehouseModal.vue";
 import theme from "@/utils/agGridTheme";
 import userDateUtils from '@/utils/useDates.js';
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
@@ -100,7 +109,7 @@ export default{
             MaterialButton,
             Modal,
             proList,
-            //WarList,
+            WarList,
             CustomNoRowsOverlay,
             
     },
@@ -148,13 +157,6 @@ export default{
             selectedWarehouseCode:"", // 선택될 창고 번호
             warehouseName:"", // 저장될 창고이름
             selectedWarehouseName : "", // 선택될 창고 이름 
-
-
-            
-
-           
-
-            
 
 
             isShowModal: {
@@ -308,6 +310,21 @@ export default{
             );  
 
         }, 
+        onClickedWh(col){
+            if (col.colDef.field === 'warehouse_name') {
+            console.log("작동");
+            this.openModal('warehouse');
+            console.log(col.data.warehouse_name);
+            col.data.warehouse_name = this.warehouseName;
+
+            }else{
+                console.log("나머지");
+            }
+
+        },
+
+       
+
 
        
         
