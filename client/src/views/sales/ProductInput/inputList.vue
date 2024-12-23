@@ -43,8 +43,8 @@
                 </div>
                         <!--검색 및 초기화-->
                 <div class="pb-3 text-center">
-                    <material-button size="sm" color="warning" class="button" @click="searchQtResult">검색</material-button>
-                    <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
+                    <material-button size="sm" color="warning" class="button" @click="searchInputlist" >검색</material-button>
+                    <material-button size="sm" color="warning" class="button">초기화</material-button>
                 </div>
             </div>
         </div>
@@ -52,33 +52,32 @@
 
 
         <div class="container-fluid py-4">
-            <div class="d-flex">
+            <div class="">
                 <!-- 입고된 주문건 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
-                    style ="width: 1100px; height: 500px;"
+                     style ="height: 450px;"
                     :rowData="inputData"
                     :columnDefs="columnInputData"
                     :theme="theme"
-                    @grid-ready="onGridReady"
+                    @grid-ready="onReady"
+                    :quickFilterText="inputListsearch"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
-                    @rowClicked="onQtRowClicked"
+                    @rowClicked="onClickedWh"
+                    :row-selection="'multiple'"
                     :pagination="true"
-                    :paginationPageSize="10"
+                    :paginationPageSize="20"
                 />
                 </div>
                 <div style="display: none">
                     <CustomNoRowsOverlay/>
                 </div>
-                
-            <!--검색 및 초기화-->
-            <div class=" pt-5 text-center " v-show="tempInput.length != 0">
-                <material-button  color="warning" class="button">수정</material-button>
-                <material-button color="warning" class="button">초기화</material-button>
-            </div>
         </div>
+       
+               
+
         
-        
+
     </div>
         
     
@@ -96,7 +95,7 @@ import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
 
 export default{
-    name :"inputManage",
+    name :"inputList",
     components:{
             MaterialButton,
             Modal,
@@ -107,8 +106,6 @@ export default{
     },
     data(){
         return{
-            
-
             //검색 필터 데이터
             startDate:"", //주문날짜 시작 날짜
             endDate:"", //주문날짜 끝 날짜
@@ -118,17 +115,30 @@ export default{
             selectedProCode:"", //선택될 제품 코드 
             productCode:'', //저장될 제품 코드 
 
+            //검색어 검색 (그리드 안)
+            inputListsearch: "", //검색어
+
           
 
             // 품질검사 조회 결과 
             noRowsOverlayComponent: 'CustomNoRowsOverlay',
-            filteredQtResult : [],
             theme : theme,
             inputData : [],
             columnInputData : [
-            
-            
-             ],
+            { headerName: "체크",
+                field: "check",
+                resizable: false,
+                editable: true,
+                sortable: false,
+                checkboxSelection: true,
+            },
+            { headerName: "완제품코드", field: "product_code", resizable: true, sortable: true },
+            { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true },
+            { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true },
+            { headerName: "입고수량 ", field: "input_amount", editable: true, sortable: true },
+            { headerName: "창고위치 ", field: "warehouse_name", editable: true, sortable: true },
+            { headerName: "입고날짜 ", field: "input_date", resizable: true, sortable: true },
+        ],
 
            
              
@@ -189,16 +199,97 @@ export default{
         closeModal(modalType) {
             this.isShowModal[modalType] = false;
         },
-        //주문서검색 초기화
-        resetSearch(){
-            this.productName = ""; // 공백 문자 대신 빈 문자열로 초기화
-            this.productCode = "";
-            this.startDate = "";  // 빈 문자열로 초기화
-            this.endDate = "";    // 빈 문자열로 초기화
-            this.inputData = [];
+        
+        dateFormat(value, format) {
+          return userDateUtils.dateFormat(value, format);
         },
-        //입고 검사 결과 조회 (필터)
-        async searchQtResult(){
+            
+
+
+        onReady(event){
+            this.gridApi = event.api;
+            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //페이징 영역에 버튼 만들기 
+            const allPanels = document.querySelectorAll('.ag-paging-panel');
+            const paginationPanel = allPanels[0];
+            if (paginationPanel) {
+               // 컨테이너 생성
+               const container = document.createElement('div');
+               container.style.display = 'flex';
+               container.style.alignItems = 'center';
+               container.style.gap = '5px'; // 버튼과 입력 필드 간격
+
+               // 버튼 생성
+               const button1 = document.createElement('button');
+               button1.textContent = '수정';
+               button1.style.cursor = 'pointer';
+               button1.style.backgroundColor = '#f48a06';
+               button1.style.color = 'white';
+               button1.style.border = 'none';
+               button1.style.padding = '5px 10px';
+               button1.style.borderRadius = '4px';
+
+               const button2 = document.createElement('button');
+               button2.textContent = '삭제';
+               button2.style.cursor = 'pointer';
+               button2.style.backgroundColor = '#f48a06';
+               button2.style.color = 'white';
+               button2.style.border = 'none';
+               button2.style.padding = '5px 10px';
+               button2.style.borderRadius = '4px';
+
+               const button3 = document.createElement('button');
+               button3.textContent = '초기화';
+               button3.style.cursor = 'pointer';
+               button3.style.backgroundColor = '#f48a06';
+               button3.style.color = 'white';
+               button3.style.border = 'none';
+               button3.style.padding = '5px 10px';
+               button3.style.borderRadius = '4px';
+
+               //버튼클릭이벤트
+                button1.addEventListener('click',()=>{
+                    alert('수정버튼 클릭') // 함수 연결 
+                });
+
+                button2.addEventListener('click',()=>{
+                    alert('삭제버튼 클릭') //함수 연결 
+                });
+                button3.addEventListener('click',()=>{
+                    alert('초기화버튼 클릭') //함수 연결 
+                })
+
+                //입력필드생성 
+                const inputText = document.createElement('input');
+                inputText.type = 'text';
+                inputText.placeholder = '검색';
+                inputText.style.padding = '5px';
+                inputText.style.width = '250px';
+                inputText.style.border = '1px solid #ccc';
+                inputText.style.borderRadius = '4px';
+
+                //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
+                inputText.addEventListener('input',(event)=>{
+                    const value = event.target.value;
+                    console.log("입력된 값:", value);
+
+                    //검색로직추가기능
+                    this.inputListsearch = value;
+                });
+
+                //컨테이너에 버튼, 입력 필드 추가
+                container.appendChild(button1);
+                container.appendChild(button2);
+                container.appendChild(button3);
+                container.appendChild(inputText);
+
+                //페이징 영역에 컨테이너삽입
+                paginationPanel.insertBefore(container,paginationPanel.firstChild);
+            }
+
+        },
+
+        async searchInputlist(){
             this.filters  = {
                 productCode : this.productCode,
                 startDate : this.startDate,
@@ -206,28 +297,20 @@ export default{
             }
 
             console.log(this.filters);
-
-            let result = await axios.put(`${ajaxUrl}/`,this.filters )
+            let result = await axios.put(`${ajaxUrl}/input/inputlist`,this.filters )
                                     .catch(err => console.log(err));
             console.log(result.data);
             this.inputData = result.data;
             this.inputData = result.data.map((col) => ({
                 ...col,
-                expire_date: this.dateFormat(col.expire_date, "yyyy-MM-dd"),
+                input_date: this.dateFormat(col.input_date, "yyyy-MM-dd"),
                 })
             );  
-        },
-        dateFormat(value, format) {
-          return userDateUtils.dateFormat(value, format);
-        },
-            
 
+        }, 
 
-        onGridReady(params){
-            this.gridApi = params.api;
-            this.gridApi.sizeColumnsToFit();
-        },
        
+        
        
 
         
@@ -247,21 +330,10 @@ export default{
 .main-container{
     background-color:  #e9ecef;
     border-radius: 10px;
+    height: 300px;
     
 }
-.select-container{
-    background-color:  #e9ecef;
-    border-radius: 10px;
-    width: 650px;
-    height: 300px;
-    margin-top: 70px;
-}
 
-.d-flex {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
 
 
 .text-center {

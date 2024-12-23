@@ -26,6 +26,14 @@ router.post('/input/insert',async(req,res)=>{
     res.send(result);
 })
 
+//검색기준으로 입고리스트 조회
+router.put('/input/inputlist',async(req,res)=>{
+    let {productCode, startDate,endDate } = req.body;
+    let result = await inputService.inputLists(productCode, startDate,endDate);
+    console.log("결과:",result);
+    res.send(result);
+})
+
 
 
 

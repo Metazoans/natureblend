@@ -138,11 +138,30 @@ const insertProduct =
 `CALL inputProduct(?, ?, ?, ?, ?, ?, ? )`;
 
 
+//입고기록조회 
+const inputRecord = 
+`SELECT ib.product_code
+	   ,ib.input_amount
+	   ,p.product_name
+       ,ib.product_lot
+       ,w.warehouse_name
+       ,e.name
+       ,ih.input_date
+FROM input_body ib  JOIN product p 
+ON ib.product_code = p.product_code
+                   JOIN warehouse w 
+ON ib.warehouse_code = w.warehouse_code
+				   JOIN input_header ih
+ON ib.inputlist_num = ih.inputlist_num
+JOIN employee e
+ON ih.emp_num = e.emp_num `;
+
 
 module.exports = {
     getUseWarehouse,
     getQtResult,
     insertProduct,
+    inputRecord,
 
 
 }

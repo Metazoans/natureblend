@@ -56,6 +56,41 @@ const addInput = async(inputInfo)=>{
 
 }
 
+//입고리스트조회(필터)
+// 품질검사필터 조회 
+const inputLists = async(productCode, startDate,endDate)=>{
+  let inputList = [];
+  if(productCode  != undefined && productCode != null && productCode != ''){
+      let search = `ib.product_code LIKE \'${productCode}\'`;
+      inputList.push(search);
+  }
+
+  if(startDate  != undefined && startDate != null && startDate != ''){
+      let search = `ih.input_date >= \'${startDate}\'`;
+      inputList.push(search);
+    }
+  
+  if(endDate  != undefined && endDate != null && endDate != ''){
+      let search = `ih.input_date <= \'${endDate}\'`;
+      inputList.push(search);
+    }
+
+    // 조건을 기반으로 WHERE절 최종 구성
+      let querywhere = '';
+      for(let i = 0 ; i < inputList.length; i++){
+        let search  = inputList[i];
+        querywhere+=(i == 0 ? ` `:`AND `) + search;  
+      };
+    
+      querywhere = inputList.length == 0 ? "" : `WHERE ${querywhere}`;
+      querywhere += `ORDER BY ih.input_date`
+      console.log('selected Query', querywhere);
+    
+      let result = await mysql.query('inputRecord',querywhere);
+      return result;
+  
+}
+
 
 
 
@@ -79,5 +114,6 @@ module.exports = {
     getWarehouse,
     getQtList,
     addInput,
+    inputLists,
 
 }
