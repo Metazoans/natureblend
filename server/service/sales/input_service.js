@@ -37,6 +37,24 @@ const getQtList = async(productCode, startDate,endDate)=>{
         return result;
     
 }
+//제품입고등록 
+const addInput = async(inputInfo)=>{
+  let datas = [ ...Object.values(inputInfo)];
+  console.log("service의 데이터:",datas);
+  let result = await mysql.query('insertProduct',datas);
+  console.log("서비스 결과:",result);
+  if (Array.isArray(result) && result[0] && result[0][0]) {
+    return { message: result[0][0].result };
+  } 
+  // 배열이 아닐 경우 처리
+  else if (result && result.result) {
+    return { message: result.result };
+  } else {
+    // 결과가 없을 경우
+    return {};
+  }
+
+}
 
 
 
@@ -60,5 +78,6 @@ const getQtList = async(productCode, startDate,endDate)=>{
 module.exports = {
     getWarehouse,
     getQtList,
+    addInput,
 
 }

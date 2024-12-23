@@ -1,148 +1,153 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-    <h2>제품입고등록</h2>
-    <h4>완제품 품질 검사 조회</h4>
-    <div class= "main-container">
-        <div class= "pt-5 pb-5">
-                <!--제품명 검색-->
-                <div class="row align-items-center mb-3">
-                    <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')" readonly>
-                            <Modal
-                                    :isShowModal="isShowModal.product"
-                                    :modalTitle="'제품선택'"
-                                    :noBtn="'닫기'"
-                                    :yesBtn="'선택'"
-                                    @closeModal="closeModal('product')"
-                                    @confirm="confirm('product')"
-                                >
-                                <template v-slot:list>
-                                    <proList v-show="isShowModal.product" @selectproduct="selectproduct" :indexNum="indexNum"/>
-                                </template>
-                            </Modal>
-                    </div>    
-                </div>
-                <!--통과일자 검색 -->
-                <div class="row align-items-center mb-5">
-                    <label class="col-sm-2 col-form-label fw-bold">통과 일자</label>
-                    <div class="col-sm-4">
-                        <input 
-                        type="date" 
-                        id="startDate" class="form-control border p-2"
-                        v-model="startDate"/>
-                    </div>
-                    <div class="col-sm-1 text-center">~</div>
-                    <div class="col-sm-4">
-                        <input 
-                        type="date" 
-                        id="endDate" class="form-control border p-2"
-                        v-model="endDate" />
-                    </div>
-                </div>
-            </div>
-                    <!--검색 및 초기화-->
-            <div class="pb-3 text-center">
-                <material-button size="sm" color="warning" class="button" @click="searchQtResult">검색</material-button>
-                <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="container-fluid py-4">
-        <div class="d-flex">
-            <!-- 품질검사 조회(입고 안된 것들 )-->
-            <div class="grid-container">
-                <ag-grid-vue
-                style ="width: 1100px; height: 500px;"
-                :rowData="QtData"
-                :columnDefs="columnQtlist"
-                :theme="theme"
-                @grid-ready="onGridReady"
-                :noRowsOverlayComponent="noRowsOverlayComponent"
-                @rowClicked="onQtRowClicked"
-                :pagination="true"
-                :paginationPageSize="10"
-            />
-            </div>
-            <div style="display: none">
-                <CustomNoRowsOverlay/>
-            </div>
-            <div class= "select-container">
-                <div class="d-flex flex-column justify-content-center ps-5 pt-5" style="height: 200px;">
-                        <!--담당자 선택 -->
+        <h2>제품입고등록</h2>
+        <h4>완제품 품질 검사 조회</h4>
+        <div class= "main-container">
+            <div class= "pt-5 pb-5">
+                    <!--제품명 검색-->
                     <div class="row align-items-center mb-3">
-                        <label class="col-sm-3 col-form-label fw-bold" >담당자</label>
-                        <div class="col-sm-9 d-flex">
-                            <input 
-                                id="EmpName"  class="form-control border p-2" 
-                                v-model="searchEmpName.name" @click="openModal('emp')" readonly/>
+                        <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')" readonly>
                                 <Modal
-                                    :isShowModal="isShowModal.emp"
-                                    :modalTitle="'담당자선택'"
-                                    :noBtn="'닫기'"
-                                    :yesBtn="'선택'"
-                                    @closeModal="closeModal('emp')"
-                                    @confirm="confirm('emp')"
-                                >
-                                <template v-slot:list>
-                                    <EmpList v-show="isShowModal.emp" @selectemp="selectemp"/>
-                                </template>
+                                        :isShowModal="isShowModal.product"
+                                        :modalTitle="'제품선택'"
+                                        :noBtn="'닫기'"
+                                        :yesBtn="'선택'"
+                                        @closeModal="closeModal('product')"
+                                        @confirm="confirm('product')"
+                                    >
+                                    <template v-slot:list>
+                                        <proList v-show="isShowModal.product" @selectproduct="selectproduct" :indexNum="indexNum"/>
+                                    </template>
                                 </Modal>
                         </div>    
                     </div>
-                    <div class="row align-items-center mb-3">
-                        <label class="col-sm-3 col-form-label fw-bold" >창고</label>
-                        <div class="col-sm-9 d-flex">
+                    <!--통과일자 검색 -->
+                    <div class="row align-items-center mb-5">
+                        <label class="col-sm-2 col-form-label fw-bold">통과 일자</label>
+                        <div class="col-sm-4">
                             <input 
-                                id="EmpName"  class="form-control border p-2" 
-                                v-model="warehouseName" @click="openModal('warehouse')" readonly/>
-                                <Modal
-                                    :isShowModal="isShowModal.warehouse"
-                                    :modalTitle="'창고선택'"
-                                    :noBtn="'닫기'"
-                                    :yesBtn="'선택'"
-                                    @closeModal="closeModal('warehouse')"
-                                    @confirm="confirm('warehouse')"
-                                >
-                                <template v-slot:list>
-                                    <WarList v-show="isShowModal.warehouse" @selectwarehouse="selectwarehouse"/>
-                                </template>
-                                </Modal>
-                        </div> 
+                            type="date" 
+                            id="startDate" class="form-control border p-2"
+                            v-model="startDate"/>
+                        </div>
+                        <div class="col-sm-1 text-center">~</div>
+                        <div class="col-sm-4">
+                            <input 
+                            type="date" 
+                            id="endDate" class="form-control border p-2"
+                            v-model="endDate" />
+                        </div>
                     </div>
-                   
-                </div> 
-                <!--검색 및 초기화-->
-                <div class=" pt-5 text-center ">
-                    <material-button  color="warning" class="button" @click="tempInputInfo">입력</material-button>
-                    <material-button color="warning" class="button">초기화</material-button>
+                </div>
+                        <!--검색 및 초기화-->
+                <div class="pb-3 text-center">
+                    <material-button size="sm" color="warning" class="button" @click="searchQtResult">검색</material-button>
+                    <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
                 </div>
             </div>
-       </div>
-       <!-- 입고 임시 저장 -->
-       <div>
-            <div class="grid-container">
-            <ag-grid-vue
-            :rowData="tempInput"
-            :columnDefs="columntempInput"
-            :theme="theme"
-            @grid-ready="onGridReady"
-            :noRowsOverlayComponent="noRowsOverlayComponent"
-            :editType="'fullRow'"
-            :row-selection="'multiple'"
-            :pagination="true"
-            :paginationPageSize="10"
-            />
-            </div>
-            <div style="display: none">
-                <CustomNoRowsOverlay/>
-            </div>
         </div>
-       
+
+
+
+        <div class="container-fluid py-4">
+            <div class="d-flex">
+                <!-- 품질검사 조회(입고 안된 것들 )-->
+                <div class="grid-container" v-show="QtData.length != 0">
+                    <ag-grid-vue
+                    style ="width: 1100px; height: 500px;"
+                    :rowData="QtData"
+                    :columnDefs="columnQtlist"
+                    :theme="theme"
+                    @grid-ready="onGridReady"
+                    :noRowsOverlayComponent="noRowsOverlayComponent"
+                    @rowClicked="onQtRowClicked"
+                    :pagination="true"
+                    :paginationPageSize="10"
+                />
+                </div>
+                <div style="display: none">
+                    <CustomNoRowsOverlay/>
+                </div>
+                <div class= "select-container"  v-show="QtData.length != 0">
+                    <div class="d-flex flex-column justify-content-center ps-5 pt-5" style="height: 200px;">
+                            <!--담당자 선택 -->
+                        <div class="row align-items-center mb-3">
+                            <label class="col-sm-3 col-form-label fw-bold" >담당자</label>
+                            <div class="col-sm-9 d-flex">
+                                <input 
+                                    id="EmpName"  class="form-control border p-2" 
+                                    v-model="searchEmpName.name" @click="openModal('emp')" readonly/>
+                                    <Modal
+                                        :isShowModal="isShowModal.emp"
+                                        :modalTitle="'담당자선택'"
+                                        :noBtn="'닫기'"
+                                        :yesBtn="'선택'"
+                                        @closeModal="closeModal('emp')"
+                                        @confirm="confirm('emp')"
+                                    >
+                                    <template v-slot:list>
+                                        <EmpList v-show="isShowModal.emp" @selectemp="selectemp"/>
+                                    </template>
+                                    </Modal>
+                            </div>    
+                        </div>
+                        <div class="row align-items-center mb-3">
+                            <label class="col-sm-3 col-form-label fw-bold" >창고</label>
+                            <div class="col-sm-9 d-flex">
+                                <input 
+                                    id="EmpName"  class="form-control border p-2" 
+                                    v-model="warehouseName" @click="openModal('warehouse')" readonly/>
+                                    <Modal
+                                        :isShowModal="isShowModal.warehouse"
+                                        :modalTitle="'창고선택'"
+                                        :noBtn="'닫기'"
+                                        :yesBtn="'선택'"
+                                        @closeModal="closeModal('warehouse')"
+                                        @confirm="confirm('warehouse')"
+                                    >
+                                    <template v-slot:list>
+                                        <WarList v-show="isShowModal.warehouse" @selectwarehouse="selectwarehouse"/>
+                                    </template>
+                                    </Modal>
+                            </div> 
+                        </div>
+                    
+                    </div> 
+                    <!--검색 및 초기화-->
+                    <div class=" pt-5 text-center ">
+                        <material-button  color="warning" class="button" @click="tempInputInfo">입력</material-button>
+                        <material-button color="warning" class="button" @click="resetEmpWar">초기화</material-button>
+                    </div>
+                </div>
+        </div>
+        <!-- 입고 임시 저장 -->
+        <div>
+                <div class="grid-container"  v-show="tempInput.length != 0">
+                <ag-grid-vue
+                :rowData="tempInput"
+                :columnDefs="columntempInput"
+                :theme="theme"
+                @grid-ready="onGridReady"
+                :noRowsOverlayComponent="noRowsOverlayComponent"
+                :editType="'fullRow'"
+                :row-selection="'multiple'"
+                :pagination="true"
+                :paginationPageSize="10"
+                />
+                </div>
+                <div style="display: none">
+                    <CustomNoRowsOverlay/>
+                </div>
+            </div>
+            <!--검색 및 초기화-->
+            <div class=" pt-5 text-center " v-show="tempInput.length != 0">
+                <material-button  color="warning" class="button" @click="inputInsert">등록</material-button>
+                <material-button color="warning" class="button" @click="resetTempInput">초기화</material-button>
+            </div>
+        
         
     </div>
         
@@ -218,6 +223,7 @@ export default{
             //임시입고정보 보관 
             tempProductCode: '',
             tempProductName: '',
+            tempProcessNum : '',
             inputAmount: 0,
             qtId: '',
             inputDate: '',
@@ -238,7 +244,7 @@ export default{
                 { headerName: "입고수량", field: "inputAmount", resizable: true, sortable: true },
                 { headerName: "창고 위치", field: "warehouseName", resizable: true, sortable: true },
                 { headerName: "담당자", field: "employeeName", resizable: true, sortable: true },
-                { headerName: "입고 날짜", field: "inputDate", resizable: true, sortable: true },
+                { headerName: "통과 날짜", field: "inspectDate", resizable: true, sortable: true },
             ],
 
 
@@ -333,7 +339,10 @@ export default{
             this.gridApi = params.api;
             this.gridApi.sizeColumnsToFit();
         },
-
+        resetEmpWar(){
+            this.warehouseName = "",
+            this.searchEmpName.name = ""
+        },
        
 
         // 검사 결과 클릭 
@@ -343,7 +352,8 @@ export default{
             this.tempProductName = order.product_name;
             this.inputAmount = order.pass_qnt;
             this.qtId = order.qc_packing_id;
-            this.inputDate= order.inspec_end;
+            this.inspectDate= order.inspec_end;
+            this.tempProcessNum = order.process_num;
 
             console.log("클릭된데이터:",this.tempProductCode,this.tempProductName);
             console.log(this.warehouseName , this.searchEmpName.name);
@@ -359,9 +369,11 @@ export default{
                 tempProductName : this.tempProductName,
                 inputAmount : this.inputAmount,
                 qtId : this.qtId,
-                inputDate : this.inputDate,
+                inspectDate : this.inspectDate,
                 employeeName : this.searchEmpName.name,
                 warehouseName : this.warehouseName,
+                warehouseCode : this.warehouseCode,
+                processNum: this.tempProcessNum,
             }
             //중복체크 
             let isDuplicate = this.tempInput.some(
@@ -381,19 +393,62 @@ export default{
             } 
             console.log("현재 tempInput 상태:",this.tempInput);  
         },
-        
-        
-        
-        // resetinput(){
-        //     // 체크박스 해제
-        //     this.gridApi.deselectAll();
-        //      // 입력 필드 초기화
+        resetTempInput(){
+            this.tempInput = []
+        },
+
+        async inputInsert(){
+            const selectedRows = this.gridApi.getSelectedRows(); 
+
+            let empName = selectedRows[0].employeeName;
+            let warehouseCode = selectedRows[0].warehouseCode;
             
 
-        //     // 출력 수량 초기화
             
-            
-        // },
+            let productCodes = [];
+            let processNums = [];
+            let inputAmounts = [];
+            let qtIds = [];
+            let inspectDates = [];
+
+            selectedRows.forEach(row => {
+                console.log("row:",row.tempProductCode , row.processNum , row.inputAmount , row.qtId);
+                productCodes.push(row.tempProductCode);
+                processNums.push(row.processNum);
+                inputAmounts.push(row.inputAmount);
+                qtIds.push(row.qtId);
+                inspectDates.push(row.inspectDate);
+            });
+
+            let inputInfo = {
+                product_code : JSON.stringify(productCodes),
+                process_num : JSON.stringify(processNums),
+                input_amount : JSON.stringify(inputAmounts),
+                qc_packing_id : JSON.stringify(qtIds),
+                inspec_end : JSON.stringify(inspectDates),
+                name : empName,
+                warehouse_code : warehouseCode,
+            }
+            console.log(inputInfo);
+            let result =
+                await axios.post(`${ajaxUrl}/input/insert`,inputInfo)
+                            .catch(err => console.log(err));
+                            console.log(result.data);
+                if(result.statusText === 'OK'){
+                    this.$notify({
+                        text: `입고가 완료되었습니다.`,
+                        type: 'success',
+                    });  
+                    this.resetSearch();
+                    this.resetEmpWar();
+                    this.resetTempInput();
+
+                
+                }
+
+        },
+        
+        
 
         
     },//method

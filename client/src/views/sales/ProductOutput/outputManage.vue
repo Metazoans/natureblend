@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-    <h2>출고 관리</h2>
+    <h2>제품출고 등록</h2>
     <h4>주문서 조회</h4>
     <div class= "main-container">
         <div class= "pt-5 pb-5">
@@ -98,7 +98,7 @@
                 </div>
             </div>
             <div>
-                <div class="grid-container" v-show="rowDataLot.length != 0">
+                <div class="grid-container" v-show="rowDataOrder.length != 0">
                 <ag-grid-vue
                 style ="width:650px; height: 500px;"
                 :rowData="rowDataLot"
@@ -116,7 +116,7 @@
                     <CustomNoRowsOverlay/>
                 </div>
                 <!--담당자 선택 -->
-                <div class="row align-items-center mb-3" v-show="rowDataLot.length != 0">
+                <div class="row align-items-center mb-3" v-show="rowDataOrder.length != 0">
                     <label class="col-sm-2 col-form-label fw-bold" >담당자</label>
                     <div class="col-sm-4">
                         <input 
@@ -138,7 +138,7 @@
                 </div>
                 
                 <!--검색 및 초기화-->
-                <div class="mb-3 pt-2 text-center" v-show="rowDataLot.length != 0">
+                <div class="mb-3 pt-2 text-center" v-show="rowDataOrder.length != 0">
                     <material-button  color="warning" class="button" @click="processData">출고</material-button>
                     <material-button color="warning" class="button" @click="resetLot">초기화</material-button>
                 </div>
@@ -321,7 +321,7 @@ export default{
             this.gridApi = params.api;
             this.gridApi.sizeColumnsToFit();
         },
-
+        //주문서 클릭 시 해당 주문서의 미출고 주문 출력 
         async onOrderRowClicked(row) {
             
             let order = row.data;
@@ -338,6 +338,7 @@ export default{
 
             console.log("rowDataOrder:",this.rowDataOrder);
         },
+        // 미출고주문에 해당하는 제품의 lot 들
         async onDisoutputRowClicked(row){
             console.log("rows:",row)
             console.log("클릭된 미출고주문 데이터",row.data.order_num);
@@ -414,7 +415,11 @@ export default{
                 this.$notify({
                     text: `출고가 완료되었습니다.`,
                     type: 'success',
-                });  
+                }); 
+                this.resetSearch();
+                this.resetLot();
+                this.rowDataLot = [];
+                this.rowDataOrder = [];
              
             }
 

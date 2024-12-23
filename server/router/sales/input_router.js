@@ -19,6 +19,14 @@ router.put('/input/qtsearch',async(req,res)=>{
   
 })
 
+//입고등록 
+router.post('/input/insert',async(req,res)=>{
+    let inputInfo = req.body;
+    let result = await inputService.addInput(inputInfo);
+    res.send(result);
+})
+
+
 
 
 
