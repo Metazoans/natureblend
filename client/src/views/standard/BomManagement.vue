@@ -49,6 +49,8 @@
              @grid-ready="onReady"
              @cellEditingStopped="onCellEditingStopped"
              @rowSelection="rowSelection"
+             rowSelection="multiple"
+             @cellClicked="onCellClicked"
          >
           </ag-grid-vue>
          </div>
@@ -61,6 +63,9 @@
           <button type="button" @click="insertBom" class="btn btn-danger">
             BOM 등록
           </button>
+          <button type="button" @click="deleteBomList" class="btn btn-light">
+            선택한 자재 삭제
+          </button>
         </div>
         <!-- 조회 그리드 -->
         <div class="grid-container" >
@@ -71,7 +76,7 @@
              :theme="theme"
              :pagination="true"
              :paginationPageSize="10"
-             @grid-ready="onReady"
+             @grid-ready="onReady2"
          >
           </ag-grid-vue>
          </div>
@@ -84,6 +89,8 @@
    :modalTitle="modalTitle"
    @selectItem = "setSelectProduct"
    >
+   
+  
     <!-- <template v-slot:list> -->
       <!-- <div v-if="modalType === 'productCodeModal'"></div>
       <div v-if="modalType === 'productNameModal'"></div>
@@ -91,7 +98,15 @@
     <!-- </template> -->
 
   </Modal>
-  </div>  
+  </div> 
+  <div>
+    <materialModal :isShowModal="isShowModal2"
+   @closeModal="closeModal2"
+   @confirm="confirm2"
+   @selectMaterial = "setSelectMaterial"
+   >
+  </materialModal>
+  </div>
 </template>
 
 <script>
@@ -99,21 +114,25 @@
   import { ajaxUrl } from '@/utils/commons.js';
   import theme from "@/utils/agGridTheme";
   import Modal from "@/views/standard/Modal.vue";
+  import materialModal from "@/views/standard/materialModal.vue";
 
   
   export default { 
       name: 'BomManagement',
-      components: {Modal},
+      components: {Modal,materialModal},
       data() {
         return { 
-          isShowModal: false,
+          isShowModal: false, // 제품코드 클릭시 발생하는 모달
+          isShowModal2: false, // 자재코드 행 클릭시 발생하는 모달
           modalType:'',
           modalTitle:'제품 코드 선택',
+          selectedRow : null,
           theme: theme,
           rowData:[],
           columnBoms: [
-            { headerName:"자재코드", field : "material_code" , editable: true },
-            { headerName:"자재" , field: "material" , editable: true },
+            {checkboxSelection: true, headerCheckboxSelection: true, width: 50},
+            { headerName:"자재코드", field : "material_code"},
+            { headerName:"자재" , field: "material"},
             { headerName:"수량" , field: "material_con" , editable: true}
           ],
           columnDefs: [
@@ -158,9 +177,13 @@
           searchProduct: '', // 제품명
           searchCapacity: '', // 용량
           searchMaterialcode: '', // 자재코드
-          isUpdated : false
+          searchMaterial: '', // 자재명
+          isUpdated : false,
+
+          allInputData: {}, // 체크박스에서 선택한 데이터
+
         };
-      },
+      }, 
       created() {
         this.getBomList();
       },
@@ -170,22 +193,77 @@
           this.modalTitle = '제품 코드 선택';
 
           this.isShowModal = true;  // Show modal
-          },
-
+        },
+        openModal2(modalType) {
+          console.log('데이터 확인',this.selectedRow);
+          this.modalType = modalType;  // Set the modal type
+          // this.modalTitle = '자재 코드 선택';
+          console.log('행클릭됨');
+          this.isShowModal2 = true;  // Show modal
+        },
+        onReady(param){
+          this.allInputData = param.api;
+        },
         confirm() {
           console.log('값 저장')
           this.closeModal()
         },
-        setSelectedProduct(productCode) {
+        confirm2() {
+          console.log('값 저장') 
+          this.closeModal()
+        },
+        onCellClicked(event) { // 그리드에서 셀 클릭시 이벤트 발생
+          this.selectedRow = event.node;
+          console.log('이벤트발생',event);
+          // this.isShowModal2 = true;
+          if (event.colDef.field === 'material_code') {
+            this.openModal2('materialCodeModal');
+          }
+        },
+        setSelectProduct(product) {
         // 모달에서 선택한 데이터가 부모로 전달되면 이를 입력상자에 반영
-        this.searchProductcode = productCode;  // 선택한 제품코드를 인풋 박스에 설정
+        console.log(product);
+        this.searchProductcode = product.product_code;  // 선택한 제품코드를 인풋 박스에 설정
+        this.searchProduct = product.product_name;
+        this.searchCapacity = product.capacity;
         this.closeModal();
+        },
+        setSelectMaterial(material) {
+          console.log(material);
+          console.log(material.material_code);
+          console.log(material.material_name);
+          this.selectedRow.setDataValue('material_code', material.material_code);
+          this.selectedRow.setDataValue('material', material.material_name);
+          this.isShowModal2 = false;
         },
         closeModal() {
           this.isShowModal = false
         },
+        closeModal2() {
+          this.isShowModal2 = false
+        },
         rowSelection(event){
           console.log('이벤트발생',event);
+        },
+        async deleteBomList(){
+          console.log('삭제할 데이터',this.bomBox);
+          console.log(this.allInputData.getSelectedRows());
+          for(let i = 0; i<this.allInputData.getSelectedRows().length; i++){
+            console.log(this.allInputData.getSelectedRows()[i].bom_seq);
+            let bom_seq = this.allInputData.getSelectedRows()[i].bom_seq;
+            console.log(bom_seq);
+            let Result = await axios.get(`${ajaxUrl}/materialdelete/${bom_seq}`)
+                                                 .catch(err => console.log(err));
+            console.log(Result.data);
+          }
+          // 조회한 데이터를 자재 삭제후 남아있게 다시 조회하기
+          this.view(this.searchProduct,this.searchCapacity,this.allInputData.getSelectedRows()[0].bom_num,this.searchMaterialcode,this.searchProductcode);
+          // let bom_seq = this.allInputData.getSelectedRows()[0].bom_seq;
+          // console.log(bom_seq);
+          // this.bomBox = this.bomBox.filter(item => !item.checkboxSelection);
+          // let Result = await axios.get(`${ajaxUrl}/materialdelete/${bom_seq}`)
+          //                                      .catch(err => console.log(err));
+          // console.log(Result.data);
         },
         onCellEditingStopped(event) {
               // 현재 편집된 행 데이터 가져오기
@@ -269,12 +347,14 @@
             console.log(result.data);
           },
           async insertBom() { // 등록
-            this.newList = { product_code: this.searchProductcode , product_name: this.searchProduct, capacity : this.searchCapacity};
+            this.newList = { product_code: this.searchProductcode ,
+                             product_name: this.searchProduct, 
+                             capacity : this.searchCapacity };
               console.log('등록될 제품',this.newList);
               let result = await axios.post(`${ajaxUrl}/bomregist`,this.newList);
               console.log(result.data);   
               window.location.reload();
-          },       
+          },
           view(productname,capa,bomnum,materialcode,productcode) {
             console.log('데이터',materialcode);
             console.log('제품코드',productcode);
@@ -315,10 +395,14 @@
               for(let i = 0; i<this.bomBox.length; i++){
 
                 if(i < this.bomBox2.length ){
+                  // console.log(this.boxBox[i]['material'],'=',this.bomBox2[i]['material']);
+                  // console.log(this.boxBox[i]['material_code'],'=',this.bomBox2[i]['material_code']);
+                  // console.log(this.boxBox[i]['material_con'],'=',this.bomBox2[i]['material_con']);
                   if(this.bomBox[i]['material'] != this.bomBox2[i]['material'] || this.bomBox[i]['material_code'] != this.bomBox2[i]['material_code']
                     || this.bomBox[i]['material_con'] != this.bomBox2[i]['material_con']
                   ){
                     console.log('같지않음');
+                    this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
                     // console.log(this.bomBox[i]);
                     this.updateBomlist(this.bomBox[i]);
                   }else{
@@ -326,6 +410,7 @@
                   }
 
                 }else{
+                  this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
                   console.log('insert 해야하는 데이터');
                   console.log(this.bomBox[i]);
                   this.insertBomlist(this.bomBox[i]);

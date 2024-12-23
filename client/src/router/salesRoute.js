@@ -3,7 +3,8 @@ import orderForm from '@/views/sales/Order/orderForm.vue';
 import orderlistSearch from '@/views/sales/Order/orderlistSearch.vue';
 import orderInfo from '@/views/sales/Order/orderInfo.vue';
 import outputManage from '@/views/sales/ProductOutput/outputManage.vue';
-import inputManage from '../views/sales/ProductInput/inputManage.vue';
+import inputManage from '@/views/sales/ProductInput/inputManage.vue';
+import inputList from '../views/sales/ProductInput/inputList.vue';
 
 
 const salesRoute = [
@@ -38,7 +39,13 @@ const salesRoute = [
         path:'/input/management',
         name: 'inputManage',
         component:inputManage
+    },
+    {
+        path : '/input/inputlist',
+        name : 'inputList',
+        component:inputList
     }
+
 
 ];
 

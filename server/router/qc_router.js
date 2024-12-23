@@ -29,6 +29,13 @@ router.post('/insertQCM', async (req, res)=>{
 
 
 
+//검사관리-불량코드조회(001~005)
+router.get('/faultyCode', async (req, res)=>{
+  let faultyList = await qc_service.findFaultyCodeOneToFive();
+  res.send(faultyList);
+})
+
+
 
 //자재검사관리-검사할 요청 전체 조회 및 선택검색
 router.get('/requestQCMAll', async (req, res)=>{
@@ -42,6 +49,8 @@ router.post('/requestQCM', async (req, res)=>{
 });
 
 //자재검사관리- 검사완료처리
+
+
 
 
 

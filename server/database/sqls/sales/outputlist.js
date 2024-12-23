@@ -32,7 +32,7 @@ FROM orders o left join product p
 ON o.product_code = p.product_code
               left join output op
 ON o.order_num = op.order_num
-WHERE o.orderlist_num= 1
+WHERE o.orderlist_num= ?
 AND o.order_status != 'shipped' `;
 
 //제품별 lot 조회
@@ -44,7 +44,7 @@ FROM input_body b left join input_header h
 ON b.inputlist_num = h.inputlist_num
 				  left join output o
 ON b.input_num = o.input_num
-WHERE b.product_code = 'P001'
+WHERE b.product_code = ?
 AND b.input_amount - NVL(o.output_amount, 0) != 0
 order by h.input_date`;
 

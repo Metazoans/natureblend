@@ -14,7 +14,8 @@
 
     <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
       <template v-slot:list>
-        <p>content</p>
+        <p>content</p>.
+        
         <p>content</p>
         <p>content</p>
         <p>content</p>
