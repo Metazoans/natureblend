@@ -64,7 +64,7 @@ const selectMaterial = async () => {
 // 제품 등록
 const insertProduct = async (product_code,product_name,expiration_date,capacity) => {
   console.log(product_code,product_name,expiration_date,capacity);
-  let result = await mysql.query('productInsert', [product_code,product_name,expiration_date,capacity]);
+  let result = await mysql.query('productInsert', [product_code,product_name,capacity,expiration_date]);
   console.log(result);
   if(result.affectedRows > 0 ){
     return '성공';
@@ -76,6 +76,17 @@ const insertProduct = async (product_code,product_name,expiration_date,capacity)
 // 제품 삭제
 const deleteProduct = async (product_code) => {
   let result = await mysql.query('productDelete', [product_code]);
+  console.log(result);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+
+// 제품 수정
+const updateProduct = async (product_code,product_name,expiration_date,capacity) => {
+  let result = await mysql.query('productUpdate', [product_name,expiration_date,capacity,product_code]);
   console.log(result);
   if(result.affectedRows > 0 ){
     return '성공';
@@ -96,4 +107,5 @@ module.exports = {
     selectMaterial,
     insertProduct,
     deleteProduct,
+    updateProduct,
 }

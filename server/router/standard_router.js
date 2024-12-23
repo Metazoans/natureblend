@@ -88,4 +88,12 @@ router.delete('/productDelete/:product_code',async(req,res)=>{
   res.send(result);
 });
 
+// 제품 수정
+router.post('/productUpdate/:product_code',async(req,res)=>{
+  let product_code = req.params.product_code;
+  let { product_name,expiration_date,capacity } = req.body;
+  let result = await bomService.updateProduct(product_code,product_name,expiration_date,capacity);
+  res.send(result);
+});
+
 module.exports = router;
