@@ -33,12 +33,12 @@ const getOrderList = async (orderStatus, orderName, clientName, startDate, endDa
    }
 
   if(orderName  != undefined && orderName != null && orderName != ''){
-    let search = `o.orderlist_title LIKE \'${orderName}\'`;
+    let search = `o.orderlist_title LIKE \'%${orderName}%\'`;
     searchList.push(search);
   }
-
+  console.log("회사명:",clientName)
   if(clientName  != undefined && clientName != null && clientName != ''){
-    let search = `c.com_name LIKE \'${clientName}\'`;
+    let search = `c.com_name LIKE \'%${clientName.com_name}%\'`;
     searchList.push(search);
   }
 
@@ -109,8 +109,35 @@ const updateAddOrder = async(orderInfo)=>{
 
 } 
 
-//주문,주문서 수정 
+//주문,주문서수정
+const updateOrderInfo = async (no,updateOrder)=>{
+  let datas = [Number(no), ... Object.values(updateOrder)];
+  console.log(datas);
+  let result = await mysql.query('updateOrder',datas);
+  let sendData = {}; //값을 보내준 후 결과 값 
+  console.log("결과:",result);
 
+  if(result.changeRows == 1){
+    sendData.target = {'orderlist_num' : no};
+    sendData.result = true;
+  }else {
+    sendData.result = false;
+  }
+  return sendData;
+
+}
+
+//주문,주문서 삭제
+const delOrderlist = async(orderlistNum)=>{
+  console.log(orderlistNum, "타입:",typeof orderlistNum);
+  let result = await mysql.query('orderListDelete',Number(orderlistNum));
+  console.log(result);
+  if(result.affecteRows != 0 ){
+    return {"result" : "success","orderlistNum": orderlistNum};
+  }else{
+    return {"result" : "fail"};
+  }
+}
 
 
 module.exports = {
@@ -121,4 +148,6 @@ module.exports = {
     addOrder,
     getOrderInfo,
     updateAddOrder,
+    updateOrderInfo,
+    delOrderlist
 }

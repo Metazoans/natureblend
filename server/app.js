@@ -7,7 +7,8 @@ const empRouter = require('./router/emp_router.js');
 
 // 영업
 const salesRouter = require('./router/sales/order_router.js');
-
+const outputRouter = require('./router/sales/output_router.js');
+const inputRouter = require('./router/sales/input_router.js')
 // 자재
 const materialRouter = require('./router/material_router.js');
 
@@ -35,6 +36,8 @@ app.use('/', empRouter);
 
 // 영업 라우터
 app.use('/', salesRouter);
+app.use('/', outputRouter);
+app.use('/', inputRouter);
 
 // 자재 라우터
 app.use('/', materialRouter);

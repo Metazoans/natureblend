@@ -50,5 +50,19 @@ router.post('/orderUpdate/insert',async(req,res)=>{
 })
 
 //주문서,주문 수정 
+router.put('/orderUpdate/update/:no',async(req,res)=>{
+  let orderlistNum = req.params.no;
+  let updateOrder = req.body; //JSON으로 보내는 데이터
+  let result = await orderService.updateOrderInfo(orderlistNum,updateOrder);
+  res.send(result);
+
+})
+
+//주문서,주문 삭제 
+router.delete('/orderlist/delete/:no',async(req,res)=>{
+  let orderlistNum = req.params.no;
+  let info = await orderService.delOrderlist(orderlistNum);
+  res.send(info);
+})
 
 module.exports = router;
