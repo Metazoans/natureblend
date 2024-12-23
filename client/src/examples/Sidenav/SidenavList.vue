@@ -190,8 +190,8 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">생산계획 등록</li>
-            <li class="sub-item">생산계획 목록</li>
+            <li class="sub-item" @click="movePage('workingList')">실행작업 목록</li>
+            <li class="sub-item" @click="movePage('workDoneList')">완료작업 목록</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse 
