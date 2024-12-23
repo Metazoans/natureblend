@@ -152,6 +152,7 @@ export default {
           await axios.get(`${ajaxUrl}/production/order/processflow/${productCode}`)
               .catch(err => console.log(err));
       this.processFlow = result.data
+      this.$emit('getProcessFlow', this.processFlow)
     },
 
     selectPlan(plan) {
@@ -170,6 +171,7 @@ export default {
     async confirm() {
       if(this.modalType === 'plan') {
         this.searchPlan = this.selectedPlan
+        this.$emit('getSearchPlan', this.searchPlan)
 
         this.searchProduct = this.searchPlan.product_name + ' '
         if(this.searchPlan.capacity > 1000) {

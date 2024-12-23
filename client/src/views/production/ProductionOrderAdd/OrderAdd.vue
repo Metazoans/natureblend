@@ -10,6 +10,8 @@
             @setRowDataNeed="setRowDataNeed"
             @setRowDataStock="setRowDataStock"
             @updateInputData="updateInputData"
+            @getProcessFlow="getProcessFlow"
+            @getSearchPlan="getSearchPlan"
         />
 
         <div class="grid-container grid-1" >
@@ -126,16 +128,26 @@ export default {
       ],
       orderInfo: {},
       newProdOrderNum: 0,
+      processFlow: [],
+      searchPlan: {},
     }
   },
 
   methods: {
+    getSearchPlan(searchPlan) {
+      this.searchPlan = searchPlan
+    },
+
     onCellEditingStopped() {
       // cell 편집 후 focusout 됐을 때 트리거됨
     },
 
     updateInputData(orderInfo) {
       this.orderInfo = orderInfo
+    },
+
+    getProcessFlow(processFlow) {
+      this.processFlow = processFlow
     },
 
     isFillOutAll() {
@@ -170,35 +182,58 @@ export default {
     async confirm() {
       await this.addProductionOrder()
 
-      let isLastMaterial = false
+      // 자재별 홀딩자재 등록
       for (const data of this.rowDataUse) {
-        if(data.useLot === this.rowDataUse[this.rowDataUse.length - 1].useLot) {
-          isLastMaterial = true
+        await this.holdMaterial(data)
+      }
+
+      // 생산지시 등록 시, 공정흐름도에 따라 공정작업헤더 등록
+      let isLastProcess = false
+      for (const process of this.processFlow) {
+        if(process.process_code === this.processFlow[this.processFlow.length - 1].process_code) {
+          isLastProcess = true
         }
-        await this.holdMaterial(data.useMaterialCode, data.useLot, data.useAmount, isLastMaterial)
+        await this.addProcessWork(process, isLastProcess)
       }
 
       this.closeModal()
     },
 
-    async holdMaterial(useMaterialCode, useLot, useAmount, isLastMaterial) {
-      let holdStockInfo = {
-        newProdOrderNum: this.newProdOrderNum,
-        useMaterialCode: useMaterialCode,
-        useLot: useLot,
-        useAmount: Number(useAmount)
+    async addProcessWork(process, isLastProcess) {
+      let processInfo = {
+        productionOrderNum: this.newProdOrderNum,
+        productionOrderName: this.orderInfo.prodOrderName,
+        productionOrder_qty: this.orderInfo.prodOrderQty,
+        productCode: this.searchPlan.product_code,
+        productName: this.searchPlan.product_code,
+        capacity: this.searchPlan.capacity,
+        processCode: process.process_code,
+        processName: process.process_name,
+        machineType: process.machine_type,
       }
 
-      let result =
-          await axios.post(`${ajaxUrl}/production/order/stockhold`, holdStockInfo)
-              .catch(err => console.log(err));
+      let result = await axios.post(`${ajaxUrl}/production/order/process`, processInfo)
+          .catch(err => console.log(err));
 
-      if(isLastMaterial && result.data.message === 'success') {
+
+      if(isLastProcess && result.data.message === 'success') {
         this.$notify({
           text: "생산지시가 등록되었습니다.",
           type: 'success',
         });
       }
+    },
+
+    async holdMaterial(data) {
+      let holdStockInfo = {
+        newProdOrderNum: this.newProdOrderNum,
+        useMaterialCode: data.useMaterialCode,
+        useLot: data.useLot,
+        useAmount: Number(data.useAmount)
+      }
+
+      await axios.post(`${ajaxUrl}/production/order/stockhold`, holdStockInfo)
+          .catch(err => console.log(err));
     },
 
     async addProductionOrder() {
