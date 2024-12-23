@@ -206,10 +206,7 @@ import axios from "axios";
         }else{
             alert('제품 등록에 실패하였습니다.');
         }
-     },
-
-
-
+     }
    },
    // 화면 생성되는 시점
    mounted() {

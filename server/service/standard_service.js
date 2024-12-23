@@ -95,6 +95,40 @@ const updateProduct = async (product_code,product_name,expiration_date,capacity)
   }
 }
 
+// 자재 조회
+const materialList = async ()=>{
+  let list = await mysql.query('materialList');
+  return list;
+}
+
+// 자재 등록
+const insertMaterial = async (material_code,material_name,safety_inventory,expiration_date) => {
+  let result = await mysql.query('materialInsert', [material_code,material_name,safety_inventory,expiration_date]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 자재 수정
+const updateMaterial = async (material_code,material_name,safety_inventory,expiration_date) => {
+  let result = await mysql.query('materialUpdate', [material_name,safety_inventory,expiration_date,material_code]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 자재 삭제
+const delMaterial = async (material_code) => {
+  let result = await mysql.query('materialDel', [material_code]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+
 module.exports = {
     findAllBom,
     createNewBom,
@@ -108,4 +142,8 @@ module.exports = {
     insertProduct,
     deleteProduct,
     updateProduct,
+    materialList,
+    insertMaterial,
+    updateMaterial,
+    delMaterial,
 }

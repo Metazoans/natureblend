@@ -25,6 +25,7 @@ const inactivity = require('./sqls/machine/inactivity.js');
 
 // 기준정보
 const bomlist = require('./sqls/standard/bomlist.js');
+const processflow = require('./sqls/standard/processflow.js');
 
 
 module.exports = {
@@ -55,4 +56,5 @@ module.exports = {
 
   // 기준정보
   ...bomlist,
+  ...processflow,
 }

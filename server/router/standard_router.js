@@ -96,4 +96,30 @@ router.post('/productUpdate/:product_code',async(req,res)=>{
   res.send(result);
 });
 
+// 자재 조회
+router.get('/materialList',async(req,res)=>{
+  let searchs = req.query;
+  let materialList = await bomService.materialList(searchs);
+  res.send(materialList);
+});
+
+// 자재 등록
+router.post('/materialInsert',async(req,res)=>{
+  let { material_code,material_name,safety_inventory,expiration_date } = req.body;
+  let result = await bomService.insertMaterial(material_code,material_name,safety_inventory,expiration_date);
+  res.send(result);
+});
+// 자재 수정
+router.post('/materialUpdate/:material_code',async(req,res)=>{
+  let material_code = req.params.material_code;
+  let { material_name,safety_inventory,expiration_date } = req.body;
+  let result = await bomService.updateMaterial(material_code,material_name,safety_inventory,expiration_date);
+  res.send(result);
+});
+// 자재 삭제
+router.delete('/materialDel/:material_code',async(req,res)=>{
+  let material_code = req.params.material_code;
+  let result = await bomService.delMaterial(material_code);
+  res.send(result);
+});
 module.exports = router;
