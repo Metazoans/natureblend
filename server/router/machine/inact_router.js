@@ -31,8 +31,8 @@ router.put('/lastInAct/:mno', async(req, res) => {
 
 // 비동기 내역 검색
 router.put('/search', async (req, res) => {
-  let {selectSearchType, searchData, startDate, endDate} = req.body;
-  let result = await inactService.searchInActList(selectSearchType, searchData, startDate, endDate);
+  let {process_code, startDate, endDate} = req.body;
+  let result = await inactService.searchInActList(process_code, startDate, endDate);
   res.send(result);
 });
 
