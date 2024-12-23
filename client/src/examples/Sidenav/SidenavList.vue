@@ -98,8 +98,8 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('materialList')">자재 발주 관리</li>
-            <li class="sub-item" @click="movePage('materialList2')">자재 발주 관리2</li>
+            <!--<li class="sub-item" @click="movePage('materialList')">자재 발주 관리</li>-->
+            <li class="sub-item" @click="movePage('materialList2')">자재 발주 관리</li>
             <li class="sub-item" @click="movePage('materialOrderList')">자재 발주 조회</li>
           </template>
         </sidenav-collapse>

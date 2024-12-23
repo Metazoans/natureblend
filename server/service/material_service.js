@@ -314,6 +314,14 @@ const lotQtyList = async (qty_state, materialCode, clientName, POListCode, start
   return list;
 }
 
+
+// 발주번호 같은 자재 리스트 긁어오기
+const materialBodyList = async (orderCode)=>{
+  let list = await mysql.query('material_order_body_list', [orderCode]);
+  return list;
+}
+
+
 module.exports = {
   allmaterial,
   needOrderMaterial,
@@ -331,5 +339,6 @@ module.exports = {
   materialInputList,
   lotQtyInfomation,
   lotQtyList,
+  materialBodyList,
 
 };
