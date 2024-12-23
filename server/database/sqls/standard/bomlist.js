@@ -91,6 +91,14 @@ const productDelete =
 `DELETE FROM product
 WHERE product_code = ?`;
 
+// 제품 수정
+const productUpdate =
+`UPDATE product
+ SET  product_name = ?,
+      expiration_date = ?,
+      capacity = ?
+ WHERE product_code = ?`;
+     
  module.exports = {
     bomList,
     bomView,
@@ -105,5 +113,6 @@ WHERE product_code = ?`;
     materialSelect,
     productInsert,
     productDelete,
+    productUpdate,
     // materialInsert
 }
