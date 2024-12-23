@@ -1,23 +1,4 @@
 <!-- 설비 상세 페이지 machine/machineInfo -->
-<!--
-설비 이름(설비 위치) machine_name(machine_location)
-설비 이미지 machine_img
-모델 번호
-설비 분류
-작동 상태
-제작 업체
-등록자
-구매 일자
-UPH
-
-일 평균 생산량
-일 평균 불량률
-공정 번호
-공정 이름
-생산 품목
-
---부품 목록
--->
 <template>
   <div class="container">
     <!-- 설비 이름(설비 위치) / 설비 수정 버튼 / 설비 제거 버튼 -->
@@ -49,6 +30,7 @@ UPH
           class="btn bg-gradient-warning w-100 mb-0 toast-btn"
           type="button"
           data-target="warningToast"
+          @click="machineDelete"
           style="margin: 5px;"
         >
           설비 제거
@@ -62,7 +44,7 @@ UPH
       <div class="col-3 mimg">
         이미지
         
-        <img v-if="machineData.machine_img" :src="machineData.machine_img" />
+        <img v-if="machineData.machine_img" :src="`http://localhost:3000${machineData.machine_img}`" />
       </div>
 
       <!-- 설비 정보 항목 -->
@@ -150,12 +132,13 @@ export default {
       machinePrdData: {},
       machineNo: 0,
       isShowModal: false,
+      selectNo: null,
     }
   },
   beforeMount() {
-    let selectNo = this.$route.params.mno;
-    this.getMachineInfo(selectNo);
-    this.getMachinePrdInfo(selectNo);
+    this.selectNo = this.$route.params.mno;
+    this.getMachineInfo(this.selectNo);
+    this.getMachinePrdInfo(this.selectNo);
   },
   methods: {
     async getMachineInfo(selectNo) {
@@ -171,7 +154,7 @@ export default {
       this.machinePrdData = result.data;
     },
 
-    //설비 등록 모달
+    // 설비 수정 모달 = 등록 모달과 같은 모달
     machineUpdate() {
       this.isShowModal = !this.isShowModal;
     },
@@ -186,6 +169,18 @@ export default {
       this.isShowModal = false;
     },
 
+    // 설비 삭제 machineDelete
+    async machineDelete() {
+      let result = await axios.delete(`${ajaxUrl}/machine/machineDelete/${this.selectNo}`)
+                              .catch(err => console.log(err));
+      let delRes = result.data;
+      if(delRes.result == 'success') {
+        alert('삭제 성공');
+        this.$router.go(-1); // 삭제 성공시 뒤로가기(설비 리스트로 이동)
+      } else {
+        alert('삭제 실패');
+      }
+    },
     // 형변환 파트 작업중
     // 전체 텍스트 변환
     allFormat(data) {

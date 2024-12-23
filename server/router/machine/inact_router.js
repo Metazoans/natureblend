@@ -21,4 +21,20 @@ router.post('/inActInsert', async(req, res)=>{
   res.send(result);
 });
 
+// 마지막 비동기 갱신
+router.put('/lastInAct/:mno', async(req, res) => {
+  let mno = req.params.mno;
+  let info = req.body;
+  let result = await inactService.updateLastInAct(mno, info);
+  res.send(result);
+});
+
+// 비동기 내역 검색
+router.put('/search', async (req, res) => {
+  let {selectSearchType, searchData, startDate, endDate} = req.body;
+  let result = await inactService.searchInActList(selectSearchType, searchData, startDate, endDate);
+  res.send(result);
+});
+
+
 module.exports = router;

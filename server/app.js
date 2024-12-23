@@ -5,6 +5,8 @@ const boardRouter = require('./router/board_router.js');
 const bookRouter = require('./router/book_router.js');
 const empRouter = require('./router/emp_router.js');
 
+const path = require('path');
+
 // 영업
 const salesRouter = require('./router/sales/order_router.js');
 const outputRouter = require('./router/sales/output_router.js');
@@ -53,6 +55,8 @@ app.use('/', qualityRouter);
 // 설비 라우터
 app.use('/machine', machineRouter);
 app.use('/inActs', inactRouter);
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // 기준정보 라우터
 app.use('/', standardRouter);
