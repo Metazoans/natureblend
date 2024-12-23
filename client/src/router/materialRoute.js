@@ -24,6 +24,14 @@ import Materialqty from '@/views/material/materialqty.vue';
 //테스트
 import Tabletest from '@/views/material/Tables.vue';
 
+//테스트2 (제품 등록)
+import Tabletest2 from '@/views/material/z_product_input.vue';
+
+//테스트3 (진짜연습장)
+import Tabletest3 from '@/views/material/z_test.vue';
+
+//테스트4 (자재 등록)
+import Tabletest4 from '@/views/material/z_material_input.vue';
 
 const materialRoute = [
   {
@@ -69,6 +77,21 @@ const materialRoute = [
     path: 'test',
     name: 'tabletest',
     component: Tabletest
+  },
+  {
+    path: 'test2',
+    name: 'Tabletest2',
+    component: Tabletest2
+  },
+  {
+    path: 'test3',
+    name: 'Tabletest3',
+    component: Tabletest3
+  },
+  {
+    path: 'test4',
+    name: 'Tabletest4',
+    component: Tabletest4
   },
 ];
 
