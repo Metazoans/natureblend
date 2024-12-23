@@ -13,6 +13,8 @@ const storage = multer.diskStorage({
   }
 });
 
+// 파일 업데이트시 기존 파일 삭제 추가
+
 const upload = multer({ storage });
 
 module.exports = upload.single('machineImg');

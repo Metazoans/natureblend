@@ -18,7 +18,7 @@
           <!-- 파일 node로 저장(url return받음) -->
           <input type="file" id="machineImg" name="machineImg" @change="uploadImage"/>
           <!-- 이미지 url 불러오기(미리보기) -->
-          <img :src="`http://localhost:3000${machineData.machine_img}`"/>
+          <img :src="`${localUrl}${machineData.machine_img}`"/>
         </div>
 
         <div class="modalRow">
@@ -117,7 +117,7 @@
 <script>
 import ModalMachine from "@/views/natureBlendComponents/modal/ModalMachine.vue";
 import userDateUtils from "@/utils/useDates.js";
-import { ajaxUrl } from '@/utils/commons.js';
+import { ajaxUrl, localUrl } from '@/utils/commons.js';
 import axios from 'axios';
 
 export default {
@@ -132,6 +132,7 @@ export default {
   },
   data() {
     return {
+      localUrl: localUrl,
       imgUrlTest: '',
       machineData: {
         // 입력

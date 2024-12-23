@@ -2,18 +2,6 @@
   <div class="container-fluid py-4">
 
     <!-- 설비 검색 -->
-    <!--
-    // 검색 데이터
-    statusList: ["전체", "작동중", "작동정지"], // 작동 상태 옵션
-    pickedStatus: [], // 작동상태 선택
-    machineType: ["전체", "세척기기", "음료제작기기", "포장기기"], // 설비 분류 옵션
-    pickedType: [], // 설비 분류 선택
-    searchType: ["전체", "공정명", "설비이름"], // 검색 옵션
-    selectType: "", // 선택된 검색 옵션
-    searchData: "", // 검색 내용
-
-    filters: [],
-    -->
     <div class="main-container">
       <!-- 작동 상태 -->
       <div class="mb-3">
@@ -86,7 +74,6 @@
       </div>
     </div>
     
-    
 
     <!-- 설비 리스트 -->
     <div class="grid-container" >
@@ -141,15 +128,7 @@ export default {
     const machineList = shallowRef([]);
     const rowData = shallowRef([]);
     const columnDefs = shallowRef([
-      /*
-      번호, 공정코드, 공정명, 모델번호, 설비분류, 설비 이름, 설비 위치, 작동상태
-      field: 'country',
-        valueFormatter: countryValueFormatter,
-        filter: 'agSetColumnFilter',
-        filterParams: {
-            valueFormatter: countryValueFormatter,
-        },
-      */
+
       { headerName: '번호', field: 'machine_num' },
       { headerName: '공정코드', field: 'process_code' },
       { headerName: '공정명', field: 'process_name' },
@@ -257,10 +236,31 @@ export default {
         console.log('stop으로 업데이트');
       } else if(col.value == 'stop') { // 작동정지
         console.log('run으로 업데이트');
+        // inact에서 최신값 찾기
       } else { // 다른 셀 클릭
         this.$router.push({name: 'machineInfo', params : {mno : col.data.machine_num}});
       }
     },
+
+    // 설비 가동상태로 변경
+    async reStart() {
+      let obj = {
+        machine_state: 'run',
+      }
+
+      let result = await axios.put(`${ajaxUrl}/machine/machineUpdate/${this.machineNo}`, obj)
+                              .catch(err => console.log(err));
+      let updateRes = result.data;
+
+      if(updateRes.result) {
+        console.log('수정 성공');
+      } else {
+        console.log('수정 실패');
+      }
+      
+    },
+    // 최근 비가동 수정
+    
 
     // 검색 파트 동작
     resetSearch() {
@@ -305,7 +305,6 @@ export default {
           this.filters.selectSearchType = "machine_name";
           break;
       }
-      console.log(this.filters);
       this.searchMachines();
     },
 
