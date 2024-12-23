@@ -4,12 +4,13 @@
     <div class="container-fluid">
       <div class="search-container mt-4 mb-2">
         <div class="input-group w-auto h-25">
-          <input type="text" @click="openModal" :value="searchWorkingOrder.production_order_name" readonly class="form-control border p-2 cursor-pointer" placeholder="생산지시명">
+          <input type="text" @click="openModal" :value="workList[0]?.production_order_name" readonly class="form-control border p-2 cursor-pointer" placeholder="생산지시 선택">
         </div>
-        <material-button size="sm" color="warning" class="button" @click="findWorkingOrdersAll">전체조회</material-button>
-        <div class="product" v-show="searchWorkingOrder.production_order_name">
+        <div class="product" >
           <h6>제품명:</h6>
-          <input type="text" class="form-control border p-2" :value="searchWorkingOrder.product_name" readonly/>
+          <p>{{ workList[0] ? workList[0].product_name : '-' }}</p>
+          <h6 class="bold">작업일자:</h6>
+          <p>{{ workList[0] ? workList[0].work_date?.split('T')[0] : '-'}}</p>
         </div>
       </div>
       <div class="grid-container" >
@@ -38,7 +39,6 @@
   </div>
 </template>
 <script>
-import MaterialButton from "@/components/MaterialButton.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import WorkingOrderList from "@/views/production/workList/ModalWorkingOrderList.vue"
 import axios from "axios";
@@ -52,7 +52,7 @@ export default {
       return theme
     }
   },
-  components: {Modal, MaterialButton, WorkingOrderList},
+  components: {Modal, WorkingOrderList},
 
   data() {
     return {
@@ -73,11 +73,12 @@ export default {
         { headerName: "공정시작시간", field: 'process_start_time' },
         { headerName: "공정완료시간", field: 'process_end_time' },
       ],
+      workList: []
     }
   },
 
   created() {
-    this.getWorkingOrders()
+    this.getTodayWorkList()
   },
 
   methods: {
@@ -101,24 +102,69 @@ export default {
     confirm() {
       this.searchWorkingOrder = this.selectedWorkingOrder
 
-      this.getWorkingOrders()
+      this.getWorkList()
       this.closeModal()
     },
 
-    async getWorkingOrders() {
-       let result =
-          await axios.get(`${ajaxUrl}/production/work/activeorders${this.searchWorkingOrder?.production_order_num ? '?production_order_num=' + this.searchWorkingOrder.production_order_num : ''}`)
+    async getTodayWorkList() {
+      let result =
+          await axios.get(`${ajaxUrl}/production/work/today`)
               .catch(err => console.log(err));
-      console.log(result.data)
+
+      if(result.data.length === 0) {
+        this.$notify({
+          text: "오늘 작업이 없습니다.",
+          type: 'error',
+        });
+        this.workList = []
+      } else {
+        this.workList = result.data
+        this.setRowData()
+      }
+
+
+    },
+
+    setRowData() {
+      let keys = []
+      this.columnDefs.forEach((col) => {
+        keys.push(col.field)
+      })
+
+      this.rowData = []
+      this.workList.forEach((order, idx) => {
+        this.rowData[idx] = {
+          [keys[0]]: order[keys[0]],
+          [keys[1]]: order[keys[1]],
+          [keys[2]]: order[keys[2]],
+          [keys[3]]: order[keys[3]],
+          [keys[4]]: order[keys[4]],
+          [keys[5]]: order[keys[5]],
+          [keys[6]]: order[keys[6]],
+          [keys[7]]: order[keys[7]],
+          [keys[8]]: order[keys[8]],
+        }
+      })
+    },
+
+    async getWorkList() {
+      let result =
+          await axios.get(`${ajaxUrl}/production/work/${this.searchWorkingOrder.production_order_num}`)
+              .catch(err => console.log(err));
+
+      if(result.data.length === 0) {
+        this.workList = []
+      } else {
+        this.workList = result.data
+        this.setRowData()
+      }
+
+
     },
 
     selectWorkingOrder(workingOrder) {
       this.selectedWorkingOrder = workingOrder
     },
-
-    findWorkingOrdersAll() {
-
-    }
   }
 }
 </script>
@@ -134,6 +180,11 @@ export default {
       display: flex;
       height: 50px;
       align-content: center;
+      h5 {
+        margin-bottom: 0;
+        margin-left: 20px;
+        line-height: 40px;
+      }
       input {
         background-color: transparent;
       }
@@ -144,11 +195,13 @@ export default {
       }
       .product {
         display: flex;
-        align-items: baseline;
+        align-items: center;
         margin-left: 40px;
         > h6 {
-          width: 40%;
-          margin-right: 16px;
+          margin: 0 16px;
+        }
+        >p {
+          margin-bottom: 0;
         }
       }
 

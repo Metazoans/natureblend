@@ -40,7 +40,6 @@ const addHoldingStock = async (holdStockInfo)=>{
 
 const addProcessWork = async (processWorkInfo)=>{
     let result = await mysql.query('insertProcessWork', Object.values(processWorkInfo));
-    console.log('service result', result)
     if(result.affectedRows === 1) {
         return { message: 'success' }
     } else {

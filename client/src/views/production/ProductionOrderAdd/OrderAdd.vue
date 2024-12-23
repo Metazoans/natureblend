@@ -210,6 +210,7 @@ export default {
         processCode: process.process_code,
         processName: process.process_name,
         machineType: process.machine_type,
+        workDate: this.orderInfo.workDate
       }
 
       let result = await axios.post(`${ajaxUrl}/production/order/process`, processInfo)

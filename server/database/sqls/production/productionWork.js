@@ -5,6 +5,20 @@ const workingOrders = `
     where po.production_order_status in ('work_waiting', 'work_in_process')
 `
 
+const workForToday = `
+    select * from process_work_header
+    where process_status = 'process_waiting'
+    and work_date = CURDATE()
+`
+
+const workByOrderNum = `
+    select * from process_work_header
+    where process_status = 'process_waiting'
+    and production_order_num = ?
+`
+
 module.exports = {
-    workingOrders
+    workingOrders,
+    workForToday,
+    workByOrderNum
 }
