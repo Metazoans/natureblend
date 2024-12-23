@@ -4,6 +4,8 @@ import ProductionPlanList from '@/views/production/ProductionPlanList.vue';
 import productionPlanAdd from "@/views/production/productionPlanAdd/PlanAdd.vue";
 import productionOrderList from "@/views/production/ProductionOrderList.vue";
 import productionOrderAdd from "@/views/production/ProductionOrderAdd/OrderAdd.vue";
+import workingList from "@/views/production/workList/workingList.vue";
+import workDoneList from "@/views/production/workList/workDoneList.vue";
 
 const productionRoute = [
   {
@@ -29,6 +31,16 @@ const productionRoute = [
     path: 'order/add',
     name: 'productionOrderAdd',
     component: productionOrderAdd
+  },
+  {
+    path: 'working/list',
+    name: 'workingList',
+    component: workingList
+  },
+  {
+    path: 'workdone/list',
+    name: 'workDoneList',
+    component: workDoneList
   },
 ];
 
