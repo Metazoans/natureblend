@@ -41,10 +41,11 @@ const findBomView = async (no) => {
     return list;
 }
 
-// // BOM 자재 삭제
-// const deleteMaterial = async (bomnum) => {
-//   return list;
-// }
+// BOM 자재 삭제
+const deleteMaterial = async (bomseq) => {
+  let list = await mysql.query('materialDelete2', [bomseq]);
+  return list;
+}
 
 // BOM 삭제
 const deleteBom = async (bomnum) => {
@@ -54,7 +55,34 @@ const deleteBom = async (bomnum) => {
   return list,list2;
 }
 
+// 자재 목록 조회 code , name
+const selectMaterial = async () => {
+  let list = await mysql.query('materialSelect');
+  return list;
+}
 
+// 제품 등록
+const insertProduct = async (product_code,product_name,expiration_date,capacity) => {
+  console.log(product_code,product_name,expiration_date,capacity);
+  let result = await mysql.query('productInsert', [product_code,product_name,expiration_date,capacity]);
+  console.log(result);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else {
+    return '실패';
+  }
+}
+
+// 제품 삭제
+const deleteProduct = async (product_code) => {
+  let result = await mysql.query('productDelete', [product_code]);
+  console.log(result);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
 
 module.exports = {
     findAllBom,
@@ -64,5 +92,8 @@ module.exports = {
     updateBom,
     insertBomList,
     findProduct,
-    // deleteMaterial,
+    deleteMaterial,
+    selectMaterial,
+    insertProduct,
+    deleteProduct,
 }

@@ -32,7 +32,6 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">{{ noBtn }}</button>
-          <button type="button" class="btn btn-warning" @click="confirm">{{ yesBtn }}</button>
         </div>
       </div>
     </div>
@@ -81,18 +80,11 @@ export default {
     onRowClicked(row) {
       console.log('클릭된 데이터 : ', row.data);
       let bom = row.data;
-      this.$router.push({ name:'BomManagement', params: { code : bom.product_code,
-                                                          name : bom.product_name,
-                                                          capaticy : bom.capaticy
+      this.$emit( 'selectItem', { product_code : bom.product_code,
+                                  product_name : bom.product_name,
+                                  capacity : bom.capacity
         }
-      })
-    },
-
-    confirm() {
-      const selectedProduct = this.getSelectedProduct();
-        this.$emit('selectItem', selectedProduct.product_code);  // 선택한 제품코드를 부모 컴포넌트로 전달
-        console.log('연결 확인용 콘솔');
-        this.closeModal();
+      )
     },
     getSelectedProduct() {
         return this.rowData[0];
