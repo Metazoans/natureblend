@@ -159,7 +159,7 @@ export default {
     },
 
     checkQty() {
-      if(this.prodOrderQty > this.selectedPlan.total_plan_qty) {
+      if(this.orderInfo.prodOrderQty > this.selectedPlan.total_plan_qty) {
         this.$notify({
           text: "최대수량을 초과했습니다.",
           type: 'error',
