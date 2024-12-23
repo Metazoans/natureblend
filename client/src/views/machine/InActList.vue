@@ -8,41 +8,71 @@
         :theme="theme"
        	@grid-ready="onReady"
         style="height: 300px;"
+        @cellClicked="cellClickFnc"
       ></ag-grid-vue>
     </div>
 
-    <h3>비가동 설비 내역</h3>
-    <div class="grid-container" >
-      <ag-grid-vue
-        :rowData="inActRow"
-        :columnDefs="inActCol"
-        :theme="theme"
-       	@grid-ready="onReady"
-        style="height: 300px;"
-        :pagination="true"
-        :paginationPageSize="5"
-      ></ag-grid-vue>
+    <div class="inActListDiv">
+      <div class="inActHeader">
+          <h3>비가동 설비 내역</h3>
+          <!-- 검색 옵션 -->
+          <select v-model="selectSearchType" class="form-select searchSelect">
+            <option v-for="option in searchType" :key="option" :value="option">
+              {{ option }}
+            </option>
+          </select>
+
+          <!-- 검색 텍스트 -->
+          <input
+            type="text"
+            v-model="searchData"
+            placeholder="검색 내용을 입력하세요"
+            class="form-control searchText"
+          />
+
+          <!-- 검색 및 초기화 버튼 -->
+          <material-button
+            size="sm"
+            color="warning"
+            @click="updateFilter"
+          >
+            검색
+          </material-button>
+
+          <!-- 날짜 선택 -->
+          <div class="searchDate">
+            <input 
+            type="date" 
+            id="startDate" class="form-control border p-2"
+            v-model="startDate"/>
+          </div>
+          <div class="text-center">~</div>
+          <div class="searchDate">
+            <input 
+            type="date" 
+            id="endDate" class="form-control border p-2"
+            v-model="endDate" />
+          </div>
+      </div>
+
+      <div class="grid-container" >
+        <ag-grid-vue
+          :rowData="inActRow"
+          :columnDefs="inActCol"
+          :theme="theme"
+          @grid-ready="onReady"
+          style="height: 300px;"
+          :pagination="true"
+          :paginationPageSize="5"
+        ></ag-grid-vue>
+      </div>
+
     </div>
-
-
-    <!-- 임시 버튼 -->
-    <material-button
-      color="warning"
-      @click="openModal"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-    >
-      임시 비가동 등록
-    </material-button>
-
-    <InActAdd :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm"></InActAdd>
-
   </div>
 </template>
 
 <script>
 import MaterialButton from "@/components/MaterialButton.vue";
-import InActAdd from "./InActAdd.vue";
 
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
@@ -50,6 +80,7 @@ import {shallowRef} from 'vue';
 
 import theme from "@/utils/agGridTheme";
 import userDateUtils from "@/utils/useDates.js";
+
 
 export default {
   name: "inActList",
@@ -91,28 +122,19 @@ export default {
       let result = await axios.get(`${ajaxUrl}/inActs/inActMachines`)
                               .catch(err => console.log(err));
       machineRow.value = result.data;
-    }
+    };
     // 비가동 리스트 가져오기
     const getInActList = async () => {
       let result = await axios.get(`${ajaxUrl}/inActs/inActList`)
                               .catch(err => console.log(err));
       inActRow.value = result.data;
       for(let i in inActRow.value){
-        inActRow.value[i].inact_start_time = dateFormat(inActRow.value[i].inact_start_time, 'yyyy-MM-dd');
+        inActRow.value[i].inact_start_time = dateFormat(inActRow.value[i].inact_start_time, 'yyyy-MM-dd hh:mm:ss');
         if(inActRow.value[i].inact_end_time != null){
-          inActRow.value[i].inact_end_time = dateFormat(inActRow.value[i].inact_end_time, 'yyyy-MM-dd');
+          inActRow.value[i].inact_end_time = dateFormat(inActRow.value[i].inact_end_time, 'yyyy-MM-dd hh:mm:ss');
         }
       }
-    }
-
-    // const getMachineList = async () => {
-    //   let result = await axios.get(`${ajaxUrl}/machine/machineList`)
-    //                           .catch(err => console.log(err));
-    //   machineList.value = result.data;
-    //   rowData.value = result.data;
-      
-    // }
-
+    };
 
     return {
       machineRow,
@@ -129,7 +151,6 @@ export default {
   // options
   components: {
     MaterialButton,
-    InActAdd,
   },
   
   data() {
@@ -143,16 +164,57 @@ export default {
     this.getInActList();
   },
   methods: {
-    openModal() {
-      this.isShowModal = !this.isShowModal;
+    // 셀 클릭 : 작동상태 클릭시 비가동 모달, 이외의 경우 설비 상세 페이지로 이동
+    cellClickFnc(col) {
+      switch(col.value) {
+        case 'stop': // stop -> run
+          this.reStart(col.data.machine_num);
+          break;
+        default: // 설비 상세
+          this.$router.push({name: 'machineInfo', params : {mno : col.data.machine_num}});
+      }
     },
 
-    confirm() {
-      this.closeModal();
-    },
+    // 최근 비가동 수정
+    async reStart(machineNo) {
+      let obj = {
+        inact_end_time: this.getToday(),
+        inact_end_emp: 99,
+      }
 
-    closeModal() {
-      this.isShowModal = false;
+      let result = await axios.put(`${ajaxUrl}/inActs/lastInAct/${machineNo}`, obj)
+                              .catch(err => console.log(err));
+      let updateRes = result.data;
+
+      if(updateRes.result) {
+        console.log('비가동 내역 수정');
+        this.runMachine(machineNo);
+      } else {
+        console.log('비가동 내역 수정 실패');
+      }
+    },
+    // 설비 업데이트
+    async runMachine(machineNo) {
+      let obj = {
+        machine_state: 'run',
+      }
+      
+      let result = await axios.put(`${ajaxUrl}/machine/machineUpdate/${machineNo}`, obj)
+                              .catch(err => console.log(err));
+      let updateRes = result.data;
+
+      if(updateRes.result) {
+        this.getInActMachines();
+        this.getInActList();
+        console.log('설비 작동 시작');
+      } else {
+        console.log('설비 작동 실패');
+      }
+    },
+    
+    // 날짜 관련
+    getToday() {
+      return this.dateFormat(null, 'yyyy-MM-dd hh:mm:ss');
     },
   },
 };
@@ -169,5 +231,29 @@ export default {
   .search {
     margin-top: 24px;
   }
+}
+
+.inActListDiv .inActHeader {
+  display: flex;
+  justify-content: center;
+}
+.inActHeader > * {
+  margin: 0 10px;
+}
+.inActHeader > :first-child {
+  width: 22%;
+}
+.inActHeader .searchSelect {
+  width: 7%;
+}
+.inActHeader .searchText {
+  width: 15%;
+}
+button {
+  width: 7%;
+  margin-right: 4% !important;
+}
+.searchDate {
+  width: 15%;
 }
 </style>

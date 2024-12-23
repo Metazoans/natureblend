@@ -92,7 +92,7 @@
         @confirm="confirm"
     >
       <template v-slot:list>
-        <EmpList v-show="isShowModal" @selectEmp="selectEmp"/>
+        <EmpList @selectEmp="selectEmp"/>
       </template>
     </Modal>
   </div>
@@ -210,22 +210,6 @@ export default {
     closeModal() {
       this.isShowModal = false
     },
-
-    async getProductStock() {
-      if(this.selectedOrders.length === 0) {
-        this.$notify({
-          text: "추가된 주문이 없습니다",
-          type: 'error',
-        });
-        return
-      }
-
-      let result =
-          await axios.get(`${ajaxUrl}/production/plan/stock/${this.selectedOrders[0].productCode}`)
-              .catch(err => console.log(err));
-      this.productStock = result.data.stock
-    },
-
   },
 
   watch: {

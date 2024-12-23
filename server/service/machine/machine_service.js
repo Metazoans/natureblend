@@ -44,12 +44,62 @@ const updateMachineInfo = async (no, updateInfo) => {
 }
 
 // 설비 삭제
-
+const delMachineInfo = async (mno) => {
+  let result = await mariadb.query('machineDelete', [mno]);
+  if(result.affectedRows == 1) {
+    return { "result" : "success" };
+  } else {
+    return { "result" : "fail" };
+  }
+}
 
 // 설비 분류 검색
 const findMachineType = async () => {
   let list = await mariadb.query('typeList');
   return list;
+}
+
+// 설비 검색 리스트
+const searchMachineList = async (machine_state, process_code, selectSearchType, searchData) => {
+  let searchList = [];
+  if(machine_state != undefined && machine_state != null && machine_state != '') {
+    let search = `machine_state = '${machine_state}'`;
+    searchList.push(search);
+  }
+  if(process_code != undefined && Object.keys(process_code).length > 0) {
+    let search = `m.process_code IN (`;  
+    for (let key in process_code) {        
+      search += (key == '0' ? ' ' : ', ') + `\'${process_code[key]}\'`;   
+    }
+    search += ' )';
+    searchList.push(search);
+  }
+  if(selectSearchType != undefined && selectSearchType != null && selectSearchType != '' &&
+     searchData != undefined && searchData != null && searchData != ''
+  ) {
+      if(selectSearchType != 'all') {
+        let search = `${selectSearchType} LIKE \'%${searchData}%\'`;
+        searchList.push(search);
+      } else {
+        let search = `process_name LIKE \'%${searchData}%\' OR 
+                      machine_name LIKE \'%${searchData}%\'`;
+        searchList.push(search);
+      }
+      
+  }
+
+  // WHERE 구성
+  let querywhere = '';
+  for(let i = 0 ; i < searchList.length; i++){
+    let search  = searchList[i];
+    querywhere+= (i == 0 ? ` `:`AND `) + search;  
+  };
+
+  querywhere = searchList.length == 0 ? "" : `WHERE ${querywhere}`;
+  console.log('selected Query', querywhere);
+
+  let result = await mariadb.query('searchMachineList', querywhere);
+  return result;
 }
 
 module.exports = {
@@ -59,5 +109,7 @@ module.exports = {
   findMachineInfo,
   findMachinePrdInfo,
   updateMachineInfo,
-  
+  searchMachineList,
+  delMachineInfo,
+
 };
