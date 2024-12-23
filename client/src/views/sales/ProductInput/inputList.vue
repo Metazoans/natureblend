@@ -18,7 +18,7 @@
                                         @confirm="confirm('product')"
                                     >
                                     <template v-slot:list>
-                                        <proList v-show="isShowModal.product" @selectproduct="selectproduct" :indexNum="indexNum"/>
+                                        <proList v-show="isShowModal.product" @selectproduct="selectproduct"/>
                                     </template>
                                 </Modal>
                         </div>    
@@ -64,7 +64,7 @@
                     :quickFilterText="inputListsearch"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     @cellClicked="onClickedWh"
-                    :row-selection="multiple"
+                    rowSelection="multiple"
                     :pagination="true"
                     :paginationPageSize="20"
                 />
@@ -155,7 +155,7 @@ export default{
             //창고모달   (수정시) 
             warehouseCode : "", // 저장될 창고번호
             selectedWarehouseCode:"", // 선택될 창고 번호
-            warehouseName:"", // 저장될 창고이름
+            warehouseName:"", // 모달에서 저장될 창고이름
             selectedWarehouseName : "", // 선택될 창고 이름 
 
 
@@ -186,6 +186,18 @@ export default{
         openModal(modalType){
             this.isShowModal[modalType] = true; 
             console.log(`${modalType} modal open`);
+
+                // warehouse_name을 업데이트할 컬럼을 저장
+            if (modalType === 'warehouse') {
+                // ag-Grid의 선택된 노드를 가져오는 방법
+                const selectedNodes = this.gridApi.getSelectedNodes();
+                if (selectedNodes.length > 0) {
+                    this.selectedCol = selectedNodes[0];  // 첫 번째 선택된 셀을 가져옵니다.
+                    console.log("선택된 셀:", this.selectedCol);
+                } else {
+                    console.log("선택된 셀이 없습니다.");
+                }
+            }
         },
         
         confirm(modalType){
@@ -194,7 +206,18 @@ export default{
                 this.productCode = this.selectedProCode;
             } else if (modalType === 'warehouse'){
                 this.warehouseCode = this.selectedWarehouseCode;
-                this.warehouseName = this.selectedWarehouseName;
+                this.warehouseName = this.selectedWarehouseName; 
+                console.log("컴펌박스:",this.warehouseName);
+                
+                this.selectedCol.data.warehouse_name = this.warehouseName;
+                console.log("변경된 warehouse_name:", this.selectedCol.data.warehouse_name);
+
+                // ag-Grid에 적용하기
+                this.gridApi.applyTransaction({
+                    update: [this.selectedCol.data] // 수정된 행만 업데이트
+                });
+                
+                
             }
             this.closeModal(modalType); // 모달 닫기
         },
@@ -252,10 +275,12 @@ export default{
                //버튼클릭이벤트
                 button1.addEventListener('click',()=>{
                     alert('수정버튼 클릭') // 함수 연결 
+                    this.updateInsert();
                 });
 
                 button2.addEventListener('click',()=>{
                     alert('삭제버튼 클릭') //함수 연결 
+                    this.deleteInsert();
                 });
                 button3.addEventListener('click',()=>{
                     alert('초기화버튼 클릭') //함수 연결 
@@ -313,15 +338,72 @@ export default{
         onClickedWh(col){
             if (col.colDef.field === 'warehouse_name') {
             console.log("작동");
-            this.openModal('warehouse');
-            console.log(col.data.warehouse_name);
-            col.data.warehouse_name = this.warehouseName;
 
+            this.openModal('warehouse');
+           
             }else{
                 console.log("나머지");
             }
 
         },
+        async updateInsert(){
+                let productLots = []
+                let inputAmounts = []
+                let warehouseNames = []
+
+                for(let i=0; i<this.inputData.length; i++){
+                    productLots.push(this.inputData[i]['product_lot']);
+                    inputAmounts.push(this.inputData[i]['input_amount']);
+                    warehouseNames.push(this.inputData[i]['warehouse_name']);
+                }
+
+                let updateInputInfo = {
+                    productLot : JSON.stringify(productLots),
+                    inputAmount : JSON.stringify(inputAmounts),
+                    warehouse : JSON.stringify(warehouseNames)
+                }
+
+                console.log(updateInputInfo);
+            //     let result = await axios.put(`${ajaxUrl}/inputUpdate/`,updateInputInfo)
+            //                             .catch(err => console.log(err));
+            //                 console.log(result);
+
+            //                 if(result.statusText === 'OK'){
+            //     this.$notify({
+            //         text: `입고 정보가 수정되었습니다.`,
+            //         type: 'success',
+            //     });  
+            // }
+        },
+        async deleteInsert(){
+            const selectedRows = this.gridApi.getSelectedRows(); 
+            let productLots = []
+            selectedRows.forEach(row => {
+                console.log("row:",row.product_lot);
+                productLots.push(row.product_lot);
+            });
+
+            let deleteInfo = {
+                productLot : JSON.stringify(productLots)
+            }
+            console.log(deleteInfo);
+
+            let result = 
+                await axios.put(`${ajaxUrl}/input/delete`,deleteInfo)
+                            .catch(err => console.log(err));
+                    console.log(result.data);
+
+                //     if(result.statusText === 'OK'){
+                //     this.$notify({
+                //         text: `삭제가가 완료되었습니다.`,
+                //         type: 'success',
+                //     });  
+                
+                // }
+
+        },
+
+
 
        
 
