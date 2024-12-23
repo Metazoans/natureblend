@@ -44,7 +44,14 @@ const updateMachineInfo = async (no, updateInfo) => {
 }
 
 // 설비 삭제
-
+const delMachineInfo = async (mno) => {
+  let result = await mariadb.query('machineDelete', [mno]);
+  if(result.affectedRows == 1) {
+    return { "result" : "success" };
+  } else {
+    return { "result" : "fail" };
+  }
+}
 
 // 설비 분류 검색
 const findMachineType = async () => {
@@ -103,5 +110,6 @@ module.exports = {
   findMachinePrdInfo,
   updateMachineInfo,
   searchMachineList,
+  delMachineInfo,
 
 };

@@ -39,8 +39,8 @@ WHERE machine_num = ?
 const machinePrdInfo = `
 SELECT SUM(success_qty) AS success_sum,
        SUM(fail_qty) AS fail_sum,
-       SUM(TIMESTAMPDIFF(HOUR, process_start_time, process_end_time)) AS hour_sum
-FROM process_work
+       SUM(TIMESTAMPDIFF(HOUR, partial_process_start_time, partial_process_end_time)) AS hour_sum
+FROM process_work_body
 WHERE machine_num = 2
   AND success_qty IS NOT NULL;
 `;

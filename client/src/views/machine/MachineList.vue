@@ -86,7 +86,6 @@
         :pagination="true"
         :paginationPageSize="8"
         @cellClicked="cellClickFnc"
-        :gridOptions="gridOptions"
       ></ag-grid-vue>
     </div>
 
@@ -114,12 +113,10 @@
 import MachineManage from "./MachineManage.vue";
 import InActAdd from "./InActAdd.vue";
 import MaterialButton from "@/components/MaterialButton.vue";
-
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
-
 import theme from "@/utils/agGridTheme";
-
+import userDateUtils from "@/utils/useDates.js";
 import {shallowRef} from 'vue';
 
 export default {
@@ -187,12 +184,6 @@ export default {
   },
   beforeMount() {
     this.getMachineList();
-    this.GridOptions = {
-        enableColResize: true,
-        enableSorting: true,
-        enableFilter: true,
-        animateRows: false
-    }
   },
   methods: {
     // 설비 등록 모달 열기
@@ -212,55 +203,72 @@ export default {
       this.isShowMachineAdd = false;
     },
 
-    // 비동기 등록 모달 열기
+    // 비가동 등록 모달 열기
     inActAddOpen() {
       this.isShowInActAdd = !this.isShowInActAdd;
     },
-    // 비동기 등록 성공 체크
+    // 비가동 등록 성공 체크
     confirmInActAdd(check) {
       this.closeInActAdd();
       if(check == true){
         this.getMachineList();
       }
     },
-    // 비동기 등록 모달 닫기
+    // 비가동 등록 모달 닫기
     closeInActAdd() {
       this.isShowInActAdd = false;
     },
 
-    // 셀 클릭 : 작동상태 클릭시 비동기 모달, 이외의 경우 설비 상세 페이지로 이동
+    // 셀 클릭 : 작동상태 클릭시 비가동 모달, 이외의 경우 설비 상세 페이지로 이동
     cellClickFnc(col) {
-      if(col.value == 'run') { // 작동중
-        this.machineNo = col.data.machine_num;
-        this.inActAddOpen();
-        console.log('stop으로 업데이트');
-      } else if(col.value == 'stop') { // 작동정지
-        console.log('run으로 업데이트');
-        // inact에서 최신값 찾기
-      } else { // 다른 셀 클릭
-        this.$router.push({name: 'machineInfo', params : {mno : col.data.machine_num}});
+      switch(col.value) {
+        case 'run': // run -> stop
+          this.machineNo = col.data.machine_num;
+          this.inActAddOpen();
+          break;
+        case 'stop': // stop -> run
+          this.reStart(col.data.machine_num);
+          break;
+        default: // 설비 상세
+          this.$router.push({name: 'machineInfo', params : {mno : col.data.machine_num}});
       }
     },
 
-    // 설비 가동상태로 변경
-    async reStart() {
+    // 최근 비가동 수정
+    async reStart(machineNo) {
       let obj = {
-        machine_state: 'run',
+        inact_end_time: this.getToday(),
+        inact_end_emp: 99,
       }
 
-      let result = await axios.put(`${ajaxUrl}/machine/machineUpdate/${this.machineNo}`, obj)
+      let result = await axios.put(`${ajaxUrl}/inActs/lastInAct/${machineNo}`, obj)
                               .catch(err => console.log(err));
       let updateRes = result.data;
 
       if(updateRes.result) {
-        console.log('수정 성공');
+        console.log('비가동 내역 수정');
+        this.runMachine(machineNo);
       } else {
-        console.log('수정 실패');
+        console.log('비가동 내역 수정 실패');
+      }
+    },
+    // 설비 업데이트
+    async runMachine(machineNo) {
+      let obj = {
+        machine_state: 'run',
       }
       
+      let result = await axios.put(`${ajaxUrl}/machine/machineUpdate/${machineNo}`, obj)
+                              .catch(err => console.log(err));
+      let updateRes = result.data;
+
+      if(updateRes.result) {
+        this.getMachineList();
+        console.log('설비 작동 시작');
+      } else {
+        console.log('설비 작동 실패');
+      }
     },
-    // 최근 비가동 수정
-    
 
     // 검색 파트 동작
     resetSearch() {
@@ -269,6 +277,7 @@ export default {
       this.selectSearchType = "";
       this.searchData = "";
       this.filters = [];
+      this.getMachineList();
     },
     updateFilter() {
       const typeMap = {
@@ -323,6 +332,14 @@ export default {
       console.log(this.machineList);
       this.rowData = result.data;
     },
+
+    // 날짜 관련
+    getToday() {
+      return this.dateFormat(null, 'yyyy-MM-dd hh:mm:ss');
+    },
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    }
   },
 };
 </script>

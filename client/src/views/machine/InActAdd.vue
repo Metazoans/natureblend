@@ -144,7 +144,6 @@ export default {
       if(this.inActData.inact_end_time != ''){
         this.inActData.inact_end_time = this.dateFormat(this.inActData.inact_end_time, 'yyyy-MM-dd hh:mm:ss');
       }
-      this.$emit('confirm');
       this.inActInsert();
       this.deleteVal();
     },
@@ -178,8 +177,6 @@ export default {
       if(addRes.inact_num > 0){
         alert('등록 성공');
         this.inActUpdate();
-        this.isInsert = true;
-        this.$emit('confirm', this.isInsert);
       } else {
         alert('등록 실패');
         this.$emit('confirm', this.isInsert);
@@ -197,9 +194,11 @@ export default {
       let updateRes = result.data;
 
       if(updateRes.result) {
-        console.log('수정 성공');
+        console.log('설비 정지');
+        this.isInsert = true;
+        this.$emit('confirm', this.isInsert);
       } else {
-        console.log('수정 실패');
+        console.log('정지 실패');
       }
     },
 

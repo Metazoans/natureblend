@@ -24,7 +24,6 @@ router.get('/machineInfo/:mno', async (req,res)=>{
   let machineNo = req.params.mno;
   let info = await machineService.findMachineInfo(machineNo);
   res.send(info);
-  console.log(info);
 });
 // 설비 생산 정보
 router.get('/machinePrdInfo/:mno', async (req,res)=>{
@@ -49,7 +48,11 @@ router.put('/machineUpdate/:mno', async(req, res) => {
 });
 
 // 설비 삭제
-
+router.delete('/machineDelete/:mno', async (req, res) => {
+  let mno = req.params.mno;
+  let result = await machineService.delMachineInfo(mno);
+  res.send(result);
+});
 
 // 설비 분류 검색
 router.get('/machineType', async (req, res) => {
@@ -62,7 +65,7 @@ router.put('/search', async (req, res) => {
   let {machine_state, process_code, selectSearchType, searchData} = req.body;
   let result = await machineService.searchMachineList(machine_state, process_code, selectSearchType, searchData);
   res.send(result);
-})
+});
 
 
 module.exports = router;
