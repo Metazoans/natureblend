@@ -98,6 +98,11 @@ export default {
           await axios.get(`${ajaxUrl}/production/plan/orders${this.searchProduct?.product_code && '?product_code=' + this.searchProduct.product_code}`)
               .catch(err => console.log(err));
       this.orders = result.data
+
+      if(!this.orders.length) {
+        return
+      }
+
       this.orders.forEach((order) => {
         order.order_date = order.order_date.split('T')[0]
         order.due_date = order.due_date.split('T')[0]

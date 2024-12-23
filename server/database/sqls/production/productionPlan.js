@@ -19,7 +19,7 @@ const orders =
        p.product_name,
        opr.plan_qty,
        order_amount - opr.plan_qty AS unplanned_qty,
-       (select outp.output_amount from output outp where outp.order_num = o.order_num) as output_amount
+       (select sum(outp.output_amount) from output outp where outp.order_num = o.order_num) as output_amount
      FROM orders o INNER JOIN orderlists ol INNER JOIN product p inner join order_plan_relation opr
                                                                             ON o.orderlist_num = ol.orderlist_num
      WHERE o.product_code = p.product_code
@@ -166,7 +166,7 @@ const productStock = `CALL get_stock(?)`;
 // ROLLBACK;
 // SET  v_result_value = 'production_plan insert fail';
 // END if;
-//SET  v_result_value = 'success';
+// SET  v_result_value = 'success';
 // select v_result_value as result;
 // COMMIT;
 // END$$
