@@ -24,6 +24,7 @@ router.get('/output/product/:no',async(req,res)=>{
   res.send(info);
 })
 
+//출고등록 
 router.post('/output/insert',async(req,res)=>{
   //console.log(req.body);
   let outputInfo = req.body;
