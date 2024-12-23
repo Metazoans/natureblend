@@ -37,5 +37,12 @@ router.post('/stockhold', async (req, res)=>{
     res.send(result);
 });
 
+router.post('/process', async (req, res)=>{
+    let processWorkInfo = req.body;
+    let result = await orderService.addProcessWork(processWorkInfo);
+    console.log('route result', result)
+    res.send(result);
+});
+
 
 module.exports = router

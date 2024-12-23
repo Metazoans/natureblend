@@ -30,8 +30,9 @@ const waitingPlanList = `
         pp.plan_end_date`;
 
 const processFlow = `
-    select process_sequence, process_name
-    from process_chart
+    select process_sequence, pc.process_name, pc.process_code, machine_type
+    from process_chart pc inner join process_based_information pb
+        on pc.process_code = pb.process_code
     where product_code = ?
     order by process_sequence`;
 
@@ -42,7 +43,7 @@ const bomByProduct = `
     where product_code = ?`;
 
 // DELIMITER $$
-// CREATE PROCEDURE getMaterialStock(
+// CREATE PROCEDURE `getMaterialStock`(
 //     IN p_material_code_json_array TEXT
 // )
 // BEGIN
@@ -84,6 +85,7 @@ const bomByProduct = `
 // from material_lot_qty1 m1 inner join material m2
 // on m1.material_code = m2.material_code
 // where material_nomal = 'b1'
+// and material_lot_state = 'c1'
 // and m1.material_code = material_code_value;
 //
 // SET i = i + 1;
@@ -92,8 +94,8 @@ const bomByProduct = `
 // select material_code, material_name, lot_code, stok_qty, limit_date, invalid_qty from temp_result;
 // commit;
 // END$$
-//
 // DELIMITER ;
+
 
 const getMaterialStock = `
     call getMaterialStock(?)`;
@@ -110,11 +112,18 @@ const insertHoldingStock = `
     values(?, ?, ?, ?);
 `;
 
+// 공정작업헤더 등록. 공정별로
+const insertProcessWork = `
+    insert into process_work_header (production_order_num, production_order_name, production_order_qty, product_code, product_name, capacity, process_code, process_name, machine_type)
+    values(?, ?, ?, ?, ?, ?, ?, ?, ?);
+`
+
 module.exports = {
     waitingPlanList,
     processFlow,
     bomByProduct,
     getMaterialStock,
     insertProductionOrder,
-    insertHoldingStock
+    insertHoldingStock,
+    insertProcessWork
 }
