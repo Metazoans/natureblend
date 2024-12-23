@@ -54,7 +54,7 @@
     <h4>신청내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
+        @grid-ready="onGridReady" :pagination="true" @cell-clicked="onCellClicked" :paginationPageSize="20">
       </ag-grid-vue>
 
     </div>
@@ -71,15 +71,15 @@
     </div>
     <!-- 버튼 구역 끝-->
   </div>
-  <!-- <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
+  <Modal :isShowModal="isShowModalUpdate" @closeModal="closeModal" @confirm="updateQnt(selectedRow.orderCode, editedQuantity)">
       <template v-slot:list>
-        <p>신청내역대로 저장하시겠습니까?</p>
+        <p>발주수량을 확인하시고 다르다면 수정해주세요.</p>
         <div>
-          <label for="quantityInput">수정할 실제 수량:</label>
-          <input v-model="editedQuantity" type="number" id="quantityInput" />
+          <label for="quantityInput">실제 수량:</label>
+          <input v-model="editedQuantity" type="number" id="quantityInput"/>
         </div>
       </template>
-</Modal> -->
+  </Modal>
 
   <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
     <template v-slot:list>
@@ -100,10 +100,12 @@ import MaterialButton from "@/components/MaterialButton.vue";
 import theme from "@/utils/agGridTheme";
 import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 
+import { AgGridVue } from "ag-grid-vue3";
+
 
 export default {
   name: "입고검사신청",
-  components: { MaterialButton, Modal },
+  components: { MaterialButton, Modal, AgGridVue},
 
   data() {
     return {
@@ -119,9 +121,10 @@ export default {
 
       //모달 관련
       isShowModal: false,
+      isShowModalUpdate: false,
 
-      editedQuantity: null, // 모달에서 수정한 실제 수량
-      selectedRow: null, // 수정할 행 정보
+      editedQuantity: 0, // 모달에서 수정한 실제 수량
+      selectedRow: {}, // 수정할 행 정보
 
       //ag grid 관련
       theme: theme,
@@ -216,13 +219,17 @@ export default {
       this.gridApi = params.api;
       this.gridApi.sizeColumnsToFit();
 
-      // 삭제 버튼 이벤트 리스너
-      document.addEventListener("click", (event) => {
+      // 기존 이벤트 리스너 제거
+        document.removeEventListener("click", this.handleDeleteButtonClick);
+
+      // 새 삭제 버튼 이벤트 리스너 등록
+      this.handleDeleteButtonClick = (event) => {
         if (event.target && event.target.classList.contains("delete-btn")) {
           const rowIndex = event.target.getAttribute("data-id");
           this.deleteRow(rowIndex);
         }
-      });
+      };
+      document.addEventListener("click", this.handleDeleteButtonClick);
     },
 
     //검색 결과 관련
@@ -244,12 +251,14 @@ export default {
     },
 
     //생산내역 관련
-    //삭제버튼
+    //삭제버튼 누를시 해당 행 삭제처리
     deleteRow(rowIndex) {
       const nodeToDelete = this.gridApi.getDisplayedRowAtIndex(rowIndex);
-      this.rowData2 = this.rowData2.filter(
-        (row) => row !== nodeToDelete.data
-      );
+      // 데이터 삭제
+      this.rowData2 = this.rowData2.filter((row) => row !== nodeToDelete.data);
+      
+      console.log('삭제됨');
+      console.log(this.rowData2);
 
     },
     //초기화
@@ -264,7 +273,6 @@ export default {
         console.log(`  발주신청일: ${item.orderDate}`);
       });
       this.searchOrderAll()
-      //this.rowData1 = []; // 저장된 항목 초기화
       this.rowData2 = []; // 저장된 항목 초기화
     },
 
@@ -304,9 +312,50 @@ export default {
       this.closeModal();
       
     },
+    //수량 수정 관련
+    //신청 건의 합격량, 불합격량(불량항목, 각각의 수량) 처리
+    onCellClicked(event) {
+      //삭제버튼을 누룰 때 출력X
+      if (event.event.target && event.event.target.classList.contains("delete-btn")) {
+        return;
+      }
+      // 선택된 행 데이터 저장 및 모달 표시
+      this.selectedRow = JSON.parse(JSON.stringify(event.data));
+      this.editedQuantity = this.selectedRow.ordQty;
+      this.isShowModalUpdate = true;
+    },
+
+    updateQnt(orderCD, qty){
+      console.log('값수정');
+      console.log(orderCD);
+      console.log(qty);
+      console.log(this.selectedRow);
+      if(qty <=0){
+        alert('유효하지않는 값입니다.');
+        return;
+      }
+      const targetIndex = this.rowData2.findIndex(row => row.orderCode === orderCD);
+      if (targetIndex !== -1) {
+        // this.rowData2 = this.rowData2.map((row, index) => {
+        //   if (index === targetIndex) {
+        //     return { ...row, ordQty:qty, };
+        //   }
+        //   return row;
+        // });
+        this.rowData2[targetIndex] = { 
+          ...this.rowData2[targetIndex], 
+          ordQty: qty, // 수량만 업데이트
+        };
+        
+      }
+      this.rowData2 = [...this.rowData2, ];
+      this.closeModal();
+      console.log(this.rowData2);
+    },
     //모달 닫기
     closeModal() {
       this.isShowModal = false;
+      this.isShowModalUpdate = false;
     }
   },
   //기본테이블출력

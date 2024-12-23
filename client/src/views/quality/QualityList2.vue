@@ -247,7 +247,7 @@ export default {
 
     //신청 건의 합격량, 불합격량(불량항목, 각각의 수량) 처리
     onCellClicked(event) {
-      console.log('클릭됨')
+      console.log('클릭됨');
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = event.data;
       this.showModalRJC = true;
@@ -316,15 +316,15 @@ export default {
       this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료')
       console.log(this.rowData2);
     },
-    openModalForRow(row) {
-      this.selectedRow = row;
-      const qcMaterialId = row.qcMaterialId;
-      if (!this.defectDetailsMap[qcMaterialId]) {
-        this.defectDetailsMap[qcMaterialId] = [];
-      }
-      this.defectDetails = this.defectDetailsMap[qcMaterialId];
-      this.showModalRJC = true;
-    },
+    // openModalForRow(row) {
+    //   this.selectedRow = row;
+    //   const qcMaterialId = row.qcMaterialId;
+    //   if (!this.defectDetailsMap[qcMaterialId]) {
+    //     this.defectDetailsMap[qcMaterialId] = [];
+    //   }
+    //   this.defectDetails = this.defectDetailsMap[qcMaterialId];
+    //   this.showModalRJC = true;
+    // },
 
     //최종 처리 버튼
     openModal() {
