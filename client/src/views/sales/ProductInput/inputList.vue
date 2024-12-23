@@ -231,6 +231,7 @@ export default{
             
 
 
+
         onReady(event){
             this.gridApi = event.api;
             event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
