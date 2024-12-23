@@ -41,7 +41,7 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
       </ag-grid-vue>
 
     </div>
@@ -54,7 +54,7 @@
     <h4>신청내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10" @cell-clicked="onCellClicked">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
       </ag-grid-vue>
 
     </div>
@@ -111,8 +111,8 @@ export default {
       searchInfo: {
         mName: '',
         //범위 : 일주일전부터 오늘
-        startDate: this.formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
-        endDate: this.formatDate(new Date())
+        startDate: this.dateFormat(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
+        endDate: this.dateFormat(new Date(), 'yyyy-MM-dd')
       },
       //db를 통해 얻은 결과
       orderList: [],
@@ -168,15 +168,6 @@ export default {
 
 
   methods: {
-    //날짜형식
-    formatDate(date) {
-      // 날짜를 YYYY-MM-DD 형식으로 변환
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    },
-
     //검색창 관련    
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
