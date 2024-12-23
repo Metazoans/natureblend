@@ -15,8 +15,10 @@ const bomList =
 const productSelect =
 `SELECT product_code,
         product_name,
-        capacity
- FROM product`
+        capacity,
+        expiration_date
+ FROM product
+ ORDER BY product_code DESC`;
 
  // BOM 제품 리스트 조회
  const bomView = 
@@ -59,15 +61,35 @@ const bomAddInsert =
 `INSERT INTO bom_material
 SET ?` ;
 
+// 자재만 삭제 할때
+const materialDelete2 =
+`DELETE FROM bom_material
+WHERE bom_seq = ?`;
 
 // 삭제
 const materialDelete =
 `DELETE FROM bom_material
 WHERE bom_num = ?`;
+
 const bomDelete =
 `DELETE FROM bom
 WHERE bom_num = ?`;
 
+// 자재 조회
+const materialSelect =
+`SELECT material_code,
+        material_name
+ FROM material`;
+
+// 제품 등록
+const productInsert =
+`INSERT INTO product
+values(?,?,?,?)`;
+
+// 제품 삭제
+const productDelete =
+`DELETE FROM product
+WHERE product_code = ?`;
 
  module.exports = {
     bomList,
@@ -79,5 +101,9 @@ WHERE bom_num = ?`;
     bomAddInsert,
     materialDelete,
     productSelect,
+    materialDelete2,
+    materialSelect,
+    productInsert,
+    productDelete,
     // materialInsert
 }
