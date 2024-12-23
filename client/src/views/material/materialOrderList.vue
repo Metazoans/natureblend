@@ -1,6 +1,7 @@
+<!-- 자재 발주 조회 메뉴 -->
 <template>
   <div>
-     <h3>&nbsp;&nbsp;자재 주문 조회</h3>
+     <h3>&nbsp;&nbsp;자재 발주 조회</h3>
   </div>
 <!-- 검색 메뉴 레이아웃 -->
 <div class="main-container">
@@ -23,6 +24,16 @@
            <label class="col-form-label fw-bold" for="POListCode">자재발주코드</label>
            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="POListCode" v-model="POListCode" @keydown.enter="enterkey">
         </div>
+
+         <!-- 발주 상태 -->
+         <div class="col-sm-2">
+            <label class="col-form-label fw-bold" for="materialState">발주 상태</label>
+            <div id="materialState" style="padding-left: 20px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="a1" v-model="materialState" />&nbsp;&nbsp;발주등록</label>
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="a3" v-model="materialState" />&nbsp;&nbsp;발주취소</label>
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="a4" v-model="materialState" />&nbsp;&nbsp;발주완료</label>
+            </div>
+         </div>
      </form>
 
      <div class="row gx-3 gy-2 mt-2">
@@ -87,6 +98,8 @@ const clientName = ref('');  //업체명
 const POListCode = ref('');  //자재발주코드
 const startDate = ref('');   //시작일
 const endDate = ref('');  //종료일
+const materialState = ref([]);   //처리상태를 담는 배열
+
 const seachcondition = ref({}); //서치조건 담는 배열
 
 const deleteList = ref([]);   //모달에 보내줄 값
@@ -98,20 +111,22 @@ const reSet = () => {
   POListCode.value = '';
   startDate.value = '';
   endDate.value = '';
+  materialState.value = [];
 
   seachcondition.value = {
    materialCode: '',
    clientName: '',
    POListCode: '',
    startDate: '',
-   endDate: ''
+   endDate: '',
+   materialState: [],
   }
   matrialOrderList2();   //초기화버튼 누르면 이거 실행
 
   //this.$notify({ text: '필수 정보를 모두 입력하세요.', type: 'error' });
 
   notify({
-      title: "알림 제목",
+      title: "검색조건",
       text: "초기화 완료 했습니다.",
       type: "success", // success, warn, error 가능
    });
@@ -125,13 +140,15 @@ const seachPoList = () => {
   console.log(POListCode.value);
   console.log(startDate.value);
   console.log(endDate.value);
+  console.log(materialState.value);
 
   seachcondition.value = {
    materialCode: materialCode.value,
    clientName: clientName.value,
    POListCode: POListCode.value,
    startDate: startDate.value,
-   endDate: endDate.value
+   endDate: endDate.value,
+   materialState: materialState.value,
   }
 
   matrialOrderList2();
@@ -157,6 +174,17 @@ const columnDefs = ref([
      cellRenderer: params => {
      const button = document.createElement('button');
      button.innerText = '발주서';
+     button.style.marginRight = '10px';
+     button.style.cursor = 'pointer';
+     button.style.backgroundColor = '#f7b84d';
+     button.style.width = '60px';
+     button.style.height = '30px';
+     button.style.color = 'white';
+     button.style.border = 'none';
+     button.style.padding = '0';
+     button.style.borderRadius = '4px';
+     button.style.textAlign = 'center';
+     button.style.lineHeight = '30px';
      button.addEventListener('click', () => {
         console.log("레코드 확인 : ", JSON.stringify(params.data));
      });
@@ -171,6 +199,17 @@ const columnDefs = ref([
       if(params.data.material_state === "발주등록"){
          const button2 = document.createElement('button');
          button2.innerText = '취소';
+         button2.style.marginRight = '10px';
+         button2.style.cursor = 'pointer';
+         button2.style.backgroundColor = '#595959';
+         button2.style.width = '60px';
+         button2.style.height = '30px';
+         button2.style.color = 'white';
+         button2.style.border = 'none';
+         button2.style.padding = '0';
+         button2.style.borderRadius = '4px';
+         button2.style.textAlign = 'center';
+         button2.style.lineHeight = '30px';
          button2.addEventListener('click', () => {
             console.log("레코드 확인 : ", JSON.stringify(params.data));
             //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
@@ -190,8 +229,8 @@ const isShowModal = ref(false);
 const closeModal = () => {
    isShowModal.value = false;
    notify({
-      title: "취소를 취소함",
-      text: "취소 모달을 닫았습니다.",
+      title: "취소",
+      text: "적용 취소 하였습니다.",
       type: "error", // success, warn, error 가능
    });
 };
@@ -203,7 +242,7 @@ const confirm = (deleteNum) => {
    isShowModal.value = false; // 모달 닫기
    if(!deleteNum){
       notify({
-         title: "취소 완료",
+         title: "관리자문의요망",
          text: "값이 정상적으로 넘어오지 않았습니다",
          type: "error", // success, warn, error 가능
       });

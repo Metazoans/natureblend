@@ -42,6 +42,21 @@ router.post('/material/inputPoLIst', async (req, res)=>{
 });
 
 
+//★발주서 등록 프로시저2 ( 리뉴얼 )
+router.post('/material/inputPoLIst2/:inputkey', async (req, res)=>{
+  let materialKey = req.params.inputkey;
+  //console.log(materialKey);
+  //let materialObj = req.body;
+  //console.log(materialObj);
+  let {client_num, emp_num, material_code, go_qty, limit_date, go_price, go_total_price} = req.body;
+  let inputPoLIstinfo = await materialService.inputOrder2(materialKey, client_num, emp_num, material_code, go_qty, limit_date, go_price, go_total_price);
+  //console.log(inputPoLIstinfo);
+  res.send(inputPoLIstinfo);
+});
+
+
+
+
 //자재 입고 처리하는 페이지 리스트 material_input_qc_list (materialInputQcList)
 router.get('/material/miql', async (req, res)=>{
   let materialInputQcListinfo = await materialService.materialInputQcList();
@@ -80,8 +95,8 @@ router.get('/material/polistorder', async (req, res)=>{
 //자재 발주 리스트 조회2
 router.put('/material/polistorder2', async(req,res)=>{
   console.log(req.body);
-  let {materialCode, clientName, POListCode, startDate, endDate} = req.body;
-  let result = await materialService.materialOrderList2(materialCode, clientName, POListCode, startDate, endDate);
+  let {materialCode, clientName, POListCode, startDate, endDate, materialState} = req.body;
+  let result = await materialService.materialOrderList2(materialCode, clientName, POListCode, startDate, endDate, materialState);
   res.send(result);
 });
 
@@ -92,5 +107,32 @@ router.post('/material/poListDelete', async(req,res)=>{
   let result = await materialService.poListDelete(deleteNum, body_num, order_code);
   res.send(result);
 });
+
+
+// 입고완료 내역 조회
+router.put('/material/materialInputList', async(req,res)=>{
+  //console.log(req.body);
+  let {materialCode, clientName, POListCode, startDate, endDate} = req.body;
+  let result = await materialService.materialInputList(materialCode, clientName, POListCode, startDate, endDate);
+  res.send(result);
+});
+
+
+// 입고번호로 로트번호 조회해서 보여주기 ( 입고 조회 메뉴 )
+//lotinfo
+router.get('/material/lotinfo/:inputNum', async (req, res)=>{
+  let inputNum = req.params.inputNum;
+  let lotQtyInfo = await materialService.lotQtyInfomation(inputNum);
+  res.send(lotQtyInfo);
+});
+
+
+//로트 재고 조회 페이지에서 사용하는 전체조회 또는 조건조회
+router.put('/material/lotqtylist', async (req, res)=>{
+  let {qty_state, materialCode, clientName, POListCode, startDate, endDate, materialNomal, materialLotState, limitOut} = req.body;
+  let warehouseList = await materialService.lotQtyList(qty_state, materialCode, clientName, POListCode, startDate, endDate, materialNomal, materialLotState, limitOut);
+  res.send(warehouseList);
+});
+
 
 module.exports = router;

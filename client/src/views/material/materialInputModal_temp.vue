@@ -1,3 +1,4 @@
+<!-- 사용안함 자재입고 메뉴에 모달 ag그리도 시도한것 -->
 <template>
     <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

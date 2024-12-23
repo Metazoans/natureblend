@@ -1,3 +1,4 @@
+<!-- 자재 입고 메뉴 입고처리할때 창고선택용 모달 -->
 <template>
     <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

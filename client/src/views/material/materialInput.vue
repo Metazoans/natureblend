@@ -1,7 +1,7 @@
+<!--자재 입고 메뉴-->
 <template>
    <div>
-      <h1>자재 입고</h1>
-      <button @click="allInput">전체입고</button>
+      <h3>&nbsp;&nbsp;자재 입고</h3>
    </div>
     <div class="grid-container">
       <ag-grid-vue
@@ -12,6 +12,7 @@
         :paginationPageSize="10"
         @grid-ready="onReady"
         style="height: 700px;"
+        :quickFilterText="clientNamesearch"
         rowSelection="multiple"
         >
     </ag-grid-vue>
@@ -69,6 +70,17 @@ const { notify } = useNotification();  // 노티 내용변수입니다
           cellRenderer: params => {
             const button = document.createElement('button');
             button.innerText = '검사표';
+            button.style.marginRight = '10px';
+            button.style.cursor = 'pointer';
+            button.style.backgroundColor = '#595959';
+            button.style.width = '60px';
+            button.style.height = '30px';
+            button.style.color = 'white';
+            button.style.border = 'none';
+            button.style.padding = '0';
+            button.style.borderRadius = '4px';
+            button.style.textAlign = 'center';
+            button.style.lineHeight = '30px';
             button.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
             });
@@ -82,6 +94,17 @@ const { notify } = useNotification();  // 노티 내용변수입니다
           cellRenderer: params => {
             const button2 = document.createElement('button');
             button2.innerText = '입고';
+            button2.style.marginRight = '10px';
+            button2.style.cursor = 'pointer';
+            button2.style.backgroundColor = '#f7b84d';
+            button2.style.width = '60px';
+            button2.style.height = '30px';
+            button2.style.color = 'white';
+            button2.style.border = 'none';
+            button2.style.padding = '0';
+            button2.style.borderRadius = '4px';
+            button2.style.textAlign = 'center';
+            button2.style.lineHeight = '30px';
             button2.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
               //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
@@ -123,11 +146,69 @@ const warehouseInfo = async function(){
   whList.value = result.data;
 }
 
+//검색 기능 변수
+const clientNamesearch = ref('');
 
 //ag-grid 메소드 API가 준비된 후 발생하는 이벤트
 const onReady = (param) => {
   param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
   allInputData.value = param.api;  //전체선택 받아오는거
+
+  // 페이징 영역에 버튼 만들기
+  const paginationPanel = document.querySelector('.ag-paging-panel');
+  if (paginationPanel) {
+
+    // 컨테이너 생성
+    const container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.gap = '5px'; // 버튼과 입력 필드 간격
+
+    // 버튼 생성
+    const button = document.createElement('button');
+    button.textContent = '선택입고';
+    button.style.marginRight = '10px';
+    button.style.cursor = 'pointer';
+    button.style.backgroundColor = '#f48a06';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.padding = '5px 10px';
+    button.style.borderRadius = '4px';
+    button.style.position = 'absolute';
+    button.style.left = '10px';
+
+    // 버튼 클릭 이벤트
+    button.addEventListener('click', () => {
+      allInput();
+    });
+
+    // 입력 필드 생성
+    const inputText = document.createElement('input');
+    inputText.type = 'text';
+    inputText.placeholder = ' 검색';
+    inputText.style.padding = '5px';
+    inputText.style.width = '200px';
+    inputText.style.border = '1px solid #ccc';
+    inputText.style.borderRadius = '4px';
+    inputText.style.position = 'absolute';
+    inputText.style.left = '110px';
+
+    // 텍스트만 계속 가져다 바치면 ag그리드가 알아서 해줌
+    inputText.addEventListener('input', (event) => {
+          const value = event.target.value;
+          //console.log('입력된 값:', value);
+          // 검색 로직 추가 가능
+          clientNamesearch.value = value;
+    });
+
+    // 컨테이너에 버튼과 입력 필드 추가
+    container.appendChild(button);
+    container.appendChild(inputText);
+
+    // 버튼을 페이지네이션 패널의 제일 앞에 추가
+    paginationPanel.insertBefore(container, paginationPanel.firstChild);
+  }
+
 }
 
  //전체 행 눌렀을때 값 저장할 변수
@@ -142,10 +223,12 @@ const onReady = (param) => {
 // allInput 클릭 이벤트 함수
 const allInput = (data = null) => {
   //const selectedRows = data ? [data] : allInputData.value.getSelectedRows();   // 그리드에 전체선택된 값을 가져옴
-  if(data.isTrusted){
+  if (data && data.isTrusted) {
     selectedRows.value = allInputData.value.getSelectedRows();
-  }else{
+  } else if (data) {
     selectedRows.value = [data];
+  } else {
+    selectedRows.value = allInputData.value.getSelectedRows();
   }
   console.log('selectedRows ', selectedRows.value);
   //const selectedRows = allInputData.value.getSelectedRows(); 
@@ -208,8 +291,8 @@ const lotMaking = async function(){
   }
 
   notify({
-      title: "입고",
-      text: "입고중입니다 잠시만 기다려주세요.",
+      title: "입고성공",
+      text: "입고중 입니다. 잠시만 기다려주세요.",
       type: "success", // success, warn, error 가능
    });
 
@@ -257,7 +340,7 @@ const confirm = () => {
       notify({
           title: "창고선택",
           text: "창고선택을 완료한후에 작업을 시작해주세요.",
-          type: "success", // success, warn, error 가능
+          type: "error", // success, warn, error 가능
       });
       break;
     }

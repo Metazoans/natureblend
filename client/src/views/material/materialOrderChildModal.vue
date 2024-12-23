@@ -1,3 +1,4 @@
+<!--리뉴얼로 사용 안하는 페이지-->
 <template>
     <div class="modal fade" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
