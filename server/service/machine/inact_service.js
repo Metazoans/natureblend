@@ -38,22 +38,18 @@ const updateLastInAct = async (no, updateInfo) => {
 }
 
 // 설비 검색 리스트
-const searchInActList = async (selectSearchType, searchData, startDate, endDate) => {
+const searchInActList = async (process_code, startDate, endDate) => {
   let searchList = [];
 
-  if(selectSearchType != undefined && selectSearchType != null && selectSearchType != '' &&
-     searchData != undefined && searchData != null && searchData != '') {
-
-    if(selectSearchType != 'all') {
-      let search = `${selectSearchType} LIKE \'%${searchData}%\'`;
-      searchList.push(search);
-    } else {
-      let search = `process_name LIKE \'%${searchData}%\' OR 
-                    machine_name LIKE \'%${searchData}%\'`;
-      searchList.push(search);
+  if(process_code != undefined && Object.keys(process_code).length > 0) {
+    let search = `m.process_code IN (`;  
+    for (let key in process_code) {        
+      search += (key == '0' ? ' ' : ', ') + `\'${process_code[key]}\'`;   
     }
+    search += ' )';
+    searchList.push(search);
   }
-  
+
   if(startDate  != undefined && startDate != null && startDate != ''){
     let search = `inact_start_time >= \'${startDate}\'`;
     searchList.push(search);
@@ -75,7 +71,7 @@ const searchInActList = async (selectSearchType, searchData, startDate, endDate)
   querywhere = querywhere + ' ORDER BY inact_start_time DESC'
   console.log('selected Query', querywhere);
   
-  let result = await mariadb.query('searchMachineList', querywhere);
+  let result = await mariadb.query('searchInActList', querywhere);
   return result;
 }
 
