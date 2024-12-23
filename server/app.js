@@ -15,6 +15,7 @@ const materialRouter = require('./router/material_router.js');
 // 생산
 const productionPlanRouter = require('./router/production/plan_router');
 const productionOrderRouter = require('./router/production/order_router');
+const productionWorkRouter = require('./router/production/work_router');
 
 // 품질
 const qualityRouter = require('./router/qc_router.js');
@@ -46,6 +47,7 @@ app.use('/', materialRouter);
 // 생산 라우터
 app.use('/production/plan', productionPlanRouter);
 app.use('/production/order', productionOrderRouter);
+app.use('/production/work', productionWorkRouter);
 
 // 품질 라우터
 app.use('/', qualityRouter);
