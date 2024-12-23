@@ -119,7 +119,7 @@
                 <!--검색 및 초기화-->
                 <div class=" pt-5 text-center ">
                     <material-button  color="warning" class="button" @click="tempInputInfo">입력</material-button>
-                    <material-button color="warning" class="button" @click="resetinput">초기화</material-button>
+                    <material-button color="warning" class="button">초기화</material-button>
                 </div>
             </div>
        </div>
@@ -301,6 +301,7 @@ export default{
             this.productCode = "";
             this.startDate = "";  // 빈 문자열로 초기화
             this.endDate = "";    // 빈 문자열로 초기화
+            this.QtData = [];
         },
         //통과 검사 결과 조회 (필터)
         async searchQtResult(){
@@ -332,6 +333,8 @@ export default{
             this.gridApi = params.api;
             this.gridApi.sizeColumnsToFit();
         },
+
+       
 
         // 검사 결과 클릭 
         onQtRowClicked(row) {
