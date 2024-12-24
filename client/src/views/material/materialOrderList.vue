@@ -92,7 +92,6 @@ import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠�
 const { notify } = useNotification();  // 노티 내용변수입니다
 
 
-
 const materialCode = ref('');   //자재명
 const clientName = ref('');  //업체명
 const POListCode = ref('');  //자재발주코드
@@ -186,7 +185,9 @@ const columnDefs = ref([
      button.style.textAlign = 'center';
      button.style.lineHeight = '30px';
      button.addEventListener('click', () => {
-        console.log("레코드 확인 : ", JSON.stringify(params.data));
+        console.log("발주서출력 : ", JSON.stringify(params.data));
+        // 발주서 출력
+        printRowData(params.data);
      });
      return button;
      }
@@ -211,7 +212,7 @@ const columnDefs = ref([
          button2.style.textAlign = 'center';
          button2.style.lineHeight = '30px';
          button2.addEventListener('click', () => {
-            console.log("레코드 확인 : ", JSON.stringify(params.data));
+            console.log("주문취소 : ", JSON.stringify(params.data));
             //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
             deleteList.value = params.data;
             console.log('모달 오픈');
@@ -222,6 +223,200 @@ const columnDefs = ref([
       }
   },
 ]);
+
+
+//사업자 정보가져오기
+const client_info = async function(com_name){
+   console.log(com_name);
+   let result = await axios.get(`${ajaxUrl}/material/fullClientKeyWord/${com_name}`)
+                              .catch(err=>console.log(err));
+   return result.data;
+};
+
+//사업자 번호 분할
+function formatBusinessNumber(businessNumber) {
+    businessNumber = businessNumber.toString();
+    const formattedNumber = `${businessNumber.slice(0, 3)}-${businessNumber.slice(3, 5)}-${businessNumber.slice(5)}`;
+    return formattedNumber;
+}
+
+//같은 발주서 자재 정보 가져오기
+const materialBodyList = async function(orderCode){
+   let result = await axios.get(`${ajaxUrl}/material/matBodyList/${orderCode}`)
+                              .catch(err=>console.log(err));
+   return result.data;
+};
+
+// 발주서 출력하기
+const printRowData = async (rowData) => {
+   const client_data = await client_info(rowData.com_name);
+   client_data.value = client_data[0];
+   client_data.value.com_num = formatBusinessNumber(client_data.value.com_num);
+   console.log(client_data.value.emp_name);
+
+   const material_list = await materialBodyList(rowData.order_code);
+   console.log(material_list);
+
+   let materialRows = '';
+   let tototal_price = 0;
+   material_list.forEach((item, index) => {
+      tototal_price += (item.total_price*0.001);
+      materialRows += `
+         <tr>
+            <td>${index + 1}</td>
+            <td>${item.material_code}</td>
+            <td>${item.material_name}</td>
+            <td>${(item.ord_qty*0.001).toLocaleString()}</td>
+            <td>KG</td>
+            <td>${(item.unit_price*0.001).toLocaleString()}</td>
+            <td>원</td>
+            <td>${(item.total_price*0.001).toLocaleString()}</td>
+            <td>원</td>
+         </tr>
+      `;
+   });
+
+
+
+   const printContent = `
+      <html>
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>네이처 블렌드 발주서</title>
+      <style>
+         body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+         }
+         .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid black;
+         }
+         table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+         }
+         th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+         }
+         th {
+            background-color: #f4f4f4;
+         }
+         .note {
+            margin: 10px 0;
+            font-weight: bold;
+            text-align: left;
+         }
+         .compact td {
+            padding: 5px;
+         }
+         @media print {
+            .no-print {
+               display: none;
+            }
+         }
+      </style>
+      </head>
+      <body>
+      <div class="container">
+         <button class="no-print" onclick="window.print()">출력하기</button>
+         <h1 style="text-align: center;">발 주 서</h1>
+         <table>
+            <tr>
+            <th>발주일자</th>
+            <td>${rowData.order_date}</td>
+            <th>납품일자</th>
+            <td>${rowData.limit_date}</td>
+            </tr>
+            <tr>
+            <th>발주번호</th>
+            <td>${rowData.order_code}</td>
+            <th>납품장소</th>
+            <td>대구 중구 중앙대로 403 5층(네이처 블렌드)</td>
+            </tr>
+            <tr>
+            <th>상호</th>
+            <td>${rowData.com_name}</td>
+            <th>등록번호</th>
+            <td>${client_data.value.com_num}</td>
+            </tr>
+            <tr>
+            <th>전화번호</th>
+            <td>${client_data.value.emp_tel}</td>
+            <th>담당자</th>
+            <td>${client_data.value.emp_name}</td>
+            </tr>
+            <tr>
+            <th>총액</th>
+            <td>${tototal_price.toLocaleString()} 원</td>
+            <th>업체주소</th>
+            <td>${client_data.value.address}</td>
+            </tr>
+         </table>
+
+         <table>
+            <tr>
+            <th>NO</th>
+            <th>품목코드</th>
+            <th>품목</th>
+            <th>수량</th>
+            <th>단위</th>
+            <th>단가</th>
+            <th>단위</th>
+            <th>총액</th>
+            <th>단위</th>
+            </tr>
+            ${materialRows}
+         </table>
+
+         <div class="note">NOTE : 유선통화 내용 바탕으로 발주 넣었습니다.</div>
+
+         <table>
+            <tr>
+               <td class="merged-cell" rowspan="3">접수처</td>
+               <th>접수일자</th>
+               <td>${rowData.order_date}</td>
+               <th class="merged-cell" rowspan="3">결재</th>
+               <th>발주담당자</th>
+               <th>출고거래처</th>
+               <th>입고관리자</th>
+            </tr>
+            <tr>
+               <th>접수번호</th>
+               <td>${rowData.order_code}</td>
+               <td rowspan="2">${rowData.name}</td>
+               <td rowspan="2">&nbsp;</td>
+               <td rowspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+               <th>접수자</th>
+               <td>${rowData.name}</td>
+            </tr>
+         </table>
+      </div>
+      </body>
+      </html>
+   `;
+   const printWindow = window.open('', '_blank', 'width=1000,height=1000');
+   printWindow.document.open();
+   printWindow.document.write(printContent);
+   printWindow.document.close();
+};
+
+
+
+
+
+
 
 //모달 여는 변수
 const isShowModal = ref(false);
