@@ -1,30 +1,48 @@
 <template>
   <div class="px-4 py-4">
-    <h1>입고검사-검사기록조회</h1>
+    <h1 class="mb-3">입고검사-검사기록조회</h1>
     <hr>
     <!-- 검사조건 부분 시작 -->
-    <div class="row align-items-center mb-3">
-      <div class="col-2">
-        <h3 class="mr-3">검색조건</h3>
+    <div class="mb-4">
+      <div class="d-flex align-items-center mb-3">
+        <h3 class="me-3">검색조건</h3>
+        <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
       </div>
-      <div class="col">
-        <material-button class="btn-search" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
-      </div>
-    </div>
 
-    <div class="row">
-      <label for="startDate" class="mr-2">날짜범위</label>
-      <div class="input-group w-auto h-25">
-        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date" v-model="searchInfo.startDate" />
-      </div>
-      <div class="input-group w-auto h-25">
-        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date" v-model="searchInfo.endDate" />
-      </div>
-      <div class="input-group w-auto h-25">
-        <input label="자재명" class="form-control border p-2 cursor-pointer" placeholder="자재명" type="search" v-model="searchInfo.mName" />
-      </div>
-      <div class="input-group w-auto h-25">
-        <material-button size="md" v-on:click="searchOrder">검색</material-button>
+      <div class="row g-3">
+        <!-- 재고 상태 -->
+        <div class="col-md-2">
+          <label for="qcStat" class="form-label">재고 상태</label>
+          <select class="form-select text-center border cursor-pointer" v-model="searchInfo.qcState"
+            aria-label="재고 상태 선택">
+            <option value="qcs1">전체</option>
+            <option value="qcs2">검사완료</option>
+            <option value="qcs3">검사미완료</option>
+          </select>
+        </div>
+
+        <!-- 날짜 범위 -->
+        <div class="col-md-4">
+          <label for="startDate" class="form-label">날짜 범위</label>
+          <div class="d-flex gap-2">
+            <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
+              v-model="searchInfo.startDate" />
+            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
+              v-model="searchInfo.endDate" />
+          </div>
+        </div>
+
+        <!-- 자재명 -->
+        <div class="col-md-3">
+          <label for="mName" class="form-label">자재명</label>
+          <input type="search" id="mName" class="form-control border p-2 cursor-pointer" placeholder="자재명"
+            v-model="searchInfo.mName" />
+        </div>
+
+        <!-- 검색 버튼 -->
+        <div class="col-md-2 d-flex align-items-end">
+          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
+        </div>
       </div>
     </div>
   </div>
@@ -37,9 +55,8 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="10">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
       </ag-grid-vue>
-
     </div>
   </div>
   <!-- 검사결과 끝 -->
@@ -48,7 +65,7 @@
 
 
 
-  
+
 
 
 </template>
@@ -64,14 +81,15 @@ import theme from "@/utils/agGridTheme";
 
 export default {
   name: "입고검사",
-  components: { MaterialButton,  },
+  components: { MaterialButton, },
   data() {
     return {
       searchInfo: {
         mName: '',
         //범위 : 일주일전부터 오늘
-        startDate: this.formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
-        endDate: this.formatDate(new Date())
+        startDate: this.dateFormat(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
+        endDate: this.dateFormat(new Date(), 'yyyy-MM-dd'),
+        qcState: 'qcs1',
       },
 
       searchList: [],
@@ -80,12 +98,6 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "체크",
-          field: "check",
-          resizable: false,
-          editable: true,
-          sortable: false,
-        },
         { headerName: "입고검사번호", field: "qcMaterialId", resizable: false },
         { headerName: "자재발주코드", field: "orderCode", resizable: false },
         { headerName: "자재명", field: "mName", resizable: false },
@@ -94,10 +106,11 @@ export default {
         { headerName: "합격량", field: "passQnt", resizable: false },
         { headerName: "불합격량", field: "rjcQnt", resizable: false },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false },
+        { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
         { headerName: "검사상태", field: "inspecStatus", resizable: false },
 
       ],
-      
+
       defaultColDef: {
         headerClass: "header-center"
       },
@@ -107,12 +120,10 @@ export default {
 
   },
   methods: {
-    formatDate(date) {
-      // 날짜를 YYYY-MM-DD 형식으로 변환(검색창용)
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
+    onGridReady(params) {
+      this.gridApi = params.api;
+      this.gridApi.sizeColumnsToFit();
+
     },
     // 날짜를 YYYY-MM-DD 형식으로 변환
     dateFormat(value, format) {
@@ -141,10 +152,12 @@ export default {
       this.rowData1 = []
       for (let i = 0; i < this.searchList.length; i++) {
         let col = {
-          "check": false, "qcMaterialId": this.searchList[i].qc_material_id,"orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName":this.searchList[i].name, "totalQnt" : this.searchList[i].total_qnt,
-          "passQnt" : this.searchList[i].pass_qnt, "rjcQnt" : this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus" : this.searchList[i].inspec_status
+          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
+          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
+          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          // "inspecEnd": this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecStatus": this.searchList[i].inspec_status
 
         }
         this.rowData1[i] = col;
@@ -152,7 +165,7 @@ export default {
     },
     //전체 조회
     async searchRequestAll() {
-      let searchResult = await axios.get(`${ajaxUrl}/requestQCMAll`)
+      let searchResult = await axios.get(`${ajaxUrl}/recordQCMByComplete`)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
 
@@ -160,20 +173,22 @@ export default {
       this.rowData1 = []
       for (let i = 0; i < this.searchList.length; i++) {
         let col = {
-          "check": false, "qcMaterialId": this.searchList[i].qc_material_id,"orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName":this.searchList[i].name, "totalQnt" : this.searchList[i].total_qnt,
-          "passQnt" : this.searchList[i].pass_qnt, "rjcQnt" : this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus" : this.searchList[i].inspec_status
+          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
+          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
+          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecEnd": this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecStatus": this.searchList[i].inspec_status
 
         }
         this.rowData1[i] = col;
       }
     },
   },
-  created(){
+  created() {
     this.searchRequestAll();
   }
-  
+
 
 };
 </script>
