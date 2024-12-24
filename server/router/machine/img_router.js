@@ -8,10 +8,12 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, '../../images')); // 저장 경로
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // 고유한 파일명
+    file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8'); // 한글 깨짐 수정
+    cb(null, new Date().valueOf() + path.basename(file.originalname));
   }
 });
+
+
 
 const upload = multer({ storage });
 
