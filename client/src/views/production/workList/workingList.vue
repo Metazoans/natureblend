@@ -26,8 +26,8 @@
         <div class="con-top">
           <div class="process-name">
             <p class="fw-bold field">공정명</p>
-            <p v-if="processName" class="fw-bold data">{{ processName }}</p>
-            <p v-else class="fw-bold data">-</p>
+            <p v-if="Object.keys(selectedRow).length" class="fw-bold data">{{ selectedRow.process_name }}</p>
+            <p v-else class="fw-bold data">위에서 작업을 선택해주세요</p>
           </div>
           <div class="mb-3 status">
             <label class="col-form-label fw-bold">작업진행</label>
@@ -164,7 +164,7 @@ export default {
         'processing': '진행중',
         'process_complete': '완료'
       },
-      processName: ''
+      selectedRow: {}
     }
   },
 
@@ -174,6 +174,9 @@ export default {
 
   methods: {
     addPartialWork() {
+      // let workInfo = {
+      //
+      // }
 
 
       this.$notify({
@@ -183,7 +186,7 @@ export default {
     },
 
     onRowClicked(params) {
-      this.processName = params.data.process_name
+      this.selectedRow = params.data
     },
 
     onGridReady(params) {
@@ -305,12 +308,6 @@ export default {
       }
 
     }
-    .grid-container {
-      .ag-row {
-        cursor: pointer;
-      }
-    }
-
     .main-container {
       justify-content: space-between;
       width: 100%;
