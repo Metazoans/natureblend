@@ -418,6 +418,38 @@ WHERE
 		mob.order_code = ?
 `;
 
+// 검수확인증 모달
+const inspection_info =
+`
+SELECT
+		your_employee(moh.emp_num, 'name') AS Iname,
+		your_employee(qm.emp_num, 'name') AS Qname,
+		qmr.qc_material_rjc_id,
+		qmr.faulty_code,
+		your_faulty_code(qmr.faulty_code, 'faulty_reason') AS faulty_reason,
+		qmr.rjc_quantity
+FROM
+		material_order_body mob
+		LEFT JOIN
+			material mat
+			ON mob.material_code = mat.material_code
+		LEFT JOIN
+			material_order_head moh
+			ON	mob.order_code = moh.order_code
+		LEFT JOIN
+			qc_material qm
+			ON moh.order_code = qm.order_code
+			AND mat.material_code = qm.material_code
+		LEFT JOIN
+			qc_material_rjc qmr
+			ON qm.qc_material_id = qmr.qc_material_id
+WHERE
+		mob.order_code = ?
+AND
+		mat.material_name = ?
+`;
+
+
 module.exports = {
    material_order_head,
    need_order_material,
@@ -435,5 +467,6 @@ module.exports = {
 	lot_qty_info,
 	lot_qty_list,
 	material_order_body_list,
+	inspection_info,
 
 };

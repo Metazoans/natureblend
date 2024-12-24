@@ -321,6 +321,12 @@ const materialBodyList = async (orderCode)=>{
   return list;
 }
 
+// 검수확인증 모달 리스트
+const inspectionInfo = async (order_code, material_name)=>{
+  let list = await mysql.query('inspection_info', [order_code, material_name]);
+  return list;
+}
+
 
 module.exports = {
   allmaterial,
@@ -340,5 +346,6 @@ module.exports = {
   lotQtyInfomation,
   lotQtyList,
   materialBodyList,
+  inspectionInfo,
 
 };

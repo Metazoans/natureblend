@@ -198,7 +198,7 @@
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
-import Modal from "@/views/material/materialOrderChildModal.vue";  //모달
+import Modal from "@/views/material/temp/materialOrderChildModal.vue";  //모달
 
 export default {
   props: {

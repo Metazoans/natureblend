@@ -143,4 +143,14 @@ router.get('/material/matBodyList/:orderCode', async (req, res)=>{
 });
 
 
+// 검수확인증 모달리스트
+router.post('/material/inspectionInfo', async(req,res)=>{
+  //console.log(req.body);
+  let {order_code, material_name} = req.body;
+  let result = await materialService.inspectionInfo(order_code, material_name);
+  res.send(result);
+});
+
+
+
 module.exports = router;
