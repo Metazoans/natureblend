@@ -100,15 +100,15 @@
                                 </div>
                             </div>
                             <div class="col-sm-2">
-                                <material-button size="sm" color="warning" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
+                                <material-button size="sm" color="danger" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
                             </div>      
                         </form>
                     </div>
                    
 
                     <div class="col-auto mt-5 text-center">
-                            <material-button type="button" class="btn btn-warning" @click="insertOrder">저장</material-button>
-                            <material-button type="button" class="btn btn-warning ms-10" @click="resetSearch">초기화</material-button>
+                            <material-button type="button" class="button" color="success" @click="insertOrder">저장</material-button>
+                            <material-button type="button" class="button" color="warning" @click="resetSearch">초기화</material-button>
                     </div>
                 </div>
             </div>

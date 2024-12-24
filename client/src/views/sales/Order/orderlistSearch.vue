@@ -78,7 +78,7 @@
                  
         <!--검색 및 초기화-->
         <div class="mb-3 pt-2 text-center">
-            <material-button  color="warning" class="button" @click="searchOrderlists">검색</material-button>
+            <material-button  color="success" class="button" @click="searchOrderlists">검색</material-button>
             <material-button color="warning" class="button" @click="resetSearch">초기화</material-button>
         </div>
         <!--추가 -->

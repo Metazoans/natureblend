@@ -130,13 +130,13 @@
                                 </div>
                             </div>
                             <div class="col-sm-2">
-                                <material-button size="sm" color="warning" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
+                                <material-button size="sm" color="danger" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
                             </div>      
                         </form>
                     </div>
                 <div class="col-auto mt-5 text-center">
-                        <material-button type="button" class="btn btn-warning" @click="updateOrder">수정</material-button>
-                        <material-button type="button" class="btn btn-warning" @click="deleteOrder(this.orderInfo[0]['orderlist_num'])" >삭제</material-button>
+                        <material-button type="button" color="success" class="button" @click="updateOrder">수정</material-button>
+                        <material-button type="button" color="danger" class="button" @click="deleteOrder(this.orderInfo[0]['orderlist_num'])" >삭제</material-button>
                 </div>
             </div>
         </div>
