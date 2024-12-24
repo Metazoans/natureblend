@@ -3,60 +3,72 @@
    <div>
       <h3>&nbsp;&nbsp;자재 관리</h3>
    </div>
-<!-- 검색 메뉴 레이아웃 -->
-<div class="main-container">
-   <div class="content" style="height: 130px; margin: 20px;">
-      <form class="row gx-3 gy-2 align-items-center">
-         <!-- 자재코드 -->
-         <div class="col-sm-2">
-            <label class="col-form-label fw-bold" for="materialCode">자재코드</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" >
-         </div>
+<div class="d-flex">
+   <div class="p-2 flex-fill">
+      <!-- 검색 메뉴 레이아웃 -->
+      <div class="main-container">
+         <div class="content" style="margin: 20px;">
+            <form class="d-flex flex-column">
 
-         <!-- 자재명 -->
-         <div class="col-sm-2">
-            <label class="col-form-label fw-bold" for="materialName">자재명</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialName" v-model="materialName" >
-         </div>
+               <div class="d-flex">
+                  <div class="p-2 flex-fill">
+                     <!-- 자재코드 -->
+                     <div class="mb-3">
+                        <label class="col-form-label fw-bold" for="materialCode">자재코드</label>
+                        <input type="text" class="form-control" style="background-color: white;" id="materialCode" v-model="materialCode">
+                     </div>
+                  </div>
+                  <div class="p-2 flex-fill">
+                     <!-- 자재명 -->
+                     <div class="mb-3">
+                        <label class="col-form-label fw-bold" for="materialName">자재명</label>
+                        <input type="text" class="form-control" style="background-color: white;" id="materialName" v-model="materialName">
+                     </div>
+                  </div>
+               </div>
 
-         <!-- 안전재고 -->
-         <div class="col-sm-2">
-            <label class="col-form-label fw-bold" for="safetyInventory">안전재고(g,개)</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="safetyInventory" v-model="safetyInventory" >
-         </div>
+               <!-- 안전재고 -->
+               <div class="mb-3">
+                  <label class="col-form-label fw-bold" for="safetyInventory">안전재고(g,개)</label>
+                  <input type="text" class="form-control" style="background-color: white;" id="safetyInventory" v-model="safetyInventory">
+               </div>
 
-         <!-- 유통기한 -->
-         <div class="col-sm-2">
-            <label class="col-form-label fw-bold" for="expirationDate">유통기한</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="expirationDate" v-model="expirationDate" >
-         </div>
+               <!-- 유통기한 -->
+               <div class="mb-3">
+                  <label class="col-form-label fw-bold" for="expirationDate">유통기한</label>
+                  <input type="text" class="form-control" style="background-color: white;" id="expirationDate" v-model="expirationDate">
+               </div>
 
-         <!-- 등록일 -->
-         <div class="col-sm-2">
-            <label class="col-form-label fw-bold" for="regiDate">등록일</label>
-            <input type="date" class="form-control" style="background-color: white; padding-left: 20px;" id="regiDate" v-model="regiDate" >
-         </div>
+               <!-- 등록일 -->
+               <div class="mb-3">
+                  <label class="col-form-label fw-bold" for="regiDate">등록일</label>
+                  <input type="date" class="form-control" style="background-color: white;" id="regiDate" v-model="regiDate">
+               </div>
 
-         <!-- 저장 버튼 -->
-         <div class="col-sm-2">
-            <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="input_update">등록/수정</button>
+               <!-- 저장 버튼 -->
+               <div class="mt-3">
+                  <button type="button" class="btn btn-warning w-100" @click="input_update">등록/수정</button>
+               </div>
+            </form>
          </div>
-      </form>
+      </div>
+      <!-- 검색 메뉴 레이아웃 끝 -->
    </div>
-</div>
-<!-- 검색 메뉴 레이아웃 끝 -->
-<div class="grid-container" style="padding-top: 10px;">
-   <ag-grid-vue
-      :rowData="rowData"
-      :columnDefs="columnDefs"
-      :theme="theme"
-      :pagination="true"
-      :paginationPageSize="10"
-      @grid-ready="onReady"
-      style="height: 513px;"
-      rowSelection="multiple"
-   >
-   </ag-grid-vue>
+   <div class="p-2 flex-fill">
+      <div class="grid-container" style="padding-top: 10px;">
+         <ag-grid-vue
+            :rowData="rowData"
+            :columnDefs="columnDefs"
+            :theme="theme"
+            :pagination="true"
+            :paginationPageSize="10"
+            @grid-ready="onReady"
+            style="height: 513px;"
+            rowSelection="multiple"
+         >
+         </ag-grid-vue>
+      </div>
+   </div>
 </div>
 </template>
 <script>

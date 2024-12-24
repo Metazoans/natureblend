@@ -26,27 +26,27 @@
                     <tbody>
                       <tr>
                         <th scope="row">발주번호</th>
-                        <td>PO123123123</td>
+                        <td>{{ deleteList.order_code }}</td>
                         <th scope="row">담당</th>
-                        <td>김다영</td>
+                        <td>{{ deleteList.name }}</td>
                       </tr>
                       <tr>
                         <th scope="row">자재명</th>
-                        <td>식용색소</td>
+                        <td>{{ deleteList.material_name }}</td>
                         <th scope="row">업체</th>
-                        <td>바다향료회사</td>
+                        <td>{{ deleteList.com_name }}</td>
                       </tr>
                       <tr>
                         <th scope="row">주문수량</th>
-                        <td>1000KG</td>
+                        <td>{{ deleteList.ord_qty }}</td>
                         <th scope="row">주문일</th>
-                        <td>2024-12-20</td>
+                        <td>{{ deleteList.order_date }}</td>
                       </tr>
                       <tr>
                         <th scope="row">단가</th>
-                        <td>500원</td>
+                        <td>{{ deleteList.unit_price }}</td>
                         <th scope="row">총액</th>
-                        <td>500,000원</td>
+                        <td>{{ deleteList.total_price }}</td>
                       </tr>
                     </tbody>
                   </table>
