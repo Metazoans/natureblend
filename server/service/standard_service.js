@@ -129,6 +129,65 @@ const delMaterial = async (material_code) => {
   }
 }
 
+// 공정정보 조회
+const processList = async () => {
+  let list = await mysql.query('processList');
+  return list;
+}
+
+// 공정정보 삭제
+const deleteProcess = async (process_code) => {
+  let result = await mysql.query('processDelete', [process_code]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 공정정보 등록
+const insertProcess = async (process_code,process_name,machine_type) => {
+  let result = await mysql.query('processInsert', [process_code,process_name,machine_type]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 공정정보 수정
+const updateProcess = async (process_code,process_name,machine_type) => {
+  let result = await mysql.query('processUpdate', [process_name,machine_type,process_code]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+
+// 사원 조회
+const employeeList = async () => {
+  let list = await mysql.query('employeeList');
+  return list; 
+}
+
+// 사원 삭제
+const deleteEmployee = async (employee_code) => {
+  let result = await mysql.query('employeeDelete', [employee_code]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+
+// 사원 등록 , 수정
+const insertEmployee = async (employee_code,employee_name,employee_birth,employee_tel,employee_job,employee_job_num,employee_position,employee_employment_date,employee_resignation_date,employee_level) => {
+  let result = await mysql.query('employeeInsert', [employee_code,employee_name,employee_birth,employee_tel,employee_job,employee_job_num,employee_position,employee_employment_date,employee_resignation_date,employee_level]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
 module.exports = {
     findAllBom,
     createNewBom,
@@ -146,4 +205,11 @@ module.exports = {
     insertMaterial,
     updateMaterial,
     delMaterial,
+    processList,
+    deleteProcess,
+    insertProcess,
+    updateProcess,
+    employeeList,
+    deleteEmployee,
+    insertEmployee,
 }

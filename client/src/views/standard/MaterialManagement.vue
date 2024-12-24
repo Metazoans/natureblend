@@ -73,7 +73,7 @@
        materialName: '',  // 자재이름
        safetyInventory: '',  // 안전재고
        expirationDate: '', // 유통기한 
-       regiDate: '', // 등록일 
+       regiDate: new Date().toISOString().split('T')[0], // 등록일
        columnDefs: [
          { headerName: "자재코드", field: "material_code", width: 220 },
          { headerName: "자재이름", field: "material_name" },
@@ -140,7 +140,7 @@
      },
       onCellClicked(params) {
          if(params.colDef.field !== 'material_delete'){   
-            console.log('레코드 확인 : ', JSON.stringify(params.data));
+            console.log('레코드 확인[클릭] : ', JSON.stringify(params.data));
             this.materialCode = params.data.material_code;
             this.materialName = params.data.material_name;
             this.safetyInventory = params.data.safety_inventory;
@@ -179,7 +179,7 @@
                console.log(this.newList);
                this.materialInsert(this.newList);
             return
-           }
+           } 
          }
       }else if(number === 2){
          console.log('수정');
@@ -203,7 +203,6 @@
            this.materialName = '';
            this.safetyInventory = '';
            this.expirationDate = '';  
-           
         }else{
            alert('수정에 실패하였습니다.');
         }

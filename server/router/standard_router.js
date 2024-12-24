@@ -122,4 +122,54 @@ router.delete('/materialDel/:material_code',async(req,res)=>{
   let result = await bomService.delMaterial(material_code);
   res.send(result);
 });
+
+// 공정정보 조회
+router.get('/processList',async(req,res)=>{
+  let searchs = req.query;
+  let processSelect = await bomService.processList(searchs);
+  res.send(processSelect);
+});
+
+// 공정정보 삭제
+router.delete('/processDelete/:process_code',async(req,res)=>{
+  let process_code = req.params.process_code;
+  let result = await bomService.deleteProcess(process_code);
+  res.send(result);
+});
+
+// 공정정보 등록
+router.post('/processInsert',async(req,res)=>{
+  let { process_code,process_name,machine_type } = req.body;
+  let result = await bomService.insertProcess(process_code,process_name,machine_type);
+  res.send(result);
+});
+
+// 공정정보 수정
+router.post('/processUpdate/:process_code',async(req,res)=>{
+  let process_code = req.params.process_code;
+  let { process_name,machine_type } = req.body;
+  let result = await bomService.updateProcess(process_code,process_name,machine_type);
+  res.send(result);
+});
+
+// 사원 조회
+router.get('/employeeList',async(req,res)=>{
+  let searchs = req.query;
+  let empList = await bomService.employeeList(searchs);
+  res.send(empList);
+});
+
+// 사원 삭제
+router.delete('/employeeDelete/:emp_num',async(req,res)=>{
+  let emp_num = req.params.emp_num;
+  let result = await bomService.deleteEmployee(emp_num);
+  res.send(result);
+})
+
+// 사원 등록 , 수정
+router.post('/employeeInsert',async(req,res)=>{
+  let { emp_num,name,birth,tel,job,job_num,position,employment_date,resignation_date,level } = req.body;
+  let result = await bomService.insertEmployee(emp_num,name,birth,tel,job,job_num,position,employment_date,resignation_date,level);
+  res.send(result);
+});
 module.exports = router;
