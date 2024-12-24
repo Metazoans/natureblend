@@ -300,7 +300,7 @@
             class="sub-item" @click="movePage('employeemanagement')"
             url=""
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="사원 관리"
         >
