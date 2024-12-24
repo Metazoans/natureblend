@@ -33,7 +33,7 @@
  
           <!-- 저장 버튼 -->
           <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="input_update">등록/수정</button>
+             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
           </div>
        </form>
     </div>
@@ -70,11 +70,12 @@ import axios from "axios";
        columnDefs: [
          { headerName: "제품코드", field: "product_code", width: 220 },
          { headerName: "제품명", field: "product_name" },
-         { headerName: "유통기한(일)", field: "capacity" },
-         { headerName: "제품용량(mL)", field: "expiration_date" },
+         { headerName: "유통기한(일)", field: "expiration_date" },
+         { headerName: "제품용량(mL)", field: "capacity" },
          {
            headerName: "제품삭제",
            field: "product_delete",
+           upin : '',
            editable: false,
            cellRenderer: (params) => {
              const button2 = document.createElement('button');
@@ -129,47 +130,73 @@ import axios from "axios";
        param.api.sizeColumnsToFit(); // 그리드 api 넓이 슬라이드 안 생기게 하는 거
     },
     onCellClicked(params) {
-         console.log("레코드 확인[클릭] : ", JSON.stringify(params.data));
-         this.productCode = params.data.product_code;
-         this.productName = params.data.product_name;
-         this.expirationDate = params.data.expiration_date;
-         this.capacity = params.data.capacity;
-         if (params.colDef.field === 'product_code') {
-            this.openModal2('materialCodeModal');
-          }
+        if (params.colDef.field !== 'product_delete') {
+             console.log("레코드 확인[클릭] : ", JSON.stringify(params.data));
+             this.productCode = params.data.product_code;
+             this.productName = params.data.product_name;
+             this.expirationDate = params.data.expiration_date;
+             this.capacity = params.data.capacity;
+             this.upin = 'update';
+        }
     },
-    async input_update() {
-       console.log('등록 또는 수정 기능여기서 추가');
-       console.log(this.productCode);
-       console.log(this.productName);
-       console.log(this.expirationDate);
-       console.log(this.capacity);
-       if(this.productCode === '' || this.productName === '' || this.expirationDate === '' || this.capacity === ''){
-         alert('빈칸을 채워주세요');
-         return;
-       }else{
-        console.log('빈칸 없음');
-        let dataresult = 'ok';
-        for(let i = 0; i < this.rowData.length; i++){
-          if(this.rowData[i].product_code === this.productCode){
-            alert('이미 존재하는 제품코드입니다.');
-            dataresult = 'no';
-            return;
-          }
+    async input_update(number) {
+        console.log('등록 또는 수정 기능여기서 추가');
+        console.log(this.productCode);
+        console.log(this.productName);
+        console.log(this.expirationDate);
+        console.log(this.capacity);
+         if(number === 1){
+             if(this.productCode === '' || this.productName === '' || this.expirationDate === '' || this.capacity === ''){
+               alert('빈칸을 채워주세요');
+               return;
+             }else{
+              console.log('빈칸 없음');
+              let dataresult = 'ok';
+              for(let i = 0; i < this.rowData.length; i++){
+                if(this.rowData[i].product_code === this.productCode){
+                  alert('이미 존재하는 제품코드입니다.');
+                  dataresult = 'no';
+                  return;
+                }
+              }
+              if(dataresult === 'ok'){
+                  this.newList = {
+                      product_code: this.productCode,
+                      product_name: this.productName,
+                      expiration_date: this.expirationDate,
+                      capacity: this.capacity,
+                  }
+                  console.log(this.newList);
+                  this.productInsert(this.newList);
+                return;
+              }
+             }
+        }else if(number === 2){
+        console.log('수정 기능여기서 추가');
+        this.newList = {
+                      product_name: this.productName,
+                      expiration_date: this.expirationDate,
+                      capacity: this.capacity,
+                  }
+        this.productUpdate(this.newList);    
         }
-        if(dataresult === 'ok'){
-            this.newList = {
-                product_code: this.productCode,
-                product_name: this.productName,
-                expiration_date: this.expirationDate,
-                capacity: this.capacity,
-            }
-            console.log(this.newList);
-            this.productInsert(this.newList);
-          return;
-        }
-       }
      },
+     async productUpdate(newList) {
+        const result = await axios.post(`${ajaxUrl}/productUpdate/${this.productCode}`, newList)
+                                .catch(err => console.log(err));
+        if (result.data === '성공'){
+            alert('제품이 수정되었습니다.');
+            this.productSelect();
+            this.upin = '';
+            this.productCode = '';
+            this.productName = '';
+            this.expirationDate = '';
+            this.capacity = '';
+        }else{
+            alert('제품 수정에 실패하였습니다.');
+        }
+     },
+
      async productInsert(newList) {
         const result = await axios.post(`${ajaxUrl}/productInsert`, newList)
                                 .catch(err => console.log(err));
@@ -179,10 +206,7 @@ import axios from "axios";
         }else{
             alert('제품 등록에 실패하였습니다.');
         }
-     },
-
-
-
+     }
    },
    // 화면 생성되는 시점
    mounted() {
