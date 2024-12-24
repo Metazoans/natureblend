@@ -107,7 +107,7 @@ FROM material`;
  // 자재 등록
  const materialInsert =
   `INSERT INTO material
-   values(?,?,?,?)`;
+   values(?,?,?,?,sysdate())`;
 
  // 자재 수정
  const materialUpdate =
