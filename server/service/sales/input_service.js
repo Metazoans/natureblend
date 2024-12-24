@@ -1,4 +1,5 @@
 const mysql = require('../../database/mapper.js');
+const { deleteInput } = require('../../database/sqls/sales/inputlist.js');
 
 const getWarehouse = async ()=>{
     let list = await mysql.query('getUseWarehouse');
@@ -91,6 +92,42 @@ const inputLists = async(productCode, startDate,endDate)=>{
   
 }
 
+//입고수정을 원하는 값들이 출고가 된 적 있는지 체크 (사용안함)
+// const checkLotOutput = async(deleteInfo)=>{
+//   let result = await mysql.query('checkLotOutput',Object.values(deleteInfo));
+//   return result;
+// }
+
+// 입고건 수정 
+const updateInputInfo = async(updateInputInfo)=>{
+  let datas = Object.values(updateInputInfo);
+  console.log("서비스에서의 수정데이터:",datas);
+
+  let result = await mysql.query('inputUpdate',datas);
+  let sendData = {};
+
+  if(result.changeRows !== 0){
+    sendData.result = true;
+  }else{
+    sendData.result = false;
+  }
+  return sendData;
+}
+
+//입고 건 삭제
+const deleteInputInfo = async(deleteInfo)=>{
+  let datas = Object.values(deleteInfo);
+  console.log(datas);
+  let result = await mysql.query('deleteInput',datas);
+  let sendData = {};
+  if(result.changeRows !== 0){
+    sendData.result = true;
+  }else{
+    sendData.result = false;
+  }
+  return sendData;
+}
+
 
 
 
@@ -115,5 +152,7 @@ module.exports = {
     getQtList,
     addInput,
     inputLists,
+    updateInputInfo,
+    deleteInputInfo,
 
 }

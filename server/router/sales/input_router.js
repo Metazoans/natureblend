@@ -34,6 +34,28 @@ router.put('/input/inputlist',async(req,res)=>{
     res.send(result);
 })
 
+//수정을 원하는 입고건이 출고가 된 경우가 있는지 확인  (사용안함)
+// router.put('/inputUpdate/check',async(req,res)=>{
+//     let deleteInfo = req.body;
+//     let result = await inputService.checkLotOutput(deleteInfo);
+//     res.send(result);
+// })
+
+// 입고된 건 수정작업
+router.put('/inputUpdate/update',async(req,res)=>{
+    let updateInputInfo = req.body;
+    let result = await inputService.updateInputInfo(updateInputInfo);
+    res.send(result);
+})
+
+//입고된 건 삭제 작업
+router.put('/input/delete',async(req,res)=>{
+    let deleteInfo = req.body;
+    console.log("라우터:",deleteInfo);
+    let result = await inputService.deleteInputInfo(deleteInfo);
+    res.send(result);
+})
+
 
 
 

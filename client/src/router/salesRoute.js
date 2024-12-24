@@ -4,7 +4,8 @@ import orderlistSearch from '@/views/sales/Order/orderlistSearch.vue';
 import orderInfo from '@/views/sales/Order/orderInfo.vue';
 import outputManage from '@/views/sales/ProductOutput/outputManage.vue';
 import inputManage from '@/views/sales/ProductInput/inputManage.vue';
-import inputList from '../views/sales/ProductInput/inputList.vue';
+import inputList from '@/views/sales/ProductInput/inputList.vue';
+import productInventory from '@/views/sales/productInventory.vue'
 
 
 const salesRoute = [
@@ -44,7 +45,14 @@ const salesRoute = [
         path : '/input/inputlist',
         name : 'inputList',
         component:inputList
+    },
+    {
+        path : '/inventory/product',
+        name : 'productInventory',
+        component:productInventory
     }
+
+
 
 
 ];

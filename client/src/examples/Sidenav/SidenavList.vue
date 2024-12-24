@@ -81,7 +81,7 @@
               <i class="material-icons-round opacity-10 fs-5">dashboard</i>
             </template>
             <template v-slot:list>
-              <li class="sub-item">제품재고조회</li>
+              <li class="sub-item" @click="movePage('productInventory')">제품재고조회</li>
             </template> 
         </sidenav-collapse>
       </li>

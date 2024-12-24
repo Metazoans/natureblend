@@ -44,7 +44,7 @@
                 </div>
                         <!--검색 및 초기화-->
                 <div class="pb-3 text-center">
-                    <material-button size="sm" color="warning" class="button" @click="searchQtResult">검색</material-button>
+                    <material-button size="sm" color="success" class="button" @click="searchQtResult">검색</material-button>
                     <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
                 </div>
             </div>
@@ -118,7 +118,7 @@
                     </div> 
                     <!--검색 및 초기화-->
                     <div class=" pt-5 text-center ">
-                        <material-button  color="warning" class="button" @click="tempInputInfo">입력</material-button>
+                        <material-button  color="success" class="button" @click="tempInputInfo">입력</material-button>
                         <material-button color="warning" class="button" @click="resetEmpWar">초기화</material-button>
                     </div>
                 </div>
@@ -144,7 +144,7 @@
             </div>
             <!--검색 및 초기화-->
             <div class=" pt-5 text-center " v-show="tempInput.length != 0">
-                <material-button  color="warning" class="button" @click="inputInsert">등록</material-button>
+                <material-button  color="success" class="button" @click="inputInsert">등록</material-button>
                 <material-button color="warning" class="button" @click="resetTempInput">초기화</material-button>
             </div>
         
@@ -248,21 +248,12 @@ export default{
             ],
 
 
-           
-
-            
-
-
             isShowModal: {
             client: false, // 거래처 모달
             emp: false, // 직원 모달
             warehouse:false, //창고모달 
             },
 
-            
-           
-
-            
         }
     },
    
@@ -316,6 +307,13 @@ export default{
                 startDate : this.startDate,
                 endDate : this.endDate,
             }
+            if( new Date(this.filters.startDate) > new Date(this.filters.endDate)){
+                this.$notify({
+                        text: `시작 날짜는 종료 날짜보다 이전이어야 합니다. `,
+                        type: 'error',
+                    });
+                return;
+            }
 
             console.log(this.filters);
 
@@ -363,6 +361,10 @@ export default{
 
         // 밑에 위에서 작성한 입고 정보 출력 해서 체크박스 선택 받아서 입고 등록 
         tempInputInfo(){
+            if(!this.tempProductCode || !this.tempProductName || !this.inputAmount || !this.qtId || !this.inspectDate || !this.searchEmpName.name || !this.warehouseName || !this.warehouseCode || !this.tempProcessNum ){
+                this.$notify({ text: '품질결과,담당자,창고는 필수사항입니다.', type: 'error' });
+                return;  
+            }
             //선택된 데이터 들 묶음
             let selectedData = {
                 tempProductCode : this.tempProductCode,

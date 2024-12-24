@@ -43,8 +43,8 @@
                 </div>
                         <!--검색 및 초기화-->
                 <div class="pb-3 text-center">
-                    <material-button size="sm" color="warning" class="button" @click="searchInputlist" >검색</material-button>
-                    <material-button size="sm" color="warning" class="button">초기화</material-button>
+                    <material-button size="sm" color="success" class="button" @click="searchInputlist" >검색</material-button>
+                    <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
                 </div>
             </div>
         </div>
@@ -63,11 +63,14 @@
                     @grid-ready="onReady"
                     :quickFilterText="inputListsearch"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
-                    @cellClicked="onClickedWh"
+                    @cellClicked="onClickedWh" 
                     rowSelection="multiple"
                     :pagination="true"
                     :paginationPageSize="20"
                 />
+                <!--@cellClicked="onClickedWh"  특정 셀값에 이벤트 걸때 꼭 cellClicked 
+                 :quickFilterText="inputListsearch" 그리드 내부에 검색창 넣기 
+                  rowSelection="multiple" 체크박스 다수 선택 가능 -->
                 </div>
                 <div style="display: none">
                     <CustomNoRowsOverlay/>
@@ -144,7 +147,7 @@ export default{
             { headerName: "완제품코드", field: "product_code", resizable: true, sortable: true },
             { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true },
             { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true },
-            { headerName: "입고수량 ", field: "input_amount", editable: true, sortable: true },
+            { headerName: "입고수량 ", field: "input_amount", resizable: true, sortable: true },
             { headerName: "창고위치 ", field: "warehouse_name", editable: true, sortable: true },
             { headerName: "입고날짜 ", field: "input_date", resizable: true, sortable: true },
         ],
@@ -249,7 +252,7 @@ export default{
                const button1 = document.createElement('button');
                button1.textContent = '수정';
                button1.style.cursor = 'pointer';
-               button1.style.backgroundColor = '#f48a06';
+               button1.style.backgroundColor = '#008000';
                button1.style.color = 'white';
                button1.style.border = 'none';
                button1.style.padding = '5px 10px';
@@ -258,7 +261,7 @@ export default{
                const button2 = document.createElement('button');
                button2.textContent = '삭제';
                button2.style.cursor = 'pointer';
-               button2.style.backgroundColor = '#f48a06';
+               button2.style.backgroundColor = '#ff0000';
                button2.style.color = 'white';
                button2.style.border = 'none';
                button2.style.padding = '5px 10px';
@@ -275,16 +278,17 @@ export default{
 
                //버튼클릭이벤트
                 button1.addEventListener('click',()=>{
-                    alert('수정버튼 클릭') // 함수 연결 
-                    this.updateInsert();
+                    //수정버튼
+                    this.updateInput();
                 });
 
                 button2.addEventListener('click',()=>{
-                    alert('삭제버튼 클릭') //함수 연결 
-                    this.deleteInsert();
+                    //삭제버튼
+                    this.deleteInput();
                 });
                 button3.addEventListener('click',()=>{
-                    alert('초기화버튼 클릭') //함수 연결 
+                    //초기화버튼
+                    this.resetUpdateInfo(); 
                 })
 
                 //입력필드생성 
@@ -318,6 +322,13 @@ export default{
         },
 
         async searchInputlist(){
+            if( new Date(this.startDate) > new Date(this.endDate)){
+                this.$notify({
+                        text: `시작 날짜는 종료 날짜보다 이전이어야 합니다. `,
+                        type: 'error',
+                    });
+                return;
+            }
             this.filters  = {
                 productCode : this.productCode,
                 startDate : this.startDate,
@@ -336,47 +347,108 @@ export default{
             );  
 
         }, 
+        resetSearch(){
+            //검색창 초기화
+             //검색 필터 데이터
+             this.startDate = "", //주문날짜 시작 날짜
+            this.endDate = "", //주문날짜 끝 날짜
+            //제품 모달
+            this.selectedProName = "",//선택될 제품 이름
+            this.productName = '', //저장될 제품 이름 
+            this.selectedProCode = "", //선택될 제품 코드 
+            this.productCode='' //저장될 제품 코드 
+
+        },
+        
         onClickedWh(col){
             if (col.colDef.field === 'warehouse_name') {
-            console.log("작동");
-
-            this.openModal('warehouse');
+                console.log("작동");
+                // warehouse_name의 셀을 클릭시에만 모달 작동 
+                this.openModal('warehouse');
            
             }else{
                 console.log("나머지");
             }
 
         },
-        async updateInsert(){
-                let productLots = []
-                let inputAmounts = []
-                let warehouseNames = []
+        async updateInput(){
+            const selectedRows = this.gridApi.getSelectedRows(); 
+            let productLots = []
+            //let inputAmounts = []
+            let warehouseNames = []
+            selectedRows.forEach(row => {
+                console.log("row:",row.product_lot);
+                productLots.push(row.product_lot);
+                //inputAmounts.push(row.input_amount);
+                warehouseNames.push(row.warehouse_name);
+            });
 
-                for(let i=0; i<this.inputData.length; i++){
-                    productLots.push(this.inputData[i]['product_lot']);
-                    inputAmounts.push(this.inputData[i]['input_amount']);
-                    warehouseNames.push(this.inputData[i]['warehouse_name']);
-                }
+        // 수정을 원하는 입고건이 출고가 되었는지 유무 체크  => 재고수 수정 사라지고 체크 필요 없음 
+            // let checkLotOutput = {
+            //     productLot : JSON.stringify(productLots)
+            // }
+            // let result = await axios.put(`${ajaxUrl}/inputUpdate/check`,checkLotOutput)
+            //                         .catch(err => console.log(err));
 
+            // console.log(result.data);
+            // let lotOutputNum = result.data[0][0]
+            // console.log(lotOutputNum.total_output_count);
+
+            // if(lotOutputNum.total_output_count == 0){
+                 // 수정을 원하는 input 내역들이 출고 내역이 없는 경우만 수정 진행  
+            //     let updateInputInfo = {
+            //         productLot : JSON.stringify(productLots),
+            //         inputAmount : JSON.stringify(inputAmounts),
+            //         warehouse : JSON.stringify(warehouseNames)
+            //     }
+            //     console.log("수정입고값",updateInputInfo);
+            //         let result = await axios.put(`${ajaxUrl}/inputUpdate/update`,updateInputInfo)
+            //                                 .catch(err => console.log(err));
+            //                     console.log(result.data.result);
+                    // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
+            //         if(result.data.result === true){
+            //                 this.$notify({
+            //                 text: `해당 입고건의 수정이 완료되었습니다. `,
+            //                 type: 'success',
+            //             });
+            //         }else{
+            //             this.$notify({
+            //                 text: `해당 입고건의 수정을 실패 했습니다. `,
+            //                 type: 'error',
+            //             });
+            //         }
+
+            // }else{
+            //     this.$notify({
+            //             text: `해당 입고 건의 출고 내역이 있습니다.`,
+            //             type: 'error',
+            //         });
+            // }
+            // 창고번호만 수정 가능 
                 let updateInputInfo = {
                     productLot : JSON.stringify(productLots),
-                    inputAmount : JSON.stringify(inputAmounts),
                     warehouse : JSON.stringify(warehouseNames)
                 }
+                let result = await axios.put(`${ajaxUrl}/inputUpdate/update`,updateInputInfo)
+                                        .catch(err => console.log(err));
+                console.log(result.data.result);
+                // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
+                if(result.data.result === true){
+                        this.$notify({
+                        text: `해당 입고건의 수정이 완료되었습니다. `,
+                        type: 'success',
+                    });
+                }else{
+                    this.$notify({
+                        text: `해당 입고건의 수정을 실패 했습니다. `,
+                        type: 'error',
+                    });
+                }
 
-                console.log(updateInputInfo);
-            //     let result = await axios.put(`${ajaxUrl}/inputUpdate/`,updateInputInfo)
-            //                             .catch(err => console.log(err));
-            //                 console.log(result);
-
-            //                 if(result.statusText === 'OK'){
-            //     this.$notify({
-            //         text: `입고 정보가 수정되었습니다.`,
-            //         type: 'success',
-            //     });  
-            // }
-        },
-        async deleteInsert(){
+            },
+            
+       // 입고내역 삭제(input_flag를 1로 변경 )
+        async deleteInput(){
             const selectedRows = this.gridApi.getSelectedRows(); 
             let productLots = []
             selectedRows.forEach(row => {
@@ -387,43 +459,33 @@ export default{
             let deleteInfo = {
                 productLot : JSON.stringify(productLots)
             }
-            console.log(deleteInfo);
+            console.log("삭제:",deleteInfo);
 
             let result = 
                 await axios.put(`${ajaxUrl}/input/delete`,deleteInfo)
-                            .catch(err => console.log(err));
-                    console.log(result.data);
+                            .catch(err => console.log(err)); 
 
-                //     if(result.statusText === 'OK'){
-                //     this.$notify({
-                //         text: `삭제가가 완료되었습니다.`,
-                //         type: 'success',
-                //     });  
-                
-                // }
+                console.log(result);
+             // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
+            if(result.data.result === true){
+                        this.$notify({
+                        text: `해당 입고건의 수정이 완료되었습니다. `,
+                        type: 'success',
+                    });
+                }else{
+                    this.$notify({
+                        text: `해당 입고건의 수정을 실패 했습니다. `,
+                        type: 'error',
+                    });
+                }                  
+        },
 
+        resetUpdateInfo(){
+            this.gridApi.deselectAll();
         },
 
 
-
-       
-
-
-       
-        
-       
-
-        
-
-      
-
-    },//method
-        
-        
-
-        
- 
-    
+    },// method  
 };
 </script>
 <style lang="scss" scoped>
