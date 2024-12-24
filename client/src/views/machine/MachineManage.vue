@@ -12,7 +12,6 @@
           <input type="text" id="machineName" name="machineName" v-model="machineData.machine_name"/>
         </div>
 
-        <!-- 이미지 안들어감 input file 데이터 바인딩 수정 필요 -->
         <div class="modalRow">
           <label for="machineImg">설비 이미지</label>
           <!-- 파일 node로 저장(url return받음) -->
@@ -300,6 +299,8 @@ export default {
       const file = event.target.files[0];
       const formData = new FormData();
       formData.append('machineImg', file);
+      
+      formData.append('previousImgPath', this.machineData.machine_img); // 기존 이미지 경로
 
       try {
         const response = await axios.post(`${ajaxUrl}/machine/uploadImg`, formData, {

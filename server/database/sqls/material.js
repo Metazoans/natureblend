@@ -107,7 +107,9 @@ SELECT
         client_num,
 		com_name,
 		emp_name,
-		emp_tel
+		emp_tel,
+		com_num,
+		address
 FROM client
 WHERE trade = '구매'
 and com_name like IFNULL(?, '%')
@@ -333,6 +335,15 @@ AND
 //로트 재고 조회 페이지에서 사용하는 전체조회 또는 선택조회 
 const lot_qty_list =
 `
+WITH in_material AS (
+	SELECT
+			lot_code,
+			sum(material_qty) AS material_qty
+	FROM
+			invalid_material
+	GROUP BY 
+			lot_code
+)
 SELECT
 		mlq.lot_seq,
 		mlq.lot_code,
@@ -341,7 +352,7 @@ SELECT
 		mlq.in_qty,
 		COALESCE(emp.name, 'NO_EMP')	AS name,
 		mlq.stok_qty,
-		'0' AS hold_qty,
+		COALESCE(im.material_qty, 0) AS hold_qty,
 		mlq.out_qty,
 		COALESCE(mi.inset_lot_date, '9999-12-31 23:59:59') AS inset_lot_date,
 		mlq.limit_date,
@@ -378,6 +389,33 @@ FROM
 			warehouse ware
 			ON
 				mlq.warehouse_code = ware.warehouse_code
+		LEFT JOIN
+			in_material im
+			ON
+				mlq.lot_code = im.lot_code
+			AND
+				mlq.material_nomal = 'b1'
+			AND
+				mlq.material_lot_state = 'c1'
+`;
+
+//자재 발주서 바디에 자재발주코드 기반으로 자재리스트 전부 가져오기
+const material_order_body_list =
+`
+SELECT
+		mob.material_code,
+		mat.material_name,
+		mob.ord_qty,
+		mob.unit_price,
+		mob.total_price
+FROM
+		material_order_body mob
+		JOIN
+			material mat
+			ON
+				mob.material_code = mat.material_code
+WHERE
+		mob.order_code = ?
 `;
 
 module.exports = {
@@ -396,5 +434,6 @@ module.exports = {
 	material_input_list,
 	lot_qty_info,
 	lot_qty_list,
+	material_order_body_list,
 
 };

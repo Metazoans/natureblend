@@ -135,4 +135,12 @@ router.put('/material/lotqtylist', async (req, res)=>{
 });
 
 
+// 발주번호 같은 자재 리스트 긁어오기
+router.get('/material/matBodyList/:orderCode', async (req, res)=>{
+  let orderCode = req.params.orderCode;
+  let orderCodeInfo = await materialService.materialBodyList(orderCode);
+  res.send(orderCodeInfo);
+});
+
+
 module.exports = router;

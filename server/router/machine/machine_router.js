@@ -3,8 +3,18 @@ const router = express.Router();
 const machineService = require('../../service/machine/machine_service.js');
 
 //이미지
-const upload = require('./img_router.js');
+const {upload, deleteImage} = require('./img_router.js');
+const path = require('path');
+
 router.post('/uploadImg', upload, async (req, res) => {
+  const previousImgPath = req.body.previousImgPath; // 기존 이미지 경로
+
+  // 기존 이미지 삭제
+  if (previousImgPath) {
+    const fullPath = path.join(__dirname, '../../', previousImgPath);
+    deleteImage(fullPath);
+  }
+
   if(req.file) {
     const imagePath = `/images/${req.file.filename}`;
     res.send({filePath : imagePath});

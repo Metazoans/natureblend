@@ -1,7 +1,7 @@
 <!-- 자재 발주 관리 메뉴 리메이크 (이걸로 사용중)-->
 <template>
     <div>
-        <h3>&nbsp;&nbsp;자재 발주 관리 (리뉴얼)</h3>
+        <h3>&nbsp;&nbsp;자재 발주 관리</h3>
     </div>
     <div class="d-flex">
         <div class="p-2 flex-fill">
