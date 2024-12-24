@@ -31,7 +31,7 @@ const waitingPlanList = `
 
 const processFlow = `
     select process_sequence, pc.process_name, pc.process_code, machine_type
-    from process_chart pc inner join process_based_information pb
+    from process_chart pc inner join process pb
         on pc.process_code = pb.process_code
     where product_code = ?
     order by process_sequence`;

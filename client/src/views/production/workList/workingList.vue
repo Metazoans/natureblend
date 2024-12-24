@@ -4,13 +4,13 @@
     <div class="container-fluid">
       <div class="search-container mt-4 mb-2">
         <div class="input-group w-auto h-25">
-          <input type="text" @click="openModal" :value="workList[0]?.production_order_name" readonly class="form-control border p-2 cursor-pointer" placeholder="생산지시 선택">
+          <input type="text" @click="openModal('prodOrder')" :value="workList[0]?.production_order_name" readonly class="form-control border p-2 cursor-pointer" placeholder="생산지시 선택">
         </div>
         <div class="product" >
           <h6>제품명:</h6>
           <p>{{ workList[0] ? workList[0].product_name : '-' }}</p>
           <h6 class="bold">작업일자:</h6>
-          <p>{{ workList[0] ? workList[0].work_date?.split('T')[0] : '-'}}</p>
+          <p>{{ workList[0] ? workList[0].work_date : '-'}}</p>
         </div>
       </div>
       <div class="grid-container" >
@@ -64,39 +64,44 @@
               </tr>
             </tbody>
             <tbody>
-            <tr>
+            <tr v-for="(partialWork) in partialWorkList" :key="partialWork.process_num">
               <td>
-                <h6 class="mb-0 text-sm text-center">rderNum }}</h6>
+                <h6 v-if="partialWork.emp_num !== null" class="mb-0 text-sm text-center">{{ partialWork.emp_name }}</h6>
+                <input v-else readonly @click="openModal('emp')" :value="searchEmp.name" class="form-control border p-2 cursor-pointer" />
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">rderDate }}</h6>
+                <h6 v-if="partialWork.machine_num !== null" class="mb-0 text-sm text-center">{{ partialWork.machine_name }}</h6>
+                <input v-else readonly @click="openModal('machine')" :value="searchMachine.machine_name" class="form-control border p-2 cursor-pointer" />
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">ueDate }}</h6>
+                <h6 v-if="partialWork.process_todo_qty !== null" class="mb-0 text-sm text-center">{{ partialWork.process_todo_qty }}</h6>
+                <input v-else v-model="partialWork.new_process_todo_qty" type="number" class="form-control border p-2 cursor-pointer" />
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">oductName }}</h6>
+                <h6 v-if="partialWork.fail_qty !== null" class="mb-0 text-sm text-center">{{ partialWork.fail_qty }}</h6>
+                <input v-else v-model="partialWork.new_fail_qty" type="number" class="form-control border p-2 cursor-pointer" />
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">rderQty }}</h6>
+                <h6 v-if="partialWork.success_qty !== null" class="mb-0 text-sm text-center">{{ partialWork.success_qty }}</h6>
+                <input v-else v-model="partialWork.new_success_qty" type="number" class="form-control border p-2 cursor-pointer" />
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">{nedQty }}</h6>
+                <button @click="startPartialWork(partialWork)" :disabled="partialWork.partial_process_start_time">시작</button>
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">lannedQty }}</h6>
+                <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_start_time ? dateFormat(partialWork.partial_process_start_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>
               </td>
               <td>
-                <input type="number" class="mb-0 text-sm text-center"/>
+                <button :disabled="!partialWork.partial_process_start_time">종료</button>
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">ckQty }}</h6>
+                <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_end_time ? dateFormat(partialWork.partial_process_end_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">ckQty }}</h6>
+                <button>요청</button>
               </td>
               <td>
-                <h6 class="mb-0 text-sm text-center">ckQty }}</h6>
+                <h6 class="mb-0 text-sm text-center">{{ partialWorkStatus[partialWork.partial_process_status] }}</h6>
               </td>
             </tr>
             </tbody>
@@ -109,12 +114,25 @@
         :modalTitle="modalTitle"
         :noBtn="'닫기'"
         :yesBtn="'선택'"
-        :width="1000"
+        :width="modalType === 'prodOrder' ? 1000 : 500"
         @closeModal="closeModal"
         @confirm="confirm"
     >
       <template v-slot:list>
-        <WorkingOrderList v-show="isShowModal" @selectWorkingOrder="selectWorkingOrder"/>
+        <WorkingOrderList
+            v-show="isShowModal && modalType === 'prodOrder'"
+            @selectWorkingOrder="selectWorkingOrder"
+        />
+        <ModalWorkingEmpList
+            v-show="isShowModal && modalType === 'emp'"
+            @selectEmp="selectEmp"
+        />
+        <ModalWorkingMachineList
+            v-if="isShowModal && modalType === 'machine' && selectedRow.process_code"
+            @selectMachine="selectMachine"
+            :processCode="selectedRow.process_code"
+        />
+
       </template>
     </Modal>
   </div>
@@ -122,9 +140,12 @@
 <script>
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import WorkingOrderList from "@/views/production/workList/ModalWorkingOrderList.vue"
+import ModalWorkingEmpList from "@/views/production/workList/ModalWorkingEmpList.vue"
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
 import theme from "@/utils/agGridTheme";
+import ModalWorkingMachineList from "@/views/production/workList/ModalWorkingMachineList.vue";
+import userDateUtils from "@/utils/useDates";
 
 export default {
   name: "workingList" ,
@@ -133,10 +154,11 @@ export default {
       return theme
     }
   },
-  components: {Modal, WorkingOrderList},
+  components: {ModalWorkingMachineList, Modal, WorkingOrderList, ModalWorkingEmpList},
 
   data() {
     return {
+      modalType: 'prodOrder',
       partialWorkList: [],
       selectedStatus: '전체',
       partialProcessStatusList: ['전체', '진행중', '완료'],
@@ -164,7 +186,16 @@ export default {
         'processing': '진행중',
         'process_complete': '완료'
       },
-      selectedRow: {}
+      partialWorkStatus: {
+        'partial_process_waiting': '진행전',
+        'partial_processing': '진행중',
+        'partial_process_complete': '완료'
+      },
+      selectedRow: {},
+      selectedEmp: {},
+      searchEmp: {},
+      selectedMachine: {},
+      searchMachine: {}
     }
   },
 
@@ -173,20 +204,96 @@ export default {
   },
 
   methods: {
-    addPartialWork() {
-      // let workInfo = {
-      //
-      // }
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format)
+    },
 
+    async startPartialWork(partialWork) {
+      if(!this.searchEmp.emp_num) {
+        this.$notify({
+          text: "사원을 선택해주세요.",
+          type: 'fail',
+        });
+        return
+      }
+      if(!this.searchMachine.machine_num ) {
+        this.$notify({
+          text: "설비를 선택해주세요.",
+          type: 'fail',
+        });
+        return
+      }
+      if(!partialWork.new_process_todo_qty) {
+        this.$notify({
+          text: "작업량을 입력해주세요.",
+          type: 'fail',
+        });
+        return
+      }
 
-      this.$notify({
-        text: "분할작업이 등록되었습니다.",
-        type: 'success',
-      });
+      let workInfo = {
+        empName: this.searchEmp.emp_num,
+        machineNum: this.searchMachine.machine_num,
+        todoQty: partialWork.new_process_todo_qty,
+        failQty: partialWork.new_fail_qty,
+        successQty: partialWork.new_success_qty,
+        process_num: partialWork.process_num,
+      }
+
+      let result = await axios.post(`${ajaxUrl}/production/work/start`, workInfo)
+          .catch(err => console.log(err));
+      if(result.data.message === 'success') {
+        this.$notify({
+          text: "작업이 시작되었습니다.",
+          type: 'success',
+        });
+        await this.getPartialWorkList()
+      }
+
+    },
+
+    async addPartialWork() {
+      if(!this.selectedRow.process_work_header_num) {
+        this.$notify({
+          text: "공정작업을 먼저 선택해주세요.",
+          type: 'error',
+        });
+        return
+      }
+
+      let initPartialWorkInfo = {
+        process_work_header_num: this.selectedRow.process_work_header_num,
+        product_code: this.workList[0].product_code,
+      }
+
+      let resultAdd = await axios.post(`${ajaxUrl}/production/work/partial`, initPartialWorkInfo)
+          .catch(err => console.log(err));
+
+      if(resultAdd.data.message === 'success') {
+        this.$notify({
+          text: "분할작업이 등록되었습니다.",
+          type: 'success',
+        });
+      } else {
+        this.$notify({
+          text: "분할작업 등록 실패하였습니다.",
+          type: 'fail',
+        });
+      }
+
+      await this.getPartialWorkList()
+    },
+
+    async getPartialWorkList() {
+      let resultList =
+          await axios.get(`${ajaxUrl}/production/work/partial/${this.selectedRow.process_work_header_num}`)
+              .catch(err => console.log(err));
+      this.partialWorkList = resultList.data
     },
 
     onRowClicked(params) {
       this.selectedRow = params.data
+      this.getPartialWorkList()
     },
 
     onGridReady(params) {
@@ -194,7 +301,17 @@ export default {
       this.gridApi.sizeColumnsToFit();
     },
 
-    openModal() {
+    openModal(type) {
+      if(type === 'prodOrder') {
+        this.modalTitle = '생산지시 목록'
+      } else if(type === 'emp'){
+        this.modalTitle = '생산직원 목록'
+      } else if(type === 'machine'){
+        this.modalTitle = '설비 목록'
+      }
+
+
+      this.modalType = type
       this.isShowModal = !this.isShowModal
     },
 
@@ -203,9 +320,15 @@ export default {
     },
 
     confirm() {
-      this.searchWorkingOrder = this.selectedWorkingOrder
+      if(this.modalType === 'prodOrder') {
+        this.searchWorkingOrder = this.selectedWorkingOrder
+        this.getWorkList()
+      } else if(this.modalType === 'emp') {
+        this.searchEmp = this.selectedEmp
+      } else if(this.modalType === 'machine') {
+        this.searchMachine = this.selectedMachine
+      }
 
-      this.getWorkList()
       this.closeModal()
     },
 
@@ -252,9 +375,8 @@ export default {
 
     async getWorkList() {
       this.rowData = []
-
       let result =
-          await axios.get(`${ajaxUrl}/production/work/${this.searchWorkingOrder.production_order_num}`)
+          await axios.get(`${ajaxUrl}/production/work/list/${this.searchWorkingOrder.production_order_num}`)
               .catch(err => console.log(err));
 
       if(result.data.length !== 0) {
@@ -266,6 +388,14 @@ export default {
     selectWorkingOrder(workingOrder) {
       this.selectedWorkingOrder = workingOrder
     },
+
+    selectEmp(emp) {
+      this.selectedEmp = emp
+    },
+
+    selectMachine(machine) {
+      this.selectedMachine = machine
+    }
   }
 }
 </script>

@@ -62,7 +62,7 @@
                       <p class="text-sm font-weight-bold mb-0">{{ workingOrder.production_order_name }}</p>
                     </td>
                     <td>
-                      <p class="text-sm font-weight-bold mb-0">{{ workingOrder.work_date.split('T')[0] }}</p>
+                      <p class="text-sm font-weight-bold mb-0">{{ workingOrder.work_date }}</p>
                     </td>
                     <td>
                       <p class="text-sm font-weight-bold mb-0">{{ workingOrder.product_name }}</p>
