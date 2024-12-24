@@ -11,8 +11,8 @@ SELECT machine_num,
        machine_location,
        machine_state,
        buy_date
-FROM machine m JOIN process_based_information pbi
-               ON (m.process_code = pbi.process_code)
+FROM machine m JOIN process p
+               ON (m.process_code = p.process_code)
 ORDER BY machine_num
 `;
 
@@ -31,8 +31,8 @@ SELECT machine_num,
        uph,
        upd,
        m.process_code
-FROM machine m JOIN process_based_information pbi
-               ON (m.process_code = pbi.process_code)
+FROM machine m JOIN process p
+               ON (m.process_code = p.process_code)
 WHERE machine_num = ?
 `;
 // 설비 생산 정보 -> success_qty 체크는 나중에 is_inspected(검사 여부) 체크로 변경
@@ -55,7 +55,7 @@ SET ?
 const typeList = `
 SELECT process_code,
        machine_type
-FROM process_based_information
+FROM process
 `;
 
 // 설비 수정
@@ -82,8 +82,8 @@ SELECT machine_num,
        machine_location,
        machine_state,
        buy_date
-FROM machine m JOIN process_based_information pbi
-               ON (m.process_code = pbi.process_code) 
+FROM machine m JOIN process p
+               ON (m.process_code = p.process_code) 
 `;
 
 module.exports = {

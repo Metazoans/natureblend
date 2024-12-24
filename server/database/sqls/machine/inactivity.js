@@ -11,8 +11,8 @@ SELECT machine_num,
        machine_location,
        machine_state,
        buy_date
-FROM machine m JOIN process_based_information pbi
-                 ON (m.process_code = pbi.process_code)
+FROM machine m JOIN process p
+                 ON (m.process_code = p.process_code)
 WHERE machine_state = 'stop'
 ORDER BY machine_num
 `;
@@ -31,8 +31,8 @@ SELECT inact_num,
        machine_type
 FROM inactivity i JOIN machine m
                     ON (i.machine_num = m.machine_num)
-                  JOIN process_based_information pbi
-                    ON (m.process_code = pbi.process_code)
+                  JOIN process p
+                    ON (m.process_code = p.process_code)
 ORDER BY inact_start_time DESC
 `;
 
@@ -72,8 +72,8 @@ SELECT inact_num,
        machine_type
 FROM inactivity i JOIN machine m
                     ON (i.machine_num = m.machine_num)
-                  JOIN process_based_information pbi
-                    ON (m.process_code = pbi.process_code)
+                  JOIN process p
+                    ON (m.process_code = p.process_code)
 `;
 
 
