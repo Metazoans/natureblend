@@ -49,13 +49,38 @@ router.post('/requestQCM', async (req, res)=>{
 });
 
 //자재검사관리- 검사완료처리
+router.post('/completeQCM', async(req, res)=>{
+  let {qcm, qcmr} = req.body;
+  // console.log(qcm);
+  // console.log(qcmr);
+  let result = await qc_service.completeQCM(qcm, qcmr);
+  //let result = '테스트';
+  res.send(result);
+});
+
+//자재검사기록조회-전체조회
+router.get('/recordQCMByComplete', async(req, res)=>{
+  let result = await qc_service.findQCMComplete();
+  res.send(result);
+});
 
 
 
 
 
 
+//자재검사불량내역조회-전체조회
+router.get('/recordQCMRAll', async(req, res)=>{
+  let result = await qc_service.findQCMRAll();
+  res.send(result);
+});
 
+//자재검사불량내역조회-전체조회
+router.post('/recordQCMR', async(req, res)=>{
+  let {mName, startDate, endDate} = req.body;
+  let list = await qc_service.findQCMR(mName, startDate, endDate);
+  res.send(list);
+});
 
 
 
