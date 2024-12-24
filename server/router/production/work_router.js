@@ -7,4 +7,15 @@ router.get('/activeorders', async (req, res)=>{
     res.send(workingOrders);
 });
 
+router.get('/today', async (req, res)=>{
+    let workForToday = await workService.findWorkForToday();
+    res.send(workForToday);
+});
+
+router.get('/:productionOrderNum', async (req, res)=>{
+    let productionOrderNum = req.params.productionOrderNum;
+    let workByOrderNum = await workService.findWorkByOrderNum(productionOrderNum);
+    res.send(workByOrderNum);
+});
+
 module.exports = router

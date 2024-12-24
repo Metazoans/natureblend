@@ -114,8 +114,8 @@ const insertHoldingStock = `
 
 // 공정작업헤더 등록. 공정별로
 const insertProcessWork = `
-    insert into process_work_header (production_order_num, production_order_name, production_order_qty, product_code, product_name, capacity, process_code, process_name, machine_type)
-    values(?, ?, ?, ?, ?, ?, ?, ?, ?);
+    insert into process_work_header (production_order_num, production_order_name, production_order_qty, product_code, product_name, capacity, process_code, process_name, machine_type, work_date)
+    values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 `
 
 module.exports = {
