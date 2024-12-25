@@ -16,7 +16,7 @@
                                     v-model="pickedStatus"
                                 >
                                 </label>
-                        </div>
+                            </div>
                         <!--체크박스 선택 상태 값 -->
                         <div class="mt-3">
                             <p>선택된 상태</p>
