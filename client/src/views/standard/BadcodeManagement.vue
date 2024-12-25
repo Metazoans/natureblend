@@ -1,9 +1,165 @@
+<!--자재 관리 메뉴-->
 <template>
     <div>
-        <h1> 불량코드 관리 </h1>
+       <h3>&nbsp;&nbsp;불량코드 관리</h3>
     </div>
-</template>
-<script>
-    export default { 
-        name: 'BadcodeManagement' };
-</script>
+ <!-- 검색 메뉴 레이아웃 -->
+ <div class="main-container">
+    <div class="content" style="height: 130px; margin: 20px;">
+       <form class="row gx-3 gy-2 align-items-center">
+          <!-- 불량코드 -->
+          <div class="col-sm-2">
+             <label class="col-form-label fw-bold" for="faultyCode">불량코드</label>
+             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="faultyCode" v-model="faultyCode" >
+          </div>
+ 
+          <!-- 불량사유 -->
+          <div class="col-sm-2">
+             <label class="col-form-label fw-bold" for="faultyReason">불량사유</label>
+             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="faultyReason" v-model="faultyReason" >
+          </div>
+
+          <!-- 저장 버튼 -->
+          <div class="col-sm-2">
+             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+          </div>
+       </form>
+    </div>
+ </div>
+ <!-- 검색 메뉴 레이아웃 끝 -->
+ <div class="grid-container" style="padding-top: 10px;">
+    <ag-grid-vue
+       :rowData="rowData"
+       :columnDefs="columnDefs"
+       :theme="theme"
+       :pagination="true"
+       :paginationPageSize="10"
+       @grid-ready="onReady"
+       style="height: 513px;"
+       rowSelection="multiple"
+       @cellClicked="onCellClicked"
+    >
+    </ag-grid-vue>
+ </div>
+ </template>
+ <script>
+ import axios from 'axios';
+ import { ajaxUrl } from '@/utils/commons.js';
+ // import userDateUtils from '@/utils/useDates.js';
+ import theme from "@/utils/agGridTheme";
+ 
+ export default {
+   data() {
+     return {
+       faultyCode: '',   // 불량코드
+       faultyReason: '',  // 불량사유
+       columnDefs: [
+         { headerName: "불량코드", field: "faulty_code", width: 220 },
+         { headerName: "불량사유", field: "faulty_reason" },
+         {
+           headerName: "불량코드삭제",
+           field: "삭제",
+           upin:'',
+           editable: false,
+           cellRenderer: (params) => {
+             const button2 = document.createElement('button');
+             button2.innerText = '삭제';
+             button2.style.marginRight = '10px';
+             button2.style.cursor = 'pointer';
+             button2.style.backgroundColor = '#f7b84d';
+             button2.style.width = '60px';
+             button2.style.height = '30px';
+             button2.style.color = 'white';
+             button2.style.border = 'none';
+             button2.style.padding = '0';
+             button2.style.borderRadius = '4px';
+             button2.style.textAlign = 'center';
+             button2.style.lineHeight = '30px';
+             button2.addEventListener('click', () => {
+               console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
+               if(confirm("정말 삭제하시겠습니까?")){
+                    axios.delete(`${ajaxUrl}/faultyDelete/${params.data.faulty_code}`)
+                    .then(res => {
+                        if(res.data === '성공'){
+                            alert('삭제되었습니다.');
+                            this.faultyList();
+                        }else{
+                            alert('삭제 실패');
+                        }
+                    })
+                    .catch(err => console.log(err));
+               }
+               // 로트번호 조회해서 모달여는거
+               // lotinfo(params.data);
+             });
+             return button2;
+           }
+         },
+       ],
+       newList: [],
+       rowData: [], // 데이터 잡아넣을 그리드 api 행
+       theme:theme,
+     };
+   },
+   methods: {
+    async faultyList(){ // 조회
+        const result = await axios.get(`${ajaxUrl}/faultyList`)
+                                    .catch(err => console.log(err));
+        this.rowData = result.data;
+    },
+     onReady(param) {
+       param.api.sizeColumnsToFit(); // 그리드 api 넓이 슬라이드 안 생기게 하는 거
+     },
+     onCellClicked(params){
+        if(params.colDef.field !== '삭제'){
+            console.log("레코드 확인[클릭] : " , JSON.stringify(params.data));
+            this.faultyCode = params.data.faulty_code;
+            this.faultyReason = params.data.faulty_reason;
+            this.upin = 'update';
+        }
+     },
+     async faultyInsert(newList){
+        const result = await axios.post(`${ajaxUrl}/faultyInsert`, newList)
+                                  .catch(err => console.log(err));
+            console.log('데이터 확인',result.data);
+            this.faultyList();
+     },
+     input_update() {
+       console.log('등록 또는 수정 기능여기서 추가');
+       this.newList = {
+        faulty_code : this.faultyCode,
+        faulty_reason : this.faultyReason
+       };
+       this.faultyInsert(this.newList);
+       this.faultyList();
+     },
+   },
+   // 화면 생성되는 시점
+   mounted() {
+     // 전체조회 쿼리 실행
+     this.faultyList();
+   },
+ };
+ </script>
+ 
+ <style lang="scss" scoped>
+ .main-container{
+     background-color:  #e9ecef;
+     margin-left: 20px;
+     margin-right: 20px;
+     margin-top: 0px;
+     margin-bottom: 0px;
+     border-radius: 10px;
+ }
+ .content{
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
+ }
+ input {
+       background-color: $white;
+       border: solid 1px  ;
+ }
+ </style>
