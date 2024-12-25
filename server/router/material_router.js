@@ -152,5 +152,20 @@ router.post('/material/inspectionInfo', async(req,res)=>{
 });
 
 
+// 재고 조회 메뉴 ( 전체 또는 조건 )
+router.post('/material/materialqtylist', async(req,res)=>{
+  let { materialCode, materialName, startDate, endDate, qty_state, limitOut, product_qty, order_qty } = req.body;
+  let result = await materialService.materialQtyList(materialCode, materialName, startDate, endDate, qty_state, limitOut, product_qty, order_qty);
+  res.send(result);
+});
+
+// LOT 재고 폐기
+router.post('/material/trushGo', async(req,res)=>{
+  let { lot_seq, trush_reason, emp_num } = req.body;
+  let result = await materialService.trushGo(lot_seq, trush_reason, emp_num);
+  res.send(result);
+});
+
+
 
 module.exports = router;
