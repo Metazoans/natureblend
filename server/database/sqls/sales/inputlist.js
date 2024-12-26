@@ -154,7 +154,272 @@ ON ib.warehouse_code = w.warehouse_code
 				   JOIN input_header ih
 ON ib.inputlist_num = ih.inputlist_num
 JOIN employee e
-ON ih.emp_num = e.emp_num `;
+ON ih.emp_num = e.emp_num
+WHERE ib.input_flag = 0 `;
+
+//수정을 원하는 입고 건이 출고가 되었는지 유무 체크
+/**SELECT COUNT(*)
+FROM input_body i JOIN output o 
+ON i.input_num = o.input_num
+WHERE i.product_lot = 'LOT20241221001';
+
+DELIMITER //
+CREATE PROCEDURE checkLotOutput
+(
+IN v_product_lot_json_array TEXT
+)
+BEGIN
+DECLARE product_lot_array_length INT;
+DECLARE v_sum_count  INT DEFAULT 0; 
+DECLARE v_counts INT DEFAULT 0; 
+DECLARE i INT DEFAULT 1;
+DECLARE product_lot_value TEXT;
+
+  -- 트렌젝션 시작
+    START TRANSACTION;
+SET product_lot_array_length = JSON_LENGTH(v_product_lot_json_array);
+
+	-- product_lot 길이 만큼 for문 돌아서  i.input_num = o.input_num 값 수 체크 하기
+		WHILE i <= product_lot_array_length DO
+		SET product_lot_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_lot_json_array , CONCAT('$[', i - 1, ']')));
+        
+        SELECT COUNT(*)
+		INTO  v_counts
+		FROM input_body i JOIN output o 
+		ON i.input_num = o.input_num
+		WHERE i.product_lot = product_lot_value;
+        
+		-- 누적 합 업데이트
+        SET v_sum_count = v_sum_count + v_counts;
+
+        -- 반복문 인덱스 증가
+        SET i = i + 1;
+    END WHILE;
+
+    -- 결과 출력
+    SELECT v_sum_count AS total_output_count;
+
+END//
+DELIMITER ;
+    
+    CALL checkLotOutput('["LOT20241221001", "LOT20241221002", "LOT20241221003"]'); */
+const checkLotOutput = 
+`CALL checkLotOutput(?) `;
+
+//입고수정 
+/*DELIMITER //
+CREATE PROCEDURE inputUpdate
+(
+IN v_product_lot_json_array TEXT,
+IN v_warehouse_name_json_array TEXT 
+)
+BEGIN
+DECLARE product_lot_array_length INT;
+
+DECLARE product_lot_value TEXT;
+DECLARE warehouse_name_value TEXT;
+
+
+DECLARE warehouse_code_value TEXT;
+
+DECLARE i INT DEFAULT 1;
+DECLARE v_change_num INT;
+
+    -- 트렌젝션 시작
+    START TRANSACTION;
+SET product_lot_array_length = JSON_LENGTH(v_product_lot_json_array);
+
+-- product_lot 길이 만큼 for문 돌아서 업데이트 작업 하기
+	WHILE i <= product_lot_array_length DO
+		SET product_lot_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_lot_json_array , CONCAT('$[', i - 1, ']')));
+		SET warehouse_name_value   = JSON_UNQUOTE(JSON_EXTRACT(v_warehouse_name_json_array  , CONCAT('$[', i - 1, ']')));
+        
+-- 창고이름으로 창고 번호 가져오기 
+SELECT warehouse_code
+INTO warehouse_code_value
+FROM warehouse
+WHERE warehouse_name = warehouse_name_value
+LIMIT 1;
+
+-- 창고코드 업데이트 
+UPDATE input_body
+SET warehouse_code = warehouse_code_value
+WHERE product_lot = product_lot_value;
+
+		SET v_change_num = ROW_COUNT();
+		IF v_change_num = 0 THEN 
+			-- 오류 발생 시 롤백
+			rollback;
+		END IF;
+		SET i = i + 1;
+	END WHILE;
+    -- 문제없을때
+    COMMIT;
+
+    -- 문제있을때
+    ROLLBACK;
+
+END//
+DELIMITER ;
+
+CALL inputUpdate ('["LOT20241221001","LOT20241221002"]','["제품창고4","제품창고5"]');*/
+
+const inputUpdate = 
+`CALL inputUpdate (?, ?, ? )`;
+
+//입고건삭제처리 
+/**DELIMITER //
+CREATE PROCEDURE deleteUpdate
+(
+IN v_product_lot_json_array TEXT
+)
+BEGIN
+DECLARE product_lot_array_length INT;
+
+DECLARE product_lot_value TEXT;
+
+
+DECLARE i INT DEFAULT 1;
+DECLARE v_change_num INT;
+
+    -- 트렌젝션 시작
+    START TRANSACTION;
+SET product_lot_array_length = JSON_LENGTH(v_product_lot_json_array);
+
+-- product_lot 길이 만큼 for문 돌아서 업데이트 작업 하기
+	WHILE i <= product_lot_array_length DO
+		SET product_lot_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_lot_json_array , CONCAT('$[', i - 1, ']')));
+
+--  input_flag 업데이트 취소된 경우 1로 설정 
+UPDATE input_body
+SET input_flag = 1
+WHERE product_lot = product_lot_value;
+
+		SET v_change_num = ROW_COUNT();
+		IF v_change_num = 0 THEN 
+			-- 오류 발생 시 롤백
+			rollback;
+		END IF;
+		SET i = i + 1;
+	END WHILE;
+    -- 문제없을때
+    COMMIT;
+
+    -- 문제있을때
+    ROLLBACK;
+
+END//
+DELIMITER ;
+
+CALL deleteUpdate ('["LOT20241221001","LOT20241221002"]'); */
+const deleteInput = 
+`CALL deleteUpdate (? )`;
+
+// 제품별 재고 조회 (유효한입고 , 유효한 출고, 폐기된양, 입고취소된양 , 전체 재고)
+const productNum = 
+`SELECT 
+    p.product_code,
+    p.product_name, 
+
+    NVL(SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+                ELSE 0 
+            END), 0) AS valid_input_amount,
+
+   
+    NVL(SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(o.output_amount, 0) 
+                ELSE 0 
+            END), 0) AS valid_output_amount,
+
+   
+    NVL(SUM(CASE 
+                WHEN i.dispose_flag = 1 THEN NVL(i.input_amount,0) 
+                ELSE 0 
+            END), 0) AS disposed_amount,
+
+    NVL(SUM(CASE 
+                WHEN i.input_flag = 1 THEN NVL(i.input_amount,0) 
+                ELSE 0 
+            END), 0) AS canceled_amount,
+
+  
+    NVL(
+        (SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+                ELSE 0 
+            END) 
+         - 
+         SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(o.output_amount, 0) 
+                ELSE 0 
+            END)
+        ), 0) AS stock_amount
+FROM 
+    product p
+LEFT JOIN 
+    input_body i
+ON 
+    p.product_code = i.product_code
+LEFT JOIN 
+    output o
+ON 
+    i.input_num = o.input_num `;
+
+
+//lot별 재고 조회 (재고상태, 유통기한 필터)
+const lotNum =
+`SELECT 
+    ib.product_lot,
+    ib.product_code,
+    p.product_name,
+    NVL(SUM(ib.input_amount), 0) - NVL(SUM(o.output_amount), 0) AS product_quantity,
+    w.warehouse_name,
+    qp.inspec_end AS manufacturing_date,
+    ib.expire_date,
+    status.product_status
+FROM 
+    input_body ib LEFT JOIN output o
+ON 
+    ib.input_num = o.input_num
+						LEFT JOIN warehouse w
+ON ib.warehouse_code = w.warehouse_code
+						LEFT JOIN qc_packaging qp
+ON ib.qc_packing_id = qp.qc_packing_id
+						LEFT JOIN product p
+ON ib.product_code = p.product_code
+						LEFT JOIN  (
+									      SELECT 
+									         ib_inner.input_num,
+									         CASE 
+									            WHEN ib_inner.dispose_flag = 1 THEN '폐기'
+									            WHEN ib_inner.input_flag = 1 THEN '취소'
+									            ELSE '보관'
+									            END AS product_status
+									        FROM 
+									            input_body ib_inner
+									    ) STATUS
+ON ib.input_num = status.input_num `;
+
+/**WHERE ib.expire_date >='2025-01-01' 
+AND ib.expire_date <='2025-08-01' -- 유통기한 범위
+AND status.product_status IN ('보관') -- 상태 조건 (다중 필터링)
+GROUP BY 
+    ib.product_lot, 
+    ib.product_code, 
+    p.product_name, 
+    w.warehouse_name, 
+    qp.inspec_end, 
+    ib.expire_date, 
+    status.product_status
+ORDER BY 
+    ib.expire_date; */
+
+//유통기한 지난거 폐기처리
+const disposeLot =
+`UPDATE input_body
+SET dispose_flag = 1
+WHERE product_lot = ?`;
 
 
 module.exports = {
@@ -162,6 +427,11 @@ module.exports = {
     getQtResult,
     insertProduct,
     inputRecord,
+	checkLotOutput,
+	inputUpdate,
+	deleteInput,
 
-
+	productNum,
+    lotNum,
+    disposeLot,
 }

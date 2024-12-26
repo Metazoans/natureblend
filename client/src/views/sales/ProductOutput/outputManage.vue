@@ -55,7 +55,7 @@
             </div>
                     <!--검색 및 초기화-->
             <div class="pb-3 text-center">
-                <material-button size="sm" color="warning" class="button" @click="searchOrderlists">검색</material-button>
+                <material-button size="sm" color="success" class="button" @click="searchOrderlists">검색</material-button>
                 <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
             </div>
         </div>
@@ -139,7 +139,7 @@
                 
                 <!--검색 및 초기화-->
                 <div class="mb-3 pt-2 text-center" v-show="rowDataOrder.length != 0">
-                    <material-button  color="warning" class="button" @click="processData">출고</material-button>
+                    <material-button  color="success" class="button" @click="processData">출고</material-button>
                     <material-button color="warning" class="button" @click="resetLot">초기화</material-button>
                 </div>
             </div>
@@ -291,29 +291,37 @@ export default{
         },
         
         async searchOrderlists(){
-            this.filters  = {
-                clientName : this.searchCom,
-                orderName : this.orderName,
-                startDate : this.startDate,
-                endDate : this.endDate,
-            }
+        this.filters  = {
+            clientName : this.searchCom,
+            orderName : this.orderName,
+            startDate : this.startDate,
+            endDate : this.endDate,
+        }
+        if( new Date(this.filters.startDate) > new Date(this.filters.endDate)){
+          this.$notify({
+                  text: `시작 날짜는 종료 날짜보다 이전이어야 합니다. `,
+                  type: 'error',
+              });
+          return;
+        }
+    
 
-            console.log(this.filters);
+        console.log(this.filters);
 
-            let result = await axios.put(`${ajaxUrl}/output/search`,this.filters )
-                                    .catch(err => console.log(err));
-            
-            this.rowData = result.data;
-            this.rowData = result.data.map((col) => ({
-                ...col,
-                order_date: this.dateFormat(col.order_date, "yyyy-MM-dd"),
-                due_date: this.dateFormat(col.due_date, "yyyy-MM-dd"),
-                })
-            );  
-        },
-        dateFormat(value, format) {
-          return userDateUtils.dateFormat(value, format);
-        },
+        let result = await axios.put(`${ajaxUrl}/output/search`,this.filters )
+                                .catch(err => console.log(err));
+        
+        this.rowData = result.data;
+        this.rowData = result.data.map((col) => ({
+            ...col,
+            order_date: this.dateFormat(col.order_date, "yyyy-MM-dd"),
+            due_date: this.dateFormat(col.due_date, "yyyy-MM-dd"),
+            })
+        );  
+    },
+    dateFormat(value, format) {
+        return userDateUtils.dateFormat(value, format);
+    },
             
 
 

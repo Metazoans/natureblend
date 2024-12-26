@@ -321,6 +321,83 @@ const materialBodyList = async (orderCode)=>{
   return list;
 }
 
+// 검수확인증 모달 리스트
+const inspectionInfo = async (order_code, material_name)=>{
+  let list = await mysql.query('inspection_info', [order_code, material_name]);
+  return list;
+}
+
+// 재고 조회 메뉴 ( 전체 또는 조건 )
+const materialQtyList = async (materialCode, materialName, startDate, endDate, qty_state, limitOut, product_qty, order_qty)=>{
+
+  let searchList = [];
+
+  if(qty_state  != undefined && qty_state != null && qty_state != ''){
+    if(qty_state == 'a2'){
+      let search = ` pm.stok_qty > 0 `;
+      searchList.push(search);
+    }else if(qty_state == 'a3'){
+      let search = ` COALESCE(pm.stok_qty, 0) <= 0 `;
+      searchList.push(search);
+    }
+  }
+
+  if(limitOut  != undefined && limitOut != null && limitOut != ''){
+    let search = `rm.stok_qty > 0 `;
+    searchList.push(search);
+  }
+
+  if(product_qty  != undefined && product_qty != null && product_qty != ''){
+    let search = `im.stok_qty > 0 `;
+    searchList.push(search);
+  }
+
+  if(order_qty  != undefined && order_qty != null && order_qty != ''){
+    let search = `om.stok_qty > 0 `;
+    searchList.push(search);
+  }
+
+
+  if(materialCode  != undefined && materialCode != null && materialCode != ''){
+    let search = `mat.material_code LIKE \'%${materialCode}%\' `;
+    searchList.push(search);
+  }
+
+  if(materialName  != undefined && materialName != null && materialName != ''){
+    let search = `mat.material_name LIKE \'%${materialName}%\' `;
+    searchList.push(search);
+  }
+
+  if(startDate  != undefined && startDate != null && startDate != ''){
+    let search = `mat.regi_date >= \'${startDate} 00:00:00\' `;
+    searchList.push(search);
+  }
+
+  if(endDate  != undefined && endDate != null && endDate != ''){
+    let search = `mat.regi_date <= \'${endDate} 23:59:59\' `;
+    searchList.push(search);
+  }
+
+  // 조건을 기반으로 WHERE절 최종 구성
+  let querywhere = '';
+  for(let i = 0 ; i < searchList.length; i++){
+    let search  = searchList[i];
+    querywhere+= (i == 0 ? ` `:` AND `) + search;  
+  };
+
+  querywhere = searchList.length == 0 ? "" : `WHERE ${querywhere}`;
+  querywhere += ` ORDER BY mat.material_code DESC `;
+  console.log('selected Query', querywhere);
+
+  let list = await mysql.query('material_qty_list', querywhere);
+  return list;
+}
+
+// LOT 재고 폐기
+const trushGo = async (lot_seq, trush_reason, emp_num)=>{
+  let list = await mysql.query('trush_go', [lot_seq, trush_reason, emp_num]);
+  return list;
+}
 
 module.exports = {
   allmaterial,
@@ -340,5 +417,8 @@ module.exports = {
   lotQtyInfomation,
   lotQtyList,
   materialBodyList,
+  inspectionInfo,
+  materialQtyList,
+  trushGo,
 
 };

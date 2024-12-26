@@ -1,7 +1,7 @@
 // 자재 라우터
 
 //자재 주문관리
-import MaterialList from '@/views/material/materialOrder.vue';
+import MaterialList from '@/views/material/temp/materialOrder.vue';
 
 //자재 주문관리 (★리뉴얼)
 import MaterialList2 from '@/views/material/newMaterialOrder.vue';
@@ -22,16 +22,16 @@ import MaterialLotqty from '@/views/material/materialLotqty.vue';
 import Materialqty from '@/views/material/materialqty.vue';
 
 //테스트
-import Tabletest from '@/views/material/Tables.vue';
+import Tabletest from '@/views/material/temp/Tables.vue';
 
 //테스트2 (제품 등록)
-import Tabletest2 from '@/views/material/z_product_input.vue';
+import Tabletest2 from '@/views/material/temp/z_product_input.vue';
 
 //테스트3 (진짜연습장)
-import Tabletest3 from '@/views/material/z_test.vue';
+import Tabletest3 from '@/views/material/temp/z_test.vue';
 
 //테스트4 (자재 등록)
-import Tabletest4 from '@/views/material/z_material_input.vue';
+import Tabletest4 from '@/views/material/temp/z_material_input.vue';
 
 const materialRoute = [
   {

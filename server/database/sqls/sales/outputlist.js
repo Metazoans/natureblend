@@ -46,6 +46,8 @@ ON b.inputlist_num = h.inputlist_num
 ON b.input_num = o.input_num
 WHERE b.product_code = ?
 AND b.input_amount - NVL(o.output_amount, 0) != 0
+AND b.input_flag = 0
+AND b.dispose_flag = 0
 order by h.input_date`;
 
 

@@ -1,39 +1,41 @@
 <template>
   <div class="px-4 py-4">
-    <h1>입고검사-입고검사관리</h1>
+    <h1 class="mb-3">입고검사-검사기록조회</h1>
     <hr>
-
     <!-- 검사조건 부분 시작 -->
-    <div class="row align-items-center mb-3">
-      <div class="col-2">
-        <h3 class="mr-3">검색조건</h3>
+    <div class="mb-4">
+      <div class="d-flex align-items-center mb-3">
+        <h3 class="me-3">검색조건</h3>
+        <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
       </div>
-      <div class="col">
-        <material-button class="btn-search" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
-      </div>
-    </div>
 
-    <div class="row align-items-center mb-3">
-      <label for="startDate" class="mr-2">날짜범위</label>
-      <div class="input-group w-auto h-25">
-        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date"
-          v-model="searchInfo.startDate" />
-      </div>
-      <div class="input-group w-auto h-25">
-        <input type="date" class="form-control border p-2 cursor-pointer" placeholder="Date"
-          v-model="searchInfo.endDate" />
-      </div>
-      <div class="input-group w-auto h-25">
-        <input label="자재명" class="form-control border p-2 cursor-pointer" placeholder="자재명" type="search"
-          v-model="searchInfo.mName" />
-      </div>
-      <div class="input-group w-auto h-25">
-        <material-button class="btn-search" size="md" v-on:click="searchOrder">검색</material-button>
+      <div class="row g-3">
+        <!-- 날짜 범위 -->
+        <div class="col-md-4">
+          <label for="startDate" class="form-label">날짜 범위</label>
+          <div class="d-flex gap-2">
+            <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
+              v-model="searchInfo.startDate" />
+            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
+              v-model="searchInfo.endDate" />
+          </div>
+        </div>
+
+        <!-- 자재명 -->
+        <div class="col-md-3">
+          <label for="mName" class="form-label">자재명</label>
+          <input type="search" id="mName" class="form-control border p-2 cursor-pointer" placeholder="자재명"
+            v-model="searchInfo.mName" />
+        </div>
+
+        <!-- 검색 버튼 -->
+        <div class="col-md-2 d-flex align-items-end">
+          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
+        </div>
       </div>
     </div>
   </div>
   <!-- 검사조건 부분 끝 -->
-
   <hr>
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
@@ -81,7 +83,7 @@
         <label for="reason">불량 사유 {{ index + 1 }}:</label>
         <select v-model="detail.reason" :id="'reason' + index">
           <option v-for="reason in defectReasons" :key="reason.code" :value="reason.code">
-            {{ reason.name }} 
+            {{ reason.name }}
           </option>
         </select>
         <label for="defectQty">불량 수량 {{ index + 1 }}:</label>
@@ -132,7 +134,7 @@ export default {
         endDate: this.dateFormat(new Date(), 'yyyy-MM-dd')
       },
 
-      
+
 
       searchList: [],
 
@@ -165,7 +167,7 @@ export default {
         // { code: "D001", name: "파손" },
         // { code: "D002", name: "오염" },
         // { code: "D003", name: "불량품" },
-      ], 
+      ],
       selectedReason: "", // 선택된 불량 사유 코드
       defectQty: 0, // 불량 수량
       /// db에 보낼 자재 한건의 불량항목및 수량
@@ -195,9 +197,9 @@ export default {
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
-            title: "검색실패",
-            text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
-            type: "error", // success, warn, error 가능
+          title: "검색실패",
+          text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
+          type: "error", // success, warn, error 가능
         })}`;
         return;
       }
@@ -267,10 +269,7 @@ export default {
       this.showModalDone = false;
     },
 
-    async confirm() {
-      console.log('저장처리!')
-      this.closeModal();
-    },
+
 
 
     ///신청 건의 불량항목 내역 관련
@@ -292,9 +291,9 @@ export default {
       const defectDetails = this.defectDetailsMap[qcMaterialId] || [];
       if (defectDetails.some(detail => !detail.reason || detail.qty <= 0)) {
         notify({
-            title: "입력실패",
-            text: "모든 불량 항목에 대해 불량 사유와 수량을 입력하세요.",
-            type: "warn", // success, warn, error 가능
+          title: "입력실패",
+          text: "모든 불량 항목에 대해 불량 사유와 수량을 입력하세요.",
+          type: "warn", // success, warn, error 가능
         });
         return;
       }
@@ -302,9 +301,9 @@ export default {
       const rjcQntSum = defectDetails.reduce((sum, detail) => sum + detail.qty, 0);
       if (rjcQntSum > total) {
         notify({
-            title: "입력실패",
-            text: "불량 총합량이 총합량보다 클 수 없습니다.",
-            type: "warn", // success, warn, error 가능
+          title: "입력실패",
+          text: "불량 총합량이 총합량보다 클 수 없습니다.",
+          type: "warn", // success, warn, error 가능
         });
         return;
       }
@@ -344,21 +343,64 @@ export default {
 
     //최종 처리 버튼
     openModal() {
-
       this.showModalDone = !this.showModalDone
       console.log(this.rowData2);
       console.log(this.defectDetailsMap);
     },
+    async confirm() {
+      console.log('저장처리!')
+      console.log(this.rowData2);
+      console.log(this.defectDetailsMap);
+      // 객체를 배열로 변환
+      let defectDetailsArray = [];
+      for (let qcId in this.defectDetailsMap) {
+        if (Object.prototype.hasOwnProperty.call(this.defectDetailsMap, qcId)) {
+          this.defectDetailsMap[qcId].forEach(detail => {
+            defectDetailsArray.push({
+              qcMaterialId: qcId,
+              faultyCode: detail.reason,
+              qty: detail.qty,
+            });
+          });
+        }
+      }
+      //배열 정렬
+      defectDetailsArray.sort((a, b) => {
+        if (a.qcMaterialId === b.qcMaterialId) {
+          return a.faultyCode.localeCompare(b.faultyCode); // 검사번호 같으면 불량코드 비교
+        }
+        return a.qcMaterialId.localeCompare(b.qcMaterialId); // 검사번호 우선 비교
+      });
+
+      let qcData = {
+        qcm: this.rowData2,
+        qcmr: defectDetailsArray,
+      };
+      let result = await axios.post(`${ajaxUrl}/completeQCM`, qcData)
+        .catch(err => console.log(err));
+      console.log(result);
+      notify({
+        title: "검사완료",
+        text: `완료된 검사:${result.data.updatedRows}, 기록된 불량 내역:${result.data.defectNum}`,
+        // text: `기록된 불량 내역:${result.data.defectNum}`,
+        type: "success", // success, warn, error 가능
+      });
+
+
+
+      this.closeModal();
+    },
+
 
     //불량코드 불러오기
-    async callFaultyCode(){
+    async callFaultyCode() {
       let faultyCodeList = await axios.get(`${ajaxUrl}/faultyCode`)
         .catch(err => console.log(err));
       this.faultyCodeList = faultyCodeList.data;
       const arrData = [];
       this.faultyCodeList.forEach((element, index) => {
-        arrData[index] = { "code":element.faulty_code, "name": element.faulty_reason };
-        
+        arrData[index] = { "code": element.faulty_code, "name": element.faulty_reason };
+
       });
       this.defectReasons = arrData;
     }

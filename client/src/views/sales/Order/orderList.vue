@@ -84,6 +84,13 @@ export default {
       this.gridApi.sizeColumnsToFit();
     },
     async searchOrder(){
+      if( new Date(this.filters.startDate) > new Date(this.filters.endDate)){
+          this.$notify({
+                  text: `시작 날짜는 종료 날짜보다 이전이어야 합니다. `,
+                  type: 'error',
+              });
+          return;
+      }
       let obj = {
         orderStatus:this.filters.orderStatus,
         clientName:this.filters.clientName,
@@ -92,7 +99,7 @@ export default {
         endDate:this.filters.endDate 
       }
 
-      console.log(obj.clientName);
+      console.log(obj.orderStatus);
       //서버에 검색 필터 데이터 전송
         let result = await axios.put(`${ajaxUrl}/orderlist/search`,obj)
                                 .catch(err=> console.log(err));

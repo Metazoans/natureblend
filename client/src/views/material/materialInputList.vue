@@ -66,6 +66,10 @@
 <div>
    <Modal :isShowModal="isShowModal" :newObject="newObject"  @closeModal="closeModal" @confirm="confirm"></Modal>
 </div>
+<div>
+    <InspectionModal :isShowModal2="isShowModal2" :inspection_data="inspection_data" @closeModal2="closeModal2" @confirm2="confirm2">
+    </InspectionModal>
+</div>
 </template>
 <script setup>
 import axios from 'axios';
@@ -76,6 +80,7 @@ import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠�
 const { notify } = useNotification();  // 노티 내용변수입니다
 
 import Modal from "@/views/material/materialInputListModal.vue";
+import InspectionModal from "@/views/material/inspection_com.vue";
 
 import theme from "@/utils/agGridTheme";
 import { ref, onBeforeMount } from 'vue'; //onBeforeMount
@@ -111,8 +116,40 @@ const reSet = () => {
       text: "초기화 완료 했습니다.",
       type: "success", // success, warn, error 가능
    });
-
 };
+
+
+
+// 검수확인증 모달에 사용할 배열 초기화
+const inspection_data = ref({});
+// 검수확인증 모달 띄우기
+const inspection_com = (data) => {
+  //모달 형식에 맞게 필요한 값만 가져감
+  inspection_data.value = {
+    order_code: data.order_code,
+    material_name: data.material_name,
+    com_name: data.com_name,
+    ord_qty: data.ord_qty,
+    total_qnt: data.total_qnt,
+    pass_qnt: data.pass_qnt,
+    rjc_qnt: data.rjc_qnt,
+  };
+  console.log(inspection_data.value);
+  //모달 오픈
+  isShowModal2.value = true;
+};
+//모달 여는데 사용하는 변수
+const isShowModal2 = ref(false);
+ // 모달 취소
+ const closeModal2 = () => {
+  isShowModal2.value = false;
+};
+ // 모달 확인
+ const confirm2 = () => {
+  isShowModal2.value = false;
+};
+
+
 
 // 조회
 const seachPoList = () => {
@@ -166,6 +203,7 @@ const columnDefs = ref([
       button.style.lineHeight = '30px';
       button.addEventListener('click', () => {
          console.log("레코드 확인 : ", JSON.stringify(params.data));
+         inspection_com(params.data);
       });
       return button;
       }

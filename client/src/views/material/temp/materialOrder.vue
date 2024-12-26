@@ -109,7 +109,7 @@
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
-import materialChild from '@/views/material/materialOrderChild.vue';
+import materialChild from '@/views/material/temp/materialOrderChild.vue';
 
 export default {
   name: "tables",
