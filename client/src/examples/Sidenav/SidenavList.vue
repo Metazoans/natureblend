@@ -478,8 +478,8 @@ export default {
   font-size: 14px;
   cursor: pointer;
   border-left: 3px solid #ffa500;
-  margin: 4px 0 10px 0;
-  padding: 0 0 0 5px;
+  padding: 2px 1px 2px 4px;
+  margin: 7px 6px 11px 32px;
 }
 
 .sub-item:hover {

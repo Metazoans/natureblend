@@ -57,9 +57,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.sub-item {
-  padding: 8px 20px 10px 20px;
-  margin: 12px 0 10px 34px;
-}
-</style>
