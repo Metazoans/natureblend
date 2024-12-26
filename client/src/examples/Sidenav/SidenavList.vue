@@ -135,18 +135,6 @@
             <li class="sub-item" @click="movePage('materialqty')">자재 재고 조회</li>
           </template>
         </sidenav-collapse>
-        <sidenav-collapse
-            url="#"
-            :aria-controls="''"
-            v-bind:collapse="true"
-            collapseRef="mainpage"
-            navText="테스트페이지"
-            @click="movePage('tabletest')"
-        >
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-          </template>
-        </sidenav-collapse>
       </li>
       <li v-else-if="headerMenu === $departments[3]" class="nav-item">
         <sidenav-collapse

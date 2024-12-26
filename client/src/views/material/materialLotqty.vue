@@ -40,10 +40,10 @@
  
           <!-- 입고 상태 -->
           <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="materialNomal">입고 상태</label><br>
+             <label class="col-form-label fw-bold" for="materialNomal">불량여부</label><br>
              <div id="materialNomal" style="padding-left: 20px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
-                <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="b1" v-model="materialNomal" />&nbsp;&nbsp;정상자재</label>
-                <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="b2" v-model="materialNomal" />&nbsp;&nbsp;불량자재</label>
+                <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="b1" v-model="materialNomal" />&nbsp;&nbsp;미불량</label>
+                <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="b2" v-model="materialNomal" />&nbsp;&nbsp;불량</label>
              </div>
           </div>
 
@@ -51,8 +51,8 @@
           <div class="col-sm-2">
              <label class="col-form-label fw-bold" for="materialLotState">폐기 상태</label><br>
              <div id="materialLotState" style="padding-left: 20px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
-                <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="c1" v-model="materialLotState" />&nbsp;&nbsp;정상자재</label>
-                <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="c2" v-model="materialLotState" />&nbsp;&nbsp;폐기자재</label>
+                <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="c1" v-model="materialLotState" />&nbsp;&nbsp;미폐기</label>
+                <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="c2" v-model="materialLotState" />&nbsp;&nbsp;폐기</label>
              </div>
           </div>
           
@@ -105,7 +105,7 @@
    </ag-grid-vue>
  </div>
  <div>
-    <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
+    <Modal :isShowModal="isShowModal" :deleteList="deleteList" @closeModal="closeModal" @confirm="confirm">
     </Modal>
  </div>
  </template>
@@ -114,7 +114,7 @@
  import { ajaxUrl } from '@/utils/commons.js';
  import userDateUtils from '@/utils/useDates.js';
  
- import Modal from "@/views/material/materialOrderListModal.vue";
+ import Modal from "@/views/material/materialLotqtyModal.vue";
  
  import theme from "@/utils/agGridTheme";
  import { ref, onBeforeMount } from 'vue'; //onBeforeMount
@@ -212,10 +212,10 @@
    { headerName: "입고일", field: "inset_lot_date" },
    { headerName: "유통기한", field: "limit_date" },
    { headerName: "창고위치", field: "warehouse_name" },
-   { headerName: "처리", field: "material_lot_state" },
+   { headerName: "폐기", field: "material_lot_state" },
    {  
       headerName: "비고", 
-      field: "폐기", 
+      field: "폐기처리", 
       editable: false,
       cellRenderer: params => {
        if(params.data.material_lot_state === "정상"){
@@ -233,11 +233,20 @@
           button2.style.textAlign = 'center';
           button2.style.lineHeight = '30px';
           button2.addEventListener('click', () => {
-             console.log("레코드 확인 : ", JSON.stringify(params.data));
+             //console.log("레코드 확인 : ", JSON.stringify(params.data));
              //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
              deleteList.value = params.data;
-             console.log('모달 오픈');
-             isShowModal.value = true;
+             //console.log('aaaaa', deleteList.value);
+             if(deleteList.value.hold_qty != '0 kg'){
+               notify({
+                  title: "폐기불가",
+                  text: "공정 투입중인 자재 입니다. 폐기불가!",
+                  type: "error", // success, warn, error 가능
+               });
+             }else{
+                console.log('모달 오픈');
+                isShowModal.value = true;
+             }
           });
           return button2;
           }
@@ -251,16 +260,53 @@
  const closeModal = () => {
     isShowModal.value = false;
     notify({
-       title: "취소",
-       text: "적용 취소 하였습니다.",
+       title: "폐기취소",
+       text: "폐기 취소 하였습니다.",
        type: "error", // success, warn, error 가능
     });
  };
  // 모달 확인
- const confirm = () => {
+ const confirm = (data1) => {
     console.log("모달 확인 버튼 클릭됨");
+   //  console.log('data1',data1);
+   //  console.log('data2',deleteList.value);
+    const newObject = {
+      lot_seq: deleteList.value.lot_seq,
+      trush_reason: data1,
+      emp_num: 1, // 로그인 세션 받아야함
+    };
+    if( deleteList.value.lot_seq && data1){
+       trush_go(newObject);
+    }else{
+      notify({
+         title: "폐기실패",
+         text: "폐기사유가 꼭 필요합니다.",
+         type: "error", // success, warn, error 가능
+      });
+    }
     isShowModal.value = false; // 모달 닫기
- };  
+ };
+ 
+ const trush_go = async (newObject) => {
+   //console.log(newObject);
+   let result = await axios.post(`${ajaxUrl}/material/trushGo`, newObject)
+                           .catch(err=>console.log(err));
+   //console.log('aaaaaa',result.data);
+   if(result.data[0][0]['v_result']==='OK'){
+      notify({
+         title: "폐기성공",
+         text: "폐기 성공 하였습니다.",
+         type: "success", // success, warn, error 가능
+      });
+      lotqtylist();
+   }else{
+      notify({
+         title: "폐기실패",
+         text: result.data[0]['v_result']+"해당사유로 관리자 문의",
+         type: "error", // success, warn, error 가능
+      });
+   }
+ };
 
  // 엔터키 누르면 하는거
  const enterkey = (event) => {
