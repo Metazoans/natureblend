@@ -1,5 +1,4 @@
 const mysql = require('../../database/mapper.js');
-const { deleteInput } = require('../../database/sqls/sales/inputlist.js');
 
 const getWarehouse = async ()=>{
     let list = await mysql.query('getUseWarehouse');
@@ -129,19 +128,97 @@ const deleteInputInfo = async(deleteInfo)=>{
 }
 
 
+//제품번호로 재고 조회
+const getInventoryProduct = async(productCode)=>{
+  let searchList = [];
+  if(productCode != undefined && Object.keys(productCode).length > 0 ){
+    let search = `p.product_code = \'${productCode}\'`;
+    console.log("쿼리:",search);
+    searchList.push(search);
+  }
 
+   // 조건을 기반으로 WHERE절 최종 구성
+   let querywhere = '';
+   for(let i = 0 ; i < searchList.length; i++){
+     let search  = searchList[i];
+     querywhere+= search;  
+   }; 
+   querywhere = searchList.length == 0 ? `GROUP BY p.product_code, p.product_name` : `WHERE ${querywhere} GROUP BY p.product_code, p.product_name`;
+   
+   console.log('selected Query=',querywhere);
 
+   let result = await mysql.query('productNum',querywhere);
+   return result;
+}
 
+// 제품 상태, 유통기한 범위로 lot 재고 조회 
+const getInventoryLot = async(productStatus,startDate,endDate)=>{
+  let searchList = [];
+  if(startDate  != undefined && startDate != null && startDate != ''){
+    let search = `ib.expire_date >= \'${startDate}\'`;
+    searchList.push(search);
+  }
 
+  if(endDate  != undefined && endDate != null && endDate != ''){
+    let search = `ib.expire_date <= \'${endDate}\'`;
+    searchList.push(search);
+  }
+  if(productStatus != undefined && Object.keys(productStatus).length > 0){
+  let search = `status.product_status IN (`;  
+  for (let key in productStatus) {        
+      search += (key == '0' ? ' ' : ', ') + `\'${productStatus[key]}\'`;   
+  }
+  search += ' )';
+  searchList.push(search);
+  }
 
+  // 조건을 기반으로 WHERE절 최종 구성
+  let querywhere = '';
+  for(let i = 0 ; i < searchList.length; i++){
+    let search  = searchList[i];
+    querywhere+= (i == 0 ? ` `:`AND `) + search;  
+  };
 
+  querywhere = searchList.length == 0 ? 
+   `GROUP BY 
+      ib.product_lot, 
+      ib.product_code, 
+      p.product_name, 
+      w.warehouse_name, 
+      qp.inspec_end, 
+      ib.expire_date, 
+      status.product_status
+    ORDER BY 
+      ib.expire_date` 
+    : `WHERE ${querywhere}
+      GROUP BY 
+        ib.product_lot, 
+        ib.product_code, 
+        p.product_name, 
+        w.warehouse_name, 
+        qp.inspec_end, 
+        ib.expire_date, 
+        status.product_status
+      ORDER BY 
+        ib.expire_date`;
+    console.log('selected Query', querywhere);
+  
+    let result = await mysql.query('lotNum',querywhere);
+    return result;
+}
 
+const disposeLot = async(disposeLot)=>{
+  let datas = Object.values(disposeLot);
+  let result = await query('disposeLot',datas);
+  let sendData = {};
 
-
-
-
-
-
+  if(result.changeRows !== 0){
+    sendData.result = true;
+  }else{
+    sendData.result = false;
+  }
+  return sendData;
+}
 
 
 
@@ -154,5 +231,10 @@ module.exports = {
     inputLists,
     updateInputInfo,
     deleteInputInfo,
+
+    
+    getInventoryProduct,
+    getInventoryLot,
+    disposeLot,
 
 }

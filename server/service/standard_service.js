@@ -188,6 +188,113 @@ const insertEmployee = async (employee_code,employee_name,employee_birth,employe
     return '실패';
   }
 }
+// 거래처 조회
+const customerList = async () => {
+  let list = await mysql.query('customerList');
+  return list;
+}
+
+// 거래처 등록
+const insertCustomer = async (com_num,com_name,address,trade,boss,boss_tel,emp_name,emp_tel) => {
+  let result = await mysql.query('customerInsert', [com_num,com_name,address,trade,boss,boss_tel,emp_name,emp_tel]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+
+// 거래처 수정
+const updateCustomer = async (client_num,com_num,com_name,address,trade,boss,boss_tel,emp_name,emp_tel) => {
+  let result = await mysql.query('customerUpdate', [com_num,com_name,address,trade,boss,boss_tel,emp_name,emp_tel,client_num]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+
+// 거래처 삭제
+const deleteCustomer = async (com_num) => {
+  let result = await mysql.query('customerDelete', [com_num]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+
+// 창고 조회
+const warehouseList = async () => {
+  let list = await mysql.query('warehouseList');
+  return list;
+}
+
+// 창고 등록 ,수정
+const insertWarehouse = async (warehouse_code,warehouse_name,storage,warehouse_location,emp_name,emp_tel,warehouse_area) => {
+  let result = await mysql.query('warehouseInsert', [warehouse_code,warehouse_name,storage,warehouse_location,emp_name,emp_tel,warehouse_area]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 창고 삭제
+const deleteWarehouse = async (warehouse_code) => {
+  let result = await mysql.query('warehouseDelete', [warehouse_code]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+
+// 불량코드 조회
+const faultyList = async () => {
+  let list = await mysql.query('faultyList');
+  return list;
+}
+// 불량코드 등록 , 수정
+const insertFaulty = async (faulty_code,faulty_reason) => {
+  let result = await mysql.query('faultyInsert', [faulty_code,faulty_reason]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 불량코드 삭제
+const deleteFaulty = async (faulty_code) => {
+  let result = await mysql.query('faultyDelete',[faulty_code]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 반품코드 조회
+const returnList = async () => {
+  let list = await mysql.query('returnList');
+  return list;
+}
+// 반품코드 등록 , 수정
+const insertReturn = async (return_code,return_reason) => {
+  let result = await mysql.query('returnInsert', [return_code,return_reason]);
+  if(result.affectedRows > 0){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 반품코드 삭제
+const deleteReturn = async (return_code) => {
+  let result = await mysql.query('returnDelete',[return_code]);
+  if(result.affectedRows > 0 ){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
 module.exports = {
     findAllBom,
     createNewBom,
@@ -212,4 +319,17 @@ module.exports = {
     employeeList,
     deleteEmployee,
     insertEmployee,
+    customerList,
+    insertCustomer,
+    updateCustomer,
+    deleteCustomer,
+    warehouseList,
+    insertWarehouse,
+    deleteWarehouse,
+    faultyList,
+    insertFaulty,
+    deleteFaulty,
+    returnList,
+    insertReturn,
+    deleteReturn,
 }
