@@ -101,22 +101,22 @@
                 <h6 v-if="partialWork.success_qty !== null" class="mb-0 text-sm text-center">{{ partialWork.success_qty }}</h6>
                 <input v-else v-model="partialWork.new_success_qty" type="number" class="form-control border p-2 cursor-pointer" />
               </td>
-              <td>
+              <td class="text-center">
                 <button @click="startPartialWork(partialWork)" :disabled="partialWork.partial_process_start_time">시작</button>
               </td>
               <td>
                 <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_start_time ? dateFormat(partialWork.partial_process_start_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>
               </td>
-              <td>
+              <td class="text-center">
                 <button @click="endPartialWork(partialWork)" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>
               </td>
               <td>
                 <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_end_time ? dateFormat(partialWork.partial_process_end_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>
               </td>
-              <td>
-                <button :disabled="partialWork.partial_process_end_time">요청</button>
-              </td>
-              <td>
+<!--              <td>-->
+<!--                <button @click="requestRepair(partialWork)" :disabled="partialWork.partial_process_end_time">요청</button>-->
+<!--              </td>-->
+              <td class="text-center">
                 <h6
                     class="mb-0 text-sm text-center status"
                     :class="{
@@ -187,7 +187,7 @@ export default {
       partialWorkList: [],
       selectedStatus: '전체',
       partialProcessStatusList: ['전체', '진행중', '완료'],
-      cols: ['작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '정비요청', '진행상태'],
+      cols: ['작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '진행상태'],
       isShowModal: false,
       modalTitle: '생산지시 목록',
       selectedWorkingOrder: {},
@@ -348,6 +348,7 @@ export default {
       }
 
       await this.getPartialWorkList()
+      // this.start
     },
 
     getPartialWorkFinalQty() {
@@ -520,6 +521,10 @@ export default {
         }
       })
     },
+
+    // requestRepair(partialWork) {
+    //   console.log(partialWork)
+    // },
 
     async getWorkList() {
       this.rowData = []
