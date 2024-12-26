@@ -315,6 +315,112 @@ CALL deleteUpdate ('["LOT20241221001","LOT20241221002"]'); */
 const deleteInput = 
 `CALL deleteUpdate (? )`;
 
+// 제품별 재고 조회 (유효한입고 , 유효한 출고, 폐기된양, 입고취소된양 , 전체 재고)
+const productNum = 
+`SELECT 
+    p.product_code,
+    p.product_name, 
+
+    NVL(SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+                ELSE 0 
+            END), 0) AS valid_input_amount,
+
+   
+    NVL(SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(o.output_amount, 0) 
+                ELSE 0 
+            END), 0) AS valid_output_amount,
+
+   
+    NVL(SUM(CASE 
+                WHEN i.dispose_flag = 1 THEN NVL(i.input_amount,0) 
+                ELSE 0 
+            END), 0) AS disposed_amount,
+
+    NVL(SUM(CASE 
+                WHEN i.input_flag = 1 THEN NVL(i.input_amount,0) 
+                ELSE 0 
+            END), 0) AS canceled_amount,
+
+  
+    NVL(
+        (SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+                ELSE 0 
+            END) 
+         - 
+         SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(o.output_amount, 0) 
+                ELSE 0 
+            END)
+        ), 0) AS stock_amount
+FROM 
+    product p
+LEFT JOIN 
+    input_body i
+ON 
+    p.product_code = i.product_code
+LEFT JOIN 
+    output o
+ON 
+    i.input_num = o.input_num `;
+
+
+//lot별 재고 조회 (재고상태, 유통기한 필터)
+const lotNum =
+`SELECT 
+    ib.product_lot,
+    ib.product_code,
+    p.product_name,
+    NVL(SUM(ib.input_amount), 0) - NVL(SUM(o.output_amount), 0) AS product_quantity,
+    w.warehouse_name,
+    qp.inspec_end AS manufacturing_date,
+    ib.expire_date,
+    status.product_status
+FROM 
+    input_body ib LEFT JOIN output o
+ON 
+    ib.input_num = o.input_num
+						LEFT JOIN warehouse w
+ON ib.warehouse_code = w.warehouse_code
+						LEFT JOIN qc_packaging qp
+ON ib.qc_packing_id = qp.qc_packing_id
+						LEFT JOIN product p
+ON ib.product_code = p.product_code
+						LEFT JOIN  (
+									      SELECT 
+									         ib_inner.input_num,
+									         CASE 
+									            WHEN ib_inner.dispose_flag = 1 THEN '폐기'
+									            WHEN ib_inner.input_flag = 1 THEN '취소'
+									            ELSE '보관'
+									            END AS product_status
+									        FROM 
+									            input_body ib_inner
+									    ) STATUS
+ON ib.input_num = status.input_num `;
+
+/**WHERE ib.expire_date >='2025-01-01' 
+AND ib.expire_date <='2025-08-01' -- 유통기한 범위
+AND status.product_status IN ('보관') -- 상태 조건 (다중 필터링)
+GROUP BY 
+    ib.product_lot, 
+    ib.product_code, 
+    p.product_name, 
+    w.warehouse_name, 
+    qp.inspec_end, 
+    ib.expire_date, 
+    status.product_status
+ORDER BY 
+    ib.expire_date; */
+
+//유통기한 지난거 폐기처리
+const disposeLot =
+`UPDATE input_body
+SET dispose_flag = 1
+WHERE product_lot = ?`;
+
 
 module.exports = {
     getUseWarehouse,
@@ -323,5 +429,9 @@ module.exports = {
     inputRecord,
 	checkLotOutput,
 	inputUpdate,
-	deleteInput
+	deleteInput,
+
+	productNum,
+    lotNum,
+    disposeLot,
 }

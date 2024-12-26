@@ -99,7 +99,7 @@ export default {
         endDate:this.filters.endDate 
       }
 
-      console.log(obj.clientName);
+      console.log(obj.orderStatus);
       //서버에 검색 필터 데이터 전송
         let result = await axios.put(`${ajaxUrl}/orderlist/search`,obj)
                                 .catch(err=> console.log(err));
