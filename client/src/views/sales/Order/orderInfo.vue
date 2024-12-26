@@ -1,25 +1,32 @@
 <template>
+        
     <div class="grid-container">
     <ag-grid-vue
     
       :rowData="rowData"
       :columnDefs="columnDefs"
       :theme="theme"
-      @grid-ready="onGridReady"
+      @grid-ready="onReady1"
       :noRowsOverlayComponent="noRowsOverlayComponent"
       rowSelection="multiple"
       @rowClicked="onRowClicked"
       :pagination="true"
-      :paginationPageSize="10"
+      :paginationPageSize="20"
   />
   
   </div>
   <div style="display: none">
       <CustomNoRowsOverlay/>
   </div>
+  <!--검색 및 초기화-->
+    <div class="mb-3 pt-2 text-center">
+        <material-button  color="success" class="button" @click="updateOrder">수정</material-button>
+        <material-button  color="success" class="button" @click="processData">삭제</material-button>
+        <material-button color="warning" class="button" @click="resetData">초기화</material-button>
+    </div>
 </template>
 <script>
-//import MaterialButton from "@/components/MaterialButton.vue";
+import MaterialButton from "@/components/MaterialButton.vue";
 import theme from "@/utils/agGridTheme";
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 import axios from "axios";
@@ -32,7 +39,7 @@ export default{
     name:"orderInfo",
     components:{
         CustomNoRowsOverlay,
-        //MaterialButton,
+        MaterialButton,
         //proList,
         //Modal,
         
@@ -57,14 +64,25 @@ export default{
             theme : theme,
             rowData : [],
             columnDefs : [
-                { headerName : "주문코드", field:'order_num'},
-                { headerName : "제품코드", field:'product_code'},
-                { headerName : "제품명", field:'product_name'},
-                { headerName : "주문수량", field:'order_amount'},
-                { headerName : "개당가격", field:'per_price'},
-                { headerName : "총가격", field:'total_price'},
-                { headerName : "주문상태", field:'order_status'},
+                { headerName: "",
+                headerCheckboxSelection: true,
+                field: "check",
+                resizable: false,
+                editable: true,
+                sortable: false,
+                checkboxSelection: true,
+                },
+                { headerName : "주문코드", field:'order_num',resizable: true, sortable: true},
+                { headerName : "제품코드", field:'product_code',resizable: true, sortable: true},
+                { headerName : "제품명", field:'product_name',resizable: true, sortable: true},
+                { headerName : "주문수량", field:'order_amount', editable: true, sortable: true},
+                { headerName : "개당가격", field:'per_price' ,editable: true, sortable: true},
+                { headerName : "총가격", field:'total_price',resizable: true, sortable: true},
+                { headerName : "주문상태", field:'order_status',resizable: true, sortable: true},
             ],
+            
+            //검색어 검색 (그리드 안)
+            inputListsearch1:"", //검색어2
 
             //모달에서 제품 선택 
             selectedProCode : '',
@@ -94,7 +112,7 @@ export default{
    
 
     methods:{
-        
+        // 부모로 부터 (주문서조회) 부터 받은 order 
         async getOrderInfo(orderNum) { 
             
             console.log("넘어온값",this.order);
@@ -170,6 +188,7 @@ export default{
         dateFormat(value, format) {
           return userDateUtils.dateFormat(value, format);
       },
+   
 
 
       async updateOrder(){
@@ -209,25 +228,36 @@ export default{
         // }
 
         
-        //주문,주문서 업데이트
-        //업데이트 해야 하는 주문서 내용 
-        // let obj = {
-        //     orderlist_title : this.orderInfo[0]['orderlist_title'],
-        //     due_date: this.orderInfo[0]['due_date'],
-        // }
+        //주문  업데이트
+        const selectedRows = this.gridApi.getSelectedRows(); 
         //업데이트 해야 하는 주문 내용 (배열형성)
         let orderAmounts = []
         let perPrices = []
         let productCodes = []
         let orderCodes =[]
-        for(let i=0; i<this.rowData.length; i++){
-            if(this.rowData[i]['order_status'] === 'preparing'){
-                 // 주문상태가 preparing 인 경우 만 배열에 넣기 
-                orderAmounts.push(Number(this.rowData[i]['order_amount']));
-                productCodes.push(this.rowData[i]['product_code'])
-                perPrices.push(this.rowData[i]['per_price']);
-                orderCodes.push(this.rowData[i]['order_num']);
+
+         // preparing 상태가 아닌 데이터가 있는지 체크
+        let hasInvalidStatus = false;
+
+        selectedRows.forEach(row=>{
+            console.log(row.order_status);
+            if(row.order_status === '미출고'){
+                orderAmounts.push(Number(row.order_amount));
+                productCodes.push(row.product_code);
+                perPrices.push(row.per_price);
+                orderCodes.push(row.order_num);
+            }else {
+            // preparing이 아닌 상태가 존재할 경우 플래그를 설정
+            hasInvalidStatus = true;
             }
+        })
+        if (hasInvalidStatus) {
+        // preparing이 아닌 상태가 있는 경우 알림 표시
+        this.$notify({
+            text: `주문이 진행 중이 주문 건이 있습니다. 확인해주세요.`,
+            type: 'error',
+        });
+        return; // 부모로 데이터 전송 중단
         }
         
 
@@ -237,17 +267,9 @@ export default{
             orderAmount : JSON.stringify(orderAmounts),
             perPrice : JSON.stringify(perPrices),
         }
-
-        console.log(updateOrderInfo);
-        let result = await axios.put(`${ajaxUrl}/orderUpdate/update/${this.orderInfo[0]['orderlist_num']}`,updateOrderInfo)
-                                    .catch(err=>console.log(err));
-            console.log(result);
-        if(result.statusText === 'OK'){
-            this.$notify({
-                text: `${this.orderInfo[0]['orderlist_title']}이 수정되었습니다.`,
-                type: 'success',
-            });  
-        }
+        console.log("보내기:",updateOrderInfo);
+        //부모에게 주문 수정 내용 넘기기 
+        this.$emit('updateOrder',updateOrderInfo);
 
        
       },
