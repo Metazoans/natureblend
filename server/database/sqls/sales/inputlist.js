@@ -15,9 +15,9 @@ const getQtResult =
        ,q.pass_qnt
        ,q.inspec_end
 FROM process_work_body w  LEFT JOIN qc_packaging q
-ON q.process_num = w.process_num
-LEFT JOIN product p
-ON w.product_code = p.product_code
+                          ON q.process_num = w.process_num
+                          LEFT JOIN product p
+                          ON w.product_code = p.product_code
 WHERE q.qc_packing_id NOT IN (SELECT qc_packing_id FROM input_body) `;
 
 //제품 입고 
@@ -148,13 +148,13 @@ const inputRecord =
        ,e.name
        ,ih.input_date
 FROM input_body ib  JOIN product p 
-ON ib.product_code = p.product_code
+                    ON ib.product_code = p.product_code
                    JOIN warehouse w 
-ON ib.warehouse_code = w.warehouse_code
+                   ON ib.warehouse_code = w.warehouse_code
 				   JOIN input_header ih
-ON ib.inputlist_num = ih.inputlist_num
-JOIN employee e
-ON ih.emp_num = e.emp_num
+                   ON ib.inputlist_num = ih.inputlist_num
+                   JOIN employee e
+                   ON ih.emp_num = e.emp_num
 WHERE ib.input_flag = 0 `;
 
 //수정을 원하는 입고 건이 출고가 되었는지 유무 체크
@@ -326,7 +326,7 @@ const productNum =
                 ELSE 0 
             END), 0) AS valid_input_amount,
 
-   
+
     NVL(SUM(CASE 
                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(o.output_amount, 0) 
                 ELSE 0 
@@ -357,14 +357,10 @@ const productNum =
         ), 0) AS stock_amount
 FROM 
     product p
-LEFT JOIN 
-    input_body i
-ON 
-    p.product_code = i.product_code
-LEFT JOIN 
-    output o
-ON 
-    i.input_num = o.input_num `;
+LEFT JOIN input_body i
+ON p.product_code = i.product_code
+LEFT JOIN output o
+ON i.input_num = o.input_num `;
 
 
 //lot별 재고 조회 (재고상태, 유통기한 필터)
@@ -380,27 +376,26 @@ const lotNum =
     status.product_status
 FROM 
     input_body ib LEFT JOIN output o
-ON 
-    ib.input_num = o.input_num
-						LEFT JOIN warehouse w
-ON ib.warehouse_code = w.warehouse_code
-						LEFT JOIN qc_packaging qp
-ON ib.qc_packing_id = qp.qc_packing_id
-						LEFT JOIN product p
-ON ib.product_code = p.product_code
-						LEFT JOIN  (
-									      SELECT 
-									         ib_inner.input_num,
-									         CASE 
-									            WHEN ib_inner.dispose_flag = 1 THEN '폐기'
-									            WHEN ib_inner.input_flag = 1 THEN '취소'
-									            ELSE '보관'
-									            END AS product_status
-									        FROM 
-									            input_body ib_inner
-									    ) STATUS
-ON ib.input_num = status.input_num `;
-
+                  ON ib.input_num = o.input_num
+				  LEFT JOIN warehouse w
+                  ON ib.warehouse_code = w.warehouse_code
+				  LEFT JOIN qc_packaging qp
+                  ON ib.qc_packing_id = qp.qc_packing_id
+				  LEFT JOIN product p
+                  ON ib.product_code = p.product_code
+                  LEFT JOIN  (
+                                    SELECT 
+                                        ib_inner.input_num,
+                                        CASE 
+                                        WHEN ib_inner.dispose_flag = 1 THEN '폐기'
+                                        WHEN ib_inner.input_flag = 1 THEN '취소'
+                                        ELSE '보관'
+                                        END AS product_status
+                                    FROM 
+                                        input_body ib_inner
+                                ) STATUS
+                  ON ib.input_num = status.input_num `;
+//service에서 조건에 맞게 쿼리 가져오기
 /**WHERE ib.expire_date >='2025-01-01' 
 AND ib.expire_date <='2025-08-01' -- 유통기한 범위
 AND status.product_status IN ('보관') -- 상태 조건 (다중 필터링)

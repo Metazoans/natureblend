@@ -10,7 +10,8 @@ const path = require('path');
 // 영업
 const salesRouter = require('./router/sales/order_router.js');
 const outputRouter = require('./router/sales/output_router.js');
-const inputRouter = require('./router/sales/input_router.js')
+const inputRouter = require('./router/sales/input_router.js');
+const returnRouter = require('./router/sales/return_router.js');
 // 자재
 const materialRouter = require('./router/material_router.js');
 
@@ -43,6 +44,7 @@ app.use('/', empRouter);
 app.use('/', salesRouter);
 app.use('/', outputRouter);
 app.use('/', inputRouter);
+app.use('/', returnRouter);
 
 // 자재 라우터
 app.use('/', materialRouter);

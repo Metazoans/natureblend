@@ -209,7 +209,7 @@ const getInventoryLot = async(productStatus,startDate,endDate)=>{
 
 const disposeLot = async(disposeLot)=>{
   let datas = Object.values(disposeLot);
-  let result = await query('disposeLot',datas);
+  let result = await mysql.query('disposeLot',datas);
   let sendData = {};
 
   if(result.changeRows !== 0){

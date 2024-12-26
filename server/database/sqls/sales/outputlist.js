@@ -29,9 +29,9 @@ const disoutputOrder =
         ,order_amount- NVL(op.output_amount, 0) AS disorder_amount
         ,order_status
 FROM orders o left join product p 
-ON o.product_code = p.product_code
+                     ON o.product_code = p.product_code
               left join output op
-ON o.order_num = op.order_num
+                     ON o.order_num = op.order_num
 WHERE o.orderlist_num= ?
 AND o.order_status != 'shipped' `;
 
@@ -41,9 +41,9 @@ const getLotBaseProduct =
 	  ,b.input_amount
       ,h.input_date
 FROM input_body b left join input_header h
-ON b.inputlist_num = h.inputlist_num
+                  ON b.inputlist_num = h.inputlist_num
 				  left join output o
-ON b.input_num = o.input_num
+                  ON b.input_num = o.input_num
 WHERE b.product_code = ?
 AND b.input_amount - NVL(o.output_amount, 0) != 0
 AND b.input_flag = 0

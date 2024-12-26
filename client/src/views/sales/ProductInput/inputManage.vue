@@ -62,6 +62,7 @@
                     :columnDefs="columnQtlist"
                     :theme="theme"
                     @grid-ready="onGridReady"
+                    rowSelection="multiple"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     @rowClicked="onQtRowClicked"
                     :pagination="true"
@@ -231,7 +232,8 @@ export default{
 
             tempInput :[],
             columntempInput :[
-                { headerName: "체크",
+                { headerName: "",
+                headerCheckboxSelection: true,
                 field: "check",
                 resizable: false,
                 editable: true,

@@ -7,6 +7,7 @@
       :theme="theme"
       @grid-ready="onGridReady"
       :noRowsOverlayComponent="noRowsOverlayComponent"
+      rowSelection="multiple"
       @rowClicked="onRowClicked"
       :pagination="true"
       :paginationPageSize="10"

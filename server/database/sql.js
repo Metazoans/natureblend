@@ -7,6 +7,7 @@ const emp = require('./sqls/emp.js')
 const orderlist = require('./sqls/sales/orderlist.js');
 const outputlist = require('./sqls/sales/outputlist.js');
 const inputlist = require('./sqls/sales/inputlist.js')
+const returnlist = require('./sqls/sales/returnlist.js');
 
 // 자재
 const material = require('./sqls/material.js');
@@ -39,6 +40,7 @@ module.exports = {
   ...orderlist,
   ...outputlist,
   ...inputlist,
+  ...returnlist,
 
   // 자재
   ...material,

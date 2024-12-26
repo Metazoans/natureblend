@@ -137,12 +137,13 @@ export default{
             theme : theme,
             inputData : [],
             columnInputData : [
-            { headerName: "체크",
-                field: "check",
-                resizable: false,
-                editable: true,
-                sortable: false,
-                checkboxSelection: true,
+            { headerName: "",
+              headerCheckboxSelection: true,
+              field: "check",
+              resizable: false,
+              editable: true,
+              sortable: false,
+              checkboxSelection: true,
             },
             { headerName: "완제품코드", field: "product_code", resizable: true, sortable: true },
             { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true },
@@ -150,6 +151,7 @@ export default{
             { headerName: "입고수량 ", field: "input_amount", resizable: true, sortable: true },
             { headerName: "창고위치 ", field: "warehouse_name", editable: true, sortable: true },
             { headerName: "입고날짜 ", field: "input_date", resizable: true, sortable: true },
+            
         ],
 
            
