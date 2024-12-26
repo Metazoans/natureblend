@@ -292,6 +292,17 @@ const returnInsert =
 const returnDelete = 
 `DELETE FROM return_code
  WHERE return_code = ?`;
+// 흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도
+// 공정흐름도 조회
+const flowList =
+`SELECT process_chart_num,
+        product_code,
+        process_code,
+        process_sequence,
+        process_name
+ FROM process_chart
+ WHERE product_code = ?`
+// 흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도
      
  module.exports = {
     bomList,
@@ -332,5 +343,6 @@ const returnDelete =
     returnList,
     returnInsert,
     returnDelete,
+    flowList,
 
 }

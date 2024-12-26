@@ -258,5 +258,10 @@ router.delete('/returnDelete/:return_code',async(req,res)=>{
   let result = await bomService.deleteReturn(return_code);
   res.send(result);
 })
-
+// 공정흐름도 조회
+router.get('/flowList',async(req,res)=>{
+  let searchs = req.query;
+  let flowList = await bomService.returnList(searchs);
+  res.send(flowList);
+})
 module.exports = router;

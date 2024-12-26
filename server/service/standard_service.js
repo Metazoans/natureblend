@@ -295,6 +295,12 @@ const deleteReturn = async (return_code) => {
     return '실패';
   }
 }
+
+// 공정흐름도 조회
+const flowList = async () => {
+  let list = await mysql.query('flowList');
+  return list;
+}
 module.exports = {
     findAllBom,
     createNewBom,
@@ -332,4 +338,5 @@ module.exports = {
     returnList,
     insertReturn,
     deleteReturn,
+    flowList,
 }

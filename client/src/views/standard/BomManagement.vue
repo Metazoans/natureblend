@@ -130,7 +130,7 @@
           theme: theme,
           rowData:[],
           columnBoms: [
-            {checkboxSelection: true, headerCheckboxSelection: true, width: 50},
+            { checkboxSelection: true, headerCheckboxSelection: true, width: 50},
             { headerName:"자재코드", field : "material_code"},
             { headerName:"자재" , field: "material"},
             { headerName:"수량" , field: "material_con" , editable: true}
