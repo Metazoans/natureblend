@@ -118,5 +118,41 @@ export default {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
   }
+  &.work {
+    .green {
+      height: auto;
+      margin-top: 6px;
+      border-radius: 4px;
+      padding: 4px 6px;
+      width: fit-content !important;
+      line-height: 20px;
+      font-weight: 900;
+      color: white;
+      background-color: #4caf50;
+    }
+    .red {
+      height: auto;
+      margin-top: 6px;
+      border-radius: 4px;
+      padding: 4px 6px;
+      width: fit-content !important;
+      line-height: 20px;
+      font-weight: 900;
+      color: white;
+      background-color: #b82e24;
+    }
+    .gray {
+      height: auto;
+      margin-top: 6px;
+      border-radius: 4px;
+      padding: 4px 6px;
+      width: fit-content !important;
+      line-height: 20px;
+      font-weight: 900;
+      color: white;
+      background-color: #6c757d;
+    }
+  }
 }
+
 </style>
