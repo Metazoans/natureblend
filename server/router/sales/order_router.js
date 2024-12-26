@@ -65,4 +65,12 @@ router.delete('/orderlist/delete/:no',async(req,res)=>{
   res.send(info);
 })
 
+//출고된주문검색 
+router.get('/shippedOrderInfo/:no', async(req,res)=>{
+  let orderlistNum = req.params.no;
+  let info = await orderService.getShippedOrder(orderlistNum);
+  res.send(info);
+})
+
+
 module.exports = router;

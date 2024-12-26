@@ -43,6 +43,7 @@
                     @grid-ready="onReady"
                     :quickFilterText="inputListsearch"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
+                    rowSelection="multiple"
                     :pagination="true"
                     :paginationPageSize="20"
                 />
@@ -109,9 +110,10 @@
                     :rowData="LotNum"
                     :columnDefs="columnLotNum"
                     :theme="theme"
-                    @grid-ready="onReady"
-                    :quickFilterText="inputListsearch"
+                    @grid-ready="onReady1"
+                    :quickFilterText="inputListsearch1"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
+                    rowSelection="multiple"
                     :pagination="true"
                     :paginationPageSize="20"
                 />
@@ -156,7 +158,8 @@ export default{
             productCode:'', //저장될 제품 코드 
 
             //검색어 검색 (그리드 안)
-            inputListsearch: "", //검색어
+            inputListsearch: "", //검색어 1 (제품)
+            inputListsearch1:"", //검색어2 (lot)
 
           
 
@@ -189,7 +192,41 @@ export default{
             { headerName: "제조일자 ", field: "manufacturing_date", resizable: true, sortable: true },
             { headerName: "유통기한 ", field: "expire_date", resizable: true, sortable: true },
             { headerName: "상태", field: "product_status", resizable: true, sortable: true },
-            ],
+            {
+                headerName : "폐기",
+                field : "status",
+                editable : false,
+                cellRenderer: params =>{
+                      // 유통기한 값을 받아옵니다.
+                const expireDate = params.data.expire_date; // 유통기한이 날짜 형식이라 가정
+                const productStatus = params.data.product_status; // lot재고 상태
+                const currentDate = new Date();
+                if( new Date(expireDate) <= currentDate && productStatus === '보관'){
+                    const disposeButton = document.createElement('button');
+                    disposeButton.innerText = '폐기';
+                    disposeButton.style.marginRight = '10px';
+                    disposeButton.style.cursor = 'pointer';
+                    disposeButton.style.backgroundColor = '#ff0000';
+                    disposeButton.style.width = '60px';
+                    disposeButton.style.height = '30px';
+                    disposeButton.style.color = 'white';
+                    disposeButton.style.border = 'none';
+                    disposeButton.style.padding = '0';
+                    disposeButton.style.borderRadius = '4px';
+                    disposeButton.style.textAlign = 'center';
+                    disposeButton.style.lineHeight = '30px';
+
+                    disposeButton.addEventListener('click',()=>{
+                        this.renderButton(params);
+                    })
+                    return disposeButton;
+                }
+            }
+               
+               
+
+            }    
+        ],
 
 
             isShowModal: false,
@@ -272,6 +309,51 @@ export default{
                 paginationPanel.insertBefore(container,paginationPanel.firstChild);
             }
 
+           
+
+
+        },
+        onReady1(event){
+            this.gridApi = event.api;
+            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //페이징 영역에 버튼 만들기 
+            const allPanels = document.querySelectorAll('.ag-paging-panel');
+
+             //lot그리드
+             const paginationPanel1 = allPanels[1];
+            if (paginationPanel1) {
+               // 컨테이너 생성
+               const container1 = document.createElement('div');
+               container1.style.display = 'flex';
+               container1.style.alignItems = 'center';
+               container1.style.gap = '5px'; // 버튼과 입력 필드 간격
+
+               
+                //입력필드생성 
+                const inputText1 = document.createElement('input');
+                inputText1.type = 'text';
+                inputText1.placeholder = '검색1';
+                inputText1.style.padding = '5px';
+                inputText1.style.width = '250px';
+                inputText1.style.border = '1px solid #ccc';
+                inputText1.style.borderRadius = '4px';
+
+                //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
+                inputText1.addEventListener('input',(event)=>{
+                    const value = event.target.value;
+                    console.log("입력된 값:", value);
+
+                    //검색로직추가기능
+                    this.inputListsearch1 = value;
+                });
+
+                //컨테이너에 버튼, 입력 필드 추가
+                
+                container1.appendChild(inputText1);
+
+                //페이징 영역에 컨테이너삽입
+                paginationPanel1.insertBefore(container1,paginationPanel1.firstChild);
+            }
         },
 
         async searchProductNum(){
@@ -319,58 +401,29 @@ export default{
 
         // 버튼 렌더링 함수
         async renderButton(params) {
-              // 유통기한 값을 받아옵니다.
-            const expireDate = params.data.expire_date; // 유통기한이 날짜 형식이라 가정
-            const currentDate = new Date();
 
-            // 유통기한이 현재 날짜 이후인지 확인
-            const isValid = new Date(expireDate) <= currentDate;
-
-            // 조건에 맞으면 버튼을 활성화, 아니면 비활성화
-            const disposeButton = document.createElement('button');
-        
-            disposeButton.innerText = '폐기';
-            disposeButton.style.marginRight = '10px';
-            disposeButton.style.cursor = 'pointer';
-            disposeButton.style.backgroundColor = '#f48a06';
-            disposeButton.style.width = '60px';
-            disposeButton.style.height = '30px';
-            disposeButton.style.color = 'white';
-            disposeButton.style.border = 'none';
-            disposeButton.style.padding = '0';
-            disposeButton.style.borderRadius = '4px';
-            disposeButton.style.textAlign = 'center';
-            disposeButton.style.lineHeight = '30px';
-            //버튼 활성화/비활성화
-            disposeButton.disabled = !isValid;
-                       
-
-            //버튼 클릭시 동작하는 함수
-            disposeButton.addEventListener('click', async ()=>{
-                alert(`폐기버튼 클릭: ${params.data.product_lot}`)
-
-                let disposeLot = {
-                    disposeLots : params.data.product_lot
-                };
-                let result = await axios.put(`${ajaxUrl}/inventory/dispose`,disposeLot)
-                                        .catch(err => console.log(err));
-                console.log(result.data.result);
-                // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
-                if(result.data.result === true){
-                        this.$notify({
-                        text: `해당 LOT는 폐기 되었습니다. `,
-                        type: 'success',
-                    });
-                }else{
+            let disposeLot = {
+                disposeLots : params.data.product_lot
+            };
+            let result = await axios.put(`${ajaxUrl}/inventory/dispose`,disposeLot)
+                                    .catch(err => console.log(err));
+            console.log(result.data.result);
+            // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
+            if(result.data.result === true){
                     this.$notify({
-                        text: `해당 LOT는 폐기 처리 실패 했습니다. `,
-                        type: 'error',
-                    });
-                }
+                    text: `해당 LOT는 폐기 되었습니다. `,
+                    type: 'success',
+                });
+            }else{
+                this.$notify({
+                    text: `해당 LOT는 폐기 처리 실패 했습니다. `,
+                    type: 'error',
+                });
+            }
                 
-            });
+          
 
-            return disposeButton;  // 버튼 반환
+     
         },
       
 

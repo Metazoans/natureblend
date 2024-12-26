@@ -139,7 +139,11 @@ const delOrderlist = async(orderlistNum)=>{
   }
 }
 
-
+//출고된주문검색 
+const getShippedOrder = async(no)=>{
+  let list = await mysql.query('shippedOrder',[no]);
+  return list;
+}
 module.exports = {
     getClientList,
     getOrderList,
@@ -149,5 +153,6 @@ module.exports = {
     getOrderInfo,
     updateAddOrder,
     updateOrderInfo,
-    delOrderlist
+    delOrderlist,
+    getShippedOrder,
 }

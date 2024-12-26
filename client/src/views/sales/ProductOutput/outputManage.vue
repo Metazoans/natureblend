@@ -69,6 +69,7 @@
         @grid-ready="onGridReady"
         :noRowsOverlayComponent="noRowsOverlayComponent"
         @rowClicked="onOrderRowClicked"
+        rowSelection="multiple"
         :pagination="true"
         :paginationPageSize="10"
     />
@@ -89,6 +90,7 @@
                 @grid-ready="onGridReady"
                 :noRowsOverlayComponent="noRowsOverlayComponent"
                 @rowClicked="onDisoutputRowClicked"
+                rowSelection="multiple"
                 :pagination="true"
                 :paginationPageSize="10"
                 />
@@ -216,7 +218,8 @@ export default{
 
             rowDataLot :[],
             columnLot :[
-            { headerName: "체크",
+            {headerName: "",
+            headerCheckboxSelection: true,
             field: "check",
             resizable: false,
             editable: true,

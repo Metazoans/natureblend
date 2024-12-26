@@ -365,6 +365,24 @@ CALL orderlistDelete(21);*/
 const orderListDelete = 
 `CALL orderlistDelete(?)`;
 
+
+//주무서를 검색해서 출고완료된 주문 출력 
+const shippedOrder = 
+`SELECT  o.order_num
+		  ,p.product_code
+        ,p.product_name
+        ,o.order_amount
+        ,NVL(op.output_amount, 0) AS output_amount
+        ,o.order_amount- NVL(op.output_amount, 0) AS disorder_amount
+        ,o.per_price
+        ,o.order_status
+FROM orders o left join product p 
+                     ON o.product_code = p.product_code
+              left join output op
+                     ON o.order_num = op.order_num
+WHERE o.orderlist_num= ?
+AND o.order_status != 'preparing'`;
+
 module.exports = {
     orderList,
 	clientlist,
@@ -376,5 +394,6 @@ module.exports = {
 	updateOrder,
     orderListDelete,
 	orderInfo,
+	shippedOrder,
 
 }
