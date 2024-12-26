@@ -245,6 +245,10 @@ const lotQtyInfomation = async (inputNum)=>{
 const lotQtyList = async (qty_state, materialCode, clientName, POListCode, startDate, endDate, materialNomal, materialLotState, limitOut)=>{
   
   let searchList = [];
+
+  searchList.push(` mlq.in_qty > 0 `);
+
+
   if(materialNomal != undefined && Object.keys(materialNomal).length > 0){
     let search = `mlq.material_nomal IN (`;  
     for (let key in materialNomal) {        
