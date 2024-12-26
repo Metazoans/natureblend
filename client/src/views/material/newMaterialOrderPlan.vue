@@ -145,11 +145,11 @@ export default {
 
             this.needMaterialList = this.needMaterialList.map((col) => ({
                 ...col,
-                stok_qty: col.material.includes('병') ? Number(col.stok_qty) : Math.ceil(col.stok_qty * 0.001),
-                safety_inventory: col.material.includes('병') ? Number(col.safety_inventory) : Math.ceil(col.safety_inventory * 0.001),
-                plan_qty: col.material.includes('병') ? Number(col.plan_qty) : Math.ceil(col.plan_qty * 0.001),
-                ordering_qty: col.material.includes('병') ? Number(col.ordering_qty) : Math.ceil(col.ordering_qty * 0.001),
-                need_qty: col.material.includes('병') ? Number(col.need_qty) : Math.ceil(col.need_qty * 0.001),
+                stok_qty: col.material.includes('병') ? Number(col.stok_qty).toLocaleString() : Math.ceil(col.stok_qty * 0.001).toLocaleString(),
+                safety_inventory: col.material.includes('병') ? Number(col.safety_inventory).toLocaleString() : Math.ceil(col.safety_inventory * 0.001).toLocaleString(),
+                plan_qty: col.material.includes('병') ? Number(col.plan_qty).toLocaleString() : Math.ceil(col.plan_qty * 0.001).toLocaleString(),
+                ordering_qty: col.material.includes('병') ? Number(col.ordering_qty).toLocaleString() : Math.ceil(col.ordering_qty * 0.001).toLocaleString(),
+                need_qty: col.material.includes('병') ? (Number(col.need_qty)+Number(col.safety_inventory)).toLocaleString() : (Math.ceil(col.need_qty * 0.001)+Math.ceil(col.safety_inventory * 0.001)).toLocaleString(),
             }));
 
             console.log('결과 : ',this.needMaterialList);

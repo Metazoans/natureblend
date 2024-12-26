@@ -307,7 +307,8 @@ const matrialInputList = async function(){
    console.log(result.data);
    rowData.value = result.data.map((col) => ({
       ...col,
-      ord_qty: (col.ord_qty * 0.001) + " kg",
+      //ord_qty: (col.ord_qty * 0.001) + " kg",
+      ord_qty: col.material_name.includes('병') ? (Number(col.ord_qty)*0.001).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
       in_qty: (col.in_qty * 0.001) + " kg",
       pass_qty: (col.pass_qty * 0.001) + " kg",
       reject_qty: (col.reject_qty * 0.001) + " kg",

@@ -94,6 +94,11 @@ const inputLotInfoGo = async (materialObj)=>{
   let a6 = materialObj.rjc_qnt;
   let a7 = materialObj.warehouse2;
   let a8 = materialObj.emp_num;
+  console.log('aaaa', a8);
+  console.log('aaaa', a8);
+  console.log('aaaa', a8);
+  console.log('aaaa', a8);
+  console.log('aaaa', a8);
   let list = await mysql.query('input_lot_material', [a1, a2, a3, a4, a5, a6, a7, a8] );
   console.log(list);
   return list;

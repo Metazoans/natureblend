@@ -124,7 +124,8 @@
                   faulty_code: val.faulty_code,
                   faulty_reason: val.faulty_reason,
                   qc_material_rjc_id: val.qc_material_rjc_id,
-                  rjc_quantity: val.rjc_quantity,
+                  //rjc_quantity: val.rjc_quantity,
+                  rjc_quantity: this.inspection_data.material_name.includes('병') ? (Number(val.rjc_quantity)*0.001) : val.rjc_quantity,
                }));
                //console.log('bbbb',this.inspectionList);
             }

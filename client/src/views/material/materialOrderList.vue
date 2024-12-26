@@ -488,10 +488,11 @@ const matrialOrderList2 = async function(){
    console.log(result.data);
    rowData.value = result.data.map((col) => ({
       ...col,
-      ord_qty: (col.ord_qty * 0.001) + " kg",
+      //ord_qty: (col.ord_qty * 0.001) + " kg",
+      ord_qty: col.material_name.includes('병') ? (Number(col.ord_qty)*0.001).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
       order_date: userDateUtils.dateFormat(col.order_date, "yyyy-MM-dd"),
       limit_date: userDateUtils.dateFormat(col.limit_date, "yyyy-MM-dd"),
-      unit_price: Number(col.unit_price).toLocaleString() + " 원",
+      unit_price: Number(col.unit_price*0.001).toLocaleString() + " 원",
       total_price: Number(col.total_price*0.001).toLocaleString() + " 원"
     })
   );

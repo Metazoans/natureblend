@@ -163,12 +163,16 @@ const matrialQcInput = async function(){
   rowData.value = result.data.map(col => ({
     ...col,
     inspec_end: userDateUtils.dateFormat(col.inspec_endm, "yyyy-MM-dd"),
-    ord_qty: (col.ord_qty * 0.001) + " kg",
-    total_qnt: (col.total_qnt * 0.001) + " kg",
-    pass_qnt: (col.pass_qnt * 0.001) + " kg",
-    rjc_qnt: (col.rjc_qnt * 0.001) + " kg",
-    unit_price: Number(col.unit_price).toLocaleString() + " 원",
-    total_price: Number(col.total_price*0.001).toLocaleString() + " 원",
+    //ord_qty: (col.ord_qty * 0.001) + " kg",
+    ord_qty: col.material_name.includes('병') ? (Number(col.ord_qty)*0.001).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
+    //total_qnt: (col.total_qnt * 0.001) + " kg",
+    total_qnt: col.material_name.includes('병') ? (Number(col.total_qnt)*0.001).toLocaleString() + " 개" : (Number(col.total_qnt) * 0.001).toLocaleString() + " kg",
+    //pass_qnt: (col.pass_qnt * 0.001) + " kg",
+    pass_qnt: col.material_name.includes('병') ? (Number(col.pass_qnt)*0.001).toLocaleString() + " 개" : (Number(col.pass_qnt) * 0.001).toLocaleString() + " kg",
+    //rjc_qnt: (col.rjc_qnt * 0.001) + " kg",
+    rjc_qnt: col.material_name.includes('병') ? (Number(col.rjc_qnt)*0.001).toLocaleString() + " 개" : (Number(col.rjc_qnt) * 0.001).toLocaleString() + " kg",
+    unit_price: Number(col.unit_price*0.001).toLocaleString() + " 원",
+    total_price: Number(col.total_price*0.000001).toLocaleString() + " 원",
   }));
 }
 
@@ -336,9 +340,11 @@ const lotMaking = async function(){
       lot_code: prefix.value + ( (numberPart.value + i).toString().padStart(3, '0') ),
       order_code: nuwList.value[i].order_code,
       material_name: nuwList.value[i].material_name,
-      pass_qnt: ( Number( nuwList.value[i].pass_qnt.split(' ')[0] ) * 1000 ),
+      //pass_qnt: ( Number( nuwList.value[i].pass_qnt.split(' ')[0] ) * 1000 ),
+      pass_qnt: ( Number( parseFloat(nuwList.value[i].pass_qnt.replace(/,/g, '')) ) * 1000 ),
       warehouse1: nuwList.value[i].warehouse1,
-      rjc_qnt: ( Number( nuwList.value[i].rjc_qnt.split(' ')[0] ) * 1000 ),
+      //rjc_qnt: ( Number( nuwList.value[i].rjc_qnt.split(' ')[0] ) * 1000 ),
+      rjc_qnt: ( Number( parseFloat(nuwList.value[i].rjc_qnt.replace(/,/g, '')) ) * 1000 ),
       warehouse2: nuwList.value[i].warehouse2,
       emp_num: 1,   // 사원번호는 로그인한 세션으로 해야할꺼같음
     };
@@ -371,7 +377,6 @@ const confirm = () => {
     // console.log('엄마컴포넌트 : ', nuwList.value[i]['warehouse1']);
     // console.log('엄마컴포넌트 : ', nuwList.value[i]['warehouse2']);
     if(!nuwList.value[i]['warehouse1'] || !nuwList.value[i]['warehouse2']){
-      //alert('창고선택이 덜 됐음 noti 해야하는데... 다영이한테 다시 물어보기');
       notify({
           title: "창고선택",
           text: "창고선택을 완료한후에 작업을 시작해주세요.",

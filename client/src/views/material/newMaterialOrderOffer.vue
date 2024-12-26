@@ -86,10 +86,11 @@ export default {
                 { headerName: "자재재고", field: "stok_qty" },
                 { headerName: "안전재고", field: "safety_inventory" },
                 { headerName: "계획재고", field: "plan_qty" },
-                { headerName: "발주중재고", field: "ordering_qty" },
+                { headerName: "발주재고", field: "ordering_qty" },
                 { headerName: "필요수량", field: "need_qty" },
                 {  
-                    headerName: "거래처선택", 
+                    headerName: "거래처", 
+                    width:150,
                     field: "선택", 
                     editable: false,
                     cellRenderer: params => {
@@ -115,7 +116,7 @@ export default {
                         return clientButton;
                     }
                 },
-                { headerName: "거래처명", field: "com_name" },
+                { headerName: "거래처명", field: "com_name", width:210 },
                 { headerName: "발주수량", field: "go_qty", editable: true },
                 { headerName: "단가", field: "go_price", editable: true },
                 { headerName: "총금액", field: "go_total_price" },
@@ -213,7 +214,8 @@ export default {
                 const quantity = parseFloat(data.go_qty) || 0;
                 const price = parseFloat(data.go_price) || 0;
 
-                data.go_total_price = quantity * price;
+                //data.go_total_price = (quantity * price).toLocaleString();
+                data.go_total_price = (quantity * price);
 
                 //console.log(data.go_total_price);
 

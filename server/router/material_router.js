@@ -78,7 +78,7 @@ router.get('/material/lotNum', async (req, res)=>{
 //자재 입고 처리 하기
 router.post('/material/inputMaterial', async (req, res)=>{
   let materialObj = req.body;
-  //console.log(materialObj);
+  console.log(materialObj);
   let inputLotInfo = await materialService.inputLotInfoGo(materialObj);
   console.log(inputLotInfo);
   res.send(inputLotInfo);
