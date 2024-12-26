@@ -265,7 +265,6 @@ export default {
 
 
 
-
     ///신청 건의 불량항목 내역 관련
     addDefectDetailForRow(qcMaterialId) {
       if (!this.defectDetailsMap[qcMaterialId]) {
