@@ -68,6 +68,20 @@ const updateProcessEndTime = `
     where process_work_header_num = ?
 `
 
+// 실행 방법(공정작업바디번호, 총 (검사) 수량, 사원번호)
+// CALL qc_p_cleaning_input_list(4, 50, 1, @result);
+const insertCleaningQc = `
+    CALL qc_p_cleaning_input_list(?, ?, ?, @result);
+`
+
+const insertJuiceQc = `
+    CALL qc_p_juice_input_list(?, ?, ?, @result);
+`
+
+const insertPackagingQc = `
+    CALL qc_p_packaging_input_list(?, ?, ?, @result);
+`
+
 module.exports = {
     workingOrders,
     workForToday,
@@ -80,5 +94,8 @@ module.exports = {
     endPartialWork,
     updateProcessStatus,
     updateProcessStartTime,
-    updateProcessEndTime
+    updateProcessEndTime,
+    insertCleaningQc,
+    insertJuiceQc,
+    insertPackagingQc
 }

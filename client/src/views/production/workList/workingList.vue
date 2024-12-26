@@ -59,7 +59,7 @@
             <p class="fw-bold field">공정완료시간</p>
             <p class="fw-bold data">{{ partialWorkLastEndTime }}</p>
           </div>
-          <i class="fa fa-plus-circle fa-2x cursor-pointer" @click="addPartialWork"></i>
+          <i v-show="partialWorkFinalStatus !== 'process_complete'" class="fa fa-plus-circle fa-2x cursor-pointer" @click="addPartialWork"></i>
         </div>
         <div class="table-responsive p-0">
           <table
@@ -280,12 +280,30 @@ export default {
           type: 'success',
         });
         await this.getPartialWorkList()
+        this.startQc(partialWork)
+
+        this.searchEmp = {}
+        this.searchMachine = {}
       }
+    },
+
+    async startQc(partialWork) {
+      let qcInfo = {
+        qcType: this.selectedRow.process_code,
+        info: {
+          processNum: partialWork.process_num,
+          qty: partialWork.new_process_todo_qty,
+          empNum: this.searchEmp.emp_num
+        }
+      }
+
+      let result = await axios.post(`${ajaxUrl}/production/work/qc`, qcInfo)
+          .catch(err => console.log(err));
+      console.log('startQc', result)
 
     },
 
     async endPartialWork(partialWork) {
-      console.log(partialWork)
       if(partialWork.fail_qty === null && partialWork.new_fail_qty === null) {
         this.$notify({
           text: "불량량을 입력해주세요.",
@@ -340,15 +358,14 @@ export default {
           text: "분할작업이 등록되었습니다.",
           type: 'success',
         });
+
+        await this.getPartialWorkList()
       } else {
         this.$notify({
           text: "분할작업 등록 실패하였습니다.",
           type: 'fail',
         });
       }
-
-      await this.getPartialWorkList()
-      // this.start
     },
 
     getPartialWorkFinalQty() {

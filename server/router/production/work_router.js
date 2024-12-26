@@ -70,4 +70,23 @@ router.put('/process/end', async (req, res)=>{
     let result = await workService.updateEndTime(endInfo)
     res.send(result)
 });
+
+router.post('/qc', async (req, res)=>{
+    let qcInfo = req.body
+    let result = null
+
+    if(qcInfo.qcType === 'P1') {
+        result = await workService.qcCleaning(qcInfo.info)
+    } else if(qcInfo.qcType === 'P2') {
+        result = await workService.qcJuice(qcInfo.info)
+    } else if(qcInfo.qcType === 'P3'){
+        result = await workService.qcPackaging(qcInfo.info)
+        console.log(' qcPackaging result ', result)
+    } else {
+        console.log('해당 공정 검사가 없습니다.')
+    }
+
+    res.send(result)
+});
+
 module.exports = router
