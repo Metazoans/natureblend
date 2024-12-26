@@ -103,7 +103,7 @@ const findRequestForQCM = async (mName, startDate, endDate) => {
 //입고검사관리-검사완료
 const completeQCM = async (qcm, qcmr) => {
   let sql1 = 'updateQCM';
-  let sql2 = 'insertQCMR';
+  let sql2 = 'insertQCMF';
   let updatedRows = 0;  // 수정된 수(검사완료처리)
   let successNum = 0;   // 등록된 수 (불량품처리)
 
@@ -139,26 +139,69 @@ const findFaultyCodeOneToFive = async () => {
   return list;
 };
 
-//입고검사기록조회(검사완료 전체조회)
-const findQCMComplete = async() => {
-  let sql = 'selectQCMAll';
+//입고검사기록조회(전체조회)
+const findQCMRecordAll = async () => {
+  let sql = 'selectQCMRAll';
   let list = await mysql.query(sql);
   return list;
 }
+//입고검사기록조회(선택 조회)
+const findQCMRecord = async (mName, startDate, endDate, qcState) => {
+  let searchList = [];
 
+  //검사상태
+  let state = ''
+  switch(qcState) {
+    case 'qcs2':
+      state = `inspec_status LIKE '검사완료'`;
+      searchList.push(state);
+      break;
+    case 'qcs3':
+      state = `inspec_status LIKE '검사요청완료'`;
+      searchList.push(state);
+      break;
+    default:
+      break;
+  }
 
+  if (mName != undefined && mName != null && mName != '') {
+    let search = `m.material_name LIKE \'%${mName}%\'`;
+    searchList.push(search);
+  }
+
+  if (startDate != undefined && startDate != null && startDate != '') {
+    let search = `q.inspec_start >= \'${startDate} 00:00:00\'`;
+    searchList.push(search);
+  }
+
+  if (endDate != undefined && endDate != null && endDate != '') {
+    let search = `q.inspec_start <= \'${endDate} 23:59:59\'`;
+
+    searchList.push(search);
+  }
+
+  let querywhere = '';
+  for (let i = 0; i < searchList.length; i++) {
+    let search = searchList[i];
+    querywhere += (i == 0 ? ` ` : `AND `) + search;
+  };
+
+  querywhere = searchList.length == 0 ? "ORDER BY q.qc_material_id DESC" : `WHERE ${querywhere} ORDER BY q.qc_material_id DESC`;
+  console.log('selected Query', querywhere);
+
+  let result = await mysql.query('selectQCMRWithConditions', querywhere);
+  return result;
+
+}
 
 
 //입고검사-불량내역조회
-const findQCMRAll = async() =>{
-  let sql = 'selectQCMR';
+const findQCMFaultyAll = async () => {
+  let sql = 'selectQCMF';
   let list = await mysql.query(sql);
   return list;
 }
-const findQCMR = async(mName, startDate, endDate) =>{
-  // let sql = 'selectQCMR';
-  // let list = await mysql.query(sql);
-  // return list;
+const findQCMFaulty = async (mName, startDate, endDate) => {
 
   let searchList = [];
 
@@ -187,7 +230,7 @@ const findQCMR = async(mName, startDate, endDate) =>{
   querywhere = searchList.length == 0 ? "ORDER BY r.qc_material_rjc_id DESC " : `WHERE ${querywhere} ORDER BY r.qc_material_rjc_id DESC `;
   console.log('selected Query', querywhere);
 
-  let result = await mysql.query('selectQCMRWithConditions', querywhere);
+  let result = await mysql.query('selectQCMFWithConditions', querywhere);
   return result;
 }
 
@@ -200,7 +243,8 @@ module.exports = {
   findRequestForQCM,
   completeQCM,
   findFaultyCodeOneToFive,
-  findQCMComplete,
-  findQCMRAll,
-  findQCMR
+  findQCMRecordAll,
+  findQCMRecord,
+  findQCMFaultyAll,
+  findQCMFaulty
 };

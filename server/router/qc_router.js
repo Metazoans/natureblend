@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const qc_service = require('../service/qc_service.js');
 
-// // 자재품질검사 전체조회
+// 자재품질검사 전체조회
 router.get('/meterialOrderQCAll', async (req, res)=>{
   let orderList = await qc_service.findMeterialOrder();
   res.send(orderList);
@@ -17,7 +17,6 @@ router.post('/meterialOrderQC', async (req, res)=>{
 
 // 자재품질검사 신청(입력)
 router.post('/insertQCM', async (req, res)=>{
-  //console.log(req.body);
   let insertObj = []
   for(let i=0;i<req.body.length;i++){
     let { orderCode, mName, ordQty, orderDate} = req.body[i];
@@ -43,42 +42,45 @@ router.get('/requestQCMAll', async (req, res)=>{
   res.send(list);
 });
 router.post('/requestQCM', async (req, res)=>{
-  let {mName, startDate, endDate} = req.body;
-  let list = await qc_service.findRequestForQCM(mName, startDate, endDate);
+  let {mName, startDate, endDate, qcState} = req.body;
+  let list = await qc_service.findRequestForQCM(mName, startDate, endDate, qcState);
   res.send(list);
 });
 
 //자재검사관리- 검사완료처리
 router.post('/completeQCM', async(req, res)=>{
   let {qcm, qcmr} = req.body;
-  // console.log(qcm);
-  // console.log(qcmr);
   let result = await qc_service.completeQCM(qcm, qcmr);
-  //let result = '테스트';
   res.send(result);
 });
 
 //자재검사기록조회-전체조회
-router.get('/recordQCMByComplete', async(req, res)=>{
-  let result = await qc_service.findQCMComplete();
+router.get('/recordQCMAll', async(req, res)=>{
+  let result = await qc_service.findQCMRecordAll();
   res.send(result);
+  
 });
 
-
-
-
+//자재검사기록조회 - 조건 조회
+router.post('/recordQCM', async(req, res)=>{
+  let {mName, startDate, endDate, qcState} = req.body;
+  let result = await qc_service.findQCMRecord(mName, startDate, endDate, qcState);
+  console.log(result);
+  res.send(result);
+  
+});
 
 
 //자재검사불량내역조회-전체조회
 router.get('/recordQCMRAll', async(req, res)=>{
-  let result = await qc_service.findQCMRAll();
+  let result = await qc_service.findQCMFaultyAll();
   res.send(result);
 });
 
 //자재검사불량내역조회-전체조회
 router.post('/recordQCMR', async(req, res)=>{
   let {mName, startDate, endDate} = req.body;
-  let list = await qc_service.findQCMR(mName, startDate, endDate);
+  let list = await qc_service.findQCMFaulty(mName, startDate, endDate);
   res.send(list);
 });
 
