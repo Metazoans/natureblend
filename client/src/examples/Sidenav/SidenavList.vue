@@ -170,17 +170,18 @@
         <sidenav-collapse
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
-            collapseRef="mainpage"
+            :collapse="false"
+            collapseRef="workingList"
             navText="공정작업"
+            @click="movePage('workingList')"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
-          <template v-slot:list>
-            <li class="sub-item" @click="movePage('workingList')">실행작업 목록</li>
-            <li class="sub-item" @click="movePage('workDoneList')">완료작업 목록</li>
-          </template>
+<!--          <template v-slot:list>-->
+<!--            <li class="sub-item" @click="movePage('workingList')">실행작업 목록</li>-->
+<!--            <li class="sub-item" @click="movePage('workDoneList')">완료작업 목록</li>-->
+<!--          </template>-->
         </sidenav-collapse>
         <sidenav-collapse 
             url="#"
@@ -300,7 +301,7 @@
             class="sub-item" @click="movePage('customermanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="거래처 관리"
         >
@@ -312,7 +313,7 @@
             class="sub-item" @click="movePage('bommanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="BOM 관리"
         >
@@ -324,7 +325,7 @@
             class="sub-item" @click="movePage('processflowmanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="공정 흐름도 관리"
         >
@@ -336,7 +337,7 @@
             class="sub-item" @click="movePage('productmanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="제품 관리"
         >
@@ -348,7 +349,7 @@
             class="sub-item" @click="movePage('materialmanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="자재 관리"
         >
@@ -360,7 +361,7 @@
             class="sub-item" @click="movePage('badcodemanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="불량 코드 관리"
         >
@@ -372,7 +373,7 @@
             class="sub-item" @click="movePage('returncodemanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="반품 코드 관리"
         >
@@ -384,7 +385,7 @@
             class="sub-item" @click="movePage('processstandardmanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="공정기준정보 관리"
         >
@@ -396,7 +397,7 @@
             class="sub-item" @click="movePage('warehousemanagement')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="창고 관리"
         >
@@ -408,7 +409,7 @@
             class="sub-item" @click="movePage('standardTest')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="테스트1"
         >
@@ -420,7 +421,7 @@
             class="sub-item" @click="movePage('standardTest2')"
             url="#"
             :aria-controls="''"
-            v-bind:collapse="true"
+            v-bind:collapse="false"
             collapseRef="mainpage"
             navText="테스트2"
         >
@@ -477,8 +478,8 @@ export default {
   font-size: 14px;
   cursor: pointer;
   border-left: 3px solid #ffa500;
-  margin: 4px 0 10px 0;
-  padding: 0 0 0 5px;
+  padding: 2px 1px 2px 4px;
+  margin: 7px 6px 11px 32px;
 }
 
 .sub-item:hover {

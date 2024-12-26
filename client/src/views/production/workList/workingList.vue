@@ -4,16 +4,16 @@
     <div class="container-fluid">
       <div class="search-container mt-4 mb-2">
         <div class="input-group w-auto h-25">
-          <input type="text" @click="openModal('prodOrder')" :value="workList[0]?.production_order_name" readonly class="form-control border p-2 cursor-pointer" placeholder="생산지시 선택">
+          <input type="text" @click="openModal('prodOrder')" :value="processList[0]?.production_order_name" readonly class="form-control border p-2 cursor-pointer" placeholder="생산지시 선택">
         </div>
         <div class="product" >
           <h6>제품명:</h6>
-          <p>{{ workList[0] ? workList[0].product_name : '-' }}</p>
+          <p>{{ processList[0] ? processList[0].product_name : '-' }}</p>
           <h6 class="bold">작업일자:</h6>
-          <p>{{ workList[0] ? workList[0].work_date : '-'}}</p>
+          <p>{{ processList[0] ? processList[0].work_date.split('T')[0] : '-'}}</p>
         </div>
       </div>
-      <div class="grid-container" >
+      <div class="grid-container work">
         <ag-grid-vue
             :rowData="rowData"
             :columnDefs="columnDefs"
@@ -29,19 +29,35 @@
             <p v-if="Object.keys(selectedRow).length" class="fw-bold data">{{ selectedRow.process_name }}</p>
             <p v-else class="fw-bold data">위에서 작업을 선택해주세요</p>
           </div>
-          <div class="mb-3 status">
-            <label class="col-form-label fw-bold">작업진행</label>
-            <div>
-              <label v-for="status in partialProcessStatusList" :key="status" class="me-3 cursor-pointer">
-                {{ status }}
-                <input
-                    type="radio"
-                    name="status"
-                    :value="status"
-                    v-model="selectedStatus"
-                />
-              </label>
-            </div>
+<!--          <div class="mb-3 status">-->
+<!--            <label class="col-form-label fw-bold">작업진행</label>-->
+<!--            <div>-->
+<!--              <label v-for="status in partialProcessStatusList" :key="status" class="me-3 cursor-pointer">-->
+<!--                {{ status }}-->
+<!--                <input-->
+<!--                    type="radio"-->
+<!--                    name="status"-->
+<!--                    :value="status"-->
+<!--                    v-model="selectedStatus"-->
+<!--                />-->
+<!--              </label>-->
+<!--            </div>-->
+<!--          </div>-->
+          <div class="process-name">
+            <p class="fw-bold field">공정 생산량</p>
+            <p class="fw-bold data">{{ partialWorkFinalQty }}개</p>
+          </div>
+          <div class="process-name">
+            <p class="fw-bold field">공정 진행</p>
+            <p class="fw-bold data">{{ processStatus[partialWorkFinalStatus] }}</p>
+          </div>
+          <div class="process-name">
+            <p class="fw-bold field">공정시작시간</p>
+            <p class="fw-bold data">{{ partialWorkFirstStartTime }}</p>
+          </div>
+          <div class="process-name">
+            <p class="fw-bold field">공정완료시간</p>
+            <p class="fw-bold data">{{ partialWorkLastEndTime }}</p>
           </div>
           <i class="fa fa-plus-circle fa-2x cursor-pointer" @click="addPartialWork"></i>
         </div>
@@ -85,23 +101,32 @@
                 <h6 v-if="partialWork.success_qty !== null" class="mb-0 text-sm text-center">{{ partialWork.success_qty }}</h6>
                 <input v-else v-model="partialWork.new_success_qty" type="number" class="form-control border p-2 cursor-pointer" />
               </td>
-              <td>
+              <td class="text-center">
                 <button @click="startPartialWork(partialWork)" :disabled="partialWork.partial_process_start_time">시작</button>
               </td>
               <td>
                 <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_start_time ? dateFormat(partialWork.partial_process_start_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>
               </td>
-              <td>
-                <button :disabled="!partialWork.partial_process_start_time">종료</button>
+              <td class="text-center">
+                <button @click="endPartialWork(partialWork)" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>
               </td>
               <td>
                 <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_end_time ? dateFormat(partialWork.partial_process_end_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>
               </td>
-              <td>
-                <button>요청</button>
-              </td>
-              <td>
-                <h6 class="mb-0 text-sm text-center">{{ partialWorkStatus[partialWork.partial_process_status] }}</h6>
+<!--              <td>-->
+<!--                <button @click="requestRepair(partialWork)" :disabled="partialWork.partial_process_end_time">요청</button>-->
+<!--              </td>-->
+              <td class="text-center">
+                <h6
+                    class="mb-0 text-sm text-center status"
+                    :class="{
+                      red: partialWork.partial_process_status === 'partial_process_waiting',
+                      gray: partialWork.partial_process_status === 'partial_processing',
+                      green: partialWork.partial_process_status === 'partial_process_complete'
+                    }"
+                >
+                  {{ partialWorkStatus[partialWork.partial_process_status] }}
+                </h6>
               </td>
             </tr>
             </tbody>
@@ -162,7 +187,7 @@ export default {
       partialWorkList: [],
       selectedStatus: '전체',
       partialProcessStatusList: ['전체', '진행중', '완료'],
-      cols: ['작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '정비요청', '진행상태'],
+      cols: ['작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '진행상태'],
       isShowModal: false,
       modalTitle: '생산지시 목록',
       selectedWorkingOrder: {},
@@ -175,27 +200,34 @@ export default {
         { headerName: "공정명", field: 'process_name' },
         { headerName: "설비분류", field: 'machine_type' },
         { headerName: "지시량", field: 'production_order_qty' },
-        { headerName: "생산량", field: 'done_qty' },
-        { headerName: "진행상태", field: 'process_status' },
-        { headerName: "공정시작시간", field: 'process_start_time' },
-        { headerName: "공정완료시간", field: 'process_end_time' },
+        { headerName: "진행상태",
+          field: 'process_status',
+          cellClass: (params) => {
+            return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '진행전' ? 'red' : ''
+          },
+        },
       ],
-      workList: [],
+      processList: [],
       processStatus: {
         'process_waiting': '진행전',
         'processing': '진행중',
-        'process_complete': '완료'
+        'process_complete': '완료',
+        '-': '-'
       },
       partialWorkStatus: {
         'partial_process_waiting': '진행전',
         'partial_processing': '진행중',
         'partial_process_complete': '완료'
       },
+      partialWorkFinalStatus: '-', //process_waiting, processing, process_complete
       selectedRow: {},
       selectedEmp: {},
       searchEmp: {},
       selectedMachine: {},
-      searchMachine: {}
+      searchMachine: {},
+      partialWorkFinalQty: 0,
+      partialWorkFirstStartTime: '-',
+      partialWorkLastEndTime: '-'
     }
   },
 
@@ -240,7 +272,7 @@ export default {
         process_num: partialWork.process_num,
       }
 
-      let result = await axios.post(`${ajaxUrl}/production/work/start`, workInfo)
+      let result = await axios.put(`${ajaxUrl}/production/work/partial/start`, workInfo)
           .catch(err => console.log(err));
       if(result.data.message === 'success') {
         this.$notify({
@@ -250,6 +282,40 @@ export default {
         await this.getPartialWorkList()
       }
 
+    },
+
+    async endPartialWork(partialWork) {
+      console.log(partialWork)
+      if(partialWork.fail_qty === null && partialWork.new_fail_qty === null) {
+        this.$notify({
+          text: "불량량을 입력해주세요.",
+          type: 'fail',
+        });
+        return
+      }
+      if(partialWork.success_qty === null && partialWork.new_success_qty === null) {
+        this.$notify({
+          text: "합격량을 입력해주세요.",
+          type: 'fail',
+        });
+        return
+      }
+
+      let workInfo = {
+        failQty: partialWork.new_fail_qty, // 불량량 입력 후 시작버튼 누른경우 partialWork.new_fail_qty -> null
+        successQty: partialWork.new_success_qty, // 합격량 입력 후 시작버튼 누른경우 partialWork.new_success_qty -> null
+        process_num: partialWork.process_num,
+      }
+
+      let result = await axios.put(`${ajaxUrl}/production/work/partial/end`, workInfo)
+          .catch(err => console.log(err));
+      if(result.data.message === 'success') {
+        this.$notify({
+          text: "작업이 종료되었습니다.",
+          type: 'success',
+        });
+        await this.getPartialWorkList()
+      }
     },
 
     async addPartialWork() {
@@ -263,7 +329,7 @@ export default {
 
       let initPartialWorkInfo = {
         process_work_header_num: this.selectedRow.process_work_header_num,
-        product_code: this.workList[0].product_code,
+        product_code: this.processList[0].product_code,
       }
 
       let resultAdd = await axios.post(`${ajaxUrl}/production/work/partial`, initPartialWorkInfo)
@@ -282,6 +348,87 @@ export default {
       }
 
       await this.getPartialWorkList()
+      // this.start
+    },
+
+    getPartialWorkFinalQty() {
+      let finalQty = 0
+      this.partialWorkList.forEach((work) => {
+        if(typeof work.success_qty === 'number') {
+          finalQty += work.success_qty
+        }
+      })
+      this.partialWorkFinalQty = finalQty
+    },
+
+    getPartialWorkFinalStatus() {
+      let production_order_qty = Number(this.selectedRow.production_order_qty.split('개')[0])
+
+      let isStarted = false
+      this.partialWorkList.forEach((work) => {
+        if(!isStarted && work.partial_process_start_time) {
+          isStarted = true
+        }
+      })
+
+      if(!isStarted) {
+        this.partialWorkFinalStatus = 'process_waiting'
+      } else if(isStarted && (this.partialWorkFinalQty < production_order_qty)) {
+        this.partialWorkFinalStatus = 'processing'
+      } else {
+        this.partialWorkFinalStatus = 'process_complete'
+      }
+    },
+
+    getPartialWorkFirstStartTime() {
+      // 아직 분할작업 진행전이면 시작 시간 없음
+      if(this.partialWorkFinalStatus === 'process_waiting') {
+        this.partialWorkFirstStartTime = '-'
+        return
+      }
+
+      let resultTimestamp = 0
+      this.partialWorkList.forEach((work) => {
+        if(!work.partial_process_start_time) {
+          return
+        }
+
+        let workTimestamp = new Date(work.partial_process_start_time).getTime()
+        if(!resultTimestamp || resultTimestamp > workTimestamp) {
+          resultTimestamp = workTimestamp
+        }
+      })
+
+      if(!resultTimestamp) {
+        this.partialWorkFirstStartTime = '-'
+      } else {
+        this.partialWorkFirstStartTime = this.dateFormat(resultTimestamp, 'yyyy-MM-dd hh:mm:ss')
+      }
+    },
+
+    getPartialWorkLastEndTime() {
+      // 분할작업 완료가 아니면 완료 시간 없음
+      if(this.partialWorkFinalStatus !== 'process_complete') {
+        this.partialWorkLastEndTime = '-'
+        return
+      }
+
+      let resultTimestamp = 0
+      this.partialWorkList.forEach((work) => {
+        if(!work.partial_process_start_time) {
+          return
+        }
+
+        let workTimestamp = new Date(work.partial_process_end_time).getTime()
+        if(!resultTimestamp || resultTimestamp < workTimestamp) {
+          resultTimestamp = workTimestamp
+        }
+      })
+      if(!resultTimestamp) {
+        this.partialWorkLastEndTime = '-'
+      } else {
+        this.partialWorkLastEndTime = this.dateFormat(resultTimestamp, 'yyyy-MM-dd hh:mm:ss')
+      }
     },
 
     async getPartialWorkList() {
@@ -289,6 +436,11 @@ export default {
           await axios.get(`${ajaxUrl}/production/work/partial/${this.selectedRow.process_work_header_num}`)
               .catch(err => console.log(err));
       this.partialWorkList = resultList.data
+
+      this.getPartialWorkFinalQty()
+      this.getPartialWorkFinalStatus()
+      this.getPartialWorkFirstStartTime()
+      this.getPartialWorkLastEndTime()
     },
 
     onRowClicked(params) {
@@ -345,7 +497,7 @@ export default {
           type: 'error',
         });
       } else {
-        this.workList = result.data
+        this.processList = result.data
         this.setRowData()
       }
 
@@ -358,20 +510,21 @@ export default {
         keys.push(col.field)
       })
 
-      this.workList.forEach((order, idx) => {
+      this.processList.forEach((process, idx) => {
         this.rowData[idx] = {
-          [keys[0]]: order[keys[0]],
-          [keys[1]]: order[keys[1]],
-          [keys[2]]: order[keys[2]],
-          [keys[3]]: order[keys[3]],
-          [keys[4]]: order[keys[4]] + '개',
-          [keys[5]]: order[keys[5]] || '-',
-          [keys[6]]: this.processStatus[order[keys[6]]],
-          [keys[7]]: order[keys[7]] === null && '-',
-          [keys[8]]: order[keys[8]] === null && '-',
+          [keys[0]]: process[keys[0]],
+          [keys[1]]: process[keys[1]],
+          [keys[2]]: process[keys[2]],
+          [keys[3]]: process[keys[3]],
+          [keys[4]]: process[keys[4]] + '개',
+          [keys[5]]: this.processStatus[process[keys[5]]],
         }
       })
     },
+
+    // requestRepair(partialWork) {
+    //   console.log(partialWork)
+    // },
 
     async getWorkList() {
       this.rowData = []
@@ -380,7 +533,7 @@ export default {
               .catch(err => console.log(err));
 
       if(result.data.length !== 0) {
-        this.workList = result.data
+        this.processList = result.data
         this.setRowData()
       }
     },
@@ -396,6 +549,37 @@ export default {
     selectMachine(machine) {
       this.selectedMachine = machine
     }
+  },
+
+  watch: {
+    partialWorkFinalStatus() {
+      let statusInfo = {
+        processStatus: this.partialWorkFinalStatus === '-' ? null : this.partialWorkFinalStatus,
+        processWorkHeaderNum: this.selectedRow.process_work_header_num
+      }
+      let result = axios.put(`${ajaxUrl}/production/work/process/status`, statusInfo)
+              .catch(err => console.log(err));
+      console.log('watch partialWorkFinalStatus', result)
+    },
+    partialWorkFirstStartTime() {
+      let startInfo = {
+        processStartTime: this.partialWorkFirstStartTime === '-' ? null : this.partialWorkFirstStartTime,
+        processWorkHeaderNum: this.selectedRow.process_work_header_num
+      }
+      let result = axios.put(`${ajaxUrl}/production/work/process/start`, startInfo)
+          .catch(err => console.log(err));
+      console.log('watch partialWorkFirstStartTime', result)
+    },
+    partialWorkLastEndTime() {
+      let endInfo = {
+        processEndTime: this.partialWorkLastEndTime === '-' ? null : this.partialWorkLastEndTime,
+        processWorkHeaderNum: this.selectedRow.process_work_header_num
+      }
+      let result = axios.put(`${ajaxUrl}/production/work/process/end`, endInfo)
+          .catch(err => console.log(err));
+      console.log('watch partialWorkLastEndTime', result)
+    }
+
   }
 }
 </script>
@@ -403,6 +587,35 @@ export default {
 
 
 <style scoped lang="scss">
+.grid-container.work {
+  .ag-cell.green {
+    border-radius: 4px !important;
+    padding: 4px 6px !important;
+    width: fit-content !important;
+    line-height: 20px !important;
+    font-weight: 900 !important;
+    color: $white !important;
+    background: $green !important;
+  }
+  .red {
+    border-radius: 4px;
+    padding: 4px 6px;
+    width: fit-content;
+    line-height: 20px;
+    font-weight: 900;
+    color: $white;
+    background: $red1;
+  }
+  .gray {
+    border-radius: 4px;
+    padding: 4px 6px;
+    width: fit-content;
+    line-height: 20px;
+    font-weight: 900;
+    color: $white;
+    background: $gray-600;
+  }
+}
 .working-list {
   min-height: 500px;
   .container-fluid {
@@ -438,6 +651,7 @@ export default {
       }
 
     }
+
     .main-container {
       justify-content: space-between;
       width: 100%;
@@ -498,6 +712,23 @@ export default {
             height: 80px;
             font-weight: 600;
           }
+        }
+        h6.status {
+          border-radius: 4px;
+          padding: 4px 6px;
+          width: fit-content;
+          line-height: 20px;
+          font-weight: 900;
+          color: $white;
+        }
+        .green {
+          background: $green;
+        }
+        .red {
+          background: $red1;
+        }
+        .gray {
+          background: $gray-600;
         }
       }
     }

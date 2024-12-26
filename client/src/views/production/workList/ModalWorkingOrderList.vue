@@ -36,11 +36,11 @@
                     >
                       지시수량
                     </th>
-                    <th
-                        class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
-                    >
-                      생산수량
-                    </th>
+<!--                    <th-->
+<!--                        class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"-->
+<!--                    >-->
+<!--                      생산수량-->
+<!--                    </th>-->
                   </tr>
                   </thead>
                   <tbody>
@@ -70,9 +70,9 @@
                     <td>
                       <p class="text-sm font-weight-bold mb-0">{{ workingOrder.production_order_qty }}개</p>
                     </td>
-                    <td>
-                      <p class="text-sm font-weight-bold mb-0">생산수량(진행전이나 진행중일 때)개</p>
-                    </td>
+<!--                    <td>-->
+<!--                      <p class="text-sm font-weight-bold mb-0">생산수량(진행전이나 진행중일 때)개</p>-->
+<!--                    </td>-->
                   </tr>
                   </tbody>
                 </table>

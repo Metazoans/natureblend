@@ -14,8 +14,7 @@ const workForToday = `
 
 const workByOrderNum = `
     select * from process_work_header
-    where process_status = 'process_waiting'
-    and production_order_num = ?
+    where production_order_num = ?
 `
 
 const insertPartialWork = `
@@ -47,6 +46,28 @@ const startPartialWork = `
     update process_work_body
 `
 
+const endPartialWork = `
+    update process_work_body
+`
+
+const updateProcessStatus = `
+    update process_work_header
+    set process_status = ?
+    where process_work_header_num = ?
+`
+
+const updateProcessStartTime = `
+    update process_work_header
+    set process_start_time = ?
+    where process_work_header_num = ?
+`
+
+const updateProcessEndTime = `
+    update process_work_header
+    set process_end_time = ?
+    where process_work_header_num = ?
+`
+
 module.exports = {
     workingOrders,
     workForToday,
@@ -55,5 +76,9 @@ module.exports = {
     partialWorkByProcess,
     partialWorkEmpList,
     machineListByProcess,
-    startPartialWork
+    startPartialWork,
+    endPartialWork,
+    updateProcessStatus,
+    updateProcessStartTime,
+    updateProcessEndTime
 }

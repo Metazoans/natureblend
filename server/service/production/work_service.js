@@ -33,7 +33,7 @@ const getMachineList = async (processCode)=>{
     return await mysql.query('machineListByProcess', [processCode])
 }
 
-const startWork = async (startInfo)=>{
+const startPartialWork = async (startInfo)=>{
     let query =  `set emp_num = ${startInfo.empName}, machine_num = ${startInfo.machineNum}, process_todo_qty = ${startInfo.todoQty}, partial_process_start_time = NOW(), partial_process_status = 'partial_processing',`
 
     if(typeof startInfo.failQty === 'number' && typeof startInfo.successQty !== 'number') {
@@ -56,6 +56,42 @@ const startWork = async (startInfo)=>{
     }
 }
 
+const endPartialWork = async (endInfo)=>{
+    let query =  `set partial_process_end_time = NOW(), partial_process_status = 'partial_process_complete'`
+
+    if(typeof endInfo.failQty === 'number' && typeof endInfo.successQty !== 'number') {
+        query += `, fail_qty = ${endInfo.failQty}`
+    } else if(typeof endInfo.failQty !== 'number' && typeof endInfo.successQty === 'number') {
+        query += `, success_qty = ${endInfo.successQty}`
+    } else if(typeof endInfo.failQty === 'number' && typeof endInfo.successQty === 'number'){
+        query += `, fail_qty = ${endInfo.failQty}, success_qty = ${endInfo.successQty}`
+    } else {
+        // 불량량, 합격량을 입력하고 시작 버튼 누른경우임
+        // failQty, successQty 둘 다 null이라 업데이트하면 안됨
+    }
+
+    query += ` where process_num = ${endInfo.process_num}`
+
+    let result = await mysql.query('endPartialWork', query)
+    if(result.affectedRows === 1) {
+        return { message: 'success' }
+    } else {
+        return { message: 'fail' }
+    }
+}
+
+const updateProcessStatus = async (statusInfo)=>{
+    return await mysql.query('updateProcessStatus', Object.values(statusInfo))
+}
+
+const updateStartTime = async (startInfo)=>{
+    return await mysql.query('updateProcessStartTime', Object.values(startInfo))
+}
+
+const updateEndTime = async (endInfo)=>{
+    return await mysql.query('updateProcessEndTime', Object.values(endInfo))
+}
+
 module.exports = {
     findWorkingOrders,
     findWorkForToday,
@@ -64,5 +100,9 @@ module.exports = {
     findPartialWork,
     getProductionEmpList,
     getMachineList,
-    startWork
+    startPartialWork,
+    endPartialWork,
+    updateProcessStatus,
+    updateStartTime,
+    updateEndTime
 }

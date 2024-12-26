@@ -41,10 +41,33 @@ router.get('/machine/:processCode', async (req, res)=>{
     res.send(machineList);
 });
 
-router.post('/start', async (req, res)=>{
+router.put('/partial/start', async (req, res)=>{
     let startInfo = req.body
-    let result = await workService.startWork(startInfo)
+    let result = await workService.startPartialWork(startInfo)
     res.send(result)
 });
 
+router.put('/partial/end', async (req, res)=>{
+    let endInfo = req.body
+    let result = await workService.endPartialWork(endInfo)
+    res.send(result)
+});
+
+router.put('/process/status', async (req, res)=>{
+    let statusInfo = req.body
+    let result = await workService.updateProcessStatus(statusInfo)
+    res.send(result)
+});
+
+router.put('/process/start', async (req, res)=>{
+    let startInfo = req.body
+    let result = await workService.updateStartTime(startInfo)
+    res.send(result)
+});
+
+router.put('/process/end', async (req, res)=>{
+    let endInfo = req.body
+    let result = await workService.updateEndTime(endInfo)
+    res.send(result)
+});
 module.exports = router
