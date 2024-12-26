@@ -82,6 +82,12 @@ const insertPackagingQc = `
     CALL qc_p_packaging_input_list(?, ?, ?, @result);
 `
 
+const checkProcessStatus = `
+    select process_status 
+    from process_work_header
+    where production_order_num = ?
+`
+
 module.exports = {
     workingOrders,
     workForToday,
@@ -97,5 +103,6 @@ module.exports = {
     updateProcessEndTime,
     insertCleaningQc,
     insertJuiceQc,
-    insertPackagingQc
+    insertPackagingQc,
+    checkProcessStatus
 }

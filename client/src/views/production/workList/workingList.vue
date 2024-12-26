@@ -297,10 +297,8 @@ export default {
         }
       }
 
-      let result = await axios.post(`${ajaxUrl}/production/work/qc`, qcInfo)
+      await axios.post(`${ajaxUrl}/production/work/qc`, qcInfo)
           .catch(err => console.log(err));
-      console.log('startQc', result)
-
     },
 
     async endPartialWork(partialWork) {
@@ -565,36 +563,49 @@ export default {
 
     selectMachine(machine) {
       this.selectedMachine = machine
+    },
+
+    deductMaterial() {
+//
     }
   },
 
   watch: {
-    partialWorkFinalStatus() {
+    async partialWorkFinalStatus() {
       let statusInfo = {
         processStatus: this.partialWorkFinalStatus === '-' ? null : this.partialWorkFinalStatus,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
       }
-      let result = axios.put(`${ajaxUrl}/production/work/process/status`, statusInfo)
+      await axios.put(`${ajaxUrl}/production/work/process/status`, statusInfo)
               .catch(err => console.log(err));
-      console.log('watch partialWorkFinalStatus', result)
+
+      if(this.partialWorkFinalStatus === 'process_complete') {
+        let result = await axios.get(`${ajaxUrl}/production/work/process/status/${this.searchWorkingOrder.production_order_num}`)
+              .catch(err => console.log(err));
+
+        let completeList = result.data.filter((res) => res.process_status === 'process_complete')
+
+        if(completeList.length === result.data.length) {
+          // todo: 자재 차감
+          this.deductMaterial()
+        }
+      }
     },
     partialWorkFirstStartTime() {
       let startInfo = {
         processStartTime: this.partialWorkFirstStartTime === '-' ? null : this.partialWorkFirstStartTime,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
       }
-      let result = axios.put(`${ajaxUrl}/production/work/process/start`, startInfo)
+      axios.put(`${ajaxUrl}/production/work/process/start`, startInfo)
           .catch(err => console.log(err));
-      console.log('watch partialWorkFirstStartTime', result)
     },
     partialWorkLastEndTime() {
       let endInfo = {
         processEndTime: this.partialWorkLastEndTime === '-' ? null : this.partialWorkLastEndTime,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
       }
-      let result = axios.put(`${ajaxUrl}/production/work/process/end`, endInfo)
+      axios.put(`${ajaxUrl}/production/work/process/end`, endInfo)
           .catch(err => console.log(err));
-      console.log('watch partialWorkLastEndTime', result)
     }
 
   }

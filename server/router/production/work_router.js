@@ -89,4 +89,10 @@ router.post('/qc', async (req, res)=>{
     res.send(result)
 });
 
+router.get('/process/status/:prodOrderNum', async (req, res)=>{
+    let prodOrderNum = req.params.prodOrderNum;
+    let processStatus = await workService.getProcessStatus(prodOrderNum);
+    res.send(processStatus);
+});
+
 module.exports = router
