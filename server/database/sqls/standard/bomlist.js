@@ -301,7 +301,8 @@ const flowList =
         process_sequence,
         process_name
  FROM process_chart
- WHERE product_code = ?`
+ WHERE product_code = ?
+ ORDER BY process_sequence`;
 // 흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도
      
  module.exports = {

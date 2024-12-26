@@ -76,6 +76,8 @@ import processflowModal from "./processflowModal.vue";
                             this.selectedProductName = params.data.product_name;
                             console.log("레코드 확인 : ", JSON.stringify(params.data));
                             this.openModal('processflowModal');
+                            console.log('오픈 모달');
+                            // this.flowList();
                             });
                             return button1;
                         }
@@ -86,6 +88,12 @@ import processflowModal from "./processflowModal.vue";
                 theme:theme,
             };
         },
+        // watch:{
+        //         productCode:{
+        //         handler:"flowList",
+        //         immediate:true,
+        //     },
+        // },
         methods:{
             onReady(param){
                 param.api.sizeColumnsToFit();
@@ -97,6 +105,17 @@ import processflowModal from "./processflowModal.vue";
             setSelectProcessflow(){
 
             },
+            // async flowList() {
+            //     console.log('제품코드 확인',this.productCode);
+            //     let result = await axios.get(`${ajaxUrl}/flowList/${this.productCode}`)
+            //     if(result && result.data){
+            //     this.flowSelect = result.data;
+            //     console.log("연결성공");
+            //     this.rowData = result.data;
+            //     }else {
+            //     console.log("연결실패");
+            //     }
+            // },
             openModal(modalType) {
                 this.modalType = modalType;
                 this.modalTitle = '공정 흐름도'

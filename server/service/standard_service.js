@@ -297,10 +297,13 @@ const deleteReturn = async (return_code) => {
 }
 
 // 공정흐름도 조회
-const flowList = async () => {
-  let list = await mysql.query('flowList');
+const flowList = async (product_code) => {
+  let list = await mysql.query('flowList',[product_code]);
+  console.log(product_code);
+  console.log(list);
   return list;
 }
+
 module.exports = {
     findAllBom,
     createNewBom,

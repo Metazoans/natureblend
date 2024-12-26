@@ -27,7 +27,10 @@
             </div>
           </div>
           <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-info" data-bs-dismiss="modal" @click="processUp">UP</button>
+            <button type="button" class="btn btn-info" data-bs-dismiss="modal" @click="processDown">DOWN</button> -->
             <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="saveModal">저장</button>
+            <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="processAdd">공정추가</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
           </div>
         </div>
@@ -50,7 +53,6 @@
       // yesBtn: String,
       // modalData: Array,
     },
-  
     data() {
       return {
         theme: theme,
@@ -59,6 +61,54 @@
             { headerName:"공정순서" , field: "process_sequence" },
             { headerName:"공정코드" , field:"process_code" },
             { headerName:"공정명" , field:"process_name" },
+            { headerName:"▲",
+              field:"UP",
+              editable:false,
+              cellRenderer: () => {
+                const button1 = document.createElement('button');
+                button1.innerText = 'UP';
+                button1.style.marginRight = '10px';
+                button1.style.cursor = 'pointer';
+                button1.style.backgroundColor = '#f7b84d';
+                button1.style.width = '60px';
+                button1.style.height = '30px';
+                button1.style.color = 'white';
+                button1.style.border = 'none';
+                button1.style.padding = '0';
+                button1.style.borderRadius = '4px';
+                button1.style.textAlign = 'center';
+                button1.style.lineHeight = '30px';
+                button1.addEventListener('click', () => {
+
+                });
+                return button1;
+              
+              }
+            },
+            { headerName:"▼",
+              field:"DOWN",
+              editable:false,
+              cellRenderer: () => {
+                const button2 = document.createElement('button');
+                button2.innerText = 'DOWN';
+                button2.style.marginRight = '10px';
+                button2.style.cursor = 'pointer';
+                button2.style.backgroundColor = '#f7b84d';
+                button2.style.width = '60px';
+                button2.style.height = '30px';
+                button2.style.color = 'white';
+                button2.style.border = 'none';
+                button2.style.padding = '0';
+                button2.style.borderRadius = '4px';
+                button2.style.textAlign = 'center';
+                button2.style.lineHeight = '30px';
+                button2.addEventListener('click', () => {
+
+                });
+                return button2;
+              
+              }
+            },
         ],
         flowSelect:[],
       };
@@ -67,7 +117,15 @@
       modalTitle(){
         console.log('확인용');
         // this.getBomInput();
+        
       },
+      productCode:{
+            handler:"flowList",
+            immediate:true,
+        },
+    },
+    onReady(param) {
+        param.api.sizeColumnsToFit();
     },
     created(){
     //   this.getBomInput();
@@ -88,7 +146,8 @@
           return this.rowData[0];
       },
       async flowList() {
-        let result = await axios.get(`${ajaxUrl}/flowList`)
+        console.log('제품코드 확인',this.productCode);
+        let result = await axios.get(`${ajaxUrl}/flowList/${this.productCode}`)
         if(result && result.data){
           this.flowSelect = result.data;
           console.log("연결성공");
@@ -99,7 +158,8 @@
       },
     },
     mounted() { // 페이지 조회시 바로 발생
-        this.flowList();
+        console.log('모달 오픈');
+        console.log(this.productCode);
     },
   }
   </script>
@@ -108,7 +168,7 @@
   
   <style scoped>
   .modal-dialog {
-    max-width: 50%;
+    max-width: 54.5%;
   }
   .modal-body{
     background-color: gray;
