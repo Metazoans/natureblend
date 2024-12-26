@@ -7,7 +7,7 @@
 
 import MachineList from '@/views/machine/MachineList.vue';
 import MachineInfo from '@/views/machine/MachineInfo.vue';
-import PartsList from '@/views/machine/PartsList';
+import PartList from '@/views/machine/PartList';
 import InActList from '@/views/machine/InActList';
 import RequestList from '@/views/machine/RequestList';
 import RequestEnd from '@/views/machine/RequestEnd';
@@ -32,9 +32,9 @@ const machineRoute = [
 
   // 부품 페이지
   {
-    path: 'partsList',
-    name: 'partsList',
-    component: PartsList
+    path: 'partList',
+    name: 'partList',
+    component: PartList
   },
 
   // 비가동 페이지

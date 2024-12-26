@@ -26,6 +26,7 @@ const qualityRouter = require('./router/qc_router.js');
 const machineRouter = require('./router/machine/machine_router.js');
 const inactRouter = require('./router/machine/inact_router.js');
 const maintenanceRouter = require('./router/machine/maintenance_router.js')
+const partRouter = require('./router/machine/part_router.js')
 
 // 기준정보
 const standardRouter = require('./router/standard_router.js');
@@ -59,6 +60,7 @@ app.use('/', qualityRouter);
 app.use('/machine', machineRouter);
 app.use('/inActs', inactRouter);
 app.use('/maintenances', maintenanceRouter);
+app.use('/parts', partRouter);
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 

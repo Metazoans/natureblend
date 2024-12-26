@@ -23,6 +23,7 @@ const quality = require('./sqls/quality.js');
 const machine = require('./sqls/machine/machine.js');
 const inactivity = require('./sqls/machine/inactivity.js');
 const maintenance = require('./sqls/machine/maintenance.js');
+const part = require('./sqls/machine/part.js');
 
 // 기준정보
 const bomlist = require('./sqls/standard/bomlist.js');
@@ -55,6 +56,7 @@ module.exports = {
   ...machine,
   ...inactivity,
   ...maintenance,
+  ...part,
 
   // 기준정보
   ...bomlist,

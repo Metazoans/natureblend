@@ -261,7 +261,7 @@
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('machineList')">설비 관리</li>
-            <li class="sub-item" @click="movePage('partsList')">부품 관리</li>
+            <li class="sub-item" @click="movePage('partList')">부품 관리</li>
             <li class="sub-item" @click="movePage('inActList')">비가동 관리</li>
           </template>
         </sidenav-collapse>
