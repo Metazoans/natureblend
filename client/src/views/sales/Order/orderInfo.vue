@@ -1,179 +1,70 @@
 <template>
-           <div class="container-fluid py-4">
-            <h2>주문서상세</h2>
-                <div class= "main-container">
-                <div class="content" v-for = "(order,idx) in orderInfo" :key="idx">
-                    <form class="row gx-3 gy-2 align-items-center" v-if="idx==0" >
-                        <div class="col-sm-2"  >
-                            <!-- v-for="(material, index) in materials" :key="index" -->
-                            <label class="col-form-label fw-bold" for="orderlistNum">주문서코드</label>
-                            <input type="text" class="form-control" id="orderlistNum" v-model="order.orderlist_num" readonly>
-                        </div>
-                        <div class="sm-3">
-                            <label class="col-form-label fw-bold" for="orderName">주문서명</label>
-                            <input type="text" class="form-control" id="orderName" v-model="order.orderlist_title">
-                        </div>
-                        <div class="col-sm-4">
-                            <label class="col-form-label fw-bold" for="clientName">거래처명</label>
-                            <div class="input-group">
-                            <input type="text" class="form-control" id="clientName" v-model="order.com_name" readonly>
-                            </div>
+    <div class="grid-container">
+    <ag-grid-vue
     
-                        </div>
-                        <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="EmpName">담당자</label>
-                            <div class="input-group">
-                            <input type="text" class="form-control" id="EmpName" v-model="order.name" readonly>
-                            </div>
-                           
-                        </div>
-                        <div class="col-sm-3">
-                            <label class="col-form-label fw-bold" for="dueDate">납기일자 {{ order.due_date }}</label>
-                            <div class="input-group">
-                            <input type="date" class="form-control" id="dueDate" v-model=  "order.due_date">
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <label class="col-form-label fw-bold" for="dueDate">주문서상태</label>
-                            <div class="input-group">
-                            <input type="text" class="form-control" id="dueDate" v-model="order.orderlist_status" readonly>
-                            </div>
-                        </div>
-                    </form>
-
-                    <div class="row gx-3 gy-2 align-items-center" >
-                        <form class="row gx-3 gy-2 align-items-center mt-2">
-                            <div class="col-sm-1">
-                                <label class="col-form-label fw-bold" for="orderCode">주문코드</label>
-                                <input type="text" class="form-control" id="orderCode" v-model="order.order_num" readonly>
-                            </div>
-                            <div class="col-sm-1">
-                                <label class="col-form-label fw-bold" for="productCode">제품코드</label>
-                                <input type="text" class="form-control" id="productCode" v-model="order.product_code" readonly>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="productName">제품명</label>
-                                <input type="text" class="form-control" id="productName" v-model="order.product_name" readonly>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="orderNum">주문수량</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="orderNum" v-model="order.order_amount" :readonly="order.order_status !== 'preparing'">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold"  for="perSale">개당가격</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="perSale" v-model="order.per_price" :readonly="order.order_status !== 'preparing'">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold"  for="perSale">총가격</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="perSale" v-model="order.total_price" readonly>
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold"  for="perSale">주문상태</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="perSale" v-model="order.order_status" readonly>
-                                </div>
-                            </div>
-                            <!-- <div class="col-sm-2">
-                                <material-button size="sm" color="warning" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
-                            </div>       -->
-                        </form>
-                    </div>
-                
-                   
-
-                </div>
-                <div class="mb-3 text-end">
-                        <material-button size="sm" color="warning" class="button"  @click="addMaterial">+</material-button>
-                    </div>
-                    <div v-for="(material, index) in materials" :key="index" class="row gx-3 gy-2 align-items-center" >
-                        <form class="row gx-3 gy-2 align-items-center mt-2">
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="orderCode">주문코드</label>
-                                <input type="text" class="form-control" id="orderCode" v-model="material.newOrderCode" readonly>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="productCode">제품코드</label>
-                                <input type="text" class="form-control" id="productCode" v-model="material.newProductCode" readonly>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="productName">제품명</label>
-                                <input type="text" class="form-control" id="productName" v-model="material.newProductName" @click="openModal()" readonly>
-                            </div>
-                            <Modal
-                                    :isShowModal="isShowModal"
-                                    :modalTitle="'제품선택'"
-                                    :noBtn="'닫기'"
-                                    :yesBtn="'선택'"
-                                    @closeModal="closeModal()"
-                                    @confirm="confirm()"
-                                >
-                                <template v-slot:list>
-                                    <proList v-show="isShowModal" @selectproduct="selectproduct" :indexNum="indexNum"/>
-                                </template>
-                            </Modal>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="orderNum">주문수량</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="orderNum" v-model="material.newProductNum">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold"  for="perSale">개당가격</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="perSale" v-model="material.newPerPrice">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <material-button size="sm" color="danger" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
-                            </div>      
-                        </form>
-                    </div>
-                <div class="col-auto mt-5 text-center">
-                        <material-button type="button" color="success" class="button" @click="updateOrder">수정</material-button>
-                        <material-button type="button" color="danger" class="button" @click="deleteOrder(this.orderInfo[0]['orderlist_num'])" >삭제</material-button>
-                </div>
-            </div>
-        </div>
-      
+      :rowData="rowData"
+      :columnDefs="columnDefs"
+      :theme="theme"
+      @grid-ready="onGridReady"
+      :noRowsOverlayComponent="noRowsOverlayComponent"
+      rowSelection="multiple"
+      @rowClicked="onRowClicked"
+      :pagination="true"
+      :paginationPageSize="10"
+  />
   
- 
-        <!-- <div class="col-sm-2" v-for = "order in orderInfo" :key="order.orderlist_num">
-            {{ order.orderlist_title }}
-        </div> -->
+  </div>
+  <div style="display: none">
+      <CustomNoRowsOverlay/>
+  </div>
 </template>
 <script>
-import MaterialButton from "@/components/MaterialButton.vue";
+//import MaterialButton from "@/components/MaterialButton.vue";
+import theme from "@/utils/agGridTheme";
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
-import proList from "@/views/sales/Order/ProductModal.vue"
-import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+//import proList from "@/views/sales/Order/ProductModal.vue"
+//import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import userDateUtils from '@/utils/useDates.js';
 
 export default{
     name:"orderInfo",
     components:{
-        MaterialButton,
-        proList,
-        Modal,
+        CustomNoRowsOverlay,
+        //MaterialButton,
+        //proList,
+        //Modal,
         
+    },
+    props: {
+        order: {
+            type: Object,
+            required: true,
+        },
     },
 
     data(){
         return{
-            
-            orderInfo: {},
+            orderNum : this.order.orderlist_num,
+           //주문조회
+           statusOrderMap: {         // DB 상태값과 화면 상태명 매핑
+                "preparing": "미출고",
+                "semiShipped": "부분출고",
+                "shipped": "출고완료",
+            },
 
-            
-
-            //새로운 주문 추가 
-            materials:[],
-            indexNum:'',
+            theme : theme,
+            rowData : [],
+            columnDefs : [
+                { headerName : "주문코드", field:'order_num'},
+                { headerName : "제품코드", field:'product_code'},
+                { headerName : "제품명", field:'product_name'},
+                { headerName : "주문수량", field:'order_amount'},
+                { headerName : "개당가격", field:'per_price'},
+                { headerName : "총가격", field:'total_price'},
+                { headerName : "주문상태", field:'order_status'},
+            ],
 
             //모달에서 제품 선택 
             selectedProCode : '',
@@ -189,23 +80,36 @@ export default{
   
 
     created(){
-        let searchNo = this.$route.params.no;
-
-        this.getOrderInfo(searchNo);
+       
+        this.getOrderInfo(this.orderNum);
     }, 
-
+    watch: {
+        order:{
+            handler(){
+                this.getOrderInfo(this.orderNum);
+            },
+            deep:true
+        },
+    },
+   
 
     methods:{
-        async getOrderInfo(searchNo) {
-            console.log(searchNo);
-            let result = await axios.get(`${ajaxUrl}/orderInfo/${searchNo}`)
+        
+        async getOrderInfo(orderNum) { 
+            
+            console.log("넘어온값",this.order);
+            let result = await axios.get(`${ajaxUrl}/orderInfo/${orderNum}`)
                                     .catch(err=> console.log(err));
                        
-            this.orderInfo = result.data;
+            this.rowData = result.data;
+            this.rowData = result.data.map((col) => ({
+            ...col,
+            order_status : this.statusOrderMap[col.order_status],
+            })
+        );
+        console.log("rowData:",this.rowData);
             
-            console.log("데이터:",this.orderInfo,"기한:",this.orderInfo[0]['due_date']);
-            this.orderInfo[0]['due_date'] = this.dateFormat(this.orderInfo[0]['due_date'],'yyyy-MM-dd')
-            console.log(this.orderInfo[0]['due_date']);
+            
         },
         addMaterial() {
         
@@ -218,7 +122,7 @@ export default{
             };
             //마지막 material 요소의 productCode가 공백인 경우 newMaterial 형성 못하게 하기 
             if(this.materials.length == 0){
-                this.materials.push(newMaterial);
+                this.rowData.push(newMaterial);
                 //console.log(this.materials[this.materials.length]);
             }else if(this.materials[this.materials.length -1 ].newProductCode != ''){
                 this.materials.push(newMaterial);
@@ -270,39 +174,39 @@ export default{
 
       async updateOrder(){
         //추가주문 
-        if(this.materials.length != 0){
-            let newProductCodes = []
-            let newProductNums = []
-            let newPerPrices = []
-            // materials 배열을 순회하면서 새 주문 정보를 추출
-            this.materials.forEach((newOrderInfo)=>{
-                newProductCodes.push(newOrderInfo.newProductCode);
-                newProductNums.push(newOrderInfo.newProductNum);
-                newPerPrices.push(newOrderInfo.newPerPrice);
-            })
-            // 새 주문 정보 객체
-            let newOrderInfo = {
-                orderlistNum : this.orderInfo[0]['orderlist_num'],
-                newProductCode : JSON.stringify(newProductCodes),
-                newProductNum : JSON.stringify(newProductNums),
-                newPerPrice : JSON.stringify(newPerPrices),
-            }
-            // newProductNum 또는 newPerPrice가 비어 있으면 경고
-            if (newProductNums.some(num => num === '' || num === null) || newPerPrices.some(price => price === '' || price === null)) {
-                this.$notify({
-                    text: `주문 수량과 가격을 입력해주세요.`,
-                    type: 'error',
-                });
-                return;  // 추가 작업 진행하지 않음
-            }
-            await axios.post(`${ajaxUrl}/orderUpdate/insert`,newOrderInfo)
-                        .then(Response =>{
-                            if(Response.statusText === 'OK'){
-                                console.log("추가등록완료");
-                            }
-                        })
-                        .catch(err => console.log(err));  
-        }
+        // if(this.materials.length != 0){
+        //     let newProductCodes = []
+        //     let newProductNums = []
+        //     let newPerPrices = []
+        //     // materials 배열을 순회하면서 새 주문 정보를 추출
+        //     this.materials.forEach((newOrderInfo)=>{
+        //         newProductCodes.push(newOrderInfo.newProductCode);
+        //         newProductNums.push(newOrderInfo.newProductNum);
+        //         newPerPrices.push(newOrderInfo.newPerPrice);
+        //     })
+        //     // 새 주문 정보 객체
+        //     let newOrderInfo = {
+        //         orderlistNum : this.orderInfo[0]['orderlist_num'],
+        //         newProductCode : JSON.stringify(newProductCodes),
+        //         newProductNum : JSON.stringify(newProductNums),
+        //         newPerPrice : JSON.stringify(newPerPrices),
+        //     }
+        //     // newProductNum 또는 newPerPrice가 비어 있으면 경고
+        //     if (newProductNums.some(num => num === '' || num === null) || newPerPrices.some(price => price === '' || price === null)) {
+        //         this.$notify({
+        //             text: `주문 수량과 가격을 입력해주세요.`,
+        //             type: 'error',
+        //         });
+        //         return;  // 추가 작업 진행하지 않음
+        //     }
+        //     await axios.post(`${ajaxUrl}/orderUpdate/insert`,newOrderInfo)
+        //                 .then(Response =>{
+        //                     if(Response.statusText === 'OK'){
+        //                         console.log("추가등록완료");
+        //                     }
+        //                 })
+        //                 .catch(err => console.log(err));  
+        // }
 
         
         //주문,주문서 업데이트
@@ -316,20 +220,18 @@ export default{
         let perPrices = []
         let productCodes = []
         let orderCodes =[]
-        for(let i=0; i<this.orderInfo.length; i++){
-            if(this.orderInfo[i]['order_status'] === 'preparing'){
+        for(let i=0; i<this.rowData.length; i++){
+            if(this.rowData[i]['order_status'] === 'preparing'){
                  // 주문상태가 preparing 인 경우 만 배열에 넣기 
-                orderAmounts.push(Number(this.orderInfo[i]['order_amount']));
-                productCodes.push(this.orderInfo[i]['product_code'])
-                perPrices.push(this.orderInfo[i]['per_price']);
-                orderCodes.push(this.orderInfo[i]['order_num']);
+                orderAmounts.push(Number(this.rowData[i]['order_amount']));
+                productCodes.push(this.rowData[i]['product_code'])
+                perPrices.push(this.rowData[i]['per_price']);
+                orderCodes.push(this.rowData[i]['order_num']);
             }
         }
         
 
         let updateOrderInfo = {
-            orderlist_title : this.orderInfo[0]['orderlist_title'],
-            due_date: this.orderInfo[0]['due_date'],
             orderCode: JSON.stringify(orderCodes),
             productCode :JSON.stringify(productCodes),
             orderAmount : JSON.stringify(orderAmounts),

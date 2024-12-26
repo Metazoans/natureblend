@@ -265,7 +265,7 @@ DELIMITER ;
 CALL inputUpdate ('["LOT20241221001","LOT20241221002"]','["제품창고4","제품창고5"]');*/
 
 const inputUpdate = 
-`CALL inputUpdate (?, ?, ? )`;
+`CALL inputUpdate (?, ? )`;
 
 //입고건삭제처리 
 /**DELIMITER //

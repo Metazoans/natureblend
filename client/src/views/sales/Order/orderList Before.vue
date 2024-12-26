@@ -1,7 +1,7 @@
 <template>
   <div class="grid-container">
     <ag-grid-vue
-    
+      style ="height: 800px;"
       :rowData="rowData"
       :columnDefs="columnDefs"
       :theme="theme"
@@ -16,10 +16,7 @@
   </div>
   <div style="display: none">
       <CustomNoRowsOverlay/>
-  </div>
-<!-- 부모의 값이 자식으로 넘어갈때 자꾸 빈 값이 넘어가는 경우 v-if를 줘서 다시 렌더링 되게 만들어 준다.-->
-  <orderInfo :order="order" v-if="Object.values(order).length > 0"></orderInfo> 
-
+    </div>
 </template>
 
 
@@ -29,7 +26,7 @@ import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from '@/utils/useDates.js';
 import theme from "@/utils/agGridTheme";
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
-import orderInfo from "./orderInfo.vue";
+
 
 
 export default {
@@ -41,8 +38,7 @@ export default {
     },
   },
   components:{
-    CustomNoRowsOverlay,
-    orderInfo,
+    CustomNoRowsOverlay
   },
   
  
@@ -59,16 +55,15 @@ export default {
       theme : theme,
       rowData : [],
       columnDefs : [
-        { headerName : "주문서코드", field:'orderlist_num'},
-        { headerName : "주문서명", field:'orderlist_title'},
-        { headerName : "거래처명",field:'com_name'},
-        { headerName : "담당자",field:'name'},
-        { headerName : "주문일자",field:'order_date'},
-        { headerName : "납기일자",field:'due_date', editable: true, sortable: true},
-        { headerName : "진행상태",field:'orderlist_status'},
+        { headerName : "주문서코드", field:'orderListNum'},
+        { headerName : "주문서명", field:'orderName'},
+        { headerName : "거래처명",field:'clientName'},
+        { headerName : "담당자",field:'empName'},
+        { headerName : "주문일자",field:'orderDate'},
+        { headerName : "납기일자",field:'dueDate'},
+        { headerName : "진행상태",field:'orderStatus'},
 
       ],
-      order : {},
 
     }
   },
@@ -109,33 +104,24 @@ export default {
       //서버에 검색 필터 데이터 전송
         let result = await axios.put(`${ajaxUrl}/orderlist/search`,obj)
                                 .catch(err=> console.log(err));
-        this.rowData = result.data;
+        
+        this.filterOrderlist = result.data; //서버에 받은 데이터 저장 
+        console.log(this.filterOrderlist);
 
-        this.rowData = result.data.map((col) => ({
-            ...col,
-            order_date: this.dateFormat(col.order_date, "yyyy-MM-dd"),
-            due_date: this.dateFormat(col.due_date, "yyyy-MM-dd"),
-            orderlist_status : this.statusMap[col.orderlist_status],
-            })
-        );  
-
-        // this.filterOrderlist = result.data; //서버에 받은 데이터 저장 
-        // console.log(this.filterOrderlist);
-
-        // this.rowData = []; //초기화 
-        // for(let i=0; i < this.filterOrderlist.length; i++){
-        //   let tempData = {'orderListNum': this.filterOrderlist[i].orderlist_num,
-        //                    'orderName':this.filterOrderlist[i].orderlist_title ,
-        //                    'clientName':this.filterOrderlist[i].com_name,
-        //                    'empName': this.filterOrderlist[i].name,
-        //                    'orderDate' : this.dateFormat(this.filterOrderlist[i].order_date, 'yyyy-MM-dd'),
-        //                    'dueDate' : this.dateFormat(this.filterOrderlist[i].due_date, 'yyyy-MM-dd'),
-        //                    'orderStatus' : this.statusMap[this.filterOrderlist[i].orderlist_status] || this.filterOrderlist[i].orderlist_status
-        //                 }
-        //                 // console.log(tempData);
-        //   this.rowData[i] = tempData; // 객체를 배열로 넣기 
-        // }
-        // console.log(this.rowData);
+        this.rowData = []; //초기화 
+        for(let i=0; i < this.filterOrderlist.length; i++){
+          let tempData = {'orderListNum': this.filterOrderlist[i].orderlist_num,
+                           'orderName':this.filterOrderlist[i].orderlist_title ,
+                           'clientName':this.filterOrderlist[i].com_name,
+                           'empName': this.filterOrderlist[i].name,
+                           'orderDate' : this.dateFormat(this.filterOrderlist[i].order_date, 'yyyy-MM-dd'),
+                           'dueDate' : this.dateFormat(this.filterOrderlist[i].due_date, 'yyyy-MM-dd'),
+                           'orderStatus' : this.statusMap[this.filterOrderlist[i].orderlist_status] || this.filterOrderlist[i].orderlist_status
+                        }
+                        // console.log(tempData);
+          this.rowData[i] = tempData; // 객체를 배열로 넣기 
+        }
+        console.log(this.rowData);
         
         
       },// searchOrder
@@ -146,10 +132,9 @@ export default {
       },
 
     onRowClicked(row) {
-        
-        this.order = row.data
-        console.log('클릭된 셀 데이터:',this.order);
-        //this.$router.push({ name:'orderInfo', params : {no: order.orderListNum} })
+        console.log('클릭된 셀 데이터:',row.data);
+        let order = row.data
+        this.$router.push({ name:'orderInfo', params : {no: order.orderListNum} })
       },
     },//end-Method
     
