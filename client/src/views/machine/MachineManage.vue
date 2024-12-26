@@ -1,5 +1,5 @@
 <template>
-  <ModalMachine>
+  <ModalMachine class="modal-lg">
     <template v-slot:header>
       <h2 v-if="isUpdate">설비 수정</h2>
       <h2 v-else>설비 등록</h2>
@@ -83,6 +83,30 @@
           <input type="datetime-local" id="buyDate" name="buyDate" v-model="machineData.buy_date" v-bind:readonly="isUpdate"/>
         </div>
       </div>
+
+      <div class="partDataList">
+        <div class="row"> <!-- 부품 이름, 교체 주기(년/월/일) -->
+          <div class="col">
+            <label for="">부품 이름</label>
+          </div>
+          <div class="col">
+            <input type="text" />
+          </div>
+          <div class="col">
+            교체 주기
+          </div>
+          <div class="col">
+            <input type="number"> 년
+          </div>
+          <div class="col">
+            <input type="number"> 월
+          </div>
+          <div class="col">
+            <input type="number"> 일
+          </div>
+        </div>
+      </div>
+
     </template>
     
     <template v-slot:footer>
@@ -131,6 +155,7 @@ export default {
   },
   data() {
     return {
+      modalSize: 'modal-lg',
       localUrl: localUrl,
       imgUrlTest: '',
       machineData: {

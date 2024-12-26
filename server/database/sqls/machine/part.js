@@ -13,16 +13,16 @@ WHERE machine_num IS NULL
 `;
 
 // 부품 상세 정보
-// const partInfo = `
-// SELECT part_name
-//        , replace_cycle
-//        , part_location
-//        , buy_date
-//        , machine_type
-//        , client_num
-// FROM machine_part
-
-// `;
+const partInfo = `
+SELECT part_name
+       , replace_cycle
+       , part_location
+       , buy_date
+       , machine_type
+       , client_num
+FROM machine_part
+WHERE part_num = ?
+`;
 
 // 등록
 const partInsert = `
@@ -46,6 +46,7 @@ WHERE part_num = ?
 
 module.exports = {
   partList,
+  partInfo,
   partInsert,
   partUpdate,
   partDelete,

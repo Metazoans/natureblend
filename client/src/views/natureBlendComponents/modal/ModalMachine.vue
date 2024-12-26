@@ -21,6 +21,7 @@ export default {
   name: "modalMachine",
   props: {
     isShowModal: Boolean,
+    modalSize: String,
   },
 
   data() {
