@@ -182,6 +182,116 @@ const employeeInsert =
   resignation_date = VALUES(resignation_date),
   level = VALUES(level)`;
 // 사원사원사원사원사원사원사원사원사원사원사원사원
+// 거래처거래처거래처거래처거래처거래처거래처거래처거래처
+// 거래처 조회
+const customerList =
+`SELECT client_num,
+        com_num,
+        com_name,
+        address,
+        trade,
+        boss,
+        boss_tel,
+        emp_name,
+        emp_tel
+FROM client`
+// // 거래처 등록
+// const customerInsert =
+// `INSERT INTO client
+//  VALUES(NULL,?,?,?,?,?,?,?,?)
+//  ON DUPLICATE KEY UPDATE
+//   com_num = VALUES(com_num),
+//   com_name = VALUES(com_name),
+//   address = VALUES(address),
+//   trade = VALUES(trade),
+//   boss = VALUES(boss),
+//   boss_tel = VALUES(boss_tel),
+//   emp_name = VALUES(emp_name),
+//   emp_tel = VALUES(emp_tel)`;
+ // 거래처 등록
+ const customerInsert =
+ `INSERT INTO client
+  values(NULL,?,?,?,?,?,?,?,?)`;
+ // 거래처 수정
+ const customerUpdate =
+ `UPDATE client
+  SET com_num = ?,
+      com_name = ?,
+      address = ?,
+      trade = ?,
+      boss = ?,
+      boss_tel = ?,
+      emp_name = ?,
+      emp_tel = ?
+  WHERE client_num = ?`;
+// 거래처 삭제
+const customerDelete =
+`DELETE FROM client
+ WHERE client_num = ?`;
+// 거래처거래처거래처거래처거래처거래처거래처거래처거래처
+// 창고창고창고창고창고창고창고창고창고창고창고창고창고
+// 창고 조회
+const warehouseList =
+`SELECT warehouse_code,
+        warehouse_name,
+        storage,
+        warehouse_location,
+        emp_name,
+        emp_tel,
+        warehouse_area
+ FROM warehouse`
+
+ // 창고 등록 , 수정
+ const warehouseInsert =
+`INSERT INTO warehouse
+ VALUES(?,?,?,?,?,?,?)
+ ON DUPLICATE KEY UPDATE
+  warehouse_code = VALUES(warehouse_code),
+  warehouse_name = VALUES(warehouse_name),
+  storage = VALUES(storage),
+  warehouse_location = VALUES(warehouse_location),
+  emp_name = VALUES(emp_name),
+  emp_tel = VALUES(emp_tel),
+  warehouse_area = VALUES(warehouse_area)`;
+
+ // 창고 삭제
+ const warehouseDelete =
+ `DELETE FROM warehouse
+  WHERE warehouse_code = ?`
+// 창고창고창고창고창고창고창고창고창고창고창고창고창고
+
+// 불량코드 조회
+const faultyList = 
+`SELECT faulty_code,
+        faulty_reason
+ FROM faulty_code`;
+// 불량코드 등록 , 수정
+const faultyInsert = 
+`INSERT INTO faulty_code
+ VALUES(?,?)
+ ON DUPLICATE KEY UPDATE
+  faulty_code = VALUES(faulty_code),
+  faulty_reason = VALUES(faulty_reason)`;
+// 불량코드 삭제
+const faultyDelete = 
+`DELETE FROM faulty_code
+ WHERE faulty_code = ?`;
+// 반품코드 조회
+const returnList = 
+`SELECT return_code,
+        return_reason
+ FROM return_code`;
+// 반품코드 등록 , 수정
+const returnInsert = 
+`INSERT INTO return_code
+ VALUES(?,?)
+ ON DUPLICATE KEY UPDATE
+  return_code = VALUES(return_code),
+  return_reason = VALUES(return_reason)`;
+// 반품코드 삭제
+const returnDelete = 
+`DELETE FROM return_code
+ WHERE return_code = ?`;
      
  module.exports = {
     bomList,
@@ -209,4 +319,18 @@ const employeeInsert =
     employeeList,
     employeeDelete,
     employeeInsert,
+    customerList,
+    customerInsert,
+    customerUpdate,
+    customerDelete,
+    warehouseList,
+    warehouseInsert,
+    warehouseDelete,
+    faultyList,
+    faultyInsert,
+    faultyDelete,
+    returnList,
+    returnInsert,
+    returnDelete,
+
 }
