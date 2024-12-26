@@ -81,7 +81,6 @@ const requestData = shallowRef({
 });
 let isInsert = shallowRef(false);
 
-const emit = defineEmits(['closeModal', 'confirm']);
 
 // 메소드
 // 정비 요청 등록
@@ -111,6 +110,7 @@ const requestInsert = async () => {
 
 
 // 모달 동작
+const emit = defineEmits(['closeModal', 'confirm']);
 function closeModal() {
   emit('closeModal');
   deleteVal();

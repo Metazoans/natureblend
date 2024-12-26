@@ -3,74 +3,81 @@
 
     <!-- 설비 검색 -->
     <div class="main-container">
-      <!-- 작동 상태 -->
-      <div class="mb-3">
-        <label class="col-sm-2 col-form-label fw-bold">작동 상태</label>
-        <div>
-          <label v-for="status in statusList" :key="status" class="me-3">
-            {{ status }}
-            <input
-              type="radio"
-              name="status"
-              :value="status"
-              v-model="pickedStatus"
-            />
-          </label>
+      <div class="row">
+        <!-- 작동 상태 -->
+        <div class="col mb-3">
+          <label class="col-sm-2 col-form-label fw-bold">작동 상태</label>
+          <div class="col-sm-6">
+            <label v-for="status in statusList" :key="status" class="me-3">
+              {{ status }}
+              <input
+                type="radio"
+                name="status"
+                :value="status"
+                v-model="pickedStatus"
+              />
+            </label>
+          </div>
+        </div>
+
+        <!-- 설비 분류 -->
+        <div class="col mb-3">
+          <label class="col-sm-2 col-form-label fw-bold">설비 분류</label>
+          <div>
+            <label v-for="type in machineType" :key="type" class="me-3">
+              {{ type }}
+              <input
+                type="checkbox"
+                :value="type"
+                v-model="pickedType"
+              />
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- 설비 분류 -->
-      <div class="mb-3">
-        <label class="col-sm-2 col-form-label fw-bold">설비 분류</label>
-        <div>
-          <label v-for="type in machineType" :key="type" class="me-3">
-            {{ type }}
-            <input
-              type="checkbox"
-              :value="type"
-              v-model="pickedType"
-            />
-          </label>
+      <div class="row">
+        <label class="col-1 col-form-label fw-bold">이름 검색</label>
+        <!-- 검색 옵션 -->
+        <div class="col-2 mb-3">
+          <select v-model="selectSearchType" class="form-select">
+            <option v-for="option in searchType" :key="option" :value="option">
+              {{ option }}
+            </option>
+          </select>
+        </div>
+  
+        <!-- 검색 텍스트 -->
+        <div class="col-5 mb-3">
+          <input
+            type="text"
+            v-model="searchData"
+            placeholder="검색 내용을 입력하세요"
+            class="form-control"
+          />
         </div>
       </div>
 
-      <!-- 검색 옵션 -->
-      <div class="mb-3">
-        <label class="col-sm-2 col-form-label fw-bold">검색 옵션</label>
-        <select v-model="selectSearchType" class="form-select">
-          <option v-for="option in searchType" :key="option" :value="option">
-            {{ option }}
-          </option>
-        </select>
-      </div>
-
-      <!-- 검색 텍스트 -->
-      <div class="mb-3">
-        <label class="col-sm-2 col-form-label fw-bold">검색 내용</label>
-        <input
-          type="text"
-          v-model="searchData"
-          placeholder="검색 내용을 입력하세요"
-          class="form-control"
-        />
-      </div>
-
-      <!-- 검색 및 초기화 버튼 -->
-      <div class="mb-3 text-center">
-        <material-button
-          size="sm"
-          color="warning"
-          @click="updateFilter"
-        >
-          검색
-        </material-button>
-        <material-button
-          size="sm"
-          color="warning"
-          @click="resetSearch"
-        >
-          초기화
-        </material-button>
+      <div class="row justify-content-center">
+        <!-- 검색 및 초기화 버튼 -->
+        <div class="col-1 mb-3 text-center">
+          <material-button
+            size="sm"
+            color="warning"
+            @click="updateFilter"
+          >
+            검색
+          </material-button>
+        </div>
+        <div class="col-1 mb-3 text-center">
+          <material-button
+            size="sm"
+            color="warning"
+            @click="resetSearch"
+          >
+            초기화
+          </material-button>
+        </div>
       </div>
     </div>
     
