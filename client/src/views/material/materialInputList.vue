@@ -130,11 +130,11 @@ const inspection_com = (data) => {
     material_name: data.material_name,
     com_name: data.com_name,
     ord_qty: data.ord_qty,
-    total_qnt: data.total_qnt,
-    pass_qnt: data.pass_qnt,
-    rjc_qnt: data.rjc_qnt,
+    total_qnt: data.total_qty,
+    pass_qnt: data.pass_qty,
+    rjc_qnt: data.reject_qty,
   };
-  console.log(inspection_data.value);
+  console.log('검사표 모달오픈전 : ',inspection_data.value);
   //모달 오픈
   isShowModal2.value = true;
 };
@@ -253,8 +253,10 @@ const lotinfo = async (lotdata) =>{
    newObject.value = {
       material_name: lotdata.material_name,
       lot_code: lotinfodata.value[0]['lot_code'],
-      pass_stok_qty: ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 ) + lotdata.material_name.includes('병') ? ' 개' : ' kg',
-      reject_stok_qty: ( lotinfodata.value[0]['reject_stok_qty'] * 0.001 ) + ' kg',
+      //pass_stok_qty: ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 ) + lotdata.material_name.includes('병') ? ' 개' : ' kg',
+      pass_stok_qty: lotdata.material_name.includes('병') ? ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 )+' 개' : ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 )+' kg',
+      //reject_stok_qty: ( lotinfodata.value[0]['reject_stok_qty'] * 0.001 ) + ' kg',
+      reject_stok_qty: lotdata.material_name.includes('병') ? ( lotinfodata.value[0]['reject_stok_qty'] * 0.001 )+' 개' : ( lotinfodata.value[0]['reject_stok_qty'] * 0.001 )+' kg',
    };
    console.log('newObject ',newObject);
 
