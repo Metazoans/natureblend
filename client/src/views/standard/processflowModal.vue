@@ -18,7 +18,7 @@
                   :columnDefs="columnDefs"
                   :theme="theme"
                   :pagination="true"
-                  :paginationPageSize="10"
+                  :paginationPageSize="5"
                   @grid-ready="onReady"
                   @rowClicked="onRowClicked"
               >

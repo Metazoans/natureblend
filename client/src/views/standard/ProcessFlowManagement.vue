@@ -46,7 +46,7 @@ import processflowModal from "./processflowModal.vue";
                 isShowModal : false, // 공정흐름도 조회 버튼 클릭시 나오는 모달
                 modalType:'',
                 modalTitle:'공정 흐름도',
-                selectedProductCode: '',
+                selectedProductCode: 'null',
                 selectedProductName: '',
                 columnDefs:[
                     {headerName:"제품명" , field:"product_name"},
