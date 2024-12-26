@@ -108,6 +108,14 @@ const getProcessStatus = async (prodOrderNum)=>{
     return await mysql.query('checkProcessStatus', [prodOrderNum])
 }
 
+const updateProdOrderStatus = async (statusInfo)=>{
+    return await mysql.query('updateProdOrderStatus', Object.values(statusInfo))
+}
+
+const updateMaterial = async (prodOrderNum)=>{
+    return await mysql.query('updateMaterial', Object.values(prodOrderNum))
+}
+
 module.exports = {
     findWorkingOrders,
     findWorkForToday,
@@ -124,5 +132,7 @@ module.exports = {
     qcCleaning,
     qcJuice,
     qcPackaging,
-    getProcessStatus
+    getProcessStatus,
+    updateProdOrderStatus,
+    updateMaterial
 }

@@ -282,6 +282,10 @@ export default {
         await this.getPartialWorkList()
         this.startQc(partialWork)
 
+        if(this.searchWorkingOrder.production_order_status === 'work_waiting') {
+          this.updateProdOrderStatus('work_in_process')
+        }
+
         this.searchEmp = {}
         this.searchMachine = {}
       }
@@ -565,8 +569,23 @@ export default {
       this.selectedMachine = machine
     },
 
-    deductMaterial() {
-//
+    async deductMaterial() {
+      let prodOrderNum = {
+        prodOrderNum: this.searchWorkingOrder.production_order_num
+      }
+      let result = await axios.put(`${ajaxUrl}/production/work/material`, prodOrderNum)
+          .catch(err => console.log(err));
+      console.log('deductMaterial', result)
+    },
+
+    async updateProdOrderStatus(status) {
+      let statusInfo = {
+        productionOrderStatus: status,
+        productionOrderNum: this.searchWorkingOrder.production_order_num
+      }
+      let result = await axios.put(`${ajaxUrl}/production/work/order/status`, statusInfo)
+          .catch(err => console.log(err));
+      console.log('updateProdOrderStatus', result)
     }
   },
 
@@ -579,6 +598,9 @@ export default {
       await axios.put(`${ajaxUrl}/production/work/process/status`, statusInfo)
               .catch(err => console.log(err));
 
+      // process_work_header 상태값도 같이 업데이트 시키기
+      await this.getWorkList()
+
       if(this.partialWorkFinalStatus === 'process_complete') {
         let result = await axios.get(`${ajaxUrl}/production/work/process/status/${this.searchWorkingOrder.production_order_num}`)
               .catch(err => console.log(err));
@@ -586,8 +608,10 @@ export default {
         let completeList = result.data.filter((res) => res.process_status === 'process_complete')
 
         if(completeList.length === result.data.length) {
-          // todo: 자재 차감
-          this.deductMaterial()
+          // 자재 차감
+          await this.deductMaterial()
+          // 생산지시 상태값 변경
+          await this.updateProdOrderStatus('work_complete')
         }
       }
     },

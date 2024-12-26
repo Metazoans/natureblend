@@ -95,4 +95,15 @@ router.get('/process/status/:prodOrderNum', async (req, res)=>{
     res.send(processStatus);
 });
 
+router.put('/order/status', async (req, res)=>{
+    let statusInfo = req.body
+    let prodOrderStatus = await workService.updateProdOrderStatus(statusInfo)
+    res.send(prodOrderStatus)
+});
+
+router.put('/material', async (req, res)=>{
+    let prodOrderNum = req.body
+    let updatedMaterial = await workService.updateMaterial(prodOrderNum)
+    res.send(updatedMaterial)
+});
 module.exports = router
