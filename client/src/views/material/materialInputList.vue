@@ -253,7 +253,7 @@ const lotinfo = async (lotdata) =>{
    newObject.value = {
       material_name: lotdata.material_name,
       lot_code: lotinfodata.value[0]['lot_code'],
-      pass_stok_qty: ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 ) + ' kg',
+      pass_stok_qty: ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 ) + lotdata.material_name.includes('병') ? ' 개' : ' kg',
       reject_stok_qty: ( lotinfodata.value[0]['reject_stok_qty'] * 0.001 ) + ' kg',
    };
    console.log('newObject ',newObject);
@@ -309,9 +309,12 @@ const matrialInputList = async function(){
       ...col,
       //ord_qty: (col.ord_qty * 0.001) + " kg",
       ord_qty: col.material_name.includes('병') ? (Number(col.ord_qty)*0.001).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
-      in_qty: (col.in_qty * 0.001) + " kg",
-      pass_qty: (col.pass_qty * 0.001) + " kg",
-      reject_qty: (col.reject_qty * 0.001) + " kg",
+      //in_qty: (col.in_qty * 0.001) + " kg",
+      in_qty: col.material_name.includes('병') ? (Number(col.in_qty)*0.001).toLocaleString() + " 개" : (Number(col.in_qty) * 0.001).toLocaleString() + " kg",
+      //pass_qty: (col.pass_qty * 0.001) + " kg",
+      pass_qty: col.material_name.includes('병') ? (Number(col.pass_qty)*0.001).toLocaleString() + " 개" : (Number(col.pass_qty) * 0.001).toLocaleString() + " kg",
+      //reject_qty: (col.reject_qty * 0.001) + " kg",
+      reject_qty: col.material_name.includes('병') ? (Number(col.reject_qty)*0.001).toLocaleString() + " 개" : (Number(col.reject_qty) * 0.001).toLocaleString() + " kg",
       inset_lot_date: userDateUtils.dateFormat(col.inset_lot_date, "yyyy-MM-dd")
     })
   );

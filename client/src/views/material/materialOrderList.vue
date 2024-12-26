@@ -267,7 +267,7 @@ const printRowData = async (rowData) => {
             <td>${item.material_code}</td>
             <td>${item.material_name}</td>
             <td>${(item.ord_qty*0.001).toLocaleString()}</td>
-            <td>KG</td>
+            <td>${ item.material_name.includes('병') ? "개" : "kg"  }</td>
             <td>${(item.unit_price*0.001).toLocaleString()}</td>
             <td>원</td>
             <td>${(item.total_price*0.001).toLocaleString()}</td>
