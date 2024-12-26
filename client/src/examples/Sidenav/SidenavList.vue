@@ -201,15 +201,16 @@
             v-bind:collapse="true"
             collapseRef="mainpage"
             navText="입고검사"
+            @click="movePage('qCMaterialApply')"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('qualityList')">검사신청</li>
-            <li class="sub-item" @click="movePage('qualityList2')">입고검사관리</li>
-            <li class="sub-item" @click="movePage('qualityList3')">검사기록조회</li>
-            <li class="sub-item" @click="movePage('qualityList4')">불량내역조회</li>
+            <li class="sub-item" @click="movePage('qCMaterialApply')">검사신청</li>
+            <li class="sub-item" @click="movePage('qCMaterialInspec')">입고검사관리</li>
+            <li class="sub-item" @click="movePage('qCMaterialRecord')">검사기록조회</li>
+            <li class="sub-item" @click="movePage('qCMaterialFaulty')">불량내역조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
@@ -218,15 +219,16 @@
             v-bind:collapse="true"
             collapseRef="mainpage"
             navText="공정품질검사"
+            @click="movePage('qCProcessCleanInspec')"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">세척검사관리</li>
-            <li class="sub-item">음료검사관리</li>
-            <li class="sub-item">검사기록조회</li>
-            <li class="sub-item">불량내역조회</li>
+            <li class="sub-item" @click="movePage('qCProcessCleanInspec')">세척검사관리</li>
+            <li class="sub-item" @click="movePage('qCProcessBeverageInspec')">음료검사관리</li>
+            <li class="sub-item" @click="movePage('qCProcessRecord')">검사기록조회</li>
+            <li class="sub-item" @click="movePage('qCProcessFaulty')">불량내역조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse
@@ -235,14 +237,15 @@
             v-bind:collapse="true"
             collapseRef="mainpage"
             navText="포장품질검사"
+            @click="movePage('qCPackingInspec')"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item">관리</li>
-            <li class="sub-item">검사기록조회</li>
-            <li class="sub-item">불량내역조회</li>
+            <li class="sub-item" @click="movePage('qCPackingInspec')">관리</li>
+            <li class="sub-item" @click="movePage('qCPackingRecord')">검사기록조회</li>
+            <li class="sub-item" @click="movePage('qCPackingFaulty')">불량내역조회</li>
           </template>
         </sidenav-collapse>
       </li>

@@ -97,7 +97,7 @@ WHERE  qc_material_id = ?
 `;
 
 //입고검사-불량품 등록('검사코드', '불량항목', '불량수량'@result);
-const insertQCMR =
+const insertQCMF =
 `
 CALL qc_material_rjc_input_rjclist(?, ?, ?, @result)
 `;
@@ -112,8 +112,8 @@ WHERE RIGHT(faulty_code, 3) IN ('001', '002', '003', '004', '005')
 `;
 
 
-//입고검사-검사기록조회(완료된 검사만 전체 조회)
-const selectQCMAll =`
+//입고검사-검사기록조회(전체)
+const selectQCMRAll =`
 SELECT q.qc_material_id,
        q.order_code,
        q.material_code,
@@ -128,11 +128,10 @@ SELECT q.qc_material_id,
        e.name
 FROM qc_material q LEFT JOIN employee e ON q.emp_num = e.emp_num
 						 LEFT JOIN material m ON q.material_code = m.material_code
-WHERE inspec_status LIKE '검사완료'
 ORDER BY q.qc_material_id DESC
 `;
 //입고검사-검사기록조회(완료된 검사만 선택조회)
-const selectQCM =`
+const selectQCMRWithConditions =`
 SELECT q.qc_material_id,
        q.order_code,
        q.material_code,
@@ -147,11 +146,13 @@ SELECT q.qc_material_id,
        e.name
 FROM qc_material q LEFT JOIN employee e ON q.emp_num = e.emp_num
 						 LEFT JOIN material m ON q.material_code = m.material_code
-WHERE inspec_status LIKE '검사완료'
+
 `;
+// WHERE inspec_status LIKE '검사완료'
+// WHERE inspec_status LIKE '검사요청완료'
 
 //입고검사-불량내역(입고검사불량 전체 조회)
-const selectQCMR = `
+const selectQCMF = `
 SELECT r.qc_material_rjc_id,
        q.order_code,
        r.qc_material_id,
@@ -169,8 +170,8 @@ LEFT JOIN employee e ON q.emp_num = e.emp_num
 LEFT JOIN faulty_code f ON r.faulty_code = f.faulty_code
 ORDER BY r.qc_material_rjc_id DESC   
 `;
-//입고검사-검사기록조회(완료된 검사만 선택 조회)
-const selectQCMRWithConditions = `
+//입고검사-불량내역(입고검사불량 전체 조회)
+const selectQCMFWithConditions = `
 SELECT r.qc_material_rjc_id,
        q.order_code,
        r.qc_material_id,
@@ -199,11 +200,11 @@ module.exports = {
   selectedQCMAll,
   selectQCMWithConditions,
   updateQCM,
-  insertQCMR,
+  insertQCMF,
   selectFaultyCodeOneToFive,
-  selectQCMAll,
-  selectQCM,
-  selectQCMR,
-  selectQCMRWithConditions
+  selectQCMRAll,
+  selectQCMRWithConditions,
+  selectQCMF,
+  selectQCMFWithConditions
   
 };
