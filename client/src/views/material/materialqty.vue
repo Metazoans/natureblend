@@ -95,6 +95,7 @@
       @grid-ready="onReady"
       style="height: 513px;"
       rowSelection="multiple"
+      :noRowsOverlayComponent="CustomNoRowsOverlay"
    >
    </ag-grid-vue>
  </div>
@@ -109,6 +110,8 @@
  
  import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
  const { notify } = useNotification();  // 노티 내용변수입니다
+
+ import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
  
  
  const qty_state = ref('a1'); //재고상태
@@ -181,12 +184,12 @@
    const columnDefs = ref([
       { headerName: "No.", field: "row_num", width: 100, cellStyle: { textAlign: "center" } },
       { headerName: "자재코드", field: "material_code", width: 250, cellStyle: { textAlign: "center" } },
-      { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "center" } },
-      { headerName: "현재고량", field: "stok_qty", cellStyle: { textAlign: "center" } },
-      { headerName: "불가용", field: "reject_qty", cellStyle: { textAlign: "center" } },
-      { headerName: "폐기필요재고", field: "trush_qty", cellStyle: { textAlign: "center" } },
-      { headerName: "발주중재고", field: "order_qty", cellStyle: { textAlign: "center" } },
-      { headerName: "안전재고", field: "safety_inventory", cellStyle: { textAlign: "center" } },
+      { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "left" } },
+      { headerName: "현재고량", field: "stok_qty", cellStyle: { textAlign: "right" } },
+      { headerName: "불가용", field: "reject_qty", cellStyle: { textAlign: "right" } },
+      { headerName: "폐기필요재고", field: "trush_qty", cellStyle: { textAlign: "right" } },
+      { headerName: "발주중재고", field: "order_qty", cellStyle: { textAlign: "right" } },
+      { headerName: "안전재고", field: "safety_inventory", cellStyle: { textAlign: "right" } },
       { headerName: "자재등록일", field: "regi_date", cellStyle: { textAlign: "center" } },
    ]);
 
@@ -198,13 +201,6 @@
  
  const onReady = (param) => {
    param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
-
-   
-   const headerCells = document.querySelectorAll('.ag-header-cell-text');
-   headerCells.forEach((headerCell) => {
-        headerCell.style.placeContent = 'center';
-    });
-
  }
  
  //데이터 잡아넣을 그리드 api 행
@@ -227,7 +223,7 @@
       regi_date : userDateUtils.dateFormat(val.regi_date, "yyyy-MM-dd"),
    }));
  }
- 
+
  // 화면 생성되는 시점
  onBeforeMount(()=>{
    qtylist();   //전체조회 쿼리 실행
@@ -254,5 +250,13 @@
       background-color: $white;
       border: solid 1px  ;
  }
- </style>
+</style>
+
+<style lang="scss">
+   .ag-header {
+      .ag-header-cell-label {
+         place-content: center;
+      }
+   }
+</style>
  

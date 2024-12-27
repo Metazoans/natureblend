@@ -60,6 +60,7 @@
       @grid-ready="onReady"
       style="height: 513px;"
       rowSelection="multiple"
+      :noRowsOverlayComponent="CustomNoRowsOverlay"
    >
    </ag-grid-vue>
 </div>
@@ -81,6 +82,8 @@ const { notify } = useNotification();  // 노티 내용변수입니다
 
 import Modal from "@/views/material/materialInputListModal.vue";
 import InspectionModal from "@/views/material/inspection_com.vue";
+
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 
 import theme from "@/utils/agGridTheme";
 import { ref, onBeforeMount } from 'vue'; //onBeforeMount

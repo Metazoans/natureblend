@@ -14,11 +14,17 @@
             style="height: 303px;"
             rowSelection="multiple"
             :quickFilterText="plenlistsearch"
+            :noRowsOverlayComponent="noRowsOverlayComponent"
         >
         </ag-grid-vue>
     </div>
     <div style="display: none">
         <CustomNoRowsOverlay/>
+    </div>
+    <div v-if="showprogress" style="width: 100%; height: 100%; background-color: #0005; position: fixed; top: 0px; left: 0px; z-index: 1000;">
+        <div style="position: fixed; top: 50%; left: 30%;  width: 50%;">
+            <material-progress color="success" :percentage="number2" />
+        </div>
     </div>
 </template>
 <script>
@@ -27,15 +33,20 @@ import theme from "@/utils/agGridTheme";
 import userDateUtils from '@/utils/useDates.js';
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
+import MaterialProgress from "@/components/MaterialProgress.vue";
 
 export default {
     //컴포넌트 선언했어
     components: {
         CustomNoRowsOverlay,
+        MaterialProgress,
     },
     //변수 넣는 통은 너야
     data(){
         return{
+            showprogress: false,
+            number2: 0,
+            noRowsOverlayComponent: 'CustomNoRowsOverlay',
             plenlistsearch: '',
             plancolumnDefs: [
                 { 
@@ -137,9 +148,12 @@ export default {
 
         async allInput(){
             const selectedRows = this.gridApi.getSelectedRows(); // 선택된 행의 데이터 가져오기
+            let percentNum = 100/selectedRows.length;
+            this.showprogress = true;
             if (selectedRows.length > 0) {
                 for(let i=0; i<selectedRows.length; i++){
                     //console.log(selectedRows[i]['order_plan_num']);
+                    this.number2 = this.number2 + percentNum;
                     await this.needMaterialOrder(selectedRows[i]['order_plan_num']);
                 }
 
@@ -161,7 +175,8 @@ export default {
             // 2차 가공
             this.needMaterialList = this.needMaterialList.map((col) => ({
                 ...col,
-                need_qty: Number(col.need_qty) > 0 ? col.need_qty.toLocaleString() : 0,
+                //need_qty: Number(col.need_qty) > 0 ? Number(col.need_qty).toLocaleString() : 0,
+                need_qty: (col.need_qty > 0 ? col.need_qty.toLocaleString() : '0'),
             }));
 
             console.log('결과 : ',this.needMaterialList);
@@ -169,9 +184,12 @@ export default {
                 //리스트 만들기 끝났으면 그걸로 엄마한테 줌 (2)
                 this.$emit('planAndBomList', this.needMaterialList);
                 this.needMaterialList = [];
+                this.$notify({ title:'주문생성', text: '자재리스트 생성 완료.', type: 'success' });
             } else {
                 this.$notify({ title:'주문생성', text: '선택된 행이 없습니다.', type: 'error' });
             }
+            this.showprogress = false;
+            this.number2 = 0;
         },
 
         // BOM기반 필요자재 가져와서 리스트 만들고 (1)

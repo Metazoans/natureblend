@@ -14,6 +14,7 @@
         style="height: 700px;"
         :quickFilterText="clientNamesearch"
         rowSelection="multiple"
+        :noRowsOverlayComponent="CustomNoRowsOverlay"
         >
     </ag-grid-vue>
    </div>
@@ -25,6 +26,11 @@
     <InspectionModal :isShowModal2="isShowModal2" :inspection_data="inspection_data" @closeModal2="closeModal2" @confirm2="confirm2">
     </InspectionModal>
   </div>
+  <div v-if="showprogress" style="width: 100%; height: 100%; background-color: #0005; position: fixed; top: 0px; left: 0px; z-index: 1000;">
+      <div style="position: fixed; top: 50%; left: 30%;  width: 50%;">
+          <material-progress color="success" :percentage="number2" />
+      </div>
+  </div>
  </template>
 <script setup>
 import axios from 'axios';
@@ -34,6 +40,8 @@ import userDateUtils from '@/utils/useDates.js';
 import Modal from "@/views/material/materialInputModal.vue";
 import InspectionModal from "@/views/material/inspection_com.vue";
 
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
  import theme from "@/utils/agGridTheme";
  import { ref, onBeforeMount } from 'vue';
 
@@ -42,6 +50,12 @@ const { notify } = useNotification();  // 노티 내용변수입니다
 
  //import { ref, shallowRef, computed, onBeforeMount } from 'vue';
  //import { useRouter } from 'vue-router';
+
+ import MaterialProgress from "@/components/MaterialProgress.vue";
+
+ //프로그래스 돌릴 숫자
+ const number2 = ref(0);
+ const showprogress = ref(false);
 
  // 행 레코드 삽입하는 변수
  const rowData = ref([]);
@@ -331,12 +345,9 @@ const lotMaking = async function(){
     //console.log( (numberPart.value + 1).toString().padStart(3, '0') );
   }
 
-  notify({
-      title: "입고성공",
-      text: "입고중 입니다. 잠시만 기다려주세요.",
-      type: "success", // success, warn, error 가능
-   });
-
+  
+  let percentNum = 100/nuwList.value.length;
+  showprogress.value = true;
   for(let i=0; i<nuwList.value.length; i++){
     materialObj.value = {
       lot_code: prefix.value + ( (numberPart.value + i).toString().padStart(3, '0') ),
@@ -351,11 +362,18 @@ const lotMaking = async function(){
     
     console.log(materialObj.value);
     //여기서 서버통신 시작함
+    number2.value = number2.value + percentNum;
     await inputMaterial(materialObj.value);
     // await delay(3000);   //3초마다 포문 작동되게하기
   }
   matrialQcInput(); //그냥 처리 끝나면 새로 DB받아옴
-
+  notify({
+      title: "입고성공",
+      text: "입고 완료 되었습니다.",
+      type: "success", // success, warn, error 가능
+   });
+   showprogress.value = false;
+   number2.value = 0;
   //location.reload();  //페이지 새로고침
 }
 

@@ -14,6 +14,12 @@
     </div>
    <!-- 위에서 만들어진거 요기에 보냄-->
    <newMaterialOrderOffer :planMaterialList="planMaterialList" :clientList="clientList" @seachClient="seachClienting" @goPOlist="letGoPoList"/>
+
+   <div v-if="showprogress2" style="width: 100%; height: 100%; background-color: #0005; position: fixed; top: 0px; left: 0px; z-index: 1000;">
+        <div style="position: fixed; top: 50%; left: 30%;  width: 50%;">
+            <material-progress color="success" :percentage="number" />
+        </div>
+    </div>
 </template>
 <script>
 import axios from 'axios';
@@ -22,16 +28,21 @@ import { ajaxUrl } from '@/utils/commons.js';
 import newMaterialOrderPlan from '@/views/material/newMaterialOrderPlan.vue';
 import newMaterialOrderList from '@/views/material/newMaterialOrderList.vue';
 import newMaterialOrderOffer from '@/views/material/newMaterialOrderOffer.vue';
+
+import MaterialProgress from "@/components/MaterialProgress.vue";
+
 export default {
     name: "myBestPage",
     components: {
         newMaterialOrderPlan,
         newMaterialOrderList,
         newMaterialOrderOffer,
+        MaterialProgress,
     },
     // 변수 선언
     data() {
         return {
+            showprogress2: false,
             productorderlist: [],
             planMaterialList: [],
             material_code: '',
@@ -39,6 +50,7 @@ export default {
             clientList: [],
             polist: [],
             my_result: 'OK',
+            number: 0,
         };
     },
     computed: {
@@ -84,13 +96,20 @@ export default {
 
             let artificial_head = new Date();
             artificial_head = artificial_head.getTime();
+            let percentNum = 100/this.polist.length;
+            this.showprogress2 = true;
             for(let i=0; i<this.polist.length; i++){
+                this.number = this.number + percentNum;
                 await this.inputpolist(artificial_head, this.polist[i]);
             }
             if( this.my_result === 'OK' ){
+                this.showprogress2 = false;
+                this.number = 0;
                 this.$notify({ title:'발주성공', text: '발주 등록에 성공 하셨습니다.', type: 'success' });    // success, warn, error 가능
                 this.$router.push({ name : 'materialOrderList' });
             }else{
+                this.showprogress2 = false;
+                this.number = 0;
                 this.$notify({ title:'발주오류', text: this.my_result+'오류 관리자 호출요망!', type: 'error' });    // success, warn, error 가능
             }
         },

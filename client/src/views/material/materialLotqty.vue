@@ -101,6 +101,7 @@
       @grid-ready="onReady"
       style="height: 513px;"
       rowSelection="multiple"
+      :noRowsOverlayComponent="CustomNoRowsOverlay"
    >
    </ag-grid-vue>
  </div>
@@ -115,6 +116,8 @@
  import userDateUtils from '@/utils/useDates.js';
  
  import Modal from "@/views/material/materialLotqtyModal.vue";
+
+ import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
  
  import theme from "@/utils/agGridTheme";
  import { ref, onBeforeMount } from 'vue'; //onBeforeMount
