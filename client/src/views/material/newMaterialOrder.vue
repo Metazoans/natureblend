@@ -77,9 +77,9 @@ export default {
             this.polist = this.polist.map((val) => ({
                 ...val,
                 emp_num: 1,
-                go_qty: Number(val.go_qty)*1000,
-                go_price: Number(val.go_price)*1000,
-                go_total_price: val.go_total_price*1000,
+                go_qty: val.material.includes('병') ? Number(val.go_qty) : Number(val.go_qty)*1000,
+                go_price: val.material.includes('병') ? Number(val.go_price) : Number(val.go_price)*1000,
+                go_total_price: val.material.includes('병') ? val.go_total_price : val.go_total_price*1000,
             }));
 
             let artificial_head = new Date();

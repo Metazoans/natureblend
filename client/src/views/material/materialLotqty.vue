@@ -237,7 +237,8 @@
              //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
              deleteList.value = params.data;
              //console.log('aaaaa', deleteList.value);
-             if(deleteList.value.hold_qty != '0 kg'){
+             const quantity = Number(deleteList.value.hold_qty.split(' ')[0]);
+             if(quantity !== 0){
                notify({
                   title: "폐기불가",
                   text: "공정 투입중인 자재 입니다. 폐기불가!",
@@ -328,10 +329,10 @@
     console.log(result.data);
     rowData.value = result.data.map((col) => ({
        ...col,
-       in_qty: (col.in_qty * 0.001) + " kg",
-       stok_qty: (col.stok_qty * 0.001) + " kg",
-       hold_qty: (col.hold_qty * 0.001) + " kg",
-       out_qty: (col.out_qty * 0.001) + " kg",
+       in_qty: col.material_name.includes('병') ? (col.in_qty).toLocaleString() + " 개" : (col.in_qty * 0.001).toLocaleString() + " kg",
+       stok_qty: col.material_name.includes('병') ? (col.stok_qty).toLocaleString() + " 개" : (col.stok_qty * 0.001).toLocaleString() + " kg",
+       hold_qty: col.material_name.includes('병') ?  (col.hold_qty).toLocaleString() + " 개" : (col.hold_qty * 0.001).toLocaleString() + " kg",
+       out_qty: col.material_name.includes('병') ? (col.out_qty).toLocaleString() + " 개" : (col.out_qty * 0.001).toLocaleString() + " kg",
        inset_lot_date: userDateUtils.dateFormat(col.inset_lot_date, "yyyy-MM-dd"),
        limit_date: userDateUtils.dateFormat(col.limit_date, "yyyy-MM-dd"),
      })

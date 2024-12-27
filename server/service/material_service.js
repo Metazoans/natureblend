@@ -164,7 +164,7 @@ const materialOrderList2 = async (materialCode, clientName, POListCode, startDat
   };
 
   querywhere = searchList.length == 0 ? "" : `WHERE ${querywhere}`;
-  querywhere += ` ORDER BY mob.body_num DESC `;
+  querywhere += ` ORDER BY order_code DESC, mob.body_num DESC `;
   console.log('selected Query', querywhere);
 
   let result = await mysql.query('material_order_list',querywhere);
@@ -245,6 +245,10 @@ const lotQtyInfomation = async (inputNum)=>{
 const lotQtyList = async (qty_state, materialCode, clientName, POListCode, startDate, endDate, materialNomal, materialLotState, limitOut)=>{
   
   let searchList = [];
+
+  searchList.push(` mlq.in_qty > 0 `);
+
+
   if(materialNomal != undefined && Object.keys(materialNomal).length > 0){
     let search = `mlq.material_nomal IN (`;  
     for (let key in materialNomal) {        

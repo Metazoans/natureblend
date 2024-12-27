@@ -107,6 +107,7 @@ SELECT mb.body_num,
        qm.inspec_end
 FROM qc_material qm
 JOIN material_order_body mb ON mb.order_code = qm.order_code
+AND mb.material_code = qm.material_code
 JOIN material m ON mb.material_code = m.material_code
 JOIN material_order_head moh ON mb.order_code = moh.order_code
 JOIN client cl ON cl.client_num = moh.client_num
@@ -122,6 +123,7 @@ SELECT warehouse_code,
 FROM warehouse
 WHERE
   STORAGE = '가능'
+  AND warehouse_location LIKE '%자재%'
 `;
 
 //LOT번호 가공해오기
@@ -215,6 +217,7 @@ AND mlq2.material_nomal = 'b2'
 JOIN material mat ON mi.material_code = mat.material_code
 JOIN client cli ON mi.client_num = cli.client_num
 JOIN material_order_body mob ON mi.order_code = mob.order_code
+AND mi.material_code = mob.material_code
 LEFT JOIN warehouse ware ON mlq.warehouse_code = ware.warehouse_code
 LEFT JOIN warehouse ware2 ON mlq2.warehouse_code = ware2.warehouse_code
 JOIN employee emp ON mi.emp_num = emp.emp_num

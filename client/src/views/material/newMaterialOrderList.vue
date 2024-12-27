@@ -100,6 +100,7 @@ export default {
                button3.style.backgroundColor = '#f48a06';
                button3.style.color = 'white';
                button3.style.border = 'none';
+               button3.style.width = '90px';
                button3.style.padding = '5px 10px';
                button3.style.borderRadius = '4px';
 
