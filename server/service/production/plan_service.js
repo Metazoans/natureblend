@@ -23,8 +23,12 @@ const addPlan = async (planInfo)=>{
     return { message: result[0][0].result }
 }
 
-const planList = async ()=>{
-    return await mysql.query('planDetailList');
+const planList = async (urlQuery)=>{
+    if(Object.keys(urlQuery).length === 0) {
+        return await mysql.query('planDetailList');
+    } else {
+        // let dbQuery =
+    }
 }
 
 module.exports = {
