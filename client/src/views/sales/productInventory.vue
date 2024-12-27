@@ -41,6 +41,7 @@
                     :columnDefs="columnProductNum"
                     :theme="theme"
                     @grid-ready="onReady"
+                    @rowClicked="onProductLot"
                     :quickFilterText="inputListsearch"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     rowSelection="multiple"
@@ -54,56 +55,10 @@
             </div>
         </div>
 
-        <div class="container-fluid py-4">
-    <!--검색 폼 -->
-        <h2>제품LOT재고조회</h2>
-        <div class= "main-container ">
-            <div class="ps-4">
-                     <!--LOT재고 상태 체크 박스-->
-                     <div class="pt-2">
-                            <label class="col-sm-2 col-form-label fw-bold">LOT재고상태</label>
-                            <div>
-                                <label class="me-3" v-for="status in statusList" :key="status">
-                                    {{ status }}
-                                <input 
-                                    :value="status"
-                                    type="checkbox"
-                                    v-model="pickedStatus"
-                                >
-                                </label>
-                            </div>
-                       
-                    </div>
-                    <!--유통기한 검색-->
-                    <div class="row align-items-center">
-                        <label class="col-sm-2 col-form-label fw-bold" >유통기한</label>
-                            <div class="col-sm-6 d-flex align-items-center">
-                                <div class="col-sm-4">
-                                <input 
-                                type="date" 
-                                id="startDate" class="form-control border p-2"
-                                v-model="startDate"/>
-                            </div>
-                            <div class="col-sm-1 text-center">~</div>
-                            <div class="col-sm-4">
-                                <input 
-                                type="date" 
-                                id="endDate" class="form-control border p-2"
-                                v-model="endDate" />
-                            </div>
-                            <div class="col-sm-4 text-end">
-                                <!--검색 및 초기화-->
-                                <material-button  size = "md" color="success" class="button" @click="searchLotNum">검색</material-button>
-                                <material-button  size = "md" color="warning" class="button" >초기화</material-button>
-                            </div>
-                        </div>   
-                    </div>
-                </div>   
-            </div>
-        </div>
+        
         <div class="container-fluid py-4">
             <div>
-                <!-- 입고된 lot 조회 -->
+                <!-- 제품별 lot 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
                      style ="width: 1250px; height: 300px; "
@@ -149,8 +104,7 @@ export default{
     data(){
         return{
             //검색 필터 데이터
-            startDate:"", //입고날짜 시작 날짜
-            endDate:"", //입고고날짜 끝 날짜
+            
             //제품 모달
             selectedProName:"",//선택될 제품 이름
             productName:'', //저장될 제품 이름 
@@ -196,35 +150,6 @@ export default{
                 headerName : "폐기",
                 field : "status",
                 editable : false,
-                cellRenderer: params =>{
-                      // 유통기한 값을 받아옵니다.
-                const expireDate = params.data.expire_date; // 유통기한이 날짜 형식이라 가정
-                const productStatus = params.data.product_status; // lot재고 상태
-                const currentDate = new Date();
-                if( new Date(expireDate) <= currentDate && productStatus === '보관'){
-                    const disposeButton = document.createElement('button');
-                    disposeButton.innerText = '폐기';
-                    disposeButton.style.marginRight = '10px';
-                    disposeButton.style.cursor = 'pointer';
-                    disposeButton.style.backgroundColor = '#ff0000';
-                    disposeButton.style.width = '60px';
-                    disposeButton.style.height = '30px';
-                    disposeButton.style.color = 'white';
-                    disposeButton.style.border = 'none';
-                    disposeButton.style.padding = '0';
-                    disposeButton.style.borderRadius = '4px';
-                    disposeButton.style.textAlign = 'center';
-                    disposeButton.style.lineHeight = '30px';
-
-                    disposeButton.addEventListener('click',()=>{
-                        this.renderButton(params);
-                    })
-                    return disposeButton;
-                }
-            }
-               
-               
-
             }    
         ],
 
@@ -245,7 +170,7 @@ export default{
             
             this.selectedProCode = product.product_code;
             this.selectedProName = product.product_name;
-            console.log("선택된이름:",this.selectedProName);
+           // console.log("선택된이름:",this.selectedProName);
         },
     
         openModal(){
@@ -256,7 +181,7 @@ export default{
             
             this.productName = this.selectedProName;
             this.productCode = this.selectedProCode;
-            console.log("저장된이름:",this.productName);
+           // console.log("저장된이름:",this.productName);
 
             this.closeModal(); // 모달 닫기
         },
@@ -295,7 +220,7 @@ export default{
                 //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
                 inputText.addEventListener('input',(event)=>{
                     const value = event.target.value;
-                    console.log("입력된 값:", value);
+                    //console.log("입력된 값:", value);
 
                     //검색로직추가기능
                     this.inputListsearch = value;
@@ -341,7 +266,7 @@ export default{
                 //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
                 inputText1.addEventListener('input',(event)=>{
                     const value = event.target.value;
-                    console.log("입력된 값:", value);
+                    //console.log("입력된 값:", value);
 
                     //검색로직추가기능
                     this.inputListsearch1 = value;
@@ -360,32 +285,25 @@ export default{
             this.filters = {
                 productCode : this.productCode,
             }
-            console.log(this.filters);
+            //console.log(this.filters);
             let result = await axios.put(`${ajaxUrl}/inventory/product`,this.filters)
                                     .catch(err => console.log(err));
             this.productNum = result.data;
-            console.log(this.productNum);
+            //console.log(this.productNum);
 
         },
 
-        async searchLotNum(){
-            if( new Date(this.startDate) > new Date(this.endDate)){
-                this.$notify({
-                        text: `시작 날짜는 종료 날짜보다 이전이어야 합니다. `,
-                        type: 'error',
-                    });
-                return;
-            }
-            this.filters  = {
-                productStatus : this.pickedStatus,
-                startDate : this.startDate,
-                endDate : this.endDate,
-            }
+      
+        dateFormat(value, format) {
+          return userDateUtils.dateFormat(value, format);
+        }, 
+        // 제품선택해서 제품에 대한 lot 출력
+        async onProductLot(row){
+            console.log("제품코드1",row.data.product_code);
+           
 
-            console.log(this.filters);
-            let result = await axios.put(`${ajaxUrl}/inventory/lot`,this.filters )
-                                    .catch(err => console.log(err));
-            console.log(result.data);
+            let result = await axios.get(`${ajaxUrl}/inventory/productLot/${row.data.product_code}`)
+                                    .catch(err => console.log(err))
             this.LotNum = result.data;
             this.LotNum = result.data.map((col) => ({
                 ...col,
@@ -394,37 +312,8 @@ export default{
                 })
             );  
 
-        },
-        dateFormat(value, format) {
-          return userDateUtils.dateFormat(value, format);
-        }, 
+        }
 
-        // 버튼 렌더링 함수
-        async renderButton(params) {
-
-            let disposeLot = {
-                disposeLots : params.data.product_lot
-            };
-            let result = await axios.put(`${ajaxUrl}/inventory/dispose`,disposeLot)
-                                    .catch(err => console.log(err));
-            console.log(result.data.result);
-            // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
-            if(result.data.result === true){
-                    this.$notify({
-                    text: `해당 LOT는 폐기 되었습니다. `,
-                    type: 'success',
-                });
-            }else{
-                this.$notify({
-                    text: `해당 LOT는 폐기 처리 실패 했습니다. `,
-                    type: 'error',
-                });
-            }
-                
-          
-
-     
-        },
       
 
        

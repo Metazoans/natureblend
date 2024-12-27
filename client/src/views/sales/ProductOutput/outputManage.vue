@@ -80,7 +80,7 @@
     <div class="container-fluid py-4">
         <h4 v-show="rowDataOrder.length != 0">미출고조회</h4>
         <div class="d-flex">
-            <div>
+            <div class=" p-2 flex-fill">
                 <div class="grid-container" v-show="rowDataOrder.length != 0">
                 <ag-grid-vue
                 style ="width: 850px; height: 500px;"
@@ -99,10 +99,10 @@
                     <CustomNoRowsOverlay/>
                 </div>
             </div>
-            <div>
+            <div class=" p-2 flex-fill">
                 <div class="grid-container" v-show="rowDataOrder.length != 0">
                 <ag-grid-vue
-                style ="width:650px; height: 500px;"
+                style ="width:850px; height: 500px;"
                 :rowData="rowDataLot"
                 :columnDefs="columnLot"
                 :theme="theme"
@@ -206,8 +206,8 @@ export default{
                 {headerName :"제품코드",field: 'product_code'},
                 {headerName :"제품명",field: 'product_name'},
                 {headerName :"주문수량",field: 'order_amount'},
-                {headerName :"출고량",field: 'output_amount'},
                 {headerName :"미출고량",field: 'disorder_amount'}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
+                {headerName :"출고량",field: 'output_amount'},
                 {headerName :"상태여부",field: 'order_status'}
             ],
 
@@ -228,9 +228,6 @@ export default{
             //cellClass: "custom-cell"
             },
             {headerName :"제품LOT번호",field: 'product_lot'},
-            {headerName :"제품 재고수 ",field: 'input_amount'},
-            {headerName :"제품제조일자 ",field: 'input_date'},
-
             { headerName: "출고수",
             field: "output_num",
             resizable: false,
@@ -239,6 +236,10 @@ export default{
             // 셀 값이 변경될 때마다 실행되는 함수
             onCellValueChanged: this.onCellValueChanged
             },
+            {headerName :"제품 재고수 ",field: 'total_amount'},
+            {headerName :"제품제조일자 ",field: 'inspec_end'},
+
+           
             ],
 
             
@@ -360,7 +361,7 @@ export default{
                                     this.rowDataLot = result.data;
             this.rowDataLot = result.data.map((col) => ({
                 ...col,
-                input_date: this.dateFormat(col.input_date, "yyyy-MM-dd"),
+                inspec_end: this.dateFormat(col.inspec_end, "yyyy-MM-dd"),
                 com_name: row.data.com_name,
                 order_num : row.data.order_num,
                 order_amount : row.data.order_amount,
@@ -398,7 +399,7 @@ export default{
             const totalOutput = outputNums.reduce((sum,value)=> sum + Number(value),0);
             if(selectedRows.length > 0 && Number(selectedRows[0].disorder_amount) < totalOutput){
                 this.$notify({
-                    text: '출고수는 재고수보다 많을 수 없습니다.',
+                    text: '출고수는 미출고량보다 많을 수 없습니다.',
                     type: 'error',
                 });
                 return; 

@@ -80,5 +80,12 @@ router.put('/inventory/dispose',async(req,res)=>{
     res.send(result);
 })
 
+//제품번호로 제품의 lot조회
+router.get('/inventory/productLot/:no',async(req,res)=>{
+    let productNum = req.params.no;
+    let info = await inputService.getProductLotInfo(productNum);
+    res.send(info);
+})
+
 module.exports = router;
 

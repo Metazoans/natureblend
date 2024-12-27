@@ -1,5 +1,5 @@
 <template>
-  <div class="grid-container">
+  <div class="grid-container" v-show="rowData.length != 0">
     <ag-grid-vue
     
       :rowData="rowData"
@@ -72,6 +72,10 @@ export default {
 
        //검색어 검색 (그리드 안)
        inputListsearch: "", //검색어 1
+
+       //수정,추가등록 플래그
+       added : "",
+       updated:"",
 
     }
   },
@@ -158,24 +162,7 @@ export default {
             })
         );  
 
-        // this.filterOrderlist = result.data; //서버에 받은 데이터 저장 
-        // console.log(this.filterOrderlist);
-
-        // this.rowData = []; //초기화 
-        // for(let i=0; i < this.filterOrderlist.length; i++){
-        //   let tempData = {'orderListNum': this.filterOrderlist[i].orderlist_num,
-        //                    'orderName':this.filterOrderlist[i].orderlist_title ,
-        //                    'clientName':this.filterOrderlist[i].com_name,
-        //                    'empName': this.filterOrderlist[i].name,
-        //                    'orderDate' : this.dateFormat(this.filterOrderlist[i].order_date, 'yyyy-MM-dd'),
-        //                    'dueDate' : this.dateFormat(this.filterOrderlist[i].due_date, 'yyyy-MM-dd'),
-        //                    'orderStatus' : this.statusMap[this.filterOrderlist[i].orderlist_status] || this.filterOrderlist[i].orderlist_status
-        //                 }
-        //                 // console.log(tempData);
-        //   this.rowData[i] = tempData; // 객체를 배열로 넣기 
-        // }
-        // console.log(this.rowData);
-        
+       
         
       },// searchOrder
 
@@ -190,32 +177,138 @@ export default {
         //this.$router.push({ name:'orderInfo', params : {no: order.orderListNum} })
       },
 
-
+//주문의 수정 및 추가주문 진행 
       async updateOrder(updateOrderInfo){
         console.log("부모로 온 데이터:",updateOrderInfo);
         console.log("주문서변경값:", this.order.orderlist_title , this.order.due_date);
+        // 문자열을 배열로 변환
+          const orderCodeArray = JSON.parse(updateOrderInfo.orderCode);  // ['null', 34]
+          const productCodeArray = JSON.parse(updateOrderInfo.productCode);  // ['P006', 'P002']
+          const orderAmountArray = JSON.parse(updateOrderInfo.orderAmount);  // [1000, 20]
+          const perPriceArray = JSON.parse(updateOrderInfo.perPrice);  // [2000, 1500]
+
+          // orderCode가 null인 항목과 아닌 항목으로 나누기
+          const ordersWithOrderNum = [];
+          const ordersWithoutOrderNum = [];
+
+          // 배열의 길이만큼 반복하여 처리
+          for (let i = 0; i < orderCodeArray.length; i++) {
+              const order = {
+                  orderCode: orderCodeArray[i],
+                  productCode: productCodeArray[i],
+                  orderAmount: orderAmountArray[i],
+                  perPrice: perPriceArray[i]
+              };
+
+              // orderCode가 null인 경우와 아닌 경우로 나누기
+              if (order.orderCode === null || order.orderCode === 'null') {
+                  ordersWithoutOrderNum.push(order);
+              } else {
+                  ordersWithOrderNum.push(order);
+              }
+          }
+          
+        //주문추가 
+       
+        if(ordersWithoutOrderNum.length >0){
+          console.log("orderCode가 null인 주문:", ordersWithoutOrderNum);
+          let newProductCodes = []
+          let newProductNums = []
+          let newPerPrices = []
+          ordersWithoutOrderNum.forEach(row =>{
+            newProductCodes.push(row.productCode);
+            newProductNums.push(row.orderAmount);
+            newPerPrices.push(row.perPrice);
+          })
+
+          let addOrdersWithoutOrderNum ={
+            orderlistNum :this.order.orderlist_num,
+            newProductCode : JSON.stringify(newProductCodes),
+            newProductNum : JSON.stringify(newProductNums),
+            newPerPrice : JSON.stringify(newPerPrices)
+          }
+           //newProductNum 또는 newPerPrice가 비어 있으면 경고
+            if (newProductNums.some(num => num === '' || num === null) || newPerPrices.some(price => price === '' || price === null)) {
+                this.$notify({
+                    text: `주문 수량과 가격을 입력해주세요.`,
+                    type: 'error',
+                });
+                return;  // 추가 작업 진행하지 않음
+            }
+            await axios.post(`${ajaxUrl}/orderUpdate/insert`,addOrdersWithoutOrderNum)
+                        .then(Response =>{
+                              if(Response.statusText === 'OK'){
+                                console.log("추가등록완료");
+                                this.added = true;
+                              }
+                            })
+                        .catch(err => console.log(err));  
+      
+
+          
+        }
+          
+          //업데이트 작업 
+          
+        if(ordersWithOrderNum.length > 0){
+          console.log("orderCode가 null이 아닌 주문:", ordersWithOrderNum);
+          //업데이트 해야 하는 주문 내용 (배열형성)
+          let orderAmounts = []
+          let perPrices = []
+          let productCodes = []
+          let orderCodes =[]
+          ordersWithOrderNum.forEach(row=>{
+            orderAmounts.push(Number(row.orderAmount));
+            perPrices.push(row.perPrice);
+            productCodes.push(row.productCode);
+            orderCodes.push(row.orderCode);
+          })
         // updateOrderInfo.orderlistTitle = this.order.orderlist_title;
         // updateOrderInfo.dueDate = this.order.due_date;
         // 혹은 스프레드 연산자(...)를 사용하여 기존 객체를 복사하면서 새 속성을 추가
         // 새로운 속성을 추가한 객체 생성
-        updateOrderInfo = {
-            orderlistTitle: this.order.orderlist_title,
-            dueDate: this.order.due_date,
-            ...updateOrderInfo,
-        };
-        console.log("서버로 보낼 데이터",updateOrderInfo)
-        let result = await axios.put(`${ajaxUrl}/orderUpdate/update/${this.order.orderlist_num}`,updateOrderInfo)
-                                    .catch(err=>console.log(err));
-            console.log(result);
-        if(result.statusText === 'OK'){
-            this.$notify({
-                text: `${this.order.orderlist_title}이 수정되었습니다.`,
-                type: 'success',
-            });  
+          let updateOrdersWithOrderNum = {
+              orderlistTitle: this.order.orderlist_title,
+              dueDate: this.order.due_date,
+              orderCode : JSON.stringify(orderCodes),
+              productCode : JSON.stringify(productCodes),
+              orderAmount : JSON.stringify(orderAmounts),
+              perPrices : JSON.stringify(perPrices),
+        
+          };
+
+          let result = await axios.put(`${ajaxUrl}/orderUpdate/update/${this.order.orderlist_num}`,updateOrdersWithOrderNum)
+                                  .catch(err=>console.log(err));
+              console.log(result);
+          if(result.statusText === 'OK'){
+            this.updated = true; 
+          }
+
         }
 
+        //알림 처리  (각 성공의 경우 플래그 걸어서 주기 : added, updated )
+        if(this.added && this.updated){
+          this.$notify({
+                  text: `${this.order.orderlist_title}에 주문이 추가 되고 수정되었습니다.`,
+                  type: 'success',
+              });  
+        }else if (this.added){
+          this.$notify({
+                  text: `${this.order.orderlist_title}에 주문이 추가 되었습니다.`,
+                  type: 'success',
+              });  
+        }else if (this.updated){
+          this.$notify({
+                  text: `${this.order.orderlist_title}이 수정되었습니다.`,
+                  type: 'success',
+              });  
+        }
+          
+       
+      },
+      
 
-      }
+      
     },//end-Method
     
    

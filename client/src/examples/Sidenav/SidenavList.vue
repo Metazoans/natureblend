@@ -82,6 +82,7 @@
             </template>
             <template v-slot:list>
               <li class="sub-item" @click="movePage('productInventory')">제품재고조회</li>
+              <li class="sub-item" @click="movePage('lotInventory')">제품LOT조회</li>
             </template> 
         </sidenav-collapse>
       </li>

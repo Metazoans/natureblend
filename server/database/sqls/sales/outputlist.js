@@ -37,18 +37,26 @@ AND o.order_status != 'shipped' `;
 
 //제품별 lot 조회
 const getLotBaseProduct =
-`SELECT b.product_lot
-	  ,b.input_amount
-      ,h.input_date
-FROM input_body b left join input_header h
-                  ON b.inputlist_num = h.inputlist_num
-				  left join output o
+`WITH output_aggregated AS (
+	SELECT
+		input_num,
+        SUM(output_amount) AS total_output_amount
+	FROM output
+    GROUP BY input_num
+)
+SELECT 
+      b.product_lot
+	  ,b.input_amount - IFNULL(o.total_output_amount,0) AS total_amount
+      ,q.inspec_end
+FROM input_body b LEFT JOIN output_aggregated o
                   ON b.input_num = o.input_num
+                  LEFT JOIN qc_packaging q
+                  ON b.qc_packing_id = q.qc_packing_id
 WHERE b.product_code = ?
-AND b.input_amount - NVL(o.output_amount, 0) != 0
+AND b.input_amount - NVL(o.total_output_amount, 0) != 0
 AND b.input_flag = 0
 AND b.dispose_flag = 0
-order by h.input_date`;
+order by b.expire_date`;
 
 
 // 출고 등록 및 주문서와 주문 상태 변화
@@ -152,25 +160,26 @@ SET order_status =
 WHERE order_num = v_order_num;
 -- 주문 번호 업데이트 후 주문서 상태 업데이트 만약 주문서의 주문들 중 하나라도 shipped , semiShipped가 있는 경우 "continue"로 변경 , 주문 모두 shipped의 경우 "done"으로 변경  
 -- 주문서 상태 업데이트
+
 UPDATE orderlists ol
 JOIN orders o ON o.orderlist_num = ol.orderlist_num
 SET ol.orderlist_status = 
-	CASE 
-		WHEN EXISTS (
-			SELECT 1 
-			FROM orders 
-			WHERE orderlist_num = ol.orderlist_num 
-			  AND order_status IN ('shipped', 'semiShipped')
-		) THEN 'continue'
-		WHEN NOT EXISTS (
-			SELECT 1 
-			FROM orders 
-			WHERE orderlist_num = ol.orderlist_num 
-			  AND order_status != 'shipped'
-		) THEN 'done'
-		ELSE ol.orderlist_status
-	END
-WHERE o.order_num = v_order_num;       
+    CASE 
+		WHEN (
+				SELECT COUNT(*) 
+				FROM orders 
+				WHERE orderlist_num = ol.orderlist_num 
+				  AND order_status != 'shipped'
+			) = 0 THEN 'done'
+        WHEN (
+            SELECT COUNT(*) 
+            FROM orders 
+            WHERE orderlist_num = ol.orderlist_num 
+              AND order_status IN ('shipped', 'semiShipped')
+        ) > 0 THEN 'continue'
+        ELSE ol.orderlist_status
+    END
+WHERE o.order_num = v_order_num;     
 
     -- 문제없을때
     COMMIT;

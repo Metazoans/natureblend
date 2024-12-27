@@ -6,7 +6,8 @@ import outputManage from '@/views/sales/ProductOutput/outputManage.vue';
 import inputManage from '@/views/sales/ProductInput/inputManage.vue';
 import inputList from '@/views/sales/ProductInput/inputList.vue';
 import productInventory from '@/views/sales/productInventory.vue';
-import returnManage from '@/views/sales/ProductReturn/returnManage.vue'
+import lotInventory from '@/views/sales/lotInventory.vue'
+import returnManage from '@/views/sales/ProductReturn/returnManage.vue';
 
 
 const salesRoute = [
@@ -53,11 +54,17 @@ const salesRoute = [
         component:productInventory
     },
     {
+        path:'/inventory/lot',
+        name:'lotInventory',
+        component:lotInventory
+
+    },
+    {
         path:'return/product',
         name : 'returnManage',
         component:returnManage
-    }
-
+    },
+    
 
 
 
