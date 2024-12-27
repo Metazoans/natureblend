@@ -145,12 +145,7 @@ export default{
             { headerName: "창고위치 ", field: "warehouse_name", resizable: true, sortable: true },
             { headerName: "제조일자 ", field: "manufacturing_date", resizable: true, sortable: true },
             { headerName: "유통기한 ", field: "expire_date", resizable: true, sortable: true },
-            { headerName: "상태", field: "product_status", resizable: true, sortable: true },
-            {
-                headerName : "폐기",
-                field : "status",
-                editable : false,
-            }    
+            { headerName: "상태", field: "product_status", resizable: true, sortable: true },  
         ],
 
 
