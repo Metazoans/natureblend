@@ -74,9 +74,9 @@ const delBtn = () => {
 // 입력 데이터
 const partInfo = ref({
   partName: '',
-  yearCycle: '',
-  monthCycle: '',
-  dayCycle: '',
+  yearCycle: 0,
+  monthCycle: 0,
+  dayCycle: 0,
 });
 
 watch (

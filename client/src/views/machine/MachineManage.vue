@@ -376,7 +376,7 @@ export default {
 
       newArray.splice(row-1, 1);
       newArray.length = 4;
-      newArray[3] = this.emptyData;
+      newArray[3] = {...this.emptyData};
 
       this.partDataList = newArray;
       this.partNum--;
@@ -387,7 +387,7 @@ export default {
     createPartsData() { // 빈 객체 배열 생성(beforeMount시 작동)
       this.partDataList.length = 4;
       for(let i = 0; i < 4; i++) {
-        this.partDataList[i] = this.emptyData;
+        this.partDataList[i] = {...this.emptyData};
       }
     },
 
