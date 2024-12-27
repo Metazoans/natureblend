@@ -77,7 +77,6 @@ import processflowModal from "./processflowModal.vue";
                             console.log("레코드 확인 : ", JSON.stringify(params.data));
                             this.openModal('processflowModal');
                             console.log('오픈 모달');
-                            // this.flowList();
                             });
                             return button1;
                         }
@@ -120,12 +119,9 @@ import processflowModal from "./processflowModal.vue";
                 this.modalType = modalType;
                 this.modalTitle = '공정 흐름도'
 
-                // this.processflowModal = true;
-
                 this.isShowModal = true;
             },
             closeModal() {
-                // this.processflowModal = false;
                 this.isShowModal = false;
             },
             // onCellClicked(params){

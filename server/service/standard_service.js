@@ -303,7 +303,36 @@ const flowList = async (product_code) => {
   console.log(list);
   return list;
 }
-
+// 공정흐름도 등록
+const insertFlow = async(product_code, process_code, process_name) =>{
+  console.log(product_code);
+  let result = await mysql.query('flowInsert', [product_code, process_code, process_name]);
+  console.log('result 확인',result[1]);
+  if(result[1].affectedRows > 0){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 공정흐름도 수정
+const updateFlow = async( process_chart_num,process_sequence ) => {
+  let result = await mysql.query('flowUpdate',[ process_sequence,process_chart_num]);
+  if(result.affectedRows > 0){
+    return '성공';
+  }else{
+    return '실패';
+  }
+}
+// 선택한 상품의 process chart num 조회
+const flowNumList = async(product_code, process_sequence) => {
+  let result = await mysql.query('flowNumList',[product_code, process_sequence]);
+  return result;
+}
+// before 데이터 업데이트
+const beforeData = async(beforeData,beforeProcessSequence) => {
+  let result = await mysql.query('beforeUpdate',[beforeProcessSequence,beforeData]);
+  return result;
+}
 module.exports = {
     findAllBom,
     createNewBom,
@@ -342,4 +371,8 @@ module.exports = {
     insertReturn,
     deleteReturn,
     flowList,
+    insertFlow,
+    updateFlow,
+    flowNumList,
+    beforeData,
 }
