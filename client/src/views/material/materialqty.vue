@@ -150,7 +150,7 @@
        text: "초기화 완료 했습니다.",
        type: "success", // success, warn, error 가능
     });
- 
+  
  };
  
  // 조회
