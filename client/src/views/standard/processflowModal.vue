@@ -22,6 +22,7 @@
                   @grid-ready="onReady"
                   @rowClicked="onRowClicked"
               >
+              
                 </ag-grid-vue>
               </div>
             </div>
