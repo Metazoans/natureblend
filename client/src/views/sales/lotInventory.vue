@@ -51,7 +51,7 @@
                 <!-- 입고된 lot 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
-                     style ="width: 1250px; height: 300px; "
+                     style ="height: 600px; "
                     :rowData="LotNum"
                     :columnDefs="columnLotNum"
                     :theme="theme"
