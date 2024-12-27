@@ -14,12 +14,13 @@
         :pagination="true"
         :paginationPageSize="5"
         rowSelection="multiple"
+        @rowClicked="onRowClicked"
       ></ag-grid-vue>
 
     </div>
 
     <!-- 정비 요청 등록 모달 -->
-    <PartsAdd :isShowModal="isShowModal" :partNo="partNo"  @closeModal="closeModal" @confirm="confirm"/>
+    <PartsAdd :isShowModal="isShowModal" :partNo="partNo" :isUpdate="isUpdate" @closeModal="closeModal" @confirm="confirm"/>
   </div>
 
 </template>
@@ -49,8 +50,9 @@ const partCol = shallowRef([
   { headerName: '구매일자', field: 'buy_date' },
 ]);
 
-let isShowModal = shallowRef(false);
-let partNo = shallowRef(0);
+let isShowModal = ref(false);
+let partNo = ref(0);
+let isUpdate = ref(false);
 
 
 // 메소드
@@ -143,14 +145,25 @@ const onReady = (param) => {
 const partAdd = () => {
   isShowModal.value = !isShowModal.value;
 }
-const confirm = (check) => {
+const confirm = () => {
   closeModal();
-  if(check == true) {
-    getParts();
-  }
+  getParts();
 }
 const closeModal = () => {
   isShowModal.value = false;
+  modalReset();
+  gridApi.value.deselectAll();
+}
+const modalReset = () => {
+  partNo.value = 0;
+  isUpdate.value = false;
+}
+
+// 행클릭시 수정 페이지로
+const onRowClicked = (row) => {
+  partNo.value = row.data.part_num;
+  isUpdate.value = true;
+  partAdd();
 }
 
 // 마운트전

@@ -6,6 +6,13 @@ const findAllParts = async ()=>{
   return list;
 }
 
+// 부품 상세 정보
+const findPartInfo = async (no) => {
+  let list = await mariadb.query('partInfo', [no]);
+  let info = list[0];
+  return info;
+}
+
 // 등록
 const createNewPart = async (partInfo)=>{
   let result = await mariadb.query('partInsert', partInfo);
@@ -14,6 +21,20 @@ const createNewPart = async (partInfo)=>{
   }else{
     return {};
   }
+}
+
+// 부품 수정
+const updatePartInfo = async (no, updateInfo) => {
+  let datas = [updateInfo, no];
+  let result = await mariadb.query('partUpdate', datas);
+  let sendData = {};
+  if(result.affectedRows == 1){
+    sendData.target = { 'part_no' : no };
+    sendData.result = true;
+  }else{
+    sendData.result = false;
+  }
+  return sendData;
 }
 
 // 삭제
@@ -26,23 +47,13 @@ const delPartInfo = async (pno) => {
   }
 }
 
-// // 마지막 비동기 갱신
-// const updateLastInAct = async (no, updateInfo) => {
-//   let datas = [updateInfo, no];
-//   let result = await mariadb.query('lastInAct', datas);
-//   let sendData = {};
-//   if(result.affectedRows == 1){
-//     sendData.result = true;
-//   }else{
-//     sendData.result = false;
-//   }
-//   return sendData;
-// }
 
 
 module.exports = {
   findAllParts,
+  findPartInfo,
   createNewPart,
+  updatePartInfo,
   delPartInfo,
 
 };
