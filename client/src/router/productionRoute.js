@@ -5,7 +5,7 @@ import productionPlanAdd from "@/views/production/productionPlanAdd/PlanAdd.vue"
 import productionOrderList from "@/views/production/ProductionOrderList.vue";
 import productionOrderAdd from "@/views/production/ProductionOrderAdd/OrderAdd.vue";
 import workingList from "@/views/production/workList/workingList.vue";
-import workDoneList from "@/views/production/workList/workDoneList.vue";
+import productionWorkDoneList from "@/views/production/productionWorkDoneList.vue";
 
 const productionRoute = [
   {
@@ -39,8 +39,8 @@ const productionRoute = [
   },
   {
     path: 'workdone/list',
-    name: 'workDoneList',
-    component: workDoneList
+    name: 'productionWorkDoneList',
+    component: productionWorkDoneList
   },
 ];
 

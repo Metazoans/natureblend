@@ -113,4 +113,9 @@ router.put('/plan/status', async (req, res)=>{
     res.send(updatedPlanStatus)
 });
 
+router.get('/done', async (req, res)=>{
+    let completePartialWork = await workService.getCompletePartialWork();
+    res.send(completePartialWork);
+});
+
 module.exports = router

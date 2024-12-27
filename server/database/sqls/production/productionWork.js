@@ -142,12 +142,14 @@ const updateProdOrderStatus = `
 // UPDATE material_lot_qty1
 // SET out_qty = out_qty + v_material_qty
 // WHERE material_code = v_material_code
+// AND material_nomal = 'b1'
 // AND lot_code = v_lot_code;
 //
 // -- 2. stok_qty 재계산
 // UPDATE material_lot_qty1
 // SET stok_qty = in_qty - out_qty
 // WHERE material_code = v_material_code
+// AND material_nomal = 'b1'
 // AND lot_code = v_lot_code;
 //
 // -- 3. invalid_material 테이블의 is_out, out_date 업데이트
@@ -178,6 +180,27 @@ const updatePlanStatus = `
     where plan_num = ?
 `
 
+const completePartialWork = `
+    select
+        rownum() as no,
+        ph.process_work_header_num,
+        production_order_num,
+        process_name,
+        your_machine(pb.machine_num, 'machine_name') as machine_name,
+        your_employee(pb.emp_num, 'name') as emp_name,
+        pb.process_complete_qty,
+        pb.fail_qty,
+        pb.success_qty,
+        pb.partial_process_start_time,
+        pb.partial_process_end_time,
+        ph.product_name,
+        ph.capacity
+    from process_work_header ph
+             join process_work_body pb
+                  on ph.process_work_header_num = pb.process_work_header_num
+    where pb.partial_process_status = 'partial_process_complete';
+`
+
 module.exports = {
     workingOrders,
     workForToday,
@@ -197,5 +220,6 @@ module.exports = {
     checkProcessStatus,
     updateProdOrderStatus,
     updateMaterial,
-    updatePlanStatus
+    updatePlanStatus,
+    completePartialWork
 }

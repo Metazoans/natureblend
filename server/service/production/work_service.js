@@ -120,6 +120,10 @@ const updatePlanStatus = async (planStatusInfo)=>{
     return await mysql.query('updatePlanStatus', Object.values(planStatusInfo))
 }
 
+const getCompletePartialWork = async ()=>{
+    return await mysql.query('completePartialWork')
+}
+
 module.exports = {
     findWorkingOrders,
     findWorkForToday,
@@ -139,5 +143,6 @@ module.exports = {
     getProcessStatus,
     updateProdOrderStatus,
     updateMaterial,
-    updatePlanStatus
+    updatePlanStatus,
+    getCompletePartialWork
 }
