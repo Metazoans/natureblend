@@ -83,6 +83,9 @@ const props = defineProps({
   isUpdate: Boolean,
 });
 
+// emit
+const emit = defineEmits(['closeModal', 'confirm']);
+
 // 마운트 전
 onBeforeMount(() => {
   getSelectItem();
@@ -173,8 +176,6 @@ const partUpdate = async () => {
 
 }
 
-// 모달 동작
-const emit = defineEmits(['closeModal', 'confirm']);
 function closeModal() {
   emit('closeModal');
   deleteVal();
