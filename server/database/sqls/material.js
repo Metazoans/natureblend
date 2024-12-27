@@ -123,6 +123,7 @@ SELECT warehouse_code,
 FROM warehouse
 WHERE
   STORAGE = '가능'
+  AND warehouse_location LIKE '%자재%'
 `;
 
 //LOT번호 가공해오기
