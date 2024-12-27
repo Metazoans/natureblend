@@ -70,16 +70,16 @@
   <!-- 불량 상세 모달 -->
 
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
-    @confirm="saveDefectDetailsForRow(selectedRow.qcMaterialId, selectedRow.totalQnt)">
+    @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId, selectedRow.totalQnt)">
     <template v-slot:list>
       <h4>불량 상세 정보</h4>
-      <p>입고검사번호: {{ selectedRow.qcMaterialId }}</p>
+      <p>공정(세척)검사번호: {{ selectedRow.qcProcessId }}</p>
       <p>자재명: {{ selectedRow.mName }}</p>
       <p>총 수량: {{ selectedRow.totalQnt }}</p>
 
       <!-- 불량 사유 입력 및 불량 수량 입력 -->
 
-      <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcMaterialId]" :key="index" class="defect-item">
+      <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcProcessId]" :key="index" class="defect-item">
         <label for="reason">불량 사유 {{ index + 1 }}:</label>
         <select v-model="detail.reason" :id="'reason' + index">
           <option v-for="reason in defectReasons" :key="reason.code" :value="reason.code">
@@ -88,11 +88,11 @@
         </select>
         <label for="defectQty">불량 수량 {{ index + 1 }}:</label>
         <input type="number" v-model="detail.qty" :id="'defectQty' + index" />
-        <button class="btn btn-danger" @click="removeDefectDetailForRow(selectedRow.qcMaterialId, index)">삭제</button>
+        <button class="btn btn-danger" @click="removeDefectDetailForRow(selectedRow.qcProcessId, index)">삭제</button>
       </div>
-      <material-button size="md" class="mt-3" @click="addDefectDetailForRow(selectedRow.qcMaterialId)">불량 항목
+      <material-button size="md" class="mt-3" @click="addDefectDetailForRow(selectedRow.qcProcessId)">불량 항목
         추가</material-button>
-      <!-- <button @click="saveDefectDetailsForRow(selectedRow.qcMaterialId, selectedRow.totalQnt)">저장</button> -->
+      <!-- <button @click="saveDefectDetailsForRow(selectedRow.qcProcessId, selectedRow.totalQnt)">저장</button> -->
     </template>
   </Modal>
 
@@ -142,8 +142,9 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false },
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
+        { headerName: "공정검사번호", field: "qcProcessId", resizable: false },
+        { headerName: "공정작업번호", field: "processNum", resizable: false },
+        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false },
         { headerName: "자재명", field: "mName", resizable: false },
         { headerName: "검사담당자", field: "eName", resizable: false },
         { headerName: "총 수량", field: "totalQnt", resizable: false },
@@ -171,7 +172,7 @@ export default {
       selectedReason: "", // 선택된 불량 사유 코드
       defectQty: 0, // 불량 수량
       /// db에 보낼 자재 한건의 불량항목및 수량
-      defectDetailsMap: {}, // { qcMaterialId: [ { reason, qty }, ... ] }
+      defectDetailsMap: {}, // { qcProcessId: [ { reason, qty }, ... ] }
 
       rowData2: [], //rowData1 중 검사상태(inspecStatus)가 '검사내역작성완료'인 것을 담음
       showModalDone: false,
@@ -210,20 +211,26 @@ export default {
         startDate: this.searchInfo.startDate,
         endDate: this.searchInfo.endDate
       };
-      let searchResult = await axios.post(`${ajaxUrl}/requestQCM`, result)
+      let searchResult = await axios.post(`${ajaxUrl}/requestQCPC`, result)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
+      console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
       this.defectDetailsMap = {};
       for (let i = 0; i < this.searchList.length; i++) {
         let col = {
-          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus": this.searchList[i].inspec_status
-
+          "qcProcessId": this.searchList[i].qc_cleaning_id, 
+          "processNum": this.searchList[i].process_num,                   //공정작업번호(바디)
+          "productionOrderNum" : this.searchList[i].production_order_num, //생산지시코드
+          "mName": this.searchList[i].material, 
+          "eName": this.searchList[i].emp_name, 
+          "totalQnt": this.searchList[i].total_qnt,
+          "passQnt": this.searchList[i].pass_qnt, 
+          "rjcQnt": this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), 
+          "inspecStatus": this.searchList[i].inspec_status
         }
         this.rowData1[i] = col;
       }
@@ -234,19 +241,26 @@ export default {
 
     //전체 조회 시작
     async searchRequestAll() {
-      let searchResult = await axios.get(`${ajaxUrl}/requestQCMAll`)
+      let searchResult = await axios.post(`${ajaxUrl}/requestQCPC`)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
+      console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
       this.defectDetailsMap = [];
       for (let i = 0; i < this.searchList.length; i++) {
         let col = {
-          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus": this.searchList[i].inspec_status
+          "qcProcessId": this.searchList[i].qc_cleaning_id, 
+          "processNum": this.searchList[i].process_num,                   //공정작업번호(바디)
+          "productionOrderNum" : this.searchList[i].production_order_num, //생산지시코드
+          "mName": this.searchList[i].material, 
+          "eName": this.searchList[i].emp_name, 
+          "totalQnt": this.searchList[i].total_qnt,
+          "passQnt": this.searchList[i].pass_qnt, 
+          "rjcQnt": this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), 
+          "inspecStatus": this.searchList[i].inspec_status
 
         }
         this.rowData1[i] = col;
@@ -273,22 +287,22 @@ export default {
 
 
     ///신청 건의 불량항목 내역 관련
-    addDefectDetailForRow(qcMaterialId) {
-      if (!this.defectDetailsMap[qcMaterialId]) {
-        this.defectDetailsMap[qcMaterialId] = [];
+    addDefectDetailForRow(qcProcessId) {
+      if (!this.defectDetailsMap[qcProcessId]) {
+        this.defectDetailsMap[qcProcessId] = [];
       }
-      this.defectDetailsMap[qcMaterialId].push({ reason: "", qty: 0 });
+      this.defectDetailsMap[qcProcessId].push({ reason: "", qty: 0 });
     },
-    removeDefectDetailForRow(qcMaterialId, index) {
-      if (this.defectDetailsMap[qcMaterialId]) {
-        this.defectDetailsMap[qcMaterialId].splice(index, 1);
-        if (this.defectDetailsMap[qcMaterialId].length === 0) {
-          delete this.defectDetailsMap[qcMaterialId]; // 데이터가 비었으면 삭제
+    removeDefectDetailForRow(qcProcessId, index) {
+      if (this.defectDetailsMap[qcProcessId]) {
+        this.defectDetailsMap[qcProcessId].splice(index, 1);
+        if (this.defectDetailsMap[qcProcessId].length === 0) {
+          delete this.defectDetailsMap[qcProcessId]; // 데이터가 비었으면 삭제
         }
       }
     },
-    saveDefectDetailsForRow(qcMaterialId, total) {
-      const defectDetails = this.defectDetailsMap[qcMaterialId] || [];
+    saveDefectDetailsForRow(qcProcessId, total) {
+      const defectDetails = this.defectDetailsMap[qcProcessId] || [];
       if (defectDetails.some(detail => !detail.reason || detail.qty <= 0)) {
         notify({
           title: "입력실패",
@@ -309,9 +323,9 @@ export default {
       }
 
       const pass = total - rjcQntSum;
-      console.log(`저장 완료: ${qcMaterialId}, 합격량: ${pass}, 불량 총합: ${rjcQntSum}`);
+      console.log(`저장 완료: ${qcProcessId}, 합격량: ${pass}, 불량 총합: ${rjcQntSum}`);
       // 업데이트 로직
-      const rowIndex = this.rowData1.findIndex(row => row.qcMaterialId === this.selectedRow.qcMaterialId);
+      const rowIndex = this.rowData1.findIndex(row => row.qcProcessId === this.selectedRow.qcProcessId);
       if (rowIndex !== -1) {
         // 새 데이터 배열 생성 (Vue의 반응형 감지를 위해)
         this.rowData1 = this.rowData1.map((row, index) => {
@@ -331,15 +345,6 @@ export default {
       this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료')
       console.log(this.rowData2);
     },
-    // openModalForRow(row) {
-    //   this.selectedRow = row;
-    //   const qcMaterialId = row.qcMaterialId;
-    //   if (!this.defectDetailsMap[qcMaterialId]) {
-    //     this.defectDetailsMap[qcMaterialId] = [];
-    //   }
-    //   this.defectDetails = this.defectDetailsMap[qcMaterialId];
-    //   this.showModalRJC = true;
-    // },
 
     //최종 처리 버튼
     openModal() {
@@ -357,7 +362,7 @@ export default {
         if (Object.prototype.hasOwnProperty.call(this.defectDetailsMap, qcId)) {
           this.defectDetailsMap[qcId].forEach(detail => {
             defectDetailsArray.push({
-              qcMaterialId: qcId,
+              qcProcessId: qcId,
               faultyCode: detail.reason,
               qty: detail.qty,
             });
@@ -366,35 +371,35 @@ export default {
       }
       //배열 정렬
       defectDetailsArray.sort((a, b) => {
-        if (a.qcMaterialId === b.qcMaterialId) {
+        if (a.qcProcessId === b.qcProcessId) {
           return a.faultyCode.localeCompare(b.faultyCode); // 검사번호 같으면 불량코드 비교
         }
-        return a.qcMaterialId.localeCompare(b.qcMaterialId); // 검사번호 우선 비교
+        return a.qcProcessId.localeCompare(b.qcProcessId); // 검사번호 우선 비교
       });
 
       let qcData = {
-        qcm: this.rowData2,
-        qcmr: defectDetailsArray,
+        qcpc: this.rowData2,
+        qcpcr: defectDetailsArray,
       };
-      let result = await axios.post(`${ajaxUrl}/completeQCM`, qcData)
+      let result = await axios.post(`${ajaxUrl}/completeQCPC`, qcData)
         .catch(err => console.log(err));
       console.log(result);
       notify({
         title: "검사완료",
         text: `완료된 검사:${result.data.updatedRows}, 기록된 불량 내역:${result.data.defectNum}`,
-        // text: `기록된 불량 내역:${result.data.defectNum}`,
         type: "success", // success, warn, error 가능
       });
 
 
 
       this.closeModal();
+      this.searchRequestAll();
     },
 
 
     //불량코드 불러오기
     async callFaultyCode() {
-      let faultyCodeList = await axios.get(`${ajaxUrl}/faultyCode`)
+      let faultyCodeList = await axios.get(`${ajaxUrl}/faultyCodeQCPC`)
         .catch(err => console.log(err));
       this.faultyCodeList = faultyCodeList.data;
       const arrData = [];

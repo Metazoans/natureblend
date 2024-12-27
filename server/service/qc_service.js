@@ -233,6 +233,165 @@ const findQCMFaulty = async (mName, startDate, endDate) => {
   let result = await mysql.query('selectQCMFWithConditions', querywhere);
   return result;
 }
+///////////////////////////////////////////////////////////////////////////
+//공정검사 - 세척검사조회(공통 - 전체, 선택 조회 모두 포함)
+const findQCPC = async (status, mName, startDate, endDate)=>{
+
+  let searchList = [];
+
+  if (status != undefined && status != null && status != '') {
+    let search = `qcpc.inspec_status LIKE \'%${status}%\'`;
+    searchList.push(search);
+  }
+
+  if (mName != undefined && mName != null && mName != '') {
+    let search = `bm.material LIKE \'%${mName}%\'`;
+    searchList.push(search);
+  }
+
+  if (startDate != undefined && startDate != null && startDate != '') {
+    let search = `qcpc.inspec_start >= \'${startDate} 00:00:00\'`;
+    searchList.push(search);
+  }
+
+  if (endDate != undefined && endDate != null && endDate != '') {
+    let search = `qcpc.inspec_start <= \'${endDate} 23:59:59\'`;
+
+    searchList.push(search);
+  }
+
+  let querywhere = '';
+  for (let i = 0; i < searchList.length; i++) {
+    let search = searchList[i];
+    querywhere += (i == 0 ? ` ` : `AND `) + search;
+  };
+
+  querywhere = searchList.length == 0 ? "ORDER BY qcpc.qc_cleaning_id DESC " : `AND ${querywhere} ORDER BY qcpc.qc_cleaning_id DESC `;
+  //console.log('selected Query', querywhere);
+
+  let result = await mysql.query('selectQCPC', querywhere);
+  return result;
+
+};
+
+// 세척검사 불량코드
+const findFaultyCodeQCPC = async () => {
+  let sql = 'selectFaultyCodeQCPC';
+  let list = await mysql.query(sql);
+  return list;
+};
+
+// 세척검사 완료 처리
+const completeQCPC = async (qcpc, qcpcr) =>{
+  let sql1 = 'updateQCPC';
+  let sql2 = 'insertQCPCR';
+  let updatedRows = 0;  // 수정된 수(검사완료처리)
+  let successNum = 0;   // 등록된 수 (불량품처리)
+
+  //검사 완료 처리
+  for (let item of qcpc) {
+    let { qcProcessId, processNum, passQnt,  rjcQnt} = item;
+
+    // '검사번호', 공정바디번호,  합격수, 불합격수
+    let result = await mysql.query(sql1, [qcProcessId, processNum, passQnt, rjcQnt]);
+    if (result[0][0].result == 'Success') {
+      updatedRows++;
+    }
+  }
+
+  //불량 등록 처리
+  for (let item of qcpcr) {
+    let { qcProcessId, faultyCode, qty } = item;
+
+    let result = await mysql.query(sql2, [qcProcessId, faultyCode, qty]);
+    if (result[0][0].result == 'Success!') {
+      successNum++;
+    }
+  }
+  //수정된 행수, 불량품내역 추가된 수 return
+  return { 'updatedRows': updatedRows, 'defectNum': successNum };
+
+
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+//포장검사조회(공통 - 전체, 선택 조회 모두 포함)
+const findQCPP  = async(status, pName, startDate, endDate)=>{
+
+  let searchList = [];
+
+  if (status != undefined && status != null && status != '') {
+    let search = `qcpp.inspec_status LIKE \'%${status}%\'`;
+    searchList.push(search);
+  }
+
+  if (pName != undefined && pName != null && pName != '') {
+    let search = `b.product_name LIKE \'%${pName}%\'`;
+    searchList.push(search);
+  }
+
+  if (startDate != undefined && startDate != null && startDate != '') {
+    let search = `qcpp.inspec_start >= \'${startDate} 00:00:00\'`;
+    searchList.push(search);
+  }
+
+  if (endDate != undefined && endDate != null && endDate != '') {
+    let search = `qcpp.inspec_start <= \'${endDate} 23:59:59\'`;
+
+    searchList.push(search);
+  }
+
+  let querywhere = '';
+  for (let i = 0; i < searchList.length; i++) {
+    let search = searchList[i];
+    querywhere += (i == 0 ? ` ` : `AND `) + search;
+  };
+
+  querywhere = searchList.length == 0 ? "ORDER BY qcpp.qc_packing_id DESC " : `WHERE ${querywhere} ORDER BY qcpp.qc_packing_id DESC `;
+  //console.log('selected Query', querywhere);
+
+  let result = await mysql.query('selectQCPP', querywhere);
+  return result;
+
+};
+
+// 세척검사 완료 처리
+const completeQCPP = async (qcpp, qcppr) =>{
+  let sql1 = 'updateQCPP';
+  let sql2 = 'insertQCPPR';
+  let updatedRows = 0;  // 수정된 수(검사완료처리)
+  let successNum = 0;   // 등록된 수 (불량품처리)
+
+  //검사 완료 처리
+  for (let item of qcpp) {
+    let { qcProcessId, processNum, passQnt,  rjcQnt} = item;
+
+    // '검사번호', 공정바디번호,  합격수, 불합격수
+    let result = await mysql.query(sql1, [qcProcessId, processNum, passQnt, rjcQnt]);
+    if (result[0][0].result == 'Success') {
+      updatedRows++;
+    }
+  }
+
+  //불량 등록 처리
+  for (let item of qcppr) {
+    let { qcProcessId, faultyCode, qty } = item;
+
+    let result = await mysql.query(sql2, [qcProcessId, faultyCode, qty]);
+    if (result[0][0].result == 'Success!') {
+      successNum++;
+    }
+  }
+  //수정된 행수, 불량품내역 추가된 수 return
+  return { 'updatedRows': updatedRows, 'defectNum': successNum };
+
+
+
+}
+
+
 
 
 module.exports = {
@@ -246,5 +405,15 @@ module.exports = {
   findQCMRecordAll,
   findQCMRecord,
   findQCMFaultyAll,
-  findQCMFaulty
+  findQCMFaulty,
+
+  findQCPC,
+  findFaultyCodeQCPC,
+  completeQCPC,
+
+
+  findQCPP,
+
+  completeQCPP,
+
 };
