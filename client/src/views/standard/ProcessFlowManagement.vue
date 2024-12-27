@@ -46,7 +46,7 @@ import processflowModal from "./processflowModal.vue";
                 isShowModal : false, // 공정흐름도 조회 버튼 클릭시 나오는 모달
                 modalType:'',
                 modalTitle:'공정 흐름도',
-                selectedProductCode: '',
+                selectedProductCode: 'null',
                 selectedProductName: '',
                 columnDefs:[
                     {headerName:"제품명" , field:"product_name"},
@@ -76,6 +76,7 @@ import processflowModal from "./processflowModal.vue";
                             this.selectedProductName = params.data.product_name;
                             console.log("레코드 확인 : ", JSON.stringify(params.data));
                             this.openModal('processflowModal');
+                            console.log('오픈 모달');
                             });
                             return button1;
                         }
@@ -86,6 +87,12 @@ import processflowModal from "./processflowModal.vue";
                 theme:theme,
             };
         },
+        // watch:{
+        //         productCode:{
+        //         handler:"flowList",
+        //         immediate:true,
+        //     },
+        // },
         methods:{
             onReady(param){
                 param.api.sizeColumnsToFit();
@@ -97,16 +104,24 @@ import processflowModal from "./processflowModal.vue";
             setSelectProcessflow(){
 
             },
+            // async flowList() {
+            //     console.log('제품코드 확인',this.productCode);
+            //     let result = await axios.get(`${ajaxUrl}/flowList/${this.productCode}`)
+            //     if(result && result.data){
+            //     this.flowSelect = result.data;
+            //     console.log("연결성공");
+            //     this.rowData = result.data;
+            //     }else {
+            //     console.log("연결실패");
+            //     }
+            // },
             openModal(modalType) {
                 this.modalType = modalType;
                 this.modalTitle = '공정 흐름도'
 
-                // this.processflowModal = true;
-
                 this.isShowModal = true;
             },
             closeModal() {
-                // this.processflowModal = false;
                 this.isShowModal = false;
             },
             // onCellClicked(params){
