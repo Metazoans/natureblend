@@ -164,15 +164,17 @@ const matrialQcInput = async function(){
     ...col,
     inspec_end: userDateUtils.dateFormat(col.inspec_endm, "yyyy-MM-dd"),
     //ord_qty: (col.ord_qty * 0.001) + " kg",
-    ord_qty: col.material_name.includes('병') ? (Number(col.ord_qty)*0.001).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
+    ord_qty: col.material_name.includes('병') ? (Number(col.ord_qty)).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
     //total_qnt: (col.total_qnt * 0.001) + " kg",
-    total_qnt: col.material_name.includes('병') ? (Number(col.total_qnt)*0.001).toLocaleString() + " 개" : (Number(col.total_qnt) * 0.001).toLocaleString() + " kg",
+    total_qnt: col.material_name.includes('병') ? (Number(col.total_qnt)).toLocaleString() + " 개" : (Number(col.total_qnt) * 0.001).toLocaleString() + " kg",
     //pass_qnt: (col.pass_qnt * 0.001) + " kg",
-    pass_qnt: col.material_name.includes('병') ? (Number(col.pass_qnt)*0.001).toLocaleString() + " 개" : (Number(col.pass_qnt) * 0.001).toLocaleString() + " kg",
+    pass_qnt: col.material_name.includes('병') ? (Number(col.pass_qnt)).toLocaleString() + " 개" : (Number(col.pass_qnt) * 0.001).toLocaleString() + " kg",
     //rjc_qnt: (col.rjc_qnt * 0.001) + " kg",
-    rjc_qnt: col.material_name.includes('병') ? (Number(col.rjc_qnt)*0.001).toLocaleString() + " 개" : (Number(col.rjc_qnt) * 0.001).toLocaleString() + " kg",
-    unit_price: Number(col.unit_price*0.001).toLocaleString() + " 원",
-    total_price: Number(col.total_price*0.000001).toLocaleString() + " 원",
+    rjc_qnt: col.material_name.includes('병') ? (Number(col.rjc_qnt)).toLocaleString() + " 개" : (Number(col.rjc_qnt) * 0.001).toLocaleString() + " kg",
+    //unit_price: Number(col.unit_price*0.001).toLocaleString() + " 원",
+    unit_price: col.material_name.includes('병') ? Number(col.unit_price).toLocaleString() + " 원" : Number(col.unit_price*0.001).toLocaleString() + " 원",
+    //total_price: Number(col.total_price*0.000001).toLocaleString() + " 원",
+    total_price: col.material_name.includes('병') ? Number(col.total_price).toLocaleString() + " 원" : Number(col.total_price*0.000001).toLocaleString() + " 원",
   }));
 }
 
@@ -340,20 +342,20 @@ const lotMaking = async function(){
       lot_code: prefix.value + ( (numberPart.value + i).toString().padStart(3, '0') ),
       order_code: nuwList.value[i].order_code,
       material_name: nuwList.value[i].material_name,
-      //pass_qnt: ( Number( nuwList.value[i].pass_qnt.split(' ')[0] ) * 1000 ),
-      pass_qnt: ( Number( parseFloat(nuwList.value[i].pass_qnt.replace(/,/g, '')) ) * 1000 ),
+      pass_qnt: nuwList.value[i].material_name.includes('병') ? ( Number( parseFloat(nuwList.value[i].pass_qnt.replace(/,/g, '')) ) ) : ( Number( parseFloat(nuwList.value[i].pass_qnt.replace(/,/g, '')) ) * 1000 ),
       warehouse1: nuwList.value[i].warehouse1,
-      //rjc_qnt: ( Number( nuwList.value[i].rjc_qnt.split(' ')[0] ) * 1000 ),
-      rjc_qnt: ( Number( parseFloat(nuwList.value[i].rjc_qnt.replace(/,/g, '')) ) * 1000 ),
+      rjc_qnt:  nuwList.value[i].material_name.includes('병') ? ( Number( parseFloat(nuwList.value[i].rjc_qnt.replace(/,/g, '')) ) ) : ( Number( parseFloat(nuwList.value[i].rjc_qnt.replace(/,/g, '')) ) * 1000 ),
       warehouse2: nuwList.value[i].warehouse2,
       emp_num: 1,   // 사원번호는 로그인한 세션으로 해야할꺼같음
     };
-    //console.log(materialObj.value);
+    
+    console.log(materialObj.value);
     //여기서 서버통신 시작함
     await inputMaterial(materialObj.value);
     // await delay(3000);   //3초마다 포문 작동되게하기
   }
   matrialQcInput(); //그냥 처리 끝나면 새로 DB받아옴
+
   //location.reload();  //페이지 새로고침
 }
 

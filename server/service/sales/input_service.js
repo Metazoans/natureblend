@@ -220,6 +220,12 @@ const disposeLot = async(disposeLot)=>{
   return sendData;
 }
 
+//제품번호로 lot 조회
+const getProductLotInfo = async(no)=>{
+  let list = await mysql.query('productLot',[no]);
+  return list;
+}
+
 
 
 
@@ -236,5 +242,6 @@ module.exports = {
     getInventoryProduct,
     getInventoryLot,
     disposeLot,
+    getProductLotInfo,
 
 }

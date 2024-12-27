@@ -301,7 +301,30 @@ const flowList =
         process_sequence,
         process_name
  FROM process_chart
- WHERE product_code = ?`
+ WHERE product_code = ?
+ ORDER BY process_sequence`;
+
+// 공정흐름도 등록
+const flowInsert = 
+`SET @next_process_sequence := (SELECT IFNULL(MAX(process_sequence), 0) + 1 FROM process_chart);
+INSERT INTO process_chart (product_code,process_code, process_sequence , process_name)
+VALUES (?,  ?, @next_process_sequence, ?)`;
+
+// 공정 순서 변경
+const flowUpdate = 
+`UPDATE process_chart 
+    SET process_sequence = ?
+    WHERE process_chart_num = ?`;
+const flowNumList =
+`SELECT process_chart_num
+ FROM process_chart
+ WHERE product_code = ?
+ and process_sequence = ?`;
+const beforeUpdate =
+`UPDATE process_chart
+ SET process_sequence = ?
+ WHERE process_chart_num = ?`;
+
 // 흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도
      
  module.exports = {
@@ -344,5 +367,9 @@ const flowList =
     returnInsert,
     returnDelete,
     flowList,
+    flowInsert,
+    flowUpdate,
+    flowNumList,
+    beforeUpdate,
 
 }

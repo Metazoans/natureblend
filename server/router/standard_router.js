@@ -259,9 +259,38 @@ router.delete('/returnDelete/:return_code',async(req,res)=>{
   res.send(result);
 })
 // 공정흐름도 조회
-router.get('/flowList',async(req,res)=>{
-  let searchs = req.query;
-  let flowList = await bomService.returnList(searchs);
+router.get('/flowList/:product_code',async(req,res)=>{
+  let productCode = req.params.product_code;
+  console.log(productCode);
+  // let searchs = req.query;
+  let flowList = await bomService.flowList(productCode);
   res.send(flowList);
 })
+// 공정흐름도 등록
+router.post('/flowInsert' ,async(req,res)=>{
+  let { product_code, process_code, process_name } = req.body;
+  console.log('라우터에서 데이터 확인',product_code);
+  let result = await bomService.insertFlow(product_code, process_code, process_name);
+  res.send(result);
+})
+// 공정흐름도 수정
+router.post('/flowUpdate', async (req, res) => {
+  const { process_chart_num,process_sequence } = req.body;
+  let result = await bomService.updateFlow( process_chart_num,process_sequence );
+  res.send(result);
+})
+// 선택한 상품의 process chart num 조회
+router.post('/flowNumList', async(req,res)=>{
+  const { beforeProcessSequence, beforeData } = req.body;
+  let result = await bomService.flowNumList(beforeProcessSequence, beforeData);
+  res.send(result);
+})
+// before 데이터 업데이트
+router.post('/beforeUpdate', async(req,res) => {
+  const {beforeData,beforeProcessSequence} = req.body;
+  let result = await bomService.beforeData(beforeData,beforeProcessSequence);
+  res.send(result);
+})
+
+
 module.exports = router;

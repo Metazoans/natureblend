@@ -1,3 +1,7 @@
+//입고검사
+//////////////////////////////////////////////////////////////////////////
+
+//검사신청할 자재목록 불러오기
 const searchMaterialOrder = `
 SELECT h.order_code,
        h.client_num,
@@ -23,7 +27,7 @@ WHERE b.material_state LIKE 'a1'
   )
 ORDER BY h.order_code DESC
 `;
-
+//검사신청할 자재목록 불러오기
 const searchMaterialOrderWithConditions = `
 SELECT h.order_code,
        h.client_num,
@@ -48,7 +52,7 @@ WHERE b.material_state LIKE 'a1'
         AND q.material_code = b.material_code
   )
 `;
-
+//신청처리(insert)
 const inputQCMaterial =
 //사원번호, 발주번호, 자재명, 총 수량
 `
@@ -109,6 +113,7 @@ const selectFaultyCodeOneToFive =
 SELECT faulty_code, faulty_reason
 FROM faulty_code
 WHERE RIGHT(faulty_code, 3) IN ('001', '002', '003', '004', '005')
+ORDER BY faulty_code DESC
 `;
 
 
@@ -191,6 +196,91 @@ LEFT JOIN faulty_code f ON r.faulty_code = f.faulty_code
 `;
 // ORDER BY r.qc_material_rjc_id DESC   
 
+//공정검사 - 세척
+//////////////////////////////////////////////////////////////////////////
+//신청한 검사 조회(전체/선택)
+const selectQCPC = `
+SELECT    qcpc.qc_cleaning_id
+		    , qcpc.process_num
+		    , ph.production_order_num
+ -- 	  , pb.product_code
+ --     , b.product_name
+		    , bm.material
+        , qcpc.emp_num
+        , e.name AS emp_name
+        , qcpc.total_qnt
+        , qcpc.pass_qnt
+        , qcpc.rjc_qnt
+        , qcpc.inspec_start
+        , qcpc.inspec_end
+        , qcpc.inspec_status
+FROM qc_process_cleaning qcpc LEFT JOIN process_work_body pb ON qcpc.process_num = pb.process_num
+							                LEFT JOIN employee e ON qcpc.emp_num = e.emp_num
+							                LEFT JOIN process_work_header ph ON pb.process_work_header_num = ph.process_work_header_num
+                              LEFT JOIN bom b ON pb.product_code =b.product_code
+                              LEFT JOIN bom_material bm ON b.bom_num = bm.bom_num
+WHERE bm.material_code IN ('M011', 'M012', 'M013')
+`;
+
+//불량코드 가져오기(세척검사용)
+const selectFaultyCodeQCPC =
+`
+SELECT faulty_code, faulty_reason
+FROM faulty_code
+WHERE RIGHT(faulty_code, 3) IN ('009', '008', '002', '000')
+ORDER BY faulty_code DESC
+`;
+
+//세척 검사 완료 처리
+//CALL qc_process_cleaning_update_list('검사번호', 공정바디번호,  합격수, 불합격수, @result); 
+const updateQCPC = `
+CALL qc_process_cleaning_update_list(?, ?, ?, ?, @result)
+`;
+
+
+//세척 검사 불량품 등록(검사번호, 불량코드, 불량수량, @result)
+const insertQCPCR = `
+CALL qc_process_cleaning_rjc_input_rjclist(?, ?, ?, @result);
+`;
+
+
+
+
+
+//포장검사
+//////////////////////////////////////////////////////////////////////////
+//신청한 검사 조회(전체/선택)
+const selectQCPP = `
+SELECT  qcpp.qc_packing_id
+		  , qcpp.process_num
+		  , ph.production_order_num
+	--	, pb.product_code
+		  , b.product_name
+	  	, qcpp.emp_num
+      , e.name AS emp_name
+		  , qcpp.total_qnt
+      , qcpp.pass_qnt
+      , qcpp.rjc_qnt
+      , qcpp.inspec_start
+      , qcpp.inspec_end
+      , qcpp.inspec_status
+FROM qc_packaging qcpp  LEFT JOIN process_work_body pb ON qcpp.process_num = pb.process_num
+								        LEFT JOIN process_work_header ph ON pb.process_work_header_num = ph.process_work_header_num
+								        LEFT JOIN bom b ON pb.product_code = b.product_code
+								        LEFT JOIN employee e ON qcpp.emp_num = e.emp_num
+`;
+
+//불량코드 가져오기(포장검사용)
+
+//포장검사 완료 처리 
+//call qc_packaging_update_list('검사번호', 공정바디번호,  합격수, 불합격수, @result);
+const updateQCPP = `
+CALL qc_packaging_update_list(?, ?, ?, ?, @result)
+`;
+//포장검사 불량품 등록
+const insertQCPPR = `
+CALL qc_packaging_rjc_input_rjclist(?, ?, ?, @result);
+`;
 
 
 module.exports = {
@@ -205,6 +295,26 @@ module.exports = {
   selectQCMRAll,
   selectQCMRWithConditions,
   selectQCMF,
-  selectQCMFWithConditions
+  selectQCMFWithConditions,
+
+  selectQCPC,
+  selectFaultyCodeQCPC,
+  updateQCPC,
+  insertQCPCR,
+
+
+
+
+
+
+
+  selectQCPP,
+
+  updateQCPP,
+  insertQCPPR
+
+
+
+
   
 };

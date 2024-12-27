@@ -265,7 +265,7 @@ DELIMITER ;
 CALL inputUpdate ('["LOT20241221001","LOT20241221002"]','["제품창고4","제품창고5"]');*/
 
 const inputUpdate = 
-`CALL inputUpdate (?, ?, ? )`;
+`CALL inputUpdate (?, ? )`;
 
 //입고건삭제처리 
 /**DELIMITER //
@@ -317,7 +317,14 @@ const deleteInput =
 
 // 제품별 재고 조회 (유효한입고 , 유효한 출고, 폐기된양, 입고취소된양 , 전체 재고)
 const productNum = 
-`SELECT 
+`WITH output_aggregated AS (
+    SELECT 
+        input_num,
+        SUM(output_amount) AS total_output_amount
+    FROM output
+    GROUP BY input_num
+)
+SELECT 
     p.product_code,
     p.product_name, 
 
@@ -328,7 +335,7 @@ const productNum =
 
 
     NVL(SUM(CASE 
-                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(o.output_amount, 0) 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
                 ELSE 0 
             END), 0) AS valid_output_amount,
 
@@ -351,7 +358,7 @@ const productNum =
             END) 
          - 
          SUM(CASE 
-                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(o.output_amount, 0) 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
                 ELSE 0 
             END)
         ), 0) AS stock_amount
@@ -359,23 +366,30 @@ FROM
     product p
 LEFT JOIN input_body i
 ON p.product_code = i.product_code
-LEFT JOIN output o
-ON i.input_num = o.input_num `;
+LEFT JOIN output_aggregated oa
+ON i.input_num = oa.input_num `;
 
 
 //lot별 재고 조회 (재고상태, 유통기한 필터)
 const lotNum =
-`SELECT 
+`WITH output_aggregated AS (
+	SELECT
+		input_num,
+        SUM(output_amount) AS total_output_amount
+	FROM output
+    GROUP BY input_num
+)
+SELECT 
     ib.product_lot,
     ib.product_code,
     p.product_name,
-    NVL(SUM(ib.input_amount), 0) - NVL(SUM(o.output_amount), 0) AS product_quantity,
+    NVL(SUM(ib.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) AS product_quantity,
     w.warehouse_name,
     qp.inspec_end AS manufacturing_date,
     ib.expire_date,
     status.product_status
 FROM 
-    input_body ib LEFT JOIN output o
+    input_body ib LEFT JOIN output_aggregated o
                   ON ib.input_num = o.input_num
 				  LEFT JOIN warehouse w
                   ON ib.warehouse_code = w.warehouse_code
@@ -416,6 +430,57 @@ const disposeLot =
 SET dispose_flag = 1
 WHERE product_lot = ?`;
 
+//제품클릭시 제품의 lot 출력 
+const productLot = 
+`WITH output_aggregated AS (
+	SELECT
+		input_num,
+        SUM(output_amount) AS total_output_amount
+	FROM output
+    GROUP BY input_num
+)
+SELECT 
+    ib.product_lot,
+    ib.product_code,
+    p.product_name,
+    NVL(SUM(ib.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) AS product_quantity,
+    w.warehouse_name,
+    qp.inspec_end AS manufacturing_date,
+    ib.expire_date,
+    status.product_status
+FROM 
+    input_body ib LEFT JOIN output_aggregated o
+                  ON ib.input_num = o.input_num
+				  LEFT JOIN warehouse w
+                  ON ib.warehouse_code = w.warehouse_code
+				  LEFT JOIN qc_packaging qp
+                  ON ib.qc_packing_id = qp.qc_packing_id
+				  LEFT JOIN product p
+                  ON ib.product_code = p.product_code
+                  LEFT JOIN  (
+                                    SELECT 
+                                        ib_inner.input_num,
+                                        CASE 
+                                        WHEN ib_inner.dispose_flag = 1 THEN '폐기'
+                                        WHEN ib_inner.input_flag = 1 THEN '취소'
+                                        ELSE '보관'
+                                        END AS product_status
+                                    FROM 
+                                        input_body ib_inner
+                                ) STATUS
+                  ON ib.input_num = status.input_num
+WHERE p.product_code = ?
+GROUP BY 
+    ib.product_lot, 
+    ib.product_code, 
+    p.product_name, 
+    w.warehouse_name, 
+    qp.inspec_end, 
+    ib.expire_date, 
+    status.product_status
+ORDER BY 
+    ib.expire_date`;
+
 
 module.exports = {
     getUseWarehouse,
@@ -429,4 +494,5 @@ module.exports = {
 	productNum,
     lotNum,
     disposeLot,
+    productLot,
 }

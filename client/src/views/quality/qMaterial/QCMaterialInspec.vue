@@ -96,6 +96,7 @@
     </template>
   </Modal>
 
+
   <Modal :isShowModal="showModalDone" @closeModal="closeModal" @confirm="confirm">
     <template v-slot:list>
       <p>신청내역대로 저장하시겠습니까?</p>
@@ -118,6 +119,8 @@ import userDateUtils from '@/utils/useDates.js';
 import theme from "@/utils/agGridTheme";
 
 import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
+
+//import ModalEmployee from "@/view/production/productionPlanAdd/ModalEmpList"; //생산파트 직원 모달창 이용
 
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 const { notify } = useNotification();  // 노티 내용변수입니다
@@ -389,6 +392,7 @@ export default {
 
 
       this.closeModal();
+      this.searchRequestAll();
     },
 
 

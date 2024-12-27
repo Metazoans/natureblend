@@ -260,17 +260,17 @@ const printRowData = async (rowData) => {
    let materialRows = '';
    let tototal_price = 0;
    material_list.forEach((item, index) => {
-      tototal_price += (item.total_price*0.001);
+      tototal_price += item.material_name.includes('병') ? (item.total_price) : (item.total_price*0.001);
       materialRows += `
          <tr>
             <td>${index + 1}</td>
             <td>${item.material_code}</td>
             <td>${item.material_name}</td>
-            <td>${(item.ord_qty*0.001).toLocaleString()}</td>
-            <td>KG</td>
-            <td>${(item.unit_price*0.001).toLocaleString()}</td>
+            <td>${ item.material_name.includes('병') ? (item.ord_qty).toLocaleString() : (item.ord_qty*0.001).toLocaleString() }</td>
+            <td>${ item.material_name.includes('병') ? "개" : "kg"  }</td>
+            <td>${(item.material_name.includes('병') ? item.unit_price.toLocaleString() : item.unit_price*0.001).toLocaleString() }</td>
             <td>원</td>
-            <td>${(item.total_price*0.001).toLocaleString()}</td>
+            <td>${(item.material_name.includes('병') ? item.total_price.toLocaleString() : item.total_price*0.001).toLocaleString()}</td>
             <td>원</td>
          </tr>
       `;
@@ -489,11 +489,11 @@ const matrialOrderList2 = async function(){
    rowData.value = result.data.map((col) => ({
       ...col,
       //ord_qty: (col.ord_qty * 0.001) + " kg",
-      ord_qty: col.material_name.includes('병') ? (Number(col.ord_qty)*0.001).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
+      ord_qty: col.material_name.includes('병') ? Number(col.ord_qty).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
       order_date: userDateUtils.dateFormat(col.order_date, "yyyy-MM-dd"),
       limit_date: userDateUtils.dateFormat(col.limit_date, "yyyy-MM-dd"),
-      unit_price: Number(col.unit_price*0.001).toLocaleString() + " 원",
-      total_price: Number(col.total_price*0.001).toLocaleString() + " 원"
+      unit_price: col.material_name.includes('병') ? Number(col.unit_price).toLocaleString() + " 원" : Number(col.unit_price*0.001).toLocaleString() + " 원",
+      total_price: col.material_name.includes('병') ? Number(col.total_price).toLocaleString() + " 원" : Number(col.total_price*0.001).toLocaleString() + " 원"
     })
   );
 }

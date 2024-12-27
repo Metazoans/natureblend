@@ -178,17 +178,17 @@
  };
  
   //그리드 api 컬럼명 들어가는 거
- const columnDefs = ref([
-   { headerName: "No.", field: "row_num", width:100 },
-   { headerName: "자재코드", field: "material_code", width:250 },
-   { headerName: "자재명", field: "material_name" },
-   { headerName: "현재고량", field: "stok_qty" },
-   { headerName: "불가용", field: "reject_qty" },
-   { headerName: "폐기필요재고", field: "trush_qty" },
-   { headerName: "발주중재고", field: "order_qty" },
-   { headerName: "안전재고", field: "safety_inventory" },
-   { headerName: "자재등록일", field: "regi_date" },
- ]);
+   const columnDefs = ref([
+      { headerName: "No.", field: "row_num", width: 100, cellStyle: { textAlign: "center" } },
+      { headerName: "자재코드", field: "material_code", width: 250, cellStyle: { textAlign: "center" } },
+      { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "center" } },
+      { headerName: "현재고량", field: "stok_qty", cellStyle: { textAlign: "center" } },
+      { headerName: "불가용", field: "reject_qty", cellStyle: { textAlign: "center" } },
+      { headerName: "폐기필요재고", field: "trush_qty", cellStyle: { textAlign: "center" } },
+      { headerName: "발주중재고", field: "order_qty", cellStyle: { textAlign: "center" } },
+      { headerName: "안전재고", field: "safety_inventory", cellStyle: { textAlign: "center" } },
+      { headerName: "자재등록일", field: "regi_date", cellStyle: { textAlign: "center" } },
+   ]);
 
  // 엔터키 누르면 하는거
  const enterkey = (event) => {
@@ -212,6 +212,11 @@
    
    rowData.value = result.data.map(val => ({
       ...val,
+      stok_qty: val.material_name.includes('병') ? Number(val.stok_qty) + ' 개' : Number(val.stok_qty)*0.001 + ' kg',
+      reject_qty : val.material_name.includes('병') ? Number(val.reject_qty) + ' 개' : Number(val.reject_qty)*0.001 + ' kg',
+      trush_qty : val.material_name.includes('병') ? Number(val.trush_qty) + ' 개' : Number(val.trush_qty)*0.001 + ' kg', 
+      order_qty : val.material_name.includes('병') ? Number(val.order_qty) + ' 개' : Number(val.order_qty)*0.001 + ' kg',  
+      safety_inventory : val.material_name.includes('병') ? Number(val.safety_inventory) + ' 개' : Number(val.safety_inventory)*0.001 + ' kg',   
       regi_date : userDateUtils.dateFormat(val.regi_date, "yyyy-MM-dd"),
    }));
  }

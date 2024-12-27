@@ -86,4 +86,81 @@ router.post('/recordQCMR', async(req, res)=>{
 
 
 
+///////////////////////////////////////////////////
+//검사관리-불량코드조회(세척검사관련)
+router.get('/faultyCodeQCPC', async (req, res)=>{
+  let faultyList = await qc_service.findFaultyCodeQCPC();
+  res.send(faultyList);
+})
+
+//공정검사 -세척검사조회(미검사만)
+router.post('/requestQCPC', async(req, res)=>{
+  let {mName, startDate, endDate} = req.body;
+  let status = '검사요청완료';
+  let list = await qc_service.findQCPC(status, mName, startDate, endDate);
+  res.send(list);
+})
+//공정검사 -세척검사조회(검사완료만)
+router.post('/recordQCPC', async(req, res)=>{
+  let {mName, startDate, endDate} = req.body;
+  let status = '검사완료';
+  let list = await qc_service.findQCPC(status, mName, startDate, endDate);
+  res.send(list);
+})
+//공정검사 -세척검사조회(모두)
+router.post('/recordQCPCAll', async(req, res)=>{
+  let {mName, startDate, endDate} = req.body;
+  let status = '';
+  let list = await qc_service.findQCPC(status, mName, startDate, endDate);
+  res.send(list);
+})
+//공정검사- 세척검사완료처리
+router.post('/completeQCPC', async(req, res)=>{
+  let {qcpc, qcpcr} = req.body;
+  let result = await qc_service.completeQCPC(qcpc, qcpcr);
+  res.send(result);
+});
+
+
+
+
+/////////////////////////////////////
+//검사관리-불량코드조회(포장검사관련) 임시 => 수정필요
+router.get('/faultyCodeQCPC', async (req, res)=>{
+  let faultyList = await qc_service.findFaultyCodeQCPC();
+  res.send(faultyList);
+})
+
+//포장검사조회(미검사만)
+router.post('/requestQCPP', async(req, res)=>{
+  let {pName, startDate, endDate} = req.body;
+  let status = '검사요청완료';
+  let list = await qc_service.findQCPP(status, pName, startDate, endDate);
+  res.send(list);
+})
+//포장검사조회(검사완료만)
+router.post('/recordQCPP', async(req, res)=>{
+  let {pName, startDate, endDate} = req.body;
+  let status = '검사완료';
+  let list = await qc_service.findQCPP(status, pName, startDate, endDate);
+  res.send(list);
+})
+//포장검사조회(모두)
+router.post('/recordQCPPAll', async(req, res)=>{
+  let {pName, startDate, endDate} = req.body;
+  let status = '';
+  let list = await qc_service.findQCPP(status, pName, startDate, endDate);
+  res.send(list);
+})
+//포장검사- 세척검사완료처리
+router.post('/completeQCPP', async(req, res)=>{
+  let {qcpp, qcppr} = req.body;
+  let result = await qc_service.completeQCPP(qcpp, qcppr);
+  res.send(result);
+});
+
+
+
+
+
 module.exports = router;
