@@ -198,6 +198,13 @@
  
  const onReady = (param) => {
    param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+
+   
+   const headerCells = document.querySelectorAll('.ag-header-cell-text');
+   headerCells.forEach((headerCell) => {
+        headerCell.style.placeContent = 'center';
+    });
+
  }
  
  //데이터 잡아넣을 그리드 api 행
