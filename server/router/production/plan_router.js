@@ -31,6 +31,8 @@ router.post('/', async (req, res)=>{
 });
 
 router.get('/', async (req, res)=>{
+    const query = req.query
+    console.log('query', query)
     res.send(await planService.planList());
 });
 

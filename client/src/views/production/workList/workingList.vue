@@ -82,6 +82,9 @@
             <tbody>
             <tr v-for="(partialWork) in partialWorkList" :key="partialWork.process_num">
               <td>
+                <h6 class="mb-0 text-sm text-center">{{ partialWork.process_num }}</h6>
+              </td>
+              <td>
                 <h6 v-if="partialWork.emp_num !== null" class="mb-0 text-sm text-center">{{ partialWork.emp_name }}</h6>
                 <input v-else readonly @click="openModal('emp')" :value="searchEmp.name" class="form-control border p-2 cursor-pointer" />
               </td>
@@ -187,7 +190,7 @@ export default {
       partialWorkList: [],
       selectedStatus: '전체',
       partialProcessStatusList: ['전체', '진행중', '완료'],
-      cols: ['작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '진행상태'],
+      cols: ['분할작업번호', '작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '진행상태'],
       isShowModal: false,
       modalTitle: '생산지시 목록',
       selectedWorkingOrder: {},
