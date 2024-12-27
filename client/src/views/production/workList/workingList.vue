@@ -203,19 +203,19 @@ export default {
         { headerName: "진행상태",
           field: 'process_status',
           cellClass: (params) => {
-            return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '진행전' ? 'red' : ''
+            return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
           },
         },
       ],
       processList: [],
       processStatus: {
-        'process_waiting': '진행전',
+        'process_waiting': '대기중',
         'processing': '진행중',
         'process_complete': '완료',
         '-': '-'
       },
       partialWorkStatus: {
-        'partial_process_waiting': '진행전',
+        'partial_process_waiting': '대기중',
         'partial_processing': '진행중',
         'partial_process_complete': '완료'
       },
@@ -284,6 +284,7 @@ export default {
 
         if(this.searchWorkingOrder.production_order_status === 'work_waiting') {
           this.updateProdOrderStatus('work_in_process')
+          this.updatePlanStatus('plan_in_process')
         }
 
         this.searchEmp = {}
@@ -586,6 +587,16 @@ export default {
       let result = await axios.put(`${ajaxUrl}/production/work/order/status`, statusInfo)
           .catch(err => console.log(err));
       console.log('updateProdOrderStatus', result)
+    },
+
+    async updatePlanStatus(status) {
+      let planStatusInfo = {
+        planStatus: status,
+        planNum: this.searchWorkingOrder.plan_num
+      }
+      let result = await axios.put(`${ajaxUrl}/production/work/plan/status`, planStatusInfo)
+          .catch(err => console.log(err));
+      console.log('updatePlanStatus', result)
     }
   },
 
@@ -612,6 +623,8 @@ export default {
           await this.deductMaterial()
           // 생산지시 상태값 변경
           await this.updateProdOrderStatus('work_complete')
+          // 생산계획 상태값 변경
+          await this.updatePlanStatus('plan_complete')
         }
       }
     },

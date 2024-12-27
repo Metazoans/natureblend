@@ -119,6 +119,13 @@ export default {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
   }
   &.work {
+    .borderTop {
+      border-top: 1px solid #6c757d;
+      border-bottom: 0 !important;
+    }
+    .noBorder {
+      border: 0 !important;
+    }
     .green {
       height: auto;
       margin-top: 6px;

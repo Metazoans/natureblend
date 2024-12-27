@@ -106,4 +106,11 @@ router.put('/material', async (req, res)=>{
     let updatedMaterial = await workService.updateMaterial(prodOrderNum)
     res.send(updatedMaterial)
 });
+
+router.put('/plan/status', async (req, res)=>{
+    let planStatusInfo = req.body
+    let updatedPlanStatus = await workService.updatePlanStatus(planStatusInfo)
+    res.send(updatedPlanStatus)
+});
+
 module.exports = router

@@ -116,6 +116,10 @@ const updateMaterial = async (prodOrderNum)=>{
     return await mysql.query('updateMaterial', Object.values(prodOrderNum))
 }
 
+const updatePlanStatus = async (planStatusInfo)=>{
+    return await mysql.query('updatePlanStatus', Object.values(planStatusInfo))
+}
+
 module.exports = {
     findWorkingOrders,
     findWorkForToday,
@@ -134,5 +138,6 @@ module.exports = {
     qcPackaging,
     getProcessStatus,
     updateProdOrderStatus,
-    updateMaterial
+    updateMaterial,
+    updatePlanStatus
 }

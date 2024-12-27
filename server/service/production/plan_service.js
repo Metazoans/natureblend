@@ -23,10 +23,15 @@ const addPlan = async (planInfo)=>{
     return { message: result[0][0].result }
 }
 
+const planList = async ()=>{
+    return await mysql.query('planDetailList');
+}
+
 module.exports = {
     findAllProducts,
     findOrders,
     findProductStock,
     getProductionEmpList,
-    addPlan
+    addPlan,
+    planList
 }

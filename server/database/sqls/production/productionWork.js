@@ -1,5 +1,15 @@
 const workingOrders = `
-    select production_order_num, production_order_name, plan_num, po.product_code, p.product_name, DATE_FORMAT(work_date, '%Y-%m-%d') AS work_date, production_order_qty, production_order_date, emp_num, po.production_order_status
+    select 
+        production_order_num, 
+        production_order_name, 
+        plan_num, 
+        po.product_code, 
+        p.product_name, 
+        DATE_FORMAT(work_date, '%Y-%m-%d') AS work_date, 
+        production_order_qty, 
+        production_order_date, 
+        emp_num, 
+        po.production_order_status
     from production_order po inner join product p
         on po.product_code = p.product_code
     where po.production_order_status in ('work_waiting', 'work_in_process')
@@ -161,6 +171,13 @@ const updateMaterial = `
     CALL deductMaterial(?);
 `
 
+// work_in_process, work_complete
+const updatePlanStatus = `
+    update production_plan
+    set plan_status = ? 
+    where plan_num = ?
+`
+
 module.exports = {
     workingOrders,
     workForToday,
@@ -179,5 +196,6 @@ module.exports = {
     insertPackagingQc,
     checkProcessStatus,
     updateProdOrderStatus,
-    updateMaterial
+    updateMaterial,
+    updatePlanStatus
 }

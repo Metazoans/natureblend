@@ -30,5 +30,9 @@ router.post('/', async (req, res)=>{
     res.send(await planService.addPlan(planInfo));
 });
 
+router.get('/', async (req, res)=>{
+    res.send(await planService.planList());
+});
+
 
 module.exports = router
