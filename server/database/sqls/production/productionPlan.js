@@ -186,6 +186,20 @@ const productionEmployees = `
      or job_num = 6
 `;
 
+const planDetailList = `
+  select 
+      plan_name, 
+      p.plan_create_date, 
+      p.plan_start_date,
+      p.plan_end_date, 
+      p.plan_status, 
+      p.plan_emp, 
+      p.plan_num,
+      your_product(o.product_code, 'product_name') as product_name,
+      o.plan_qty
+  from production_plan p join order_plan_relation o
+  where p.plan_num = o.plan_num;
+`
         
 module.exports = {
   productList,
@@ -193,5 +207,6 @@ module.exports = {
   ordersByProductCode,
   productStock,
   insertPlanByOrders,
-  productionEmployees
+  productionEmployees,
+  planDetailList
 }

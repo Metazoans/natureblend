@@ -9,8 +9,9 @@ const waitingPlanList = `
         p.capacity,
         SUM(o.plan_qty) AS total_plan_qty,
         pp.plan_start_date,
-        pp.plan_end_date
-
+        pp.plan_end_date,
+        o.order_plan_num,
+        pp.plan_status
     FROM
         production_plan pp
             INNER JOIN
@@ -118,6 +119,19 @@ const insertProcessWork = `
     values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 `
 
+const prodOrderList = `
+    select production_order_num,
+           production_order_name,
+           pp.plan_name,
+           your_product(po.product_code, 'product_name') as product_name,
+           po.work_date,
+           po.production_order_qty,
+           po.production_order_status
+    from production_order po
+             join production_plan pp
+    where po.plan_num = pp.plan_num
+`
+
 module.exports = {
     waitingPlanList,
     processFlow,
@@ -125,5 +139,6 @@ module.exports = {
     getMaterialStock,
     insertProductionOrder,
     insertHoldingStock,
-    insertProcessWork
+    insertProcessWork,
+    prodOrderList
 }

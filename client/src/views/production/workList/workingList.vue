@@ -59,7 +59,7 @@
             <p class="fw-bold field">공정완료시간</p>
             <p class="fw-bold data">{{ partialWorkLastEndTime }}</p>
           </div>
-          <i class="fa fa-plus-circle fa-2x cursor-pointer" @click="addPartialWork"></i>
+          <i v-show="partialWorkFinalStatus !== 'process_complete'" class="fa fa-plus-circle fa-2x cursor-pointer" @click="addPartialWork"></i>
         </div>
         <div class="table-responsive p-0">
           <table
@@ -81,6 +81,9 @@
             </tbody>
             <tbody>
             <tr v-for="(partialWork) in partialWorkList" :key="partialWork.process_num">
+              <td>
+                <h6 class="mb-0 text-sm text-center">{{ partialWork.process_num }}</h6>
+              </td>
               <td>
                 <h6 v-if="partialWork.emp_num !== null" class="mb-0 text-sm text-center">{{ partialWork.emp_name }}</h6>
                 <input v-else readonly @click="openModal('emp')" :value="searchEmp.name" class="form-control border p-2 cursor-pointer" />
@@ -187,7 +190,7 @@ export default {
       partialWorkList: [],
       selectedStatus: '전체',
       partialProcessStatusList: ['전체', '진행중', '완료'],
-      cols: ['작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '진행상태'],
+      cols: ['분할작업번호', '작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '진행상태'],
       isShowModal: false,
       modalTitle: '생산지시 목록',
       selectedWorkingOrder: {},
@@ -203,19 +206,19 @@ export default {
         { headerName: "진행상태",
           field: 'process_status',
           cellClass: (params) => {
-            return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '진행전' ? 'red' : ''
+            return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
           },
         },
       ],
       processList: [],
       processStatus: {
-        'process_waiting': '진행전',
+        'process_waiting': '대기중',
         'processing': '진행중',
         'process_complete': '완료',
         '-': '-'
       },
       partialWorkStatus: {
-        'partial_process_waiting': '진행전',
+        'partial_process_waiting': '대기중',
         'partial_processing': '진행중',
         'partial_process_complete': '완료'
       },
@@ -280,12 +283,33 @@ export default {
           type: 'success',
         });
         await this.getPartialWorkList()
+        this.startQc(partialWork)
+
+        if(this.searchWorkingOrder.production_order_status === 'work_waiting') {
+          this.updateProdOrderStatus('work_in_process')
+          this.updatePlanStatus('plan_in_process')
+        }
+
+        this.searchEmp = {}
+        this.searchMachine = {}
+      }
+    },
+
+    async startQc(partialWork) {
+      let qcInfo = {
+        qcType: this.selectedRow.process_code,
+        info: {
+          processNum: partialWork.process_num,
+          qty: partialWork.new_process_todo_qty,
+          empNum: this.searchEmp.emp_num
+        }
       }
 
+      await axios.post(`${ajaxUrl}/production/work/qc`, qcInfo)
+          .catch(err => console.log(err));
     },
 
     async endPartialWork(partialWork) {
-      console.log(partialWork)
       if(partialWork.fail_qty === null && partialWork.new_fail_qty === null) {
         this.$notify({
           text: "불량량을 입력해주세요.",
@@ -340,15 +364,14 @@ export default {
           text: "분할작업이 등록되었습니다.",
           type: 'success',
         });
+
+        await this.getPartialWorkList()
       } else {
         this.$notify({
           text: "분할작업 등록 실패하였습니다.",
           type: 'fail',
         });
       }
-
-      await this.getPartialWorkList()
-      // this.start
     },
 
     getPartialWorkFinalQty() {
@@ -548,36 +571,81 @@ export default {
 
     selectMachine(machine) {
       this.selectedMachine = machine
+    },
+
+    async deductMaterial() {
+      let prodOrderNum = {
+        prodOrderNum: this.searchWorkingOrder.production_order_num
+      }
+      let result = await axios.put(`${ajaxUrl}/production/work/material`, prodOrderNum)
+          .catch(err => console.log(err));
+      console.log('deductMaterial', result)
+    },
+
+    async updateProdOrderStatus(status) {
+      let statusInfo = {
+        productionOrderStatus: status,
+        productionOrderNum: this.searchWorkingOrder.production_order_num
+      }
+      let result = await axios.put(`${ajaxUrl}/production/work/order/status`, statusInfo)
+          .catch(err => console.log(err));
+      console.log('updateProdOrderStatus', result)
+    },
+
+    async updatePlanStatus(status) {
+      let planStatusInfo = {
+        planStatus: status,
+        planNum: this.searchWorkingOrder.plan_num
+      }
+      let result = await axios.put(`${ajaxUrl}/production/work/plan/status`, planStatusInfo)
+          .catch(err => console.log(err));
+      console.log('updatePlanStatus', result)
     }
   },
 
   watch: {
-    partialWorkFinalStatus() {
+    async partialWorkFinalStatus() {
       let statusInfo = {
         processStatus: this.partialWorkFinalStatus === '-' ? null : this.partialWorkFinalStatus,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
       }
-      let result = axios.put(`${ajaxUrl}/production/work/process/status`, statusInfo)
+      await axios.put(`${ajaxUrl}/production/work/process/status`, statusInfo)
               .catch(err => console.log(err));
-      console.log('watch partialWorkFinalStatus', result)
+
+      // process_work_header 상태값도 같이 업데이트 시키기
+      await this.getWorkList()
+
+      if(this.partialWorkFinalStatus === 'process_complete') {
+        let result = await axios.get(`${ajaxUrl}/production/work/process/status/${this.searchWorkingOrder.production_order_num}`)
+              .catch(err => console.log(err));
+
+        let completeList = result.data.filter((res) => res.process_status === 'process_complete')
+
+        if(completeList.length === result.data.length) {
+          // 자재 차감
+          await this.deductMaterial()
+          // 생산지시 상태값 변경
+          await this.updateProdOrderStatus('work_complete')
+          // 생산계획 상태값 변경
+          await this.updatePlanStatus('plan_complete')
+        }
+      }
     },
     partialWorkFirstStartTime() {
       let startInfo = {
         processStartTime: this.partialWorkFirstStartTime === '-' ? null : this.partialWorkFirstStartTime,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
       }
-      let result = axios.put(`${ajaxUrl}/production/work/process/start`, startInfo)
+      axios.put(`${ajaxUrl}/production/work/process/start`, startInfo)
           .catch(err => console.log(err));
-      console.log('watch partialWorkFirstStartTime', result)
     },
     partialWorkLastEndTime() {
       let endInfo = {
         processEndTime: this.partialWorkLastEndTime === '-' ? null : this.partialWorkLastEndTime,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
       }
-      let result = axios.put(`${ajaxUrl}/production/work/process/end`, endInfo)
+      axios.put(`${ajaxUrl}/production/work/process/end`, endInfo)
           .catch(err => console.log(err));
-      console.log('watch partialWorkLastEndTime', result)
     }
 
   }

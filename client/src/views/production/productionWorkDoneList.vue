@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid py-4">
     <div class="pb-4">
-      <h1>생산 지시 목록</h1>
+      <h1>공정 실적</h1>
     </div>
     <div class="grid-container work" style="padding-top: 10px;">
       <ag-grid-vue
@@ -32,24 +32,24 @@ export default {
       listSearch: '',
       rowData: [],
       columnDefs: [
-        { headerName: "생산지시번호", field: 'production_order_num'},
-        { headerName: "생산지시명", field: 'production_order_name' },
-        { headerName: "생산계획명", field: 'plan_name' },
-        { headerName: "작업일자", field: 'work_date' },
+        { headerName: "No.", field: 'no'},
+        { headerName: "생산지시번호", field: 'production_order_num' },
+        { headerName: "공정명", field: 'process_name' },
         { headerName: "제품명", field: 'product_name' },
-        { headerName: "지시량(개)", field: 'production_order_qty' },
-        {
-          headerName: "작업진행",
-          field: 'production_order_status',
-          cellClass: (params) => {
-            return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
-          }},
+        { headerName: "설비명", field: 'machine_name' },
+        { headerName: "작업자", field: 'emp_name' },
+        { headerName: "생산량(개)", field: 'production_qty' },
+        { headerName: "불량량(개)", field: 'fail_qty' },
+        { headerName: "합격량(개)", field: 'success_qty' },
+        { headerName: "작업시작시간", field: 'partial_process_start_time' },
+        { headerName: "작업완료시간", field: 'partial_process_end_time' },
+        // {
+        //   headerName: "작업진행",
+        //   field: 'production_order_status',
+        //   cellClass: (params) => {
+        //     return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
+        //   }},
       ],
-      prodOrderStatus: {
-        'work_waiting': '대기중',
-        'work_in_process': '진행중',
-        'work_complete': '완료'
-      }
     }
   },
 
@@ -60,7 +60,7 @@ export default {
   },
 
   created() {
-    this.getProdOrderList()
+    this.getWorkDoneList()
   },
 
   methods: {
@@ -92,8 +92,8 @@ export default {
       }
     },
 
-    async getProdOrderList() {
-      let result = await axios.get(`${ajaxUrl}/production/order`)
+    async getWorkDoneList() {
+      let result = await axios.get(`${ajaxUrl}/production/work/done`)
           .catch(err => console.log(err));
 
       if(result.data.length === 0) {
@@ -110,10 +110,14 @@ export default {
           [keys[0]]: data[keys[0]],
           [keys[1]]: data[keys[1]],
           [keys[2]]: data[keys[2]],
-          [keys[3]]: data[keys[3]].split('T')[0],
+          [keys[3]]: data[keys[3]],
           [keys[4]]: data[keys[4]],
           [keys[5]]: data[keys[5]],
-          [keys[6]]: this.prodOrderStatus[data[keys[6]]],
+          [keys[6]]: data[keys[7]] + data[keys[8]],
+          [keys[7]]: data[keys[7]],
+          [keys[8]]: data[keys[8]],
+          [keys[9]]: data[keys[9]].split('T')[0],
+          [keys[10]]: data[keys[10]].split('T')[0],
         }
       })
     }
