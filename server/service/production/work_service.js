@@ -92,6 +92,38 @@ const updateEndTime = async (endInfo)=>{
     return await mysql.query('updateProcessEndTime', Object.values(endInfo))
 }
 
+const qcCleaning = async (qcInfo)=>{
+    return await mysql.query('insertCleaningQc', Object.values(qcInfo))
+}
+
+const qcJuice = async (qcInfo)=>{
+    return await mysql.query('insertJuiceQc', Object.values(qcInfo))
+}
+
+const qcPackaging = async (qcInfo)=>{
+    return await mysql.query('insertPackagingQc', Object.values(qcInfo))
+}
+
+const getProcessStatus = async (prodOrderNum)=>{
+    return await mysql.query('checkProcessStatus', [prodOrderNum])
+}
+
+const updateProdOrderStatus = async (statusInfo)=>{
+    return await mysql.query('updateProdOrderStatus', Object.values(statusInfo))
+}
+
+const updateMaterial = async (prodOrderNum)=>{
+    return await mysql.query('updateMaterial', Object.values(prodOrderNum))
+}
+
+const updatePlanStatus = async (planStatusInfo)=>{
+    return await mysql.query('updatePlanStatus', Object.values(planStatusInfo))
+}
+
+const getCompletePartialWork = async ()=>{
+    return await mysql.query('completePartialWork')
+}
+
 module.exports = {
     findWorkingOrders,
     findWorkForToday,
@@ -104,5 +136,13 @@ module.exports = {
     endPartialWork,
     updateProcessStatus,
     updateStartTime,
-    updateEndTime
+    updateEndTime,
+    qcCleaning,
+    qcJuice,
+    qcPackaging,
+    getProcessStatus,
+    updateProdOrderStatus,
+    updateMaterial,
+    updatePlanStatus,
+    getCompletePartialWork
 }

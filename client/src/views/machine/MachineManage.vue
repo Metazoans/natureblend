@@ -1,87 +1,147 @@
 <template>
-  <ModalMachine>
+  <ModalMachine :modalSize="modalSize">
     <template v-slot:header>
       <h2 v-if="isUpdate">설비 수정</h2>
       <h2 v-else>설비 등록</h2>
     </template>
     
     <template v-slot:body>
-      <div class="machineBody" v-bind="machineData">
-        <div class="modalRow">
-          <label for="machineName">설비 이름</label>
-          <input type="text" id="machineName" name="machineName" v-model="machineData.machine_name"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="machineImg">설비 이미지</label>
-          <!-- 파일 node로 저장(url return받음) -->
-          <input type="file" id="machineImg" name="machineImg" @change="uploadImage"/>
-          <!-- 이미지 url 불러오기(미리보기) -->
-          <img :src="`${localUrl}${machineData.machine_img}`"/>
-        </div>
-
-        <div class="modalRow">
-          <a for="machineState">사용 여부</a>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="machineState"
-                   value="run" v-model="machineData.machine_state" checked>
-            <label class="form-check-label" for="flexRadioDefault1">사용</label>
+      <div class="container-fluid py-4">
+        <div class="machineBody" v-bind="machineData">
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col">
+              <label for="machineName">설비 이름</label>
+            </div>
+            <div class="col-10">
+              <input class="form-control" type="text" id="machineName" name="machineName" v-model="machineData.machine_name"/>
+            </div>
           </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="machineState"
-                   value="stop" v-model="machineData.machine_state">
-            <label class="form-check-label" for="flexRadioDefault2">미사용</label>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <label for="machineImg">설비 이미지</label>
+            <!-- 파일 node로 저장(url return받음) -->
+            <input type="file" id="machineImg" name="machineImg" @change="uploadImage"/>
+            <!-- 이미지 url 불러오기(미리보기) -->
+            <img :src="`${localUrl}${machineData.machine_img}`"/>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <label class="col-sm-2 col-form-label fw-bold">사용 여부</label>
+            <div class="col-sm-6">
+              <label v-for="status in statusList" :key="status" class="me-3">
+                {{ status }}
+                <input
+                  type="radio"
+                  name="status"
+                  :value="status"
+                  v-model="machineData.machine_state"
+                />
+              </label>
+            </div>
+
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col">
+              <label for="modelNum">모델 번호</label>
+            </div>
+            <div class="col-10">
+              <input type="text" id="modelNum" name="modelNum" v-model="machineData.model_num"/>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col">
+              <a>설비 분류</a>
+            </div>
+            <div class="col-10">
+              <select class="form-select" aria-label="Default select example"
+                      v-model="machineData.process_code">
+                <option
+                  v-for="item in typeSelect"
+                  :key="item.process_code"
+                  :value="item.process_code"
+                >
+                  {{ item.machine_type }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col">
+              <a>제작 업체</a>
+            </div>
+            <div class="col-10">
+              <select class="form-select" aria-label="Default select example"
+                      v-model="machineData.client_num">
+                <option value="1">거래처1</option>
+                <option value="2">거래처2</option>
+                <option value="3">거래처3</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col">
+              <label for="uph">UPH</label>
+            </div>
+            <div class="col-10">
+              <input type="number" id="uph" name="uph" v-model="machineData.uph"/>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col">
+              <label for="machineLocation">설비 위치</label>
+            </div>
+            <div class="col-10">
+              <input type="text" id="machineLocation" name="machineLocation" v-model="machineData.machine_location"/>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col">
+              <label for="empNum">등록자</label>
+            </div>
+            <div class="col-10">
+              <input type="number" id="empNum" name="empNum" v-model="machineData.emp_num"/>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col">
+              <label for="buyDate">구매 일자</label>
+            </div>
+            <div class="col-10">
+              <input type="datetime-local" id="buyDate" name="buyDate" v-model="machineData.buy_date" v-bind:readonly="isUpdate"/>
+            </div>
           </div>
         </div>
 
-        <div class="modalRow">
-          <label for="modelNum">모델 번호</label>
-          <input type="text" id="modelNum" name="modelNum" v-model="machineData.model_num"/>
+
+        <!-- 부품 추가 버튼 -->
+        <button
+          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+          type="button"
+          data-target="warningToast"
+          @click="partNum++"
+          v-if="partNum == 0"
+        >
+          부품 추가
+        </button>
+
+        <div v-for="i in partNum" :key="i">
+          <MachineParts 
+            :partDataList="partDataList" 
+            :rowNum="i" 
+            :lastNum="partNum" 
+            @add="addClicked" 
+            @del="delClicked" 
+            @chInput="partInput">
+          </MachineParts>
         </div>
 
-        <div class="modalRow">
-          <a>설비 분류</a>
-          <select class="form-select" aria-label="Default select example"
-                  v-model="machineData.process_code">
-            <option
-              v-for="item in typeSelect"
-              :key="item.process_code"
-              :value="item.process_code"
-            >
-              {{ item.machine_type }}
-            </option>
-          </select>
-        </div>
-
-        <div class="modalRow">
-          <a>제작 업체</a>
-          <select class="form-select" aria-label="Default select example"
-                  v-model="machineData.client_num">
-            <option value="1">거래처1</option>
-            <option value="2">거래처2</option>
-            <option value="3">거래처3</option>
-          </select>
-        </div>
-
-        <div class="modalRow">
-          <label for="uph">UPH</label>
-          <input type="number" id="uph" name="uph" v-model="machineData.uph"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="machineLocation">설비 위치</label>
-          <input type="text" id="machineLocation" name="machineLocation" v-model="machineData.machine_location"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="empNum">등록자</label>
-          <input type="number" id="empNum" name="empNum" v-model="machineData.emp_num"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="buyDate">구매 일자</label>
-          <input type="datetime-local" id="buyDate" name="buyDate" v-model="machineData.buy_date" v-bind:readonly="isUpdate"/>
-        </div>
       </div>
     </template>
     
@@ -115,6 +175,7 @@
 
 <script>
 import ModalMachine from "@/views/natureBlendComponents/modal/ModalMachine.vue";
+import MachineParts from "@/views/machine/MachineParts.vue";
 import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl, localUrl } from '@/utils/commons.js';
 import axios from 'axios';
@@ -128,9 +189,11 @@ export default {
   },
   components: {
     ModalMachine,
+    MachineParts,
   },
   data() {
     return {
+      modalSize: 'modal-lg',
       localUrl: localUrl,
       imgUrlTest: '',
       machineData: {
@@ -148,16 +211,29 @@ export default {
         // 자동
         emp_num: 0,
       },
+      statusList: ["사용", "미사용"], // 작동 상태 옵션
       typeSelect: [], // 설비 분류 객체
       isInsert: false, // 등록 성공 여부,
       fullInput: false,
       imagePreview: null,
+
+
+      // 부품 데이터
+      partNum: 0,
+      partDataList: [],
+      emptyData: {
+        partName: '',
+        yearCycle: 0,
+        monthCycle: 0,
+        dayCycle: 0,
+      },
     }
   },
   beforeMount() {
     // 설비 분류 및 거래처 정보 가져오기
     this.getSelectItem();
-    
+
+    this.createPartsData();
   },
   updated() {
     // update 여부 확인
@@ -166,6 +242,8 @@ export default {
       this.getMachineInfo(this.machineNo);
     }
     this.machineData.buy_date = this.getToday();
+
+
   },
   methods: {
     // 선택지 정보 가져오기
@@ -285,6 +363,35 @@ export default {
       }
     },
 
+    // 부품 관련
+    addClicked() {
+      if(this.partNum < 4) {
+          this.partNum++;
+      } else {
+        alert('최대 부품 수입니다.');
+      }
+    },
+    async delClicked(row) {
+      let newArray = [...this.partDataList];
+
+      newArray.splice(row-1, 1);
+      newArray.length = 4;
+      newArray[3] = {...this.emptyData};
+
+      this.partDataList = newArray;
+      this.partNum--;
+    },
+    partInput(row, data) { // 부품 정보 입력 감지 => 자식 컴포넌트에서 입력된 값을 객체 배열에 저장
+      this.partDataList[row-1] = data;
+    },
+    createPartsData() { // 빈 객체 배열 생성(beforeMount시 작동)
+      this.partDataList.length = 4;
+      for(let i = 0; i < 4; i++) {
+        this.partDataList[i] = {...this.emptyData};
+      }
+    },
+
+
 
     // 날짜 관련
     getToday() {
@@ -348,5 +455,12 @@ input::-webkit-inner-spin-button {
 /* Firefox  */
 input[type='number'] {
   -moz-appearance: textfield;
+}
+
+/* 일반 input 태그 스타일 */
+input {
+  background-color: #ffffff; /* 배경색 흰색 */
+  border: solid 1px #ced4da; /* 테두리 색상 */
+  color: #495057; /* 텍스트 색상 */
 }
 </style>

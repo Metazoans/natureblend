@@ -44,5 +44,10 @@ router.post('/process', async (req, res)=>{
     res.send(result);
 });
 
+router.get('/', async (req, res)=>{
+    let prodOrderList = await orderService.prodOrderList();
+    res.send(prodOrderList);
+});
+
 
 module.exports = router

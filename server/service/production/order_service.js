@@ -47,6 +47,10 @@ const addProcessWork = async (processWorkInfo)=>{
     }
 }
 
+const prodOrderList = async ()=>{
+    return await mysql.query('prodOrderList');
+}
+
 module.exports = {
     findWaitingPlanList,
     findProcessFlow,
@@ -54,5 +58,6 @@ module.exports = {
     materialStock,
     addProductionOrder,
     addHoldingStock,
-    addProcessWork
+    addProcessWork,
+    prodOrderList
 }

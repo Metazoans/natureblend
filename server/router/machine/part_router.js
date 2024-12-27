@@ -8,10 +8,25 @@ router.get('/partList', async (req, res)=>{
   res.send(partList);
 });
 
+// 부품 상세 정보
+router.get('/partInfo/:pno', async (req,res)=>{
+  let partNo = req.params.pno;
+  let info = await partService.findPartInfo(partNo);
+  res.send(info);
+});
+
 // 부품 등록
 router.post('/partInsert', async(req, res)=>{
   let partInfo = req.body;
   let result = await partService.createNewPart(partInfo);
+  res.send(result);
+});
+
+// 부품 수정
+router.put('/partUpdate/:pno', async(req, res) => {
+  let pno = req.params.pno;
+  let info = req.body;
+  let result = await partService.updatePartInfo(pno, info);
   res.send(result);
 });
 
@@ -21,21 +36,6 @@ router.delete('/partDelete/:pno', async (req, res) => {
   let result = await partService.delPartInfo(pno);
   res.send(result);
 });
-
-// // 마지막 비동기 갱신
-// router.put('/lastInAct/:mno', async(req, res) => {
-//   let mno = req.params.mno;
-//   let info = req.body;
-//   let result = await inactService.updateLastInAct(mno, info);
-//   res.send(result);
-// });
-
-// // 비동기 내역 검색
-// router.put('/search', async (req, res) => {
-//   let {process_code, startDate, endDate} = req.body;
-//   let result = await inactService.searchInActList(process_code, startDate, endDate);
-//   res.send(result);
-// });
 
 
 module.exports = router;

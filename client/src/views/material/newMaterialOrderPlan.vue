@@ -143,13 +143,25 @@ export default {
                     await this.needMaterialOrder(selectedRows[i]['order_plan_num']);
                 }
 
+                // 1차
             this.needMaterialList = this.needMaterialList.map((col) => ({
                 ...col,
                 stok_qty: col.material.includes('병') ? Number(col.stok_qty).toLocaleString() : Math.ceil(col.stok_qty * 0.001).toLocaleString(),
                 safety_inventory: col.material.includes('병') ? Number(col.safety_inventory).toLocaleString() : Math.ceil(col.safety_inventory * 0.001).toLocaleString(),
                 plan_qty: col.material.includes('병') ? Number(col.plan_qty).toLocaleString() : Math.ceil(col.plan_qty * 0.001).toLocaleString(),
                 ordering_qty: col.material.includes('병') ? Number(col.ordering_qty).toLocaleString() : Math.ceil(col.ordering_qty * 0.001).toLocaleString(),
-                need_qty: col.material.includes('병') ? (Number(col.need_qty)+Number(col.safety_inventory)).toLocaleString() : (Math.ceil(col.need_qty * 0.001)+Math.ceil(col.safety_inventory * 0.001)).toLocaleString(),
+                //need_qty: col.material.includes('병') ? (Number(col.need_qty)+Number(col.safety_inventory)).toLocaleString() : (Math.ceil(col.need_qty * 0.001)+Math.ceil(col.safety_inventory * 0.001)).toLocaleString(),
+                need_qty: col.material.includes('병') ? 
+                (Number(col.safety_inventory) + Number(col.plan_qty) - Number(col.stok_qty) - Number(col.ordering_qty))
+                :
+                (Math.ceil(col.safety_inventory * 0.001) +  Math.ceil(col.plan_qty * 0.001) -  Math.ceil(col.stok_qty * 0.001) - Math.ceil(col.ordering_qty * 0.001))
+                ,
+            }));
+
+            // 2차 가공
+            this.needMaterialList = this.needMaterialList.map((col) => ({
+                ...col,
+                need_qty: Number(col.need_qty) > 0 ? col.need_qty.toLocaleString() : 0,
             }));
 
             console.log('결과 : ',this.needMaterialList);
@@ -177,7 +189,7 @@ export default {
                 // 동일 객체 있으면 계획재고, 필요수량 합치기
                 if (existingItem) {
                     existingItem.plan_qty += item.plan_qty;
-                    existingItem.need_qty = parseInt(existingItem.need_qty, 10) + parseInt(item.need_qty, 10);
+                    existingItem.need_qty = parseInt(existingItem.need_qty, 10) + parseInt(item.need_qty, 10);  //죽은라인 이거 사용안함
                 } else {
                     //새로운 객체면 배열에 푸쉬
                     fullitem.push({ ...item });

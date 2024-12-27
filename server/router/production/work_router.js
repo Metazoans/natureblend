@@ -70,4 +70,52 @@ router.put('/process/end', async (req, res)=>{
     let result = await workService.updateEndTime(endInfo)
     res.send(result)
 });
+
+router.post('/qc', async (req, res)=>{
+    let qcInfo = req.body
+    let result = null
+
+    if(qcInfo.qcType === 'P1') {
+        result = await workService.qcCleaning(qcInfo.info)
+    } else if(qcInfo.qcType === 'P2') {
+        result = await workService.qcJuice(qcInfo.info)
+    } else if(qcInfo.qcType === 'P3'){
+        result = await workService.qcPackaging(qcInfo.info)
+        console.log(' qcPackaging result ', result)
+    } else {
+        console.log('해당 공정 검사가 없습니다.')
+    }
+
+    res.send(result)
+});
+
+router.get('/process/status/:prodOrderNum', async (req, res)=>{
+    let prodOrderNum = req.params.prodOrderNum;
+    let processStatus = await workService.getProcessStatus(prodOrderNum);
+    res.send(processStatus);
+});
+
+router.put('/order/status', async (req, res)=>{
+    let statusInfo = req.body
+    let prodOrderStatus = await workService.updateProdOrderStatus(statusInfo)
+    res.send(prodOrderStatus)
+});
+
+router.put('/material', async (req, res)=>{
+    let prodOrderNum = req.body
+    let updatedMaterial = await workService.updateMaterial(prodOrderNum)
+    res.send(updatedMaterial)
+});
+
+router.put('/plan/status', async (req, res)=>{
+    let planStatusInfo = req.body
+    let updatedPlanStatus = await workService.updatePlanStatus(planStatusInfo)
+    res.send(updatedPlanStatus)
+});
+
+router.get('/done', async (req, res)=>{
+    let completePartialWork = await workService.getCompletePartialWork();
+    res.send(completePartialWork);
+});
+
 module.exports = router

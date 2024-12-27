@@ -190,6 +190,7 @@
             v-bind:collapse="false"
             collapseRef="mainpage"
             navText="공정실적"
+            @click="movePage('productionWorkDoneList')"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
