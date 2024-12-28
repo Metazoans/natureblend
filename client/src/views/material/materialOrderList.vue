@@ -54,8 +54,8 @@
 
      <!-- 저장 버튼 -->
      <div class="col-auto mt-1 text-center">
-        <button type="button" class="btn btn-warning me-5" @click="seachPoList">조회</button>
-        <button type="button" class="btn btn-warning" @click="reSet">초기화</button>
+        <button type="button" class="btn me-5" style="background-color: #4caf50; color: white;" @click="seachPoList">조회</button>
+        <button type="button" class="btn" style="background-color: #fb8c00; color: white;" @click="reSet">초기화</button>
      </div>
   </div>
 </div>
@@ -157,73 +157,92 @@ const seachPoList = () => {
 
  //그리드 api 컬럼명 들어가는 거
 const columnDefs = ref([
-  { headerName: "No.", field: "body_num", width:100 },
-  { headerName: "자재발주코드", field: "order_code" },
-  { headerName: "자재명", field: "material_name" },
-  { headerName: "업체명", field: "com_name" },
-  { headerName: "발주수량", field: "ord_qty" },
-  { headerName: "발주날짜", field: "order_date" },
-  { headerName: "납기기한", field: "limit_date" },
-  { headerName: "단가", field: "unit_price" },
-  { headerName: "금액", field: "total_price" },
-  { headerName: "발주담당", field: "name" },
-  { headerName: "상태", field: "material_state" },
-  {  
-     headerName: "출력", 
-     field: "비고", 
-     editable: false,
-     cellRenderer: params => {
-     const button = document.createElement('button');
-     button.innerText = '발주서';
-     button.style.marginRight = '10px';
-     button.style.cursor = 'pointer';
-     button.style.backgroundColor = '#f7b84d';
-     button.style.width = '60px';
-     button.style.height = '30px';
-     button.style.color = 'white';
-     button.style.border = 'none';
-     button.style.padding = '0';
-     button.style.borderRadius = '4px';
-     button.style.textAlign = 'center';
-     button.style.lineHeight = '30px';
-     button.addEventListener('click', () => {
-        console.log("발주서출력 : ", JSON.stringify(params.data));
-        // 발주서 출력
-        printRowData(params.data);
-     });
-     return button;
-     }
-  },
-  {  
-     headerName: "주문취소", 
-     field: "취소", 
-     editable: false,
-     cellRenderer: params => {
-      if(params.data.material_state === "발주등록"){
-         const button2 = document.createElement('button');
-         button2.innerText = '취소';
-         button2.style.marginRight = '10px';
-         button2.style.cursor = 'pointer';
-         button2.style.backgroundColor = '#595959';
-         button2.style.width = '60px';
-         button2.style.height = '30px';
-         button2.style.color = 'white';
-         button2.style.border = 'none';
-         button2.style.padding = '0';
-         button2.style.borderRadius = '4px';
-         button2.style.textAlign = 'center';
-         button2.style.lineHeight = '30px';
-         button2.addEventListener('click', () => {
-            console.log("주문취소 : ", JSON.stringify(params.data));
-            //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
-            deleteList.value = params.data;
-            console.log('모달 오픈');
-            isShowModal.value = true;
+  { headerName: "No.", field: "body_num", width:75, cellStyle: { textAlign: "center" } },
+  { headerName: "자재발주코드", field: "order_code", width:120, cellStyle: { textAlign: "center" } },
+  { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "left" } },
+  { headerName: "업체명", field: "com_name", width:150, cellStyle: { textAlign: "left" } },
+  { headerName: "발주수량", field: "ord_qty", width:110, cellStyle: { textAlign: "right" } },
+  { headerName: "발주날짜", field: "order_date", width:110, cellStyle: { textAlign: "center" } },
+  { headerName: "납기기한", field: "limit_date", width:110, cellStyle: { textAlign: "center" } },
+  { headerName: "단가", field: "unit_price", width:110, cellStyle: { textAlign: "right" } },
+  { headerName: "금액", field: "total_price", width:110, cellStyle: { textAlign: "right" } },
+  { headerName: "발주담당", field: "name", width:100, cellStyle: { textAlign: "center" } },
+  { headerName: "상태", field: "material_state", width:100, cellStyle: { textAlign: "center" } },
+  {
+      headerName: "출력",
+      field: "비고",
+      width: 100,
+      editable: false,
+      cellRenderer: params => {
+         const div = document.createElement('div');
+         div.style.display = 'flex';
+         div.style.justifyContent = 'center';
+         div.style.alignItems = 'center';
+         div.style.height = '100%';
+
+         const button = document.createElement('button');
+         button.innerText = '발주서';
+         button.style.cursor = 'pointer';
+         button.style.backgroundColor = '#4caf50';
+         button.style.width = '60px';
+         button.style.height = '30px';
+         button.style.color = 'white';
+         button.style.border = 'none';
+         button.style.borderRadius = '4px';
+         button.style.display = 'flex';
+         button.style.justifyContent = 'center';
+         button.style.alignItems = 'center';
+
+         button.addEventListener('click', () => {
+            console.log("발주서출력 : ", JSON.stringify(params.data));
+            // 발주서 출력
+            printRowData(params.data);
          });
-         return button2;
+
+         div.appendChild(button);
+         return div;
+      }
+   },
+   {
+      headerName: "취소",
+      field: "취소",
+      width: 100,
+      editable: false,
+      cellRenderer: params => {
+         if (params.data.material_state === "발주등록") {
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.justifyContent = 'center';
+            div.style.alignItems = 'center';
+            div.style.height = '100%';
+
+            const button2 = document.createElement('button');
+            button2.innerText = '취소';
+            button2.style.cursor = 'pointer';
+            button2.style.backgroundColor = '#f44335';
+            button2.style.width = '60px';
+            button2.style.height = '30px';
+            button2.style.color = 'white';
+            button2.style.border = 'none';
+            button2.style.borderRadius = '4px';
+            // 수직 가운데 정렬을 위한 스타일 추가
+            button2.style.display = 'flex';
+            button2.style.justifyContent = 'center';
+            button2.style.alignItems = 'center';
+
+            button2.addEventListener('click', () => {
+               console.log("주문취소 : ", JSON.stringify(params.data));
+               // 여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
+               deleteList.value = params.data;
+               console.log('모달 오픈');
+               isShowModal.value = true;
+            });
+
+            div.appendChild(button2);
+            return div;
          }
       }
-  },
+   },
 ]);
 
 
@@ -330,7 +349,7 @@ const printRowData = async (rowData) => {
       </head>
       <body>
       <div class="container">
-         <button class="no-print" onclick="window.print()">출력하기</button>
+         <button class="btn no-print" style="background-color: #4caf50; color: white;" onclick="window.print()">출력하기</button>
          <h1 style="text-align: center;">발 주 서</h1>
          <table>
             <tr>

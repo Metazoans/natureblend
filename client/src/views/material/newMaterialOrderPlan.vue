@@ -53,14 +53,14 @@ export default {
                     headerCheckboxSelection: true,
                     checkboxSelection: true,
                     headerName: "",
-                    width:75,
+                    width:45,
                 },
-                { headerName: "계획코드", field: "order_plan_num", width:130 },
-                { headerName: "생산번호", field: "plan_num", width:130 },
-                { headerName: "상품코드", field: "product_code", width:130 },
-                { headerName: "생산상품명", field: "product_name" },
-                { headerName: "생산수량", field: "plan_qty", width:130 },
-                { headerName: "계획작성일", field: "plan_create_date" },
+                { headerName: "계획번호", field: "order_plan_num", width:100, cellStyle: { textAlign: "center" } },
+                { headerName: "생산번호", field: "plan_num", width:100, cellStyle: { textAlign: "center" } },
+                { headerName: "상품코드", field: "product_code", width:100, cellStyle: { textAlign: "center" } },
+                { headerName: "생산상품명", field: "product_name", cellStyle: { textAlign: "left" } },
+                { headerName: "생산수량", field: "plan_qty", width:100, cellStyle: { textAlign: "right" } },
+                { headerName: "계획작성일", field: "plan_create_date", cellStyle: { textAlign: "center" } },
             ],
             plandate: [],
             theme : theme,
@@ -107,7 +107,7 @@ export default {
                 button.textContent = '주문생성';
                 button.style.marginRight = '10px';
                 button.style.cursor = 'pointer';
-                button.style.backgroundColor = '#f48a06';
+                button.style.backgroundColor = '#4caf50';
                 button.style.color = 'white';
                 button.style.border = 'none';
                 button.style.padding = '5px 10px';
