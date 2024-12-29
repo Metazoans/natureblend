@@ -410,7 +410,20 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
         </sidenav-collapse>
+        <sidenav-collapse
+            class="sub-item" @click="movePage('login')"
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="false"
+            collapseRef="mainpage"
+            navText="로그인 페이지"
+        >
+        <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
       </li>
+
       
       <!-- 네비게이션바 항목 끝-->
     </ul>

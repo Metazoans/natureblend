@@ -10,8 +10,18 @@ import ProcessStandardManagement from '@/views/standard/ProcessStandardManagemen
 import ReturncodeManagement from '@/views/standard/ReturncodeManagement.vue';
 import WarehouseManagement from '@/views/standard/WarehouseManagement.vue';
 import ProductManagement from '../views/standard/ProductManagement.vue';
+import Login from '../views/standard/login.vue';
 
 const standardRoute = [
+  {
+    path: '',
+    redirect : { name : 'login'}
+  },
+  {
+    path: 'login',
+    name: 'login',
+    component: Login
+  },
   {
     path: '',
     redirect : { name : 'BadcodeManagement'}
