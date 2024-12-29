@@ -160,7 +160,6 @@ export default {
       },
 
       //
-      inspecData: [],
       showModalRJC: false, // (불량항목)모달 표시 여부
       selectedRow: {}, // 선택된 행 데이터
       defectDetails: [], // 불량 항목(불량코드) 여러 개 관리
@@ -264,8 +263,9 @@ export default {
 
         }
         this.rowData1[i] = col;
-        this.rowData2 = [];
       }
+      this.rowData2 = [];
+
     },
     //전체 조회 끝
 

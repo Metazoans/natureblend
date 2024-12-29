@@ -253,8 +253,8 @@ export default {
 
         }
         this.rowData1[i] = col;
-        this.rowData2 = [];
       }
+      this.rowData2 = [];
     },
     //전체 조회 끝
 

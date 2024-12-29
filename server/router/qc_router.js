@@ -129,6 +129,29 @@ router.get('/testDetailsForB', async(req, res)=>{
   
 });
 
+//포장검사조회(미검사만)
+router.post('/requestQCPB', async(req, res)=>{
+  let {pName, startDate, endDate} = req.body;
+  let status = '검사요청완료';
+  let list = await qc_service.findQCPB(status, pName, startDate, endDate);
+  res.send(list);
+})
+//포장검사조회(검사완료만)
+router.post('/recordQCPB', async(req, res)=>{
+  let {pName, startDate, endDate} = req.body;
+  let status = '검사완료';
+  let list = await qc_service.findQCPB(status, pName, startDate, endDate);
+  res.send(list);
+})
+//포장검사조회(모두)
+router.post('/recordQCPBAll', async(req, res)=>{
+  let {pName, startDate, endDate} = req.body;
+  let status = '';
+  let list = await qc_service.findQCPB(status, pName, startDate, endDate);
+  res.send(list);
+})
+
+
 
 /////////////////////////////////////
 //검사관리-불량코드조회(포장검사관련) 임시 => 수정필요

@@ -140,7 +140,7 @@ export default {
 
       console.log(this.searchInfo.qcState);
 
-      let searchSelect = ''
+      let searchSelect = '';
       switch (this.searchInfo.qcState) {
         case 'qcs1':
           searchSelect = 'recordQCPPAll'
@@ -168,7 +168,7 @@ export default {
       console.log(this.searchList);
 
       // ag grid에 결과값 넣기
-      this.rowData1 = []
+      this.rowData1 = [];
       for (let i = 0; i < this.searchList.length; i++) {
         if(this.searchList[i].inspec_end == null){
           this.searchList[i].inspec_end = "";
@@ -196,7 +196,7 @@ export default {
       this.searchList = searchResult.data;
 
       // ag grid에 결과값 넣기
-      this.rowData1 = []
+      this.rowData1 = [];
       for (let i = 0; i < this.searchList.length; i++) {
         if(this.searchList[i].inspec_end == null){
           this.searchList[i].inspec_end = "";
