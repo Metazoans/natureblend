@@ -69,68 +69,86 @@ const { notify } = useNotification();  // 노티 내용변수입니다
           headerCheckboxSelection: true,
           checkboxSelection: true,
           headerName: "",
-          width:75,
+          width:45,
         },
-        { headerName: "No.", field: "body_num", width:100 },
-        { headerName: "자재발주코드", field: "order_code" },
+        { headerName: "No.", field: "body_num", width:100, cellStyle: { textAlign: "center" } },
+        { headerName: "자재발주코드", field: "order_code", cellStyle: { textAlign: "center" } },
         { headerName: "자재명", field: "material_name" },
         { headerName: "업체명", field: "com_name" },
-        { headerName: "발주수량", field: "ord_qty" },
-        { headerName: "입고수량", field: "total_qnt" },
-        { headerName: "정상수량", field: "pass_qnt" },
-        { headerName: "불량수량", field: "rjc_qnt" },
-        { headerName: "단가", field: "unit_price" },
-        { headerName: "총액", field: "total_price" },
-        { headerName: "검사완료일", field: "inspec_end" },
+        { headerName: "발주수량", field: "ord_qty", cellStyle: { textAlign: "right" } },
+        { headerName: "입고수량", field: "total_qnt", cellStyle: { textAlign: "right" } },
+        { headerName: "정상수량", field: "pass_qnt", cellStyle: { textAlign: "right" } },
+        { headerName: "불량수량", field: "rjc_qnt", cellStyle: { textAlign: "right" } },
+        { headerName: "단가", field: "unit_price", cellStyle: { textAlign: "right" } },
+        { headerName: "총액", field: "total_price", cellStyle: { textAlign: "right" } },
+        { headerName: "검사완료일", field: "inspec_end", cellStyle: { textAlign: "center" } },
         {  
           headerName: "입고검사", 
           field: "비고", 
+          width:145,
           editable: false,
+          cellStyle: { textAlign: "center" },
           cellRenderer: params => {
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.justifyContent = 'center';
+            div.style.alignItems = 'center';
+            div.style.height = '100%';
+
             const button = document.createElement('button');
             button.innerText = '검사표';
-            button.style.marginRight = '10px';
             button.style.cursor = 'pointer';
-            button.style.backgroundColor = '#595959';
+            button.style.backgroundColor = '#fb8c00';
             button.style.width = '60px';
             button.style.height = '30px';
             button.style.color = 'white';
             button.style.border = 'none';
-            button.style.padding = '0';
             button.style.borderRadius = '4px';
-            button.style.textAlign = 'center';
-            button.style.lineHeight = '30px';
+            button.style.display = 'flex';
+            button.style.justifyContent = 'center';
+            button.style.alignItems = 'center';
             button.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
               inspection_com(params.data);
             });
-            return button;
+            div.appendChild(button);
+            return div;
+            //return button;
           }
         },
         {  
           headerName: "입고", 
           field: "입고", 
+          width: 145,
+          cellStyle: { textAlign: "center" },
           editable: false,
           cellRenderer: params => {
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.justifyContent = 'center';
+            div.style.alignItems = 'center';
+            div.style.height = '100%';
+
             const button2 = document.createElement('button');
             button2.innerText = '입고';
-            button2.style.marginRight = '10px';
             button2.style.cursor = 'pointer';
-            button2.style.backgroundColor = '#f7b84d';
+            button2.style.backgroundColor = '#4caf50';
             button2.style.width = '60px';
             button2.style.height = '30px';
             button2.style.color = 'white';
             button2.style.border = 'none';
-            button2.style.padding = '0';
             button2.style.borderRadius = '4px';
-            button2.style.textAlign = 'center';
-            button2.style.lineHeight = '30px';
+            button2.style.display = 'flex';
+            button2.style.justifyContent = 'center';
+            button2.style.alignItems = 'center';
             button2.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
               //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
               allInput(params.data);
             });
-            return button2;
+            div.appendChild(button2);
+            return div;
+            //return button2;
           }
         }
       ]);
@@ -226,7 +244,7 @@ const onReady = (param) => {
     button.textContent = '선택입고';
     button.style.marginRight = '10px';
     button.style.cursor = 'pointer';
-    button.style.backgroundColor = '#f48a06';
+    button.style.backgroundColor = '#4caf50';
     button.style.color = 'white';
     button.style.border = 'none';
     button.style.padding = '5px 10px';

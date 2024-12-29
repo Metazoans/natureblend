@@ -13,40 +13,40 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card my-4">
-                                <div class="card-body px-0 pb-2">
+                                <div class="card-body px-0 pb-2 pt-0">
                                     <div class="table-responsive p-0"></div>
                                         <table class="table align-items-center mb-0">
                                         <thead>
                                         <tr>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             발주코드
                                             </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             자재명
                                             </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             정상수량
                                             </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             창고선택
                                             </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             불량수량
                                             </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             창고선택
                                             </th>
                                         </tr>
                                         </thead>
                                         <tbody v-if="nuwList.length">
                                           <tr v-for="nlist in nuwList" :key="nlist.order_code">
-                                            <td class="text-uppercase text-xxs font-weight-bolder ps-2">
+                                            <td class="text-uppercase text-xxs font-weight-bolder ps-2 text-center">
                                               {{ nlist.order_code }}
                                             </td>
-                                            <td class="align-middle text-center text-sm">
+                                            <td class="align-middle text-dark text-bold" style="text-align: left;">
                                               {{ nlist.material_name }}
                                             </td>
-                                            <td class="align-middle text-center text-sm">
+                                            <td class="align-middle text-bold" style="color: #4caf50;">
                                               {{ nlist.pass_qnt }}
                                             </td>
                                             <td class="text-uppercase text-xxs font-weight-bolder ps-2">
@@ -56,12 +56,16 @@
                                                   v-for="wh in whList"
                                                   :key="wh.warehouse_code"
                                                   :value="wh.warehouse_code"
+                                                  :style="{ 
+                                                    color: wh.warehouse_name.includes('폐기') ? '#f44335' : '#4caf50',
+                                                    fontWeight: wh.warehouse_name.includes('폐기') ? 'normal' : 'bold'
+                                                  }"
                                                 >
                                                   {{ wh.warehouse_name }}
                                                 </option>
                                               </select>
                                             </td>
-                                            <td class="align-middle text-center text-sm">
+                                            <td class="align-middle text-bold" style="color: #f44335;">
                                               {{ nlist.rjc_qnt }}
                                             </td>
                                             <td class="text-uppercase text-xxs font-weight-bolder ps-2">
@@ -71,6 +75,10 @@
                                                   v-for="wh in whList"
                                                   :key="wh.warehouse_code"
                                                   :value="wh.warehouse_code"
+                                                  :style="{ 
+                                                    color: wh.warehouse_name.includes('폐기') ? '#f44335' : '#4caf50',
+                                                    fontWeight: wh.warehouse_name.includes('폐기') ? 'bold' : 'normal'
+                                                  }"
                                                 >
                                                   {{ wh.warehouse_name }}
                                                 </option>
@@ -94,8 +102,8 @@
                 </ul> -->
             </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-warning" @click="confirm">입고하기</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">취소하기</button>
+            <button type="button" class="btn" style="background-color: #4caf50; color: white;" @click="confirm">입고하기</button>
+            <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #f44335; color: white;" @click="closeModal">취소하기</button>
           </div>
         </div>
       </div>
@@ -147,5 +155,8 @@
   .modal-dialog {
     max-width: 600px;
     margin: auto;
+    }
+    td {
+      text-align: right;
     }
   </style>

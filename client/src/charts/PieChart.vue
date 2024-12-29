@@ -1,9 +1,9 @@
 <!--하연 원형 차트-->
 <template>
-    <div class="chart-container">
-      <canvas ref="pieChartCanvas"></canvas>
-    </div>
-  </template>
+  <div class="chart-container">
+    <canvas ref="pieChartCanvas"></canvas>
+  </div>
+</template>
   
   <script>
   import { Chart, registerables } from "chart.js";
@@ -47,13 +47,12 @@
   
   <style scoped>
   .chart-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
+    width: 130%;
+    height: 130%;
   }
   canvas {
-    /* width: 100% !important;
-    height: 300px !important; */
+    width: 100% !important;
+    height: 100% !important;
   }
   </style>
   

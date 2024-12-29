@@ -44,8 +44,8 @@
 
       <!-- 저장 버튼 -->
       <div class="col-auto mt-1 text-center">
-         <button type="button" class="btn btn-warning me-5" @click="seachPoList">조회</button>
-         <button type="button" class="btn btn-warning" @click="reSet">초기화</button>
+         <button type="button" class="btn me-5" style="background-color: #4caf50; color: white;" @click="seachPoList">조회</button>
+         <button type="button" class="btn" style="background-color: #fb8c00; color: white;" @click="reSet">초기화</button>
       </div>
    </div>
 </div>
@@ -174,67 +174,83 @@ const seachPoList = () => {
 
   //그리드 api 컬럼명 들어가는 거
 const columnDefs = ref([
-   { headerName: "No.", field: "input_num", width:100 },
-   { headerName: "자재발주코드", field: "order_code", width:220 },
-   { headerName: "자재명", field: "material_name" },
-   { headerName: "업체명", field: "com_name" },
-   { headerName: "요청수량", field: "ord_qty" },
-   { headerName: "입고수량", field: "in_qty" },
-   { headerName: "정상수량", field: "pass_qty" },
-   { headerName: "창고", field: "pass_warehouse_name" },
-   { headerName: "불량수량", field: "reject_qty" },
-   { headerName: "창고", field: "reject_warehouse_name" },
-   { headerName: "입고일자", field: "inset_lot_date" },
-   { headerName: "입고담당", field: "name" },
+   { headerName: "No.", field: "input_num", width:80, cellStyle: { textAlign: "center" } },
+   { headerName: "자재발주코드", field: "order_code", width:150, cellStyle: { textAlign: "center" } },
+   { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "left" } },
+   { headerName: "업체명", field: "com_name", cellStyle: { textAlign: "left" } },
+   { headerName: "요청수량", field: "ord_qty", width:120, cellStyle: { textAlign: "right" } },
+   { headerName: "입고수량", field: "in_qty", width:120, cellStyle: { textAlign: "right" } },
+   { headerName: "정상수량", field: "pass_qty", width:120, cellStyle: { textAlign: "right" } },
+   { headerName: "창고", field: "pass_warehouse_name", width:110, cellStyle: { textAlign: "left" } },
+   { headerName: "불량수량", field: "reject_qty", width:120, cellStyle: { textAlign: "right" } },
+   { headerName: "창고", field: "reject_warehouse_name", width:110, cellStyle: { textAlign: "left" } },
+   { headerName: "입고일자", field: "inset_lot_date", width:140, cellStyle: { textAlign: "center" } },
+   { headerName: "입고담당", field: "name", width:130, cellStyle: { textAlign: "center" } },
    {  
       headerName: "입고검사", 
       field: "비고", 
+      width:130,
       editable: false,
       cellRenderer: params => {
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.justifyContent = 'center';
+      div.style.alignItems = 'center';
+      div.style.height = '100%';
+         
       const button = document.createElement('button');
       button.innerText = '검사표';
-      button.style.marginRight = '10px';
       button.style.cursor = 'pointer';
-      button.style.backgroundColor = '#595959';
+      button.style.backgroundColor = '#fb8c00';
       button.style.width = '60px';
       button.style.height = '30px';
       button.style.color = 'white';
       button.style.border = 'none';
-      button.style.padding = '0';
       button.style.borderRadius = '4px';
-      button.style.textAlign = 'center';
-      button.style.lineHeight = '30px';
+      button.style.display = 'flex';
+      button.style.justifyContent = 'center';
+      button.style.alignItems = 'center';
       button.addEventListener('click', () => {
          console.log("레코드 확인 : ", JSON.stringify(params.data));
          inspection_com(params.data);
       });
-      return button;
+      div.appendChild(button);
+      return div;
+      //return button;
       }
    },
    {  
       headerName: "LOT조회", 
       field: "LOT조회", 
+      width:130,
       editable: false,
       cellRenderer: params => {
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.justifyContent = 'center';
+      div.style.alignItems = 'center';
+      div.style.height = '100%';
+
       const button2 = document.createElement('button');
       button2.innerText = '조회';
-      button2.style.marginRight = '10px';
       button2.style.cursor = 'pointer';
-      button2.style.backgroundColor = '#f7b84d';
+      button2.style.backgroundColor = '#4caf50';
       button2.style.width = '60px';
       button2.style.height = '30px';
       button2.style.color = 'white';
       button2.style.border = 'none';
-      button2.style.padding = '0';
       button2.style.borderRadius = '4px';
-      button2.style.textAlign = 'center';
-      button2.style.lineHeight = '30px';
+      button2.style.display = 'flex';
+      button2.style.justifyContent = 'center';
+      button2.style.alignItems = 'center';
       button2.addEventListener('click', () => {
          //console.log("레코드 확인 : ", JSON.stringify(params.data));
          //로트번호 조회해서 모달여는거
          lotinfo(params.data);
       });
-      return button2;
+      div.appendChild(button2);
+      return div;
+      //return button2;
       }
    },
 ]);

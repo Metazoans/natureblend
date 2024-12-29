@@ -53,7 +53,7 @@
   }
   canvas {
     width: 100% !important;
-    height: 400px !important;
+    height: 330px !important;
   }
   </style>
   

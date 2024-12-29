@@ -6,6 +6,7 @@ import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoute from "./machineRoute";
 
 import MaterialApp from '@/views/material/MaterialApp.vue';
+import Factoryprocess from '@/views/material/factoryProcess/factoryProcess.vue';
 import materialRoute from "./materialRoute";
 
 import ProductionApp from '@/views/production/ProductionApp.vue';
@@ -31,9 +32,19 @@ const routes = [
 
   // 공용 페이지
   {
+    path: '/',
+    redirect : { name : 'MainPage'}
+    
+  },
+  {
     path: "/mainpage",
     name: "MainPage",
     component: MainPage,
+  },
+  { //공정흐름도 (메인에서만 이동가능)
+    path: "/factoryprocess",
+    name: "Factoryprocess",
+    component: Factoryprocess,
   },
 
   // 영업

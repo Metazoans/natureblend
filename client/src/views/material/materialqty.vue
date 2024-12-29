@@ -79,8 +79,8 @@
  
       <!-- 저장 버튼 -->
       <div class="col-auto mt-1 text-center">
-         <button type="button" class="btn btn-warning me-5" @click="seachPoList">조회</button>
-         <button type="button" class="btn btn-warning" @click="reSet">초기화</button>
+         <button type="button" class="btn me-5" style="background-color: #4caf50; color: white;" @click="seachPoList">조회</button>
+         <button type="button" class="btn" style="background-color: #fb8c00; color: white;" @click="reSet">초기화</button>
       </div>
    </div>
  </div>

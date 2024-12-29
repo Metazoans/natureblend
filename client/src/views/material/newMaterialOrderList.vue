@@ -92,6 +92,8 @@ export default {
                container.style.display = 'flex';
                container.style.alignItems = 'center';
                container.style.gap = '5px'; // 버튼과 입력 필드 간격
+               container.style.position = 'absolute';
+               container.style.left = '10px';
 
                // 버튼 생성
                const button3 = document.createElement('button');
@@ -115,7 +117,7 @@ export default {
                inputText.type = 'text';
                inputText.placeholder = '검색';
                inputText.style.padding = '5px';
-               inputText.style.width = '70px';
+               inputText.style.width = '60px';
                inputText.style.border = '1px solid #ccc';
                inputText.style.borderRadius = '4px';
 

@@ -30,12 +30,13 @@
           type: "bar", // 바 차트
           data: this.chart,
           options: {
-            indexAxis: "y", // 가로 방향으로 설정
+            //indexAxis: "y", // 가로 방향으로 설정
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
               legend: {
                 position: "bottom",
+                display: false,
               },
               tooltip: {
                 enabled: true,
@@ -47,16 +48,19 @@
                 grid: {
                   display: false, // X축 격자선 제거
                 },
-                ticks: {
-                  callback: function (value) {
-                    return value.toLocaleString();
-                    },
-                },
               },
               y: {
                 beginAtZero: true,
                 grid: {
                   display: false, // X축 격자선 제거
+                },
+                ticks: {
+                  stepSize: 25, // 숫자 간격 (예: 10 단위)
+                  callback: function (value) {
+                    return value + "%"; // 숫자 뒤에 "%" 추가
+                    },
+                  min: 0, // 최소 값
+                  max: 100, // 최대 값
                 },
               },
             },

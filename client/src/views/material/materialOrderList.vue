@@ -284,15 +284,15 @@ const printRowData = async (rowData) => {
       tototal_price += item.material_name.includes('병') ? (item.total_price) : (item.total_price*0.001);
       materialRows += `
          <tr>
-            <td>${index + 1}</td>
-            <td>${item.material_code}</td>
+            <td style="text-align: center;">${index + 1}</td>
+            <td style="text-align: center;">${item.material_code}</td>
             <td>${item.material_name}</td>
-            <td>${ item.material_name.includes('병') ? (item.ord_qty).toLocaleString() : (item.ord_qty*0.001).toLocaleString() }</td>
-            <td>${ item.material_name.includes('병') ? "개" : "kg"  }</td>
-            <td>${(item.material_name.includes('병') ? item.unit_price.toLocaleString() : item.unit_price*0.001).toLocaleString() }</td>
-            <td>원</td>
-            <td>${(item.material_name.includes('병') ? item.total_price.toLocaleString() : item.total_price*0.001).toLocaleString()}</td>
-            <td>원</td>
+            <td style="text-align: right;">${ item.material_name.includes('병') ? (item.ord_qty).toLocaleString() : (item.ord_qty*0.001).toLocaleString() }</td>
+            <td style="text-align: center;">${ item.material_name.includes('병') ? "개" : "kg"  }</td>
+            <td style="text-align: right;">${(item.material_name.includes('병') ? item.unit_price.toLocaleString() : item.unit_price*0.001).toLocaleString() }</td>
+            <td style="text-align: center;">원</td>
+            <td style="text-align: right;">${(item.material_name.includes('병') ? item.total_price.toLocaleString() : item.total_price*0.001).toLocaleString()}</td>
+            <td style="text-align: center;">원</td>
          </tr>
       `;
    });
@@ -324,10 +324,15 @@ const printRowData = async (rowData) => {
             border-collapse: collapse;
             margin-bottom: 20px;
          }
-         th, td {
+         th {
             border: 1px solid black;
             padding: 8px;
             text-align: center;
+         }
+         td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
          }
          th {
             background-color: #f4f4f4;
@@ -378,7 +383,7 @@ const printRowData = async (rowData) => {
             </tr>
             <tr>
             <th>총액</th>
-            <td>${tototal_price.toLocaleString()} 원</td>
+            <td style="text-align: right;">${tototal_price.toLocaleString()} 원</td>
             <th>업체주소</th>
             <td>${client_data.value.address}</td>
             </tr>
@@ -403,7 +408,7 @@ const printRowData = async (rowData) => {
 
          <table>
             <tr>
-               <td class="merged-cell" rowspan="3">접수처</td>
+               <th class="merged-cell" rowspan="3">접수처</th>
                <th>접수일자</th>
                <td>${rowData.order_date}</td>
                <th class="merged-cell" rowspan="3">결재</th>
@@ -414,7 +419,7 @@ const printRowData = async (rowData) => {
             <tr>
                <th>접수번호</th>
                <td>${rowData.order_code}</td>
-               <td rowspan="2">${rowData.name}</td>
+               <td rowspan="2" style="text-align: center;">${rowData.name}</td>
                <td rowspan="2">&nbsp;</td>
                <td rowspan="2">&nbsp;</td>
             </tr>

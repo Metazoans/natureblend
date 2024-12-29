@@ -36,6 +36,8 @@ import Tabletest4 from '@/views/material/temp/z_material_input.vue';
 //공장흐름
 import Factory from '@/views/material/factoryProcess/factoryProcess.vue';
 
+import Main from '@/views/material/mainpage/main.vue';
+
 const materialRoute = [
   {
     path: '',
@@ -100,6 +102,11 @@ const materialRoute = [
     path: 'factory',
     name: 'Factory',
     component: Factory
+  },
+  {
+    path: 'main',
+    name: 'Main',
+    component: Main
   },
 ];
 
