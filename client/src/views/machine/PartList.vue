@@ -99,24 +99,24 @@ const onReady = (param) => {
     delBtn.textContent = '선택부품삭제';
     delBtn.style.marginRight = '10px';
     delBtn.style.cursor = 'pointer';
-    delBtn.style.backgroundColor = '#f48a06';
     delBtn.style.color = 'white';
     delBtn.style.border = 'none';
     delBtn.style.padding = '5px 10px';
     delBtn.style.borderRadius = '4px';
     delBtn.style.left = '10px';
+    delBtn.className = 'btn-danger';
 
     // 등록 버튼
     const addBtn = document.createElement('button');
     addBtn.textContent = '부품등록';
     addBtn.style.marginRight = '10px';
     addBtn.style.cursor = 'pointer';
-    addBtn.style.backgroundColor = '#f48a06';
     addBtn.style.color = 'white';
     addBtn.style.border = 'none';
     addBtn.style.padding = '5px 10px';
     addBtn.style.borderRadius = '4px';
     addBtn.style.left = '10px';
+    addBtn.className = 'btn-success';
 
     // 삭제 이벤트
     delBtn.addEventListener('click', () => {

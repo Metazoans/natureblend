@@ -7,27 +7,28 @@
     
     <template v-slot:body>
       <div class="container-fluid py-4">
-        <div class="machineBody" v-bind="machineData">
+        <div class="machineBody row gy-3" v-bind="machineData">
           <div class="row gx-3 gy-2 align-items-center">
-            <div class="col">
+            <div class="col-2">
               <label for="machineName">설비 이름</label>
             </div>
-            <div class="col-10">
+            <div class="col-6">
               <input class="form-control" type="text" id="machineName" name="machineName" v-model="machineData.machine_name"/>
             </div>
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <label for="machineImg">설비 이미지</label>
-            <!-- 파일 node로 저장(url return받음) -->
-            <input type="file" id="machineImg" name="machineImg" @change="uploadImage"/>
-            <!-- 이미지 url 불러오기(미리보기) -->
-            <img :src="`${localUrl}${machineData.machine_img}`"/>
+            <div class="col-2">
+              <label for="machineImg">설비 이미지</label>
+            </div>
+            <div class="col-6" style="text-align: left;">
+              <input type="file" id="machineImg" name="machineImg" @change="uploadImage"/>
+            </div>
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <label class="col-sm-2 col-form-label fw-bold">사용 여부</label>
-            <div class="col-sm-6">
+            <label class="col-sm-2 col-form-label">사용 여부</label>
+            <div class="col-sm-6" style="text-align: left;">
               <label v-for="status in statusList" :key="status" class="me-3">
                 {{ status }}
                 <input
@@ -42,19 +43,19 @@
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <div class="col">
+            <div class="col-2">
               <label for="modelNum">모델 번호</label>
             </div>
-            <div class="col-10">
-              <input type="text" id="modelNum" name="modelNum" v-model="machineData.model_num"/>
+            <div class="col-6">
+              <input class="form-control" type="text" id="modelNum" name="modelNum" v-model="machineData.model_num"/>
             </div>
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <div class="col">
+            <div class="col-2">
               <a>설비 분류</a>
             </div>
-            <div class="col-10">
+            <div class="col-3">
               <select class="form-select" aria-label="Default select example"
                       v-model="machineData.process_code">
                 <option
@@ -69,10 +70,10 @@
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <div class="col">
+            <div class="col-2">
               <a>제작 업체</a>
             </div>
-            <div class="col-10">
+            <div class="col-3">
               <select class="form-select" aria-label="Default select example"
                       v-model="machineData.client_num">
                 <option value="1">거래처1</option>
@@ -83,53 +84,55 @@
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <div class="col">
+            <div class="col-2">
               <label for="uph">UPH</label>
             </div>
-            <div class="col-10">
-              <input type="number" id="uph" name="uph" v-model="machineData.uph"/>
+            <div class="col-6">
+              <input class="form-control" type="number" id="uph" name="uph" v-model="machineData.uph"/>
             </div>
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <div class="col">
+            <div class="col-2">
               <label for="machineLocation">설비 위치</label>
             </div>
-            <div class="col-10">
-              <input type="text" id="machineLocation" name="machineLocation" v-model="machineData.machine_location"/>
+            <div class="col-6">
+              <input class="form-control" type="text" id="machineLocation" name="machineLocation" v-model="machineData.machine_location"/>
             </div>
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <div class="col">
+            <div class="col-2">
               <label for="empNum">등록자</label>
             </div>
-            <div class="col-10">
-              <input type="number" id="empNum" name="empNum" v-model="machineData.emp_num"/>
+            <div class="col-6">
+              <input class="form-control" type="number" id="empNum" name="empNum" v-model="machineData.emp_num"/>
             </div>
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
-            <div class="col">
+            <div class="col-2">
               <label for="buyDate">구매 일자</label>
             </div>
-            <div class="col-10">
-              <input type="datetime-local" id="buyDate" name="buyDate" v-model="machineData.buy_date" v-bind:readonly="isUpdate"/>
+            <div class="col-6">
+              <input class="form-control" type="datetime-local" id="buyDate" name="buyDate" v-model="machineData.buy_date" v-bind:readonly="isUpdate"/>
             </div>
           </div>
+
+          <!-- 부품 추가 버튼 -->
+          <div>
+            <button
+              class="btn bg-gradient-warning mb-0 toast-btn"
+              type="button"
+              data-target="warningToast"
+              @click="partNum++"
+              v-if="partNum == 0"
+            >
+              부품 추가
+            </button>
+          </div>
+
         </div>
-
-
-        <!-- 부품 추가 버튼 -->
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="partNum++"
-          v-if="partNum == 0"
-        >
-          부품 추가
-        </button>
 
         <div v-for="i in partNum" :key="i">
           <MachineParts 
@@ -148,18 +151,18 @@
     <template v-slot:footer>
 
       <button
-        class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+        class="btn btn-success w-100 mb-0 toast-btn"
         type="button"
         data-target="warningToast"
         @click="confirm"
         v-bind:disabled="!fullInput"
       >
-        <a v-if="isUpdate">수정</a>
-        <a v-else>등록</a>
+        <a v-if="isUpdate" style="color: white;">수정</a>
+        <a v-else style="color: white;">등록</a>
       </button>
 
       <button
-        class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+        class="btn btn-danger w-100 mb-0 toast-btn"
         type="button"
         data-target="warningToast"
         @click="closeModal"
@@ -437,6 +440,21 @@ export default {
         this.fullInput = btnActive;
       },
       deep: true
+    },
+    partDataList: {
+      handler(newVal) {
+        let btnActive = true;
+        for(let i in newVal) {
+          for(let key in newVal[i]) {
+            if(newVal[key] == '') {
+              btnActive = false;
+              break;
+            }
+          }
+        }
+        this.fullInput = btnActive;
+      },
+      deep: true
     }
   }
 };
@@ -463,4 +481,13 @@ input {
   border: solid 1px #ced4da; /* 테두리 색상 */
   color: #495057; /* 텍스트 색상 */
 }
+
+button {
+  width: 100px !important;
+}
+
+.machineBody {
+  padding-left: 29px;
+}
+
 </style>
