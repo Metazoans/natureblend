@@ -50,7 +50,7 @@ const getLotBaseProduct = async(no)=>{
 //출고등록 
 const addOutput = async(outputInfo)=>{
   let datas= [ ...Object.values(outputInfo)];
-  console.log(datas);
+  console.log("서비스",datas);
   let result = await mysql.query('outputOrders', datas);
   console.log("결과:",result);
   if (Array.isArray(result) && result[0] && result[0][0]) {

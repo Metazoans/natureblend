@@ -8,6 +8,7 @@ import inputList from '@/views/sales/ProductInput/inputList.vue';
 import productInventory from '@/views/sales/productInventory.vue';
 import lotInventory from '@/views/sales/lotInventory.vue'
 import returnManage from '@/views/sales/ProductReturn/returnManage.vue';
+import returnList from '@/views/sales/ProductReturn/returnList.vue';
 
 
 const salesRoute = [
@@ -63,6 +64,11 @@ const salesRoute = [
         path:'return/product',
         name : 'returnManage',
         component:returnManage
+    },
+    {
+        path:'return/search',
+        name:'returnList',
+        component :returnList
     },
     
 

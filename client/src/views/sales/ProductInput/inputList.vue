@@ -192,7 +192,7 @@ export default{
             this.isShowModal[modalType] = true; 
             console.log(`${modalType} modal open`);
 
-                // warehouse_name을 업데이트할 컬럼을 저장
+            // warehouse_name을 업데이트할 컬럼을 저장
             if (modalType === 'warehouse') {
                 // ag-Grid의 선택된 노드를 가져오는 방법
                 const selectedNodes = this.gridApi.getSelectedNodes();
@@ -440,6 +440,7 @@ export default{
                         text: `해당 입고건의 수정이 완료되었습니다. `,
                         type: 'success',
                     });
+                    
                 }else{
                     this.$notify({
                         text: `해당 입고건의 수정을 실패 했습니다. `,
