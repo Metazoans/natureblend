@@ -245,6 +245,30 @@ CALL qc_process_cleaning_rjc_input_rjclist(?, ?, ?, @result);
 
 
 
+//음료검사
+//////////////////////////////////////////////////////////////////////////
+
+//검사항목 가져오기
+const selectTestDetails =
+`
+SELECT 	bi.item_name, 
+		    bi.item_unit,
+		    bd.etc_min,
+        bd.etc_max,
+        bd.product_code   
+FROM    bev_test_details bd JOIN bev_test_item bi on bd.bev_test_item_id = bi.bev_test_item_id
+ORDER BY bd.bev_test_details_id
+`;
+
+
+
+
+
+
+
+
+
+
 
 
 //포장검사
@@ -304,7 +328,7 @@ module.exports = {
 
 
 
-
+  selectTestDetails,
 
 
 

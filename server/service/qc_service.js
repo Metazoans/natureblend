@@ -314,6 +314,36 @@ const completeQCPC = async (qcpc, qcpcr) =>{
 
 
 }
+///////////////////////////////////////////////////////////////////////////
+//공정검사 - 음료검사
+
+
+
+//검사항목 불러오기
+const loadTestDetails = async() => {
+  let sql = 'selectTestDetails';
+  let list = await mysql.query(sql);
+
+  // 데이터를 product_code 기준으로 그룹화
+  let groupedData = list.reduce((acc, cur) => {
+    const { product_code, ...details } = cur;
+    if (!acc[product_code]) acc[product_code] = [];
+    acc[product_code].push(details);
+    return acc;
+  }, {});
+
+  return groupedData;
+};
+
+
+//공정검사 - 음료검사조회(공통 - 전체, 선택 조회 모두 포함)
+
+
+
+
+
+
+
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -410,6 +440,9 @@ module.exports = {
   findQCPC,
   findFaultyCodeQCPC,
   completeQCPC,
+
+
+  loadTestDetails,
 
 
   findQCPP,

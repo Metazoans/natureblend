@@ -121,7 +121,13 @@ router.post('/completeQCPC', async(req, res)=>{
   res.send(result);
 });
 
-
+///////////////////////////////////////////////////
+//음료검사항목및수치 불러오기
+router.get('/testDetailsForB', async(req, res)=>{
+  let result = await qc_service.loadTestDetails();
+  res.send(result);
+  
+});
 
 
 /////////////////////////////////////
