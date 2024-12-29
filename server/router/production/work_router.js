@@ -81,7 +81,6 @@ router.post('/qc', async (req, res)=>{
         result = await workService.qcJuice(qcInfo.info)
     } else if(qcInfo.qcType === 'P3'){
         result = await workService.qcPackaging(qcInfo.info)
-        console.log(' qcPackaging result ', result)
     } else {
         console.log('해당 공정 검사가 없습니다.')
     }
