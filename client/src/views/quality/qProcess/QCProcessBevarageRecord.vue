@@ -76,8 +76,8 @@
       <h4>검사 상세 정보</h4>
       <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
       <p>제품번호: {{ selectedRow.productCode }}</p>
-      <p>자재명: {{ selectedRow.pName }}</p>
-      <b>산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이의 수치를 입력하세요</b>
+      <p>음료 제품명: {{ selectedRow.pName }}</p>
+      <b>검사 항목 : 산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이</b>
       <!-- <p>{{ this.defectDetailsMap }}</p> -->
       <hr>
       <!-- <p>{{ this.testDetails[selectedRow.productCode] }}</p> -->
@@ -87,7 +87,7 @@
         <label>
           {{ item.item_name }} : [허용치 {{ item.etc_min }} ~ {{ item.etc_max }} {{ item.item_unit }}]:
         </label>
-        <input type="number" v-model.number="item.input_value" placeholder="값을 입력하세요" />
+        <input type="number" v-model.number="item.input_value" placeholder="값을 입력하세요" readonly/>
       </div>
 
 
@@ -309,21 +309,23 @@ export default {
       // console.log(testItems);
       // 검사 항목들에 대해 defectDetailsMap에 항목 추가
       testItems.forEach(item => {
-        // let matchingTestDetail = this.completedTestDetails.find(detail =>
-        //   detail.bev_test_item_id === item.item_id &&
-        //   detail.bev_test_details_id === item.details_id
-        // );
+        let matchingTestDetail = this.completedTestDetails.find(detail =>
+             detail.qc_berverage_id === qcProcessId &&
+          detail.bev_test_item_id === item.item_id &&
+          detail.bev_test_details_id === item.details_id
+        );
 
 
         this.defectDetailsMap[qcProcessId].push({
+          qcProcessId: qcProcessId,
           item_id: item.item_id,
           details_id: item.details_id,
           item_name: item.item_name,
           item_unit: item.item_unit,
           etc_min: item.etc_min,
           etc_max: item.etc_max,
-          // input_value: matchingTestDetail ? matchingTestDetail.actual_value : 0, 
-          input_value: 0, 
+          input_value: matchingTestDetail ? matchingTestDetail.actual_value : 0, 
+          // input_value: 0, 
         });
       });
     },

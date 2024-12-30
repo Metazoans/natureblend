@@ -75,8 +75,8 @@
       <h4>검사 상세 정보</h4>
       <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
       <p>제품번호: {{ selectedRow.productCode }}</p>
-      <p>자재명: {{ selectedRow.pName }}</p>
-      <b>산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이의 수치를 입력하세요</b>
+      <p>음료 제품명: {{ selectedRow.pName }}</p>
+      <b>산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이의 현재 수치를 입력하세요</b>
       <!-- <p>{{ this.defectDetailsMap }}</p> -->
       <hr>
       <!-- <p>{{ this.testDetails[selectedRow.productCode] }}</p> -->
