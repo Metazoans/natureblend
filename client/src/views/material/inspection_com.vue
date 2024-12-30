@@ -4,7 +4,7 @@
      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
        <div class="modal-content">
          <div class="modal-header">
-           <h1 class="modal-title fs-5" id="exampleModalLabel">{{ inspection_data.material_name }} 검수확인증</h1>
+           <h1 class="modal-title fs-5" id="exampleModalLabel">[ {{ inspection_data.material_name }} ] 검수확인증</h1>
            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
          </div>
           <div class="modal-body" v-if="isShowModal2">
@@ -42,7 +42,7 @@
                            <th>검사코드</th>
                            <th>처리코드</th>
                            <th>사유</th>
-                           <th>개수 (g, 개)</th>
+                           <th>개수 (kg, 개)</th>
                         </tr>
                      </thead>
                      <tbody>
@@ -51,7 +51,7 @@
                            <td>{{ val.qc_material_rjc_id }}</td>
                            <td>{{ val.faulty_code }}</td>
                            <td>{{ val.faulty_reason }}</td>
-                           <td>{{ val.rjc_quantity }}</td>
+                           <td style="text-align: right;">{{ val.rjc_quantity }}</td>
                         </tr>
                         </template>
                         <template v-else>
@@ -68,7 +68,7 @@
 
           </div>
          <div class="modal-footer">
-           <button type="button" class="btn btn-outline-warning" @click="confirm2">확인</button>
+           <button type="button" class="btn" style="background-color: #4caf50; color: white;" @click="confirm2">확인</button>
            <!--<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="closeModal2">닫기</button>-->
          </div>
        </div>
@@ -174,6 +174,7 @@
 .table-title {
    font-weight: bold;
    background-color: #f8f9fa;
+   text-align: center;
 }
 .highlight-green {
    color: green;
@@ -182,5 +183,8 @@
 .highlight-red {
    color: red;
    font-weight: bold;
+}
+.table-bordered td, .table-bordered th {
+   border: 1px solid #dee2e6 !important;
 }
  </style>

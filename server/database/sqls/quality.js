@@ -245,6 +245,50 @@ CALL qc_process_cleaning_rjc_input_rjclist(?, ?, ?, @result);
 
 
 
+//음료검사
+//////////////////////////////////////////////////////////////////////////
+
+//검사항목 가져오기
+const selectTestDetails =
+`
+SELECT 	bi.item_name, 
+		    bi.item_unit,
+        bd.bev_test_item_id AS item_id,
+		    bd.etc_min,
+        bd.etc_max,
+        bd.product_code   
+FROM    bev_test_details bd JOIN bev_test_item bi on bd.bev_test_item_id = bi.bev_test_item_id
+ORDER BY bd.bev_test_details_id
+`;
+
+//신청한 음료 검사 조회(전체/선택)
+
+const selectQCPB = 
+`
+SELECT qb.qc_berverage_id,
+	     qb.process_num,		      -- 공정작업번호
+       ph.production_order_num, -- 생산지시코드
+       ph.product_code,
+       ph.product_name,
+       qb.emp_num,
+       e.name AS emp_name,
+    -- qb.inspec_result,
+       qb.inspec_start,
+       qb.inspec_status
+FROm qc_process_beverage qb
+LEFT JOIN process_work_body pb ON qb.process_num = pb.process_num
+LEFT JOIN process_work_header ph ON pb.process_work_header_num = ph.process_work_header_num
+LEFT JOIN employee e ON qb.emp_num = e.emp_num
+`;
+//ORDER BY qb.qc_berverage_id DESC
+
+
+
+
+
+
+
+
 
 
 //포장검사
@@ -304,7 +348,8 @@ module.exports = {
 
 
 
-
+  selectTestDetails,
+  selectQCPB,
 
 
 

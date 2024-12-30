@@ -85,8 +85,8 @@
  
       <!-- 저장 버튼 -->
       <div class="col-auto mt-1 text-center">
-         <button type="button" class="btn btn-warning me-5" @click="seachPoList">조회</button>
-         <button type="button" class="btn btn-warning" @click="reSet">초기화</button>
+         <button type="button" class="btn me-5" style="background-color: #4caf50; color: white;" @click="seachPoList">조회</button>
+         <button type="button" class="btn" style="background-color: #fb8c00; color: white;" @click="reSet">초기화</button>
       </div>
    </div>
  </div>
@@ -101,6 +101,7 @@
       @grid-ready="onReady"
       style="height: 513px;"
       rowSelection="multiple"
+      :noRowsOverlayComponent="CustomNoRowsOverlay"
    >
    </ag-grid-vue>
  </div>
@@ -115,6 +116,8 @@
  import userDateUtils from '@/utils/useDates.js';
  
  import Modal from "@/views/material/materialLotqtyModal.vue";
+
+ import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
  
  import theme from "@/utils/agGridTheme";
  import { ref, onBeforeMount } from 'vue'; //onBeforeMount
@@ -199,59 +202,67 @@
  
   //그리드 api 컬럼명 들어가는 거
  const columnDefs = ref([
-   { headerName: "No.", field: "lot_seq", width:100 },
-   { headerName: "자재 LOT번호", field: "lot_code", width:250 },
-   { headerName: "자재명", field: "material_name" },
-   { headerName: "업체명", field: "com_name" },
-   { headerName: "입고량", field: "in_qty" },
-   { headerName: "입고담당", field: "name" },
-   { headerName: "가용", field: "material_nomal" },
-   { headerName: "현재고", field: "stok_qty" },
-   { headerName: "불가용", field: "hold_qty" },
-   { headerName: "출고재고", field: "out_qty" },
-   { headerName: "입고일", field: "inset_lot_date" },
-   { headerName: "유통기한", field: "limit_date" },
-   { headerName: "창고위치", field: "warehouse_name" },
-   { headerName: "폐기", field: "material_lot_state" },
+   { headerName: "No.", field: "lot_seq", width:80, cellStyle: { textAlign: "center" } },
+   { headerName: "자재 LOT번호", field: "lot_code", width:155, cellStyle: { textAlign: "center" } },
+   { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "left" } },
+   { headerName: "업체명", field: "com_name", cellStyle: { textAlign: "left" } },
+   { headerName: "입고량", field: "in_qty", width:130, cellStyle: { textAlign: "right" } },
+   { headerName: "입고담당", field: "name", width:110, cellStyle: { textAlign: "center" } },
+   { headerName: "가용", field: "material_nomal", width:75, cellStyle: { textAlign: "center" } },
+   { headerName: "현재고", field: "stok_qty", width:130, cellStyle: { textAlign: "right" } },
+   { headerName: "불가용", field: "hold_qty", width:130, cellStyle: { textAlign: "right" } },
+   { headerName: "출고재고", field: "out_qty", width:130, cellStyle: { textAlign: "right" } },
+   { headerName: "입고일", field: "inset_lot_date", width:130, cellStyle: { textAlign: "center" } },
+   { headerName: "유통기한", field: "limit_date", width:130, cellStyle: { textAlign: "center" } },
+   { headerName: "창고위치", field: "warehouse_name", width:110, cellStyle: { textAlign: "left" } },
+   { headerName: "폐기", field: "material_lot_state", width:80, cellStyle: { textAlign: "center" } },
    {  
       headerName: "비고", 
       field: "폐기처리", 
+      width:100,
       editable: false,
       cellRenderer: params => {
-       if(params.data.material_lot_state === "정상"){
-          const button2 = document.createElement('button');
-          button2.innerText = '폐기처리';
-          button2.style.marginRight = '10px';
-          button2.style.cursor = 'pointer';
-          button2.style.backgroundColor = '#595959';
-          button2.style.width = '60px';
-          button2.style.height = '30px';
-          button2.style.color = 'white';
-          button2.style.border = 'none';
-          button2.style.padding = '0';
-          button2.style.borderRadius = '4px';
-          button2.style.textAlign = 'center';
-          button2.style.lineHeight = '30px';
-          button2.addEventListener('click', () => {
-             //console.log("레코드 확인 : ", JSON.stringify(params.data));
-             //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
-             deleteList.value = params.data;
-             //console.log('aaaaa', deleteList.value);
-             const quantity = Number(deleteList.value.hold_qty.split(' ')[0]);
-             if(quantity !== 0){
+         if(params.data.material_lot_state === "정상"){
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.justifyContent = 'center';
+            div.style.alignItems = 'center';
+            div.style.height = '100%';
+
+            const button2 = document.createElement('button');
+            button2.innerText = '폐기처리';
+            button2.style.cursor = 'pointer';
+            button2.style.backgroundColor = '#f44335';
+            button2.style.width = '60px';
+            button2.style.height = '30px';
+            button2.style.color = 'white';
+            button2.style.border = 'none';
+            button2.style.borderRadius = '4px';
+            button2.style.display = 'flex';
+            button2.style.justifyContent = 'center';
+            button2.style.alignItems = 'center';
+            button2.addEventListener('click', () => {
+               //console.log("레코드 확인 : ", JSON.stringify(params.data));
+               //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
+               deleteList.value = params.data;
+               //console.log('aaaaa', deleteList.value);
+               const quantity = Number(deleteList.value.hold_qty.split(' ')[0]);
+               if(quantity !== 0){
                notify({
                   title: "폐기불가",
                   text: "공정 투입중인 자재 입니다. 폐기불가!",
                   type: "error", // success, warn, error 가능
                });
-             }else{
-                console.log('모달 오픈');
-                isShowModal.value = true;
-             }
-          });
-          return button2;
-          }
-       }
+               }else{
+                  console.log('모달 오픈');
+                  isShowModal.value = true;
+               }
+            });
+            div.appendChild(button2);
+            return div;
+            //return button2;
+            }
+         }
    },
  ]);
  

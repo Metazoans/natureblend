@@ -1,5 +1,9 @@
 <template>
   <div>
-    <h1>TEST PAGE</h1>
+    <main1 />
   </div>
 </template>
+
+<script setup>
+    import main1 from '@/views/material/mainpage/main.vue';
+</script>

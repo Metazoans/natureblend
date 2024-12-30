@@ -14,6 +14,7 @@
         style="height: 700px;"
         :quickFilterText="clientNamesearch"
         rowSelection="multiple"
+        :noRowsOverlayComponent="CustomNoRowsOverlay"
         >
     </ag-grid-vue>
    </div>
@@ -25,6 +26,11 @@
     <InspectionModal :isShowModal2="isShowModal2" :inspection_data="inspection_data" @closeModal2="closeModal2" @confirm2="confirm2">
     </InspectionModal>
   </div>
+  <div v-if="showprogress" style="width: 100%; height: 100%; background-color: #0005; position: fixed; top: 0px; left: 0px; z-index: 1000;">
+      <div style="position: fixed; top: 50%; left: 30%;  width: 50%;">
+          <material-progress color="success" :percentage="number2" />
+      </div>
+  </div>
  </template>
 <script setup>
 import axios from 'axios';
@@ -34,6 +40,8 @@ import userDateUtils from '@/utils/useDates.js';
 import Modal from "@/views/material/materialInputModal.vue";
 import InspectionModal from "@/views/material/inspection_com.vue";
 
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
  import theme from "@/utils/agGridTheme";
  import { ref, onBeforeMount } from 'vue';
 
@@ -42,6 +50,12 @@ const { notify } = useNotification();  // 노티 내용변수입니다
 
  //import { ref, shallowRef, computed, onBeforeMount } from 'vue';
  //import { useRouter } from 'vue-router';
+
+ import MaterialProgress from "@/components/MaterialProgress.vue";
+
+ //프로그래스 돌릴 숫자
+ const number2 = ref(0);
+ const showprogress = ref(false);
 
  // 행 레코드 삽입하는 변수
  const rowData = ref([]);
@@ -55,68 +69,86 @@ const { notify } = useNotification();  // 노티 내용변수입니다
           headerCheckboxSelection: true,
           checkboxSelection: true,
           headerName: "",
-          width:75,
+          width:45,
         },
-        { headerName: "No.", field: "body_num", width:100 },
-        { headerName: "자재발주코드", field: "order_code" },
+        { headerName: "No.", field: "body_num", width:100, cellStyle: { textAlign: "center" } },
+        { headerName: "자재발주코드", field: "order_code", cellStyle: { textAlign: "center" } },
         { headerName: "자재명", field: "material_name" },
         { headerName: "업체명", field: "com_name" },
-        { headerName: "발주수량", field: "ord_qty" },
-        { headerName: "입고수량", field: "total_qnt" },
-        { headerName: "정상수량", field: "pass_qnt" },
-        { headerName: "불량수량", field: "rjc_qnt" },
-        { headerName: "단가", field: "unit_price" },
-        { headerName: "총액", field: "total_price" },
-        { headerName: "검사완료일", field: "inspec_end" },
+        { headerName: "발주수량", field: "ord_qty", cellStyle: { textAlign: "right" } },
+        { headerName: "입고수량", field: "total_qnt", cellStyle: { textAlign: "right" } },
+        { headerName: "정상수량", field: "pass_qnt", cellStyle: { textAlign: "right" } },
+        { headerName: "불량수량", field: "rjc_qnt", cellStyle: { textAlign: "right" } },
+        { headerName: "단가", field: "unit_price", cellStyle: { textAlign: "right" } },
+        { headerName: "총액", field: "total_price", cellStyle: { textAlign: "right" } },
+        { headerName: "검사완료일", field: "inspec_end", cellStyle: { textAlign: "center" } },
         {  
           headerName: "입고검사", 
           field: "비고", 
+          width:145,
           editable: false,
+          cellStyle: { textAlign: "center" },
           cellRenderer: params => {
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.justifyContent = 'center';
+            div.style.alignItems = 'center';
+            div.style.height = '100%';
+
             const button = document.createElement('button');
             button.innerText = '검사표';
-            button.style.marginRight = '10px';
             button.style.cursor = 'pointer';
-            button.style.backgroundColor = '#595959';
+            button.style.backgroundColor = '#fb8c00';
             button.style.width = '60px';
             button.style.height = '30px';
             button.style.color = 'white';
             button.style.border = 'none';
-            button.style.padding = '0';
             button.style.borderRadius = '4px';
-            button.style.textAlign = 'center';
-            button.style.lineHeight = '30px';
+            button.style.display = 'flex';
+            button.style.justifyContent = 'center';
+            button.style.alignItems = 'center';
             button.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
               inspection_com(params.data);
             });
-            return button;
+            div.appendChild(button);
+            return div;
+            //return button;
           }
         },
         {  
           headerName: "입고", 
           field: "입고", 
+          width: 145,
+          cellStyle: { textAlign: "center" },
           editable: false,
           cellRenderer: params => {
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.justifyContent = 'center';
+            div.style.alignItems = 'center';
+            div.style.height = '100%';
+
             const button2 = document.createElement('button');
             button2.innerText = '입고';
-            button2.style.marginRight = '10px';
             button2.style.cursor = 'pointer';
-            button2.style.backgroundColor = '#f7b84d';
+            button2.style.backgroundColor = '#4caf50';
             button2.style.width = '60px';
             button2.style.height = '30px';
             button2.style.color = 'white';
             button2.style.border = 'none';
-            button2.style.padding = '0';
             button2.style.borderRadius = '4px';
-            button2.style.textAlign = 'center';
-            button2.style.lineHeight = '30px';
+            button2.style.display = 'flex';
+            button2.style.justifyContent = 'center';
+            button2.style.alignItems = 'center';
             button2.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
               //여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
               allInput(params.data);
             });
-            return button2;
+            div.appendChild(button2);
+            return div;
+            //return button2;
           }
         }
       ]);
@@ -212,7 +244,7 @@ const onReady = (param) => {
     button.textContent = '선택입고';
     button.style.marginRight = '10px';
     button.style.cursor = 'pointer';
-    button.style.backgroundColor = '#f48a06';
+    button.style.backgroundColor = '#4caf50';
     button.style.color = 'white';
     button.style.border = 'none';
     button.style.padding = '5px 10px';
@@ -331,12 +363,9 @@ const lotMaking = async function(){
     //console.log( (numberPart.value + 1).toString().padStart(3, '0') );
   }
 
-  notify({
-      title: "입고성공",
-      text: "입고중 입니다. 잠시만 기다려주세요.",
-      type: "success", // success, warn, error 가능
-   });
-
+  
+  let percentNum = 100/nuwList.value.length;
+  showprogress.value = true;
   for(let i=0; i<nuwList.value.length; i++){
     materialObj.value = {
       lot_code: prefix.value + ( (numberPart.value + i).toString().padStart(3, '0') ),
@@ -351,11 +380,18 @@ const lotMaking = async function(){
     
     console.log(materialObj.value);
     //여기서 서버통신 시작함
+    number2.value = number2.value + percentNum;
     await inputMaterial(materialObj.value);
     // await delay(3000);   //3초마다 포문 작동되게하기
   }
   matrialQcInput(); //그냥 처리 끝나면 새로 DB받아옴
-
+  notify({
+      title: "입고성공",
+      text: "입고 완료 되었습니다.",
+      type: "success", // success, warn, error 가능
+   });
+   showprogress.value = false;
+   number2.value = 0;
   //location.reload();  //페이지 새로고침
 }
 

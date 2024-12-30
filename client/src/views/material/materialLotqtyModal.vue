@@ -46,8 +46,8 @@
                </div>
            </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-danger" @click="confirm">폐기하기</button>
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
+            <button type="button" class="btn" style="background-color: #f44335; color: white;" @click="confirm">폐기하기</button>
+            <button type="button" class="btn" style="background-color: #4caf50; color: white;" data-bs-dismiss="modal" @click="closeModal">닫기</button>
           </div>
         </div>
       </div>

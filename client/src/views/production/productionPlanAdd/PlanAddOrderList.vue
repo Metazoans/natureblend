@@ -5,7 +5,7 @@
       <div class="input-group w-auto h-25">
         <input type="text" @click="openModal" :value="searchProduct.product_name" readonly class="form-control border p-2 cursor-pointer" placeholder="제품명">
       </div>
-      <material-button size="sm" color="warning" class="button" @click="findOrdersAll">전체조회</material-button>
+      <material-button size="sm" color="success" class="button" @click="findOrdersAll">전체조회</material-button>
     </div>
     <div class="grid-container" >
       <ag-grid-vue

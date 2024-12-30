@@ -85,7 +85,7 @@ const insertCleaningQc = `
 `
 
 const insertJuiceQc = `
-    CALL qc_p_juice_input_list(?, ?, ?, @result);
+    CALL qc_p_beverage_input_list(?, ?, @result)
 `
 
 const insertPackagingQc = `
