@@ -68,6 +68,9 @@ import userDateUtils from '@/utils/useDates.js';
 
 import theme from "@/utils/agGridTheme";
 
+import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
+const { notify } = useNotification();  // 노티 내용변수입니다
+
 export default {
   name: "입고검사",
   components: { MaterialButton,  },
@@ -120,9 +123,32 @@ export default {
 
 
     //검색창 관련    
+    //검색결과 정리
+    processSearchResults(searchList) {
+      const processedData = [];
+      for (let item of searchList) {
+        processedData.push({
+          "qcMaterialRjcId":item.qc_material_rjc_id,
+          "orderCode": item.order_code,
+          "qcMaterialId": item.qc_material_id,
+          "mName": item.material_name, 
+          "eName":item.name, 
+          "rjcQnt" : item.rjc_quantity,
+          "faultyCode": item.faulty_code,
+          "faultyReason":item.faulty_reason,
+          "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecEnd": this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+        });
+      }
+      return processedData;
+    },
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
-        alert("시작 날짜는 종료 날짜보다 이전이어야 합니다.");
+        `${notify({
+            title: "검색실패",
+            text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
+            type: "error", // success, warn, error 가능
+        })}`;
         return;
       }
 
@@ -138,22 +164,7 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = []
-      for (let i = 0; i < this.searchList.length; i++) {
-        let col = {
-          "qcMaterialRjcId":this.searchList[i].qc_material_rjc_id,
-          "orderCode": this.searchList[i].order_code,
-          "qcMaterialId": this.searchList[i].qc_material_id,
-          "mName": this.searchList[i].material_name, 
-          "eName":this.searchList[i].name, 
-          "rjcQnt" : this.searchList[i].rjc_quantity,
-          "faultyCode": this.searchList[i].faulty_code,
-          "faultyReason":this.searchList[i].faulty_reason,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
-
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
     },
     //전체 조회
     async searchRequestAll() {
@@ -163,22 +174,7 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = []
-      for (let i = 0; i < this.searchList.length; i++) {
-        let col = {
-          "qcMaterialRjcId":this.searchList[i].qc_material_rjc_id,
-          "orderCode": this.searchList[i].order_code,
-          "qcMaterialId": this.searchList[i].qc_material_id,
-          "mName": this.searchList[i].material_name, 
-          "eName":this.searchList[i].name, 
-          "rjcQnt" : this.searchList[i].rjc_quantity,
-          "faultyCode": this.searchList[i].faulty_code,
-          "faultyReason":this.searchList[i].faulty_reason,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
-
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
     },
   },
   created(){
