@@ -198,7 +198,7 @@ const planDetailList = `
       your_product(o.product_code, 'product_name') as product_name,
       o.plan_qty
   from production_plan p join order_plan_relation o
-  where p.plan_num = o.plan_num;
+  where p.plan_num = o.plan_num
 `
         
 module.exports = {

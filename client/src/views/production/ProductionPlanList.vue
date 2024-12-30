@@ -140,7 +140,7 @@ export default {
       console.log(this.endDate)
       let listInfo = {
         product: this.searchProduct.product_code,
-        status: Object.values(this.planStatusOption).toString(), // array
+        status: this.planStatusOption, //array
         startDate: this.startDate,
         endDate: this.endDate,
       }
@@ -148,7 +148,15 @@ export default {
     },
 
     resetFilter() {
+      this.searchProduct = {
+        product_code: '',
+        product_name: '',
+      }
+      this.planStatusOption = []
+      this.startDate = ''
+      this.endDate = ''
 
+      this.getPlanList()
     },
 
     closeModal() {
@@ -217,6 +225,7 @@ export default {
             .catch(err => console.log(err));
       }
 
+      this.rowData = []
       if(result.data.length === 0) {
         return
       }
