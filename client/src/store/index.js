@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import createPersistedState from 'vuex-persistedstate';
 
 // 전체 상태값
 
@@ -17,6 +18,18 @@ export default createStore({
     showFooter: true,
     showMain: true,
     isDarkMode: false,
+    loginInfo: {
+      emp_num: 0,
+      name: '',
+      birth: '',
+      tel: '',
+      job: '',
+      job_num: 0,
+      position: '',
+      employment_date: '',
+      resignation_date: '',
+      level: 0,
+    },
     navbarFixed:
       "position-sticky blur shadow-blur left-auto top-1 z-index-sticky px-0 mx-4",
     absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
@@ -58,6 +71,12 @@ export default createStore({
     selectHeaderMenu(state, headerMenu) {
       state.headerMenu = headerMenu
     },
+    addLoginInfo(state, loginObj) {
+      state.loginInfo = {
+        ...state.loginInfo, // 기존 데이터 유지
+        ...loginObj,        // 새로운 데이터 추가 또는 업데이트
+      };
+    },
   },
   actions: {
     setColor({ commit }, payload) {
@@ -66,6 +85,10 @@ export default createStore({
     setHeaderMenu({commit}, headerMenu) {
       commit("selectHeaderMenu", headerMenu);
     },
+    // loginInfo(context, loginobj){
+    //   context.commit('loginInfo', loginobj);
+    // },
   },
+  plugins:[createPersistedState()],
   getters: {},
 });
