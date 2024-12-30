@@ -205,7 +205,7 @@ export default{
             { headerName : "포장검사코드", field:'qc_packing_id',width:200,cellStyle: { textAlign: "center" }},
             { headerName : "제품코드", field:'product_code',width:100, cellStyle: { textAlign: "center" }},
             { headerName : "제품명",field:'product_name',width:300, cellStyle: { textAlign: "left" }},
-            { headerName : "작업번호",field:'process_num',width:150, cellStyle: { textAlign: "center" }},
+            { headerName : "작업번호",field:'process_num',width:150, cellStyle: { textAlign: "right" }},
             { headerName : "입고수량",field:'pass_qnt',width:100, cellStyle: { textAlign: "right" }},
             { headerName : "통과날짜",field:'inspec_end',width:200, cellStyle: { textAlign: "center" }},
              ],
