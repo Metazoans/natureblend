@@ -12,55 +12,61 @@
       ></ag-grid-vue>
     </div>
 
-    <div class="inActListDiv">
-      <div class="inActHeader">
-          <h3>비가동 설비 내역</h3>
-          
-          <!-- 설비 분류 -->
-          <div class="mb-3">
-            <label class="col-sm-2 col-form-label fw-bold">설비 분류</label>
-            <div>
-              <label v-for="type in machineType" :key="type" class="me-3">
-                {{ type }}
-                <input
-                  type="checkbox"
-                  :value="type"
-                  v-model="pickedType"
-                />
-              </label>
+    <div class="inActHeader row">
+      <div class="col">
+        <h4>비가동 설비 내역</h4>
+      </div>
+      
+      <!-- 설비 분류 -->
+      <div class="col-6">
+        <div class="row align-items-center">
+          <div class="col-auto">
+            <label class="col-form-label fw-bold">설비 분류</label>
+          </div>
+          <div class="col-auto">
+            <div class="row align-items-center" style="margin: auto 0;">
+              <div class="col-auto" v-for="type in machineType" :key="type">
+                <label class="me-3">{{ type }}</label>
+                <input type="checkbox" :value="type" v-model="pickedType"/>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- 날짜 선택 -->
-          <div class="searchDate">
+      <!-- 날짜 선택 -->
+      <div class="col-3">
+        <div class="row">
+          <div class="col searchDate">
             <input 
             type="date" 
             id="startDate" class="form-control border p-2"
             v-model="startDate"/>
           </div>
-          <div class="text-center">~</div>
-          <div class="searchDate">
+          <div class="col-1 text-center">~</div>
+          <div class="col searchDate">
             <input 
             type="date" 
             id="endDate" class="form-control border p-2"
             v-model="endDate" />
           </div>
+        </div>
       </div>
-
-      <div class="grid-container" >
-        <ag-grid-vue
-          :rowData="inActRow"
-          :columnDefs="inActCol"
-          :theme="theme"
-          @grid-ready="inActOnReady"
-          style="height: 300px;"
-          :pagination="true"
-          :paginationPageSize="5"
-          :quickFilterText="inActSearchData"
-        ></ag-grid-vue>
-      </div>
-
     </div>
+
+    <div class="grid-container" >
+      <ag-grid-vue
+        :rowData="inActRow"
+        :columnDefs="inActCol"
+        :theme="theme"
+        @grid-ready="inActOnReady"
+        style="height: 300px;"
+        :pagination="true"
+        :paginationPageSize="5"
+        :quickFilterText="inActSearchData"
+      ></ag-grid-vue>
+    </div>
+
   </div>
 </template>
 

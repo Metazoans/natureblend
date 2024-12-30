@@ -7,47 +7,79 @@
     </template>
     
     <template v-slot:body>
-      <div class="partInfo" v-bind="partInfo">
-        <div class="modalRow">
-          <label for="">설비선택</label>
-          <!-- <input type="text" id="" name="" v-model=""/> -->
+      <div class="partInfo container-fluid py-4" v-bind="partInfo">
+        <div class="row gy-2">
+
+          <div class="row align-items-center">
+              <div class="col-3">
+                <label for="">설비선택</label>
+              </div>
+              <div class="col-9">
+                <!-- <input class="form-control" type="text" id="" name="" v-model=""/> -->
+              </div>
+          </div>
+  
+          <div class="row gx-3 gy-2 align-items-center">
+              <div class="col-3">
+                <label for="machineType">설비목록</label>
+              </div>
+              <div class="col-9">
+                <input class="form-control" type="text" id="machineType" name="machineType" v-model="partInfo.machine_type"/>
+              </div>
+          </div>
+  
+          <div class="row gx-3 gy-2 align-items-center">
+              <div class="col-3">
+                <label for="">부품이름</label>
+              </div>
+              <div class="col-9">
+                <input class="form-control" type="text" id="" name="" v-model="partInfo.part_name"/>
+              </div>
+          </div>
+  
+          <div class="row gx-3 gy-2 align-items-center">
+              <div class="col-3">
+                <label for="">교체주기</label>
+              </div>
+              <div class="col-9">
+                <input class="form-control" type="text" id="" name="" v-model="partInfo.replace_cycle"/>
+              </div>
+          </div>
+  
+          <div class="row gx-3 gy-2 align-items-center">
+              <div class="col-3">
+                <label for="">거래처</label>
+              </div>
+              <div class="col-9">
+                <input class="form-control" type="text" id="" name="" v-model="partInfo.client_num"/>
+              </div>
+          </div>
+  
+          <div class="row gx-3 gy-2 align-items-center">
+              <div class="col-3">
+                <label for="">부품위치</label>
+              </div>
+              <div class="col-9">
+                <input class="form-control" type="text" id="" name="" v-model="partInfo.part_location"/>
+              </div>
+          </div>
+  
+          <div class="row gx-3 gy-2 align-items-center">
+              <div class="col-3">
+                <label for="">구매날짜</label>
+              </div>
+              <div class="col-9">
+                <input class="form-control" type="text" id="" name="" v-model="partInfo.buy_date"/>
+              </div>
+          </div>
         </div>
 
-        <div class="modalRow">
-          <label for="machineType">설비목록</label>
-          <input type="text" id="machineType" name="machineType" v-model="partInfo.machine_type"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="">부품이름</label>
-          <input type="text" id="" name="" v-model="partInfo.part_name"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="">교체주기</label>
-          <input type="text" id="" name="" v-model="partInfo.replace_cycle"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="">거래처</label>
-          <input type="text" id="" name="" v-model="partInfo.client_num"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="">부품위치</label>
-          <input type="text" id="" name="" v-model="partInfo.part_location"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="">구매날짜</label>
-          <input type="text" id="" name="" v-model="partInfo.buy_date"/>
-        </div>
       </div>
     </template>
     
     <template v-slot:footer>
       <button
-        class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+        class="btn btn-success w-100 mb-0 toast-btn"
         type="button"
         data-target="warningToast"
         @click="confirm"
@@ -58,7 +90,7 @@
       </button>
 
       <button
-        class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+        class="btn btn-danger w-100 mb-0 toast-btn"
         type="button"
         data-target="warningToast"
         @click="closeModal"
@@ -213,4 +245,32 @@ watch (
 </script>
 
 
+<style scoped lang="scss">
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox  */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* 일반 input 태그 스타일 */
+input {
+  background-color: #ffffff; /* 배경색 흰색 */
+  border: solid 1px #ced4da; /* 테두리 색상 */
+  color: #495057; /* 텍스트 색상 */
+}
+
+button {
+  width: 100px !important;
+}
+
+.partInfo {
+  padding-left: 29px;
+}
+
+</style>
 

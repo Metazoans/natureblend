@@ -1,11 +1,11 @@
 <template>
   <div class="container-fluid py-4">
-
+    <h3>설비 조회</h3>
     <!-- 설비 검색 -->
     <div class="main-container">
       <div class="content">
 
-        <div class="row">
+        <div class="row justify-content-end mb-3">
           <!-- 작동 상태 -->
           <div class="col mb-3">
             <label class="col-sm-2 col-form-label fw-bold">작동 상태</label>
@@ -58,31 +58,32 @@
               class="form-control"
             />
           </div>
+
+          
+          <!-- 검색 및 초기화 버튼 -->
+          <div class="col-1 mb-3 text-end">
+            <button
+              class="btn-sm btn-success mb-0 toast-btn"
+              type="button"
+              data-target="warningToast"
+              @click="updateFilter"
+            >
+              검색
+            </button>
+          </div>
+          <div class="col-1 mb-3 text-end">
+            <button
+              class="btn-sm btn-warning mb-0 toast-btn"
+              type="button"
+              data-target="warningToast"
+              @click="resetSearch"
+            >
+              초기화
+            </button>
+          </div>
         </div>
       </div>
 
-
-      <div class="row justify-content-center">
-        <!-- 검색 및 초기화 버튼 -->
-        <div class="col-1 mb-3 text-center">
-          <material-button
-            size="sm"
-            color="warning"
-            @click="updateFilter"
-          >
-            검색
-          </material-button>
-        </div>
-        <div class="col-1 mb-3 text-center">
-          <material-button
-            size="sm"
-            color="warning"
-            @click="resetSearch"
-          >
-            초기화
-          </material-button>
-        </div>
-      </div>
     </div>
     
 
@@ -99,9 +100,9 @@
         @cellClicked="cellClickFnc"
       ></ag-grid-vue>
     </div>
-
+    
     <material-button
-      color="warning"
+      class="btn-sucess"
       @click="machineAddOpen"
       data-bs-toggle="modal"
       data-bs-target="#exampleModal"
