@@ -141,18 +141,20 @@ export default{
             editable: true,
             sortable: false,
             checkboxSelection: true,
+            width:50,
+            cellStyle: { textAlign: "center" }
             },
-            { headerName : "반품번호", field:'returnlist_num',resizable: true, sortable: true},
-            { headerName : "출고번호", field:'output_num',resizable: true, sortable: true},
-            { headerName : "거래처명",field:'com_name',resizable: true, sortable: true},
-            { headerName : "제품LOT번호",field:'product_lot',resizable: true, sortable: true},
-            { headerName : "제품코드",field:'product_code',resizable: true, sortable: true},
-            { headerName : "제품명",field:'product_name',resizable: true, sortable: true},
-            { headerName : "출고량",field:'output_amount',resizable: true, sortable: true},
-            { headerName : "반품량",field:'return_num',editable:true,resizable: true, sortable: true},
-            { headerName : "담당자",field:'name',resizable: true, sortable: true},
-            { headerName : "반품날짜",field:'return_date',resizable: true, sortable: true},
-            { headerName : "반품사유",field:'return_reason',resizable: true, sortable: true},
+            { headerName : "반품번호", field:'returnlist_num',resizable: true, sortable: true,width:150,cellStyle: { textAlign: "right" }},
+            { headerName : "출고번호", field:'output_num',resizable: true, sortable: true,width:150,cellStyle: { textAlign: "right" }},
+            { headerName : "거래처명",field:'com_name',resizable: true, sortable: true,width:150,cellStyle: { textAlign: "left" }},
+            { headerName : "제품LOT번호",field:'product_lot',resizable: true, sortable: true,width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "제품코드",field:'product_code',resizable: true, sortable: true,width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "제품명",field:'product_name',resizable: true, sortable: true,width:200,cellStyle: { textAlign: "right" }},
+            { headerName : "출고량",field:'output_amount',resizable: true, sortable: true,width:100,cellStyle: { textAlign: "right" }},
+            { headerName : "반품량",field:'return_num',editable:true,resizable: true, sortable: true,width:100,cellStyle: { textAlign: "right" }},
+            { headerName : "담당자",field:'name',resizable: true, sortable: true,width:200,cellStyle: { textAlign: "left" }},
+            { headerName : "반품날짜",field:'return_date',resizable: true, sortable: true,width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "반품사유",field:'return_reason',resizable: true, sortable: true,width:250,cellStyle: { textAlign: "left" }},
             ],
           
 
@@ -264,7 +266,7 @@ export default{
             event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
-            const paginationPanel = allPanels[0];
+            const paginationPanel = allPanels[1];
             if (paginationPanel) {
                // 컨테이너 생성
                const container = document.createElement('div');
@@ -384,7 +386,7 @@ export default{
                                     
                 if(result.data.result === true){
                         this.$notify({
-                        text: `해당 반품품건의 수정이 완료되었습니다. `,
+                        text: `해당 반품건의 수정이 완료되었습니다. `,
                         type: 'success',
                     });
                 }else{

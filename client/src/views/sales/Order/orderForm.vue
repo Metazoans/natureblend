@@ -1,122 +1,123 @@
 <template>
-        <div class="container-fluid py-4">
-            <h2>주문서등록</h2>
-                <div class= "main-container">
-                <div class="content">
-                    <div class="orderlistForm">
-                        <form class="row gx-3 gy-2 align-items-center">
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="orderlistNum">주문서코드</label>
-                                <input type="text" class="form-control" id="orderlistNum" v-model="orderlistNum" readonly>
-                            </div>
-                            <div class="sm-2">
-                                <label class="col-form-label fw-bold" for="orderlistName">주문서명</label>
-                                <input type="text" class="form-control" id="orderlistName" v-model="orderName">
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="col-form-label fw-bold" for="clientName">거래처명</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="clientName" @click="openModal('client')" v-model="searchCom.com_name" readonly>
+    <div class="container-fluid py-4">
+        <h2>주문서등록</h2>
+            <div class= "main-container">
+            <div class="content">
+                <div class="orderlistForm">
+                    <form class="row gx-3 gy-2 align-items-center">
+                        <div class="col-sm-2">
+                            <label class="col-form-label fw-bold" for="orderlistNum">주문서코드</label>
+                            <input type="text" class="form-control" id="orderlistNum" v-model="orderlistNum" readonly>
+                        </div>
+                        <div class="sm-2">
+                            <label class="col-form-label fw-bold" for="orderlistName">주문서명</label>
+                            <input type="text" class="form-control" id="orderlistName" v-model="orderName">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="col-form-label fw-bold" for="clientName">거래처명</label>
+                            <div class="input-group">
+                            <input type="text" class="form-control" id="clientName" @click="openModal('client')" v-model="searchCom.com_name" readonly>
+                        </div>
+                        <Modal
+                            :isShowModal="isShowModal.client"
+                            :modalTitle="'거래처선택'"
+                            :noBtn="'닫기'"
+                            :yesBtn="'선택'"
+                            @closeModal="closeModal('client')"
+                            @confirm="confirm('client')"
+                        >
+                            <template v-slot:list>
+                                <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
+                            </template>
+                        </Modal>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="col-form-label fw-bold" for="EmpName">담당자</label>
+                            <div class="input-group">
+                            <input type="text" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name" readonly>
                             </div>
                             <Modal
-                                :isShowModal="isShowModal.client"
-                                :modalTitle="'거래처선택'"
+                                :isShowModal="isShowModal.emp"
+                                :modalTitle="'담당자선택'"
                                 :noBtn="'닫기'"
                                 :yesBtn="'선택'"
-                                @closeModal="closeModal('client')"
-                                @confirm="confirm('client')"
+                                @closeModal="closeModal('emp')"
+                                @confirm="confirm('emp')"
                             >
-                                <template v-slot:list>
-                                    <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
-                                </template>
+                            <template v-slot:list>
+                                <EmpList v-show="isShowModal.emp" @selectemp="selectemp"/>
+                            </template>
                             </Modal>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="EmpName">담당자</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name" readonly>
-                                </div>
-                                <Modal
-                                    :isShowModal="isShowModal.emp"
-                                    :modalTitle="'담당자선택'"
-                                    :noBtn="'닫기'"
-                                    :yesBtn="'선택'"
-                                    @closeModal="closeModal('emp')"
-                                    @confirm="confirm('emp')"
-                                >
-                                <template v-slot:list>
-                                    <EmpList v-show="isShowModal.emp" @selectemp="selectemp"/>
-                                </template>
-                                </Modal>
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="col-form-label fw-bold" for="dueDate">납기일자</label>
-                                <div class="input-group">
-                                <input type="date" class="form-control" id="dueDate" v-model="dueDate">
-                                </div>
-                            </div>
-                        </form>
-                        <div class="mb-3 text-end">
-                            <material-button size="sm" color="success" class="button"  @click="addMaterial">+</material-button>
                         </div>
-
+                        <div class="col-sm-4">
+                            <label class="col-form-label fw-bold" for="dueDate">납기일자</label>
+                            <div class="input-group">
+                            <input type="date" class="form-control" id="dueDate" v-model="dueDate">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="mb-3 text-end">
+                        <material-button size="sm" color="success" class="button"  @click="addMaterial">+</material-button>
                     </div>
-                    
 
-                    <div v-for="(material, index) in materials" :key="index" class="row gx-3 gy-2 align-items-center">
-                        <form class="row gx-3 gy-2 align-items-center mt-2">
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="orderCode">주문코드</label>
-                                <input type="text" class="form-control" id="orderCode" v-model="material.orderCode" readonly>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="productCode">제품코드</label>
-                                <input type="text" class="form-control" id="productCode" v-model="material.productCode" readonly>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="productName">제품명</label>
-                                <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product')" readonly>
-                            </div>
-                            <Modal
-                                    :isShowModal="isShowModal.product"
-                                    :modalTitle="'제품선택'"
-                                    :noBtn="'닫기'"
-                                    :yesBtn="'선택'"
-                                    @closeModal="closeModal('product')"
-                                    @confirm="confirm('product')"
-                                >
-                                <template v-slot:list>
-                                    <proList v-show="isShowModal.product" @selectproduct="selectproduct" :indexNum="indexNum"/>
-                                </template>
-                            </Modal>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold" for="orderNum">주문수량</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="orderNum" v-model="material.productNum">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <label class="col-form-label fw-bold"  for="perSale">개당가격</label>
-                                <div class="input-group">
-                                <input type="text" class="form-control" id="perSale" v-model="material.perPrice">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <material-button size="sm" color="danger" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
-                            </div>      
-                        </form>
-                    </div>
-                   
+                </div>
+                
 
-                    <div class="col-auto mt-5 text-center">
-                            <material-button type="button" class="button me-4" color="success" @click="insertOrder">저장</material-button>
-                            <material-button type="button" class="button" color="warning" @click="resetSearch">초기화</material-button>
-                    </div>
+                <div  v-for="(material, index) in materials" :key="index" class="row gx-3 gy-2 align-items-center plus-section">
+                    <form class="row gx-3 gy-2 align-items-center mt-2">
+                        <div class="col-sm-2">
+                            <label class="col-form-label fw-bold" for="orderCode">주문코드</label>
+                            <input type="text" class="form-control" id="orderCode" v-model="material.orderCode" readonly>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="col-form-label fw-bold" for="productCode">제품코드</label>
+                            <input type="text" class="form-control" id="productCode" v-model="material.productCode" readonly>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="col-form-label fw-bold" for="productName">제품명</label>
+                            <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product')" readonly>
+                        </div>
+                        <Modal
+                                :isShowModal="isShowModal.product"
+                                :modalTitle="'제품선택'"
+                                :noBtn="'닫기'"
+                                :yesBtn="'선택'"
+                                @closeModal="closeModal('product')"
+                                @confirm="confirm('product')"
+                            >
+                            <template v-slot:list>
+                                <proList v-show="isShowModal.product" @selectproduct="selectproduct" :indexNum="indexNum"/>
+                            </template>
+                        </Modal>
+                        <div class="col-sm-2">
+                            <label class="col-form-label fw-bold" for="orderNum">주문수량</label>
+                            <div class="input-group">
+                            <input type="text" class="form-control" id="orderNum" v-model="material.productNum">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="col-form-label fw-bold"  for="perSale">개당가격</label>
+                            <div class="input-group">
+                            <input type="text" class="form-control" id="perSale" v-model="material.perPrice">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <material-button size="sm" color="danger" type="button" class="mt-5"  @click="deleteMaterial(index)">삭제</material-button>
+                        </div>      
+                    </form>
+                </div>
+               
+
+                <div class="col-auto mt-5 text-center">
+                        <material-button type="button" class="button me-4" color="success" @click="insertOrder">저장</material-button>
+                        <material-button type="button" class="button" color="warning" @click="resetSearch">초기화</material-button>
                 </div>
             </div>
         </div>
-        
+    </div>
+    
 </template>
+
 <script>
 import MaterialButton from "@/components/MaterialButton.vue";
 import ComList from "@/views/sales/Order/clientModal.vue";
@@ -326,11 +327,12 @@ export default{
 <style lang="scss" scoped>
 .main-container {
 //   background-color: #e9ecef;
+  border: solid 5px #e9ecef;
   margin: 20px;
   border-radius: 10px;
 }
 .orderlistForm{
-    background-color: #ffeacc;
+    background-color: #e9ecef;
     padding: 60px;
     padding-bottom: 20px;
     border-radius: 10px;
@@ -339,6 +341,10 @@ export default{
   margin: 20px;
   padding: 10px;
 }
+.plus-section{
+    padding-left: 60px;
+}
+
 .client {
   padding: 10px;
   cursor: pointer;

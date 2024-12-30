@@ -147,14 +147,14 @@ export default{
             theme : theme,
             rowData : [],
             columnOrderlist : [
-            { headerName : "출고번호", field:'output_num'},
-            { headerName : "주문서명", field:'orderlist_title'},
-            { headerName : "거래처명",field:'com_name'},
-            { headerName : "제품코드",field:'product_code'},
-            { headerName : "제품명",field:'product_name'},
-            { headerName : "제품LOT번호",field:'product_lot'},
-            { headerName : "출고수량",field:'output_amount'},
-            { headerName : "출고날짜",field:'output_date'},
+            { headerName : "출고번호", field:'output_num',width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "주문서명", field:'orderlist_title' ,width:400,cellStyle: { textAlign: "left" }},
+            { headerName : "거래처명",field:'com_name' ,width:200,cellStyle: { textAlign: "left" }},
+            { headerName : "제품코드",field:'product_code' ,width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "제품명",field:'product_name' ,width:200,cellStyle: { textAlign: "left" }},
+            { headerName : "제품LOT번호",field:'product_lot' ,width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "출고수량",field:'output_amount' ,width:200,cellStyle: { textAlign: "right" }},
+            { headerName : "출고날짜",field:'output_date' ,width:200,cellStyle: { textAlign: "center" }},
             ],
            
             //검색어 검색 (그리드 안)

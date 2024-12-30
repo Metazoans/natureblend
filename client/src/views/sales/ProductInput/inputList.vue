@@ -242,7 +242,7 @@ export default{
             event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
-            const paginationPanel = allPanels[0];
+            const paginationPanel = allPanels[1];
             if (paginationPanel) {
                // 컨테이너 생성
                const container = document.createElement('div');
