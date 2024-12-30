@@ -447,6 +447,11 @@ const completeQCPB = async (qcpb, qcpbr) =>{
 
 
 }
+const findBevTestResult = async () => {
+  let sql = 'selectBevTestResult';
+  let list = await mysql.query(sql);
+  return list;
+};
 
 
 
@@ -588,6 +593,7 @@ module.exports = {
   loadTestDetails,
   findQCPB,
   completeQCPB,
+  findBevTestResult,
 
 
   findQCPP,
