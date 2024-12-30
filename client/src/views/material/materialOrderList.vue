@@ -158,7 +158,7 @@ const seachPoList = () => {
  //그리드 api 컬럼명 들어가는 거
 const columnDefs = ref([
   { headerName: "No.", field: "body_num", width:75, cellStyle: { textAlign: "center" } },
-  { headerName: "자재발주코드", field: "order_code", width:120, cellStyle: { textAlign: "center" } },
+  { headerName: "자재발주코드", field: "order_code", width:130, cellStyle: { textAlign: "center" } },
   { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "left" } },
   { headerName: "업체명", field: "com_name", width:150, cellStyle: { textAlign: "left" } },
   { headerName: "발주수량", field: "ord_qty", width:110, cellStyle: { textAlign: "right" } },

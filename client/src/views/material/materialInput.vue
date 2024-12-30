@@ -85,7 +85,7 @@ const { notify } = useNotification();  // 노티 내용변수입니다
         {  
           headerName: "입고검사", 
           field: "비고", 
-          width:145,
+          width:150,
           editable: false,
           cellStyle: { textAlign: "center" },
           cellRenderer: params => {
