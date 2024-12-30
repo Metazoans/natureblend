@@ -43,8 +43,8 @@
                 </div>
                         <!--검색 및 초기화-->
                 <div class="pb-3 text-center">
-                    <material-button size="sm" color="success" class="button" @click="searchInputlist" >검색</material-button>
-                    <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
+                    <material-button  color="success" class="button" @click="searchInputlist" >검색</material-button>
+                    <material-button color="warning" class="button" @click="resetSearch">초기화</material-button>
                 </div>
             </div>
         </div>
@@ -358,7 +358,9 @@ export default{
             this.selectedProName = "",//선택될 제품 이름
             this.productName = '', //저장될 제품 이름 
             this.selectedProCode = "", //선택될 제품 코드 
-            this.productCode='' //저장될 제품 코드 
+            this.productCode='',//저장될 제품 코드 
+            this.inputData = []
+
 
         },
         

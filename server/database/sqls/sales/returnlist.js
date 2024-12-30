@@ -5,7 +5,7 @@ const getReturn =
 FROM return_code`;
 
 //반품등록 
-const returnInsert = 
+const returnlistInsert = 
 `INSERT INTO returnlists
 SET ? `;
 
@@ -147,7 +147,7 @@ const returnlistsDelete =
 
 module.exports ={
     getReturn,
-    returnInsert,
+    returnlistInsert,
     returnSearch,
     updateReturn,
     returnlistsDelete

@@ -7,7 +7,7 @@ const getReturnList = async()=>{
 
 //반품등록
 const createReturn = async(returnInfo)=>{
-    let result = await mysql.query('returnInsert',returnInfo);
+    let result = await mysql.query('returnlistInsert',returnInfo);
     return result;
 }
 

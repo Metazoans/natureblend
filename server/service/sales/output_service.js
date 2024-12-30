@@ -65,6 +65,50 @@ const addOutput = async(outputInfo)=>{
   }
 }
 
+//출고 조회(검색기준)
+const getOutputList = async(clientName,productCode,orderName,startDate,endDate)=>{
+  let searchList = [];
+
+  if(clientName  != undefined && clientName != null && clientName != ''){
+    let search = `c.com_name LIKE \'%${clientName.com_name}%\'`;
+    searchList.push(search);
+  }
+  if(productCode  != undefined && productCode != null && productCode != ''){
+    let search = `op.product_code LIKE \'${productCode}\'`;
+    searchList.push(search);
+  }
+  console.log("orderName=",orderName);
+  if(orderName  != undefined && orderName != null && orderName != ''){
+    let search = `ol.orderlist_title LIKE \'%${orderName}%\'`;
+    searchList.push(search);
+  }
+  if(startDate  != undefined && startDate != null && startDate != ''){
+    let search = `op.output_date >= \'${startDate}\'`;
+    searchList.push(search);
+  }
+
+  if(endDate  != undefined && endDate != null && endDate != ''){
+    let search = `op.output_date <= \'${endDate}\'`;
+    searchList.push(search);
+  }
+
+  // 조건을 기반으로 WHERE절 최종 구성
+    let querywhere = '';
+    for(let i = 0 ; i < searchList.length; i++){
+      let search  = searchList[i];
+      querywhere+= (i == 0 ? ` `:`AND `) + search;  
+    };
+  
+    querywhere = searchList.length == 0 ? `ORDER BY op.output_date` : `WHERE ${querywhere} ORDER BY op.output_date`;
+    console.log('selected Query', querywhere);
+  
+    let result = await mysql.query('outputListSearch',querywhere);
+    return result;
+
+
+
+}
+
 
 
 
@@ -77,4 +121,5 @@ module.exports = {
     getDisoutputOrder,
     getLotBaseProduct,
     addOutput,
+    getOutputList,
 }

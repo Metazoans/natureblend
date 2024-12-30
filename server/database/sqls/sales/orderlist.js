@@ -23,7 +23,8 @@ ORDER BY
 
 //거래처조회 
 const clientlist = 
-`SELECT com_name 
+`SELECT com_name,
+		client_num
 FROM client
 WHERE trade='판매'
 ORDER BY com_name`;

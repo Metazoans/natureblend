@@ -32,6 +32,13 @@ router.post('/output/insert',async(req,res)=>{
   res.send(result);
 })
 
+//검색 기준으로 출고리스트 조회
+router.put('/outputList/search',async(req,res)=>{
+  let {clientName,productCode,orderName,startDate,endDate} = req.body;
+  let result = await outputService.getOutputList(clientName,productCode,orderName,startDate,endDate);
+  res.send(result);
+})
+
 
 
 

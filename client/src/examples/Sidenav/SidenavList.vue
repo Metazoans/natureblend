@@ -37,7 +37,7 @@
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('outputManage')">제품출고등록</li>
-            <li class="sub-item">제품출고조회</li>
+            <li class="sub-item" @click="movePage('outputList')">제품출고조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse

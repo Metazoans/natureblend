@@ -9,6 +9,7 @@ import productInventory from '@/views/sales/productInventory.vue';
 import lotInventory from '@/views/sales/lotInventory.vue'
 import returnManage from '@/views/sales/ProductReturn/returnManage.vue';
 import returnList from '@/views/sales/ProductReturn/returnList.vue';
+import outputList from '@/views/sales/ProductOutput/outputList.vue';
 
 
 const salesRoute = [
@@ -37,6 +38,11 @@ const salesRoute = [
         path:'/output/management',
         name:'outputManage',
         component:outputManage
+    },
+    {
+        path:'/output/outputlist',
+        name:'outputList',
+        component :outputList
     },
 
     {
