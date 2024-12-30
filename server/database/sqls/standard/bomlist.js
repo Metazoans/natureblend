@@ -306,7 +306,7 @@ const flowList =
 
 // 공정흐름도 등록
 const flowInsert = 
-`SET @next_process_sequence := (SELECT IFNULL(MAX(process_sequence), 0) + 1 FROM process_chart);
+`SET @next_process_sequence := (SELECT IFNULL(MAX(process_sequence), 0) + 1 FROM process_chart WHERE product_code = ?);
 INSERT INTO process_chart (product_code,process_code, process_sequence , process_name)
 VALUES (?,  ?, @next_process_sequence, ?)`;
 

@@ -11,11 +11,13 @@ import ReturncodeManagement from '@/views/standard/ReturncodeManagement.vue';
 import WarehouseManagement from '@/views/standard/WarehouseManagement.vue';
 import ProductManagement from '../views/standard/ProductManagement.vue';
 import Login from '../views/standard/login.vue';
+import Loginconfig from '../views/standard/TestPage.vue';
 
 const standardRoute = [
   {
-    path: '',
-    redirect : { name : 'login'}
+    path: 'loginconfig',
+    name: 'Loginconfig',
+    component: Loginconfig
   },
   {
     path: 'login',
