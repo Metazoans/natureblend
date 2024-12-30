@@ -291,6 +291,11 @@ router.post('/beforeUpdate', async(req,res) => {
   let result = await bomService.beforeData(beforeData,beforeProcessSequence);
   res.send(result);
 })
-
+// 흐름도 삭제
+router.delete('/flowDelete/:process_chart_num', async(req,res) => {
+  let process_chart_num = req.params.process_chart_num;
+  let result = await bomService.deleteFlow(process_chart_num);
+  res.send(result);
+})
 
 module.exports = router;

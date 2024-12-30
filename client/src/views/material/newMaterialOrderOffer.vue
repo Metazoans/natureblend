@@ -79,48 +79,55 @@ export default {
                     headerCheckboxSelection: true,
                     checkboxSelection: true,
                     headerName: "",
-                    width:75,
+                    width:45,
                 },
-                { headerName: "원자재코드", field: "material_code" },
-                { headerName: "자재명", field: "material" },
-                { headerName: "자재재고", field: "stok_qty" },
-                { headerName: "안전재고", field: "safety_inventory" },
-                { headerName: "계획재고", field: "plan_qty" },
-                { headerName: "발주재고", field: "ordering_qty" },
-                { headerName: "필요수량", field: "need_qty" },
+                { headerName: "자재코드", field: "material_code", width:100, cellStyle: { textAlign: "center" } },
+                { headerName: "자재명", field: "material", cellStyle: { textAlign: "left" } },
+                { headerName: "자재재고", field: "stok_qty", width:100, cellStyle: { textAlign: "right" } },
+                { headerName: "안전재고", field: "safety_inventory", width:100, cellStyle: { textAlign: "right" } },
+                { headerName: "계획재고", field: "plan_qty", width:100, cellStyle: { textAlign: "right" } },
+                { headerName: "발주재고", field: "ordering_qty", width:100, cellStyle: { textAlign: "right" } },
+                { headerName: "필요수량", field: "need_qty", width:100, cellStyle: { textAlign: "right" } },
                 {  
                     headerName: "거래처", 
-                    width:150,
+                    width:110,
+                    cellStyle: { textAlign: "center" },
                     field: "선택", 
                     editable: false,
                     cellRenderer: params => {
+                        const div = document.createElement('div');
+                        div.style.display = 'flex';
+                        div.style.justifyContent = 'center';
+                        div.style.alignItems = 'center';
+                        div.style.height = '100%';
+                        
                         const clientButton = document.createElement('button');
                         clientButton.innerText = '선택하기';
-                        clientButton.style.marginRight = '10px';
                         clientButton.style.cursor = 'pointer';
-                        clientButton.style.backgroundColor = '#f48a06';
+                        clientButton.style.backgroundColor = '#4caf50';
                         clientButton.style.width = '60px';
                         clientButton.style.height = '30px';
                         clientButton.style.color = 'white';
                         clientButton.style.border = 'none';
-                        clientButton.style.padding = '0';
                         clientButton.style.borderRadius = '4px';
-                        clientButton.style.textAlign = 'center';
-                        clientButton.style.lineHeight = '30px';
+                        clientButton.style.display = 'flex';
+                        clientButton.style.justifyContent = 'center';
+                        clientButton.style.alignItems = 'center';
                         clientButton.addEventListener('click', () => {
                             //console.log("레코드 확인 : ", JSON.stringify(params.data));
 
                             //엄마한테 클릭한 내용 던지기
                             this.$emit('seachClient', params.data.material_code, params.data.material);
                         });
-                        return clientButton;
+                        div.appendChild(clientButton);
+                        return div;
                     }
                 },
-                { headerName: "거래처명", field: "com_name", width:210 },
-                { headerName: "발주수량", field: "go_qty", editable: true },
-                { headerName: "단가", field: "go_price", editable: true },
-                { headerName: "총금액", field: "go_total_price" },
-                { headerName: "납기일", field: "limit_date", editable: true, cellEditor: 'agDateCellEditor', 
+                { headerName: "거래처명", field: "com_name", cellStyle: { textAlign: "left" } },
+                { headerName: "발주량", field: "go_qty", width:100, editable: true, cellStyle: { textAlign: "right" } },
+                { headerName: "단가", field: "go_price", width:80, editable: true, cellStyle: { textAlign: "right" } },
+                { headerName: "총금액", field: "go_total_price", width:110, cellStyle: { textAlign: "right" } },
+                { headerName: "납기일", field: "limit_date", width:130, editable: true, cellEditor: 'agDateCellEditor', cellStyle: { textAlign: "center" },
                     cellEditorParams: {
                         dateFormat: 'yyyy-MM-dd',
                     }, 
@@ -136,20 +143,27 @@ export default {
                     headerName: "발주제거", 
                     field: "행삭제", 
                     editable: false,
+                    width: 110,
+                    cellStyle: { textAlign: "center" },
                     cellRenderer: params => {
+                        const div = document.createElement('div');
+                        div.style.display = 'flex';
+                        div.style.justifyContent = 'center';
+                        div.style.alignItems = 'center';
+                        div.style.height = '100%';
+                        
                         const deleteButton = document.createElement('button');
                         deleteButton.innerText = '주문삭제';
-                        deleteButton.style.marginRight = '10px';
                         deleteButton.style.cursor = 'pointer';
-                        deleteButton.style.backgroundColor = '#595959';
+                        deleteButton.style.backgroundColor = '#f44335';
                         deleteButton.style.width = '60px';
                         deleteButton.style.height = '30px';
                         deleteButton.style.color = 'white';
                         deleteButton.style.border = 'none';
-                        deleteButton.style.padding = '0';
                         deleteButton.style.borderRadius = '4px';
-                        deleteButton.style.textAlign = 'center';
-                        deleteButton.style.lineHeight = '30px';
+                        deleteButton.style.display = 'flex';
+                        deleteButton.style.justifyContent = 'center';
+                        deleteButton.style.alignItems = 'center';
                         deleteButton.addEventListener('click', () => {
                             //console.log("레코드 확인 : ", JSON.stringify(params.data));
                             console.log(params.data.com_name);
@@ -165,7 +179,8 @@ export default {
                                 });
                             }
                         });
-                        return deleteButton;
+                        div.appendChild(deleteButton);
+                        return div;
                     }
                 },
             ],
@@ -187,7 +202,7 @@ export default {
                 button2.textContent = '발주진행';
                 button2.style.marginRight = '10px';
                 button2.style.cursor = 'pointer';
-                button2.style.backgroundColor = '#f48a06';
+                button2.style.backgroundColor = '#4caf50';
                 button2.style.color = 'white';
                 button2.style.border = 'none';
                 button2.style.padding = '5px 10px';

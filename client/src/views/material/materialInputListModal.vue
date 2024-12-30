@@ -41,7 +41,7 @@
                 </ul> -->
          </div>
          <div class="modal-footer">
-           <button type="button" class="btn btn-warning" @click="confirm">닫기</button>
+           <button type="button" class="btn" style="background-color: #4caf50; color: white;" @click="confirm">닫기</button>
          </div>
        </div>
      </div>

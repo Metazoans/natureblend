@@ -52,6 +52,7 @@ ON o.client_num = c.client_num `;
 // 주문서 등록 가능한 직원만: 영업부서 
 const orderEmployees = 
 ` select name
+		,emp_num
   from employee
   where job_num = 1`;
 
@@ -385,19 +386,23 @@ const orderListDelete =
 //주문서를 검색해서 출고완료된 주문 출력 
 const shippedOrder = 
 `SELECT  o.order_num
-		  ,p.product_code
+		,op.output_num
+		,p.product_code
         ,p.product_name
         ,o.order_amount
         ,NVL(op.output_amount, 0) AS output_amount
-        ,o.order_amount- NVL(op.output_amount, 0) AS disorder_amount
         ,o.per_price
-        ,o.order_status
+			,op.client_num
+        ,op.output_date
 FROM orders o left join product p 
                      ON o.product_code = p.product_code
               left join output op
                      ON o.order_num = op.order_num
-WHERE o.orderlist_num= ?
-AND o.order_status != 'preparing'`;
+            	left join returnlists r
+    						ON op.output_num = r.output_num
+WHERE o.orderlist_num= 34
+AND o.order_status != 'preparing'
+AND r.output_num IS NULL`;
 
 module.exports = {
     orderList,

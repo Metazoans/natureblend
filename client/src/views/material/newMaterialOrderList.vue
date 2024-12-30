@@ -67,12 +67,12 @@ export default {
                     headerCheckboxSelection: true,
                     checkboxSelection: true,
                     headerName: "",
-                    width:75,
+                    width:45,
                 },
-                { headerName: "NO.", field: "client_num", width:100 },
-                { headerName: "거래처명", field: "com_name" },
-                { headerName: "발주담당자", field: "emp_name" },
-                { headerName: "연락처", field: "emp_tel" },
+                { headerName: "NO.", field: "client_num", width:100, cellStyle: { textAlign: "center" } },
+                { headerName: "거래처명", field: "com_name", cellStyle: { textAlign: "left" } },
+                { headerName: "발주담당자", field: "emp_name", width:130, cellStyle: { textAlign: "left" } },
+                { headerName: "연락처", field: "emp_tel", cellStyle: { textAlign: "center" } },
             ],
             clientdate: [],
             theme : theme,
@@ -92,12 +92,14 @@ export default {
                container.style.display = 'flex';
                container.style.alignItems = 'center';
                container.style.gap = '5px'; // 버튼과 입력 필드 간격
+               container.style.position = 'absolute';
+               container.style.left = '10px';
 
                // 버튼 생성
                const button3 = document.createElement('button');
                button3.textContent = '거래처선택';
                button3.style.cursor = 'pointer';
-               button3.style.backgroundColor = '#f48a06';
+               button3.style.backgroundColor = '#4caf50';
                button3.style.color = 'white';
                button3.style.border = 'none';
                button3.style.width = '90px';
@@ -115,7 +117,7 @@ export default {
                inputText.type = 'text';
                inputText.placeholder = '검색';
                inputText.style.padding = '5px';
-               inputText.style.width = '75px';
+               inputText.style.width = '60px';
                inputText.style.border = '1px solid #ccc';
                inputText.style.borderRadius = '4px';
 

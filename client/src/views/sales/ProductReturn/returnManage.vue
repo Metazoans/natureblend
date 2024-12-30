@@ -8,7 +8,7 @@
                     <!--거래처명 검색-->
                     <div class="row align-items-center ms-3 mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >거래처명</label>
-                        <div class="col-sm-6 d-flex align-items-center">
+                        <div class="col-sm-6 d-flex">
                             <input 
                                 id="clientSearch"  class="form-control me-2"
                                 v-model="searchCom.com_name" @click="openModal('client')" readonly/>
@@ -26,7 +26,7 @@
                                 </Modal>
                         </div> 
                                    <!--검색 및 초기화-->
-                        <div class="col-sm-10 text-end">
+                        <div class="button-container d-flex justify-content-end">
                             <material-button size="md" color="success" class="me-2" @click="searchOrderlists">검색</material-button>
                             <material-button size="md" color="warning"  @click="resetSearch">초기화</material-button>
                         </div>   
@@ -54,8 +54,8 @@
     </div>
     <div class="container-fluid py-4">
         <h4>출고 완료 된 주문 조회</h4>
-        <div class="d-flex">
-            <div>
+        <div class="row">
+            <div class="col-lg-8">
                 <div class="grid-container">
                 <ag-grid-vue
                 style ="width: 850px; height: 500px;"
@@ -64,7 +64,7 @@
                 :theme="theme"
                 @grid-ready="onGridReady"
                 :noRowsOverlayComponent="noRowsOverlayComponent"
-                @rowClicked="onDisoutputRowClicked"
+                @rowClicked="onOutputReturn"
                 rowSelection="multiple"
                 :pagination="true"
                 :paginationPageSize="10"
@@ -74,15 +74,16 @@
                     <CustomNoRowsOverlay/>
                 </div>
             </div>
-            <div class= "select-container" >
-                    <div class="d-flex flex-column justify-content-center ps-5 pt-5" style="height: 200px;">
+            <div class= "col-lg-4 ps-4" >
+                <div class="select-container p-4">
+                    <div class= "form-section mb-4">
                             <!--담당자 선택 -->
                         <div class="row align-items-center mb-3">
                             <label class="col-sm-3  col-form-label fw-bold" >담당자</label>
-                            <div class="col-sm-9 d-flex">
-                                <input 
-                                    id="EmpName"  class="form-control border p-2" 
-                                    v-model="searchEmpName.name" @click="openModal('emp')" readonly/>
+                                <div class="col-sm-9">
+                                    <input 
+                                    id="EmpName"  class="form-control" 
+                                    v-model="searchEmpName" @click="openModal('emp')" readonly/>
                                     <Modal
                                         :isShowModal="isShowModal.emp"
                                         :modalTitle="'담당자선택'"
@@ -95,22 +96,20 @@
                                         <EmpList v-show="isShowModal.emp" @selectemp="selectemp"/>
                                     </template>
                                     </Modal>
-                            </div>    
+                                </div>
                         </div>
                         <!--반품수량-->
-                        <div class="row align-items-center mb-3">
+                        <div class="form-section mb-4">
                             <label class="col-sm-3  col-form-label fw-bold" >반품수량</label>
-                            <div class="col-sm-9 d-flex">
                                 <input 
-                                    id="returnNum"  class="form-control border p-2" 
+                                    id="returnNum"  class="form-control" 
                                     v-model="returnNum"/>
-                            </div>    
                         </div>
                         <!--반품사유-->
-                        <div class="row align-items-center mb-3">
+                        <div class="form-section">
                             <label class="col-sm-3  col-form-label fw-bold" >반품사유</label>
-                            <div class="col-sm-9 d-flex">
-                                <input 
+                                <div class="col-sm-9">
+                                    <input 
                                     id="ReturnReason"  class="form-control border p-2" 
                                     v-model="searchReturnReason" @click="openModal('returns')" readonly/>
                                     <Modal
@@ -125,15 +124,15 @@
                                         <ReturnList v-show="isShowModal.returns" @selectreturn="selectreturn"/>
                                     </template>
                                     </Modal>
-                            </div>    
+                                </div>
                         </div>
-                        
                     </div> 
                     <!--검색 및 초기화-->
-                    <div class=" pt-5 text-center ">
-                        <material-button  color="success" class="button" @click="tempInputInfo">입력</material-button>
-                        <material-button color="warning" class="button" @click="resetEmpWar">초기화</material-button>
+                    <div class="text-center pt-4">
+                        <material-button  color="success" class=" me-3" @click="returninstall">등록</material-button>
+                        <material-button color="warning"  @click="resetEmpWar">초기화</material-button>
                     </div>
+                </div>        
             </div>
        </div>
     </div>
@@ -195,57 +194,37 @@ export default{
             { headerName : "진행상태",field:'orderlist_status'},
             ],
             //주문조회
-            statusOrderMap: {         // DB 상태값과 화면 상태명 매핑
-                "preparing": "미출고",
-                "semiShipped": "부분출고",
-                "shipped": "출고완료",
-            },
+            
             rowDataOutputOrder : [],
             columnOutputOrder : [
                 {headerName :"주문번호",field: 'order_num' },
+                {headerName :"출고번호",field: 'output_num'}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
                 {headerName :"제품코드",field: 'product_code'},
                 {headerName :"제품명",field: 'product_name'},
                 {headerName :"주문수량", field: 'order_amount'},
                 {headerName :"출고량", field: 'output_amount'},
-                {headerName :"미출고량",field: 'disorder_amount'}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
                 {headerName :"개당가격",field: 'per_price'},
-                {headerName :"상태여부",field: 'order_status'}
+                {headerName :"출고날짜",field: 'output_date'}
             ],
 
             //출고 시킬 제품 선택 
              //직원  모달
             searchEmpName:"", // 저장될 직원 명 
-            selectedEmpName:"", //선택될 직원 명 
+            selectedEmpName:"", //선택될 직원 명
+            searchEmpNum:"", //저장될 직원 번호
+            selectedEmpNum:"", // 선택될 직원 번호 
 
             selectedReturnCode: "", // 선택한 반품 코드 
             searchReturnCode : "", // 저장될 반품 코드
             selectedReturnReason:"", // 선택될 반품 이유
             searchReturnReason : "", // 저장될 반품 이유 
 
-            rowDataLot :[],
-            columnLot :[
-            {headerName: "",
-            headerCheckboxSelection: true,
-            field: "check",
-            resizable: false,
-            editable: true,
-            sortable: false,
-            checkboxSelection: true,
-            //cellClass: "custom-cell"
-            },
-            {headerName :"제품LOT번호",field: 'product_lot'},
-            {headerName :"제품 재고수 ",field: 'input_amount'},
-            {headerName :"제품제조일자 ",field: 'input_date'},
-
-            { headerName: "출고수",
-            field: "output_num",
-            resizable: false,
-            editable: true,
-            sortable: false,
-            // 셀 값이 변경될 때마다 실행되는 함수
-            onCellValueChanged: this.onCellValueChanged
-            },
-            ],
+            //반품시킬정보 
+            productCode:"",
+            outputNum:"",
+            outputAmount:"",
+            clientNum:"",
+           
 
             
 
@@ -268,7 +247,8 @@ export default{
             this.selectedCom = client; 
         },
         selectemp(emp){
-        this.selectedEmpName = emp;
+        this.selectedEmpName = emp.name;
+        this.selectedEmpNum = emp.emp_num;
         },
         selectreturn(returns){
         this.selectedReturnCode = returns.return_code;
@@ -284,6 +264,7 @@ export default{
                 this.searchCom = this.selectedCom;
             } else if (modalType === 'emp') {
                 this.searchEmpName = this.selectedEmpName;
+                this.searchEmpNum = this.selectedEmpNum;
             }else if (modalType === 'returns') {
                 this.searchReturnCode = this.selectedReturnCode;
                 this.searchReturnReason = this.selectedReturnReason;
@@ -315,6 +296,7 @@ export default{
                                 .catch(err => console.log(err));
         
         this.rowData = result.data;
+        
         this.rowData = result.data.map((col) => ({
             ...col,
             order_date: this.dateFormat(col.order_date, "yyyy-MM-dd"),
@@ -341,13 +323,54 @@ export default{
         let result = await axios.get(`${ajaxUrl}/shippedOrderInfo/${order.orderlist_num}`)
                                 .catch(err => console.log(err));
         this.rowDataOutputOrder = result.data;
+        
         this.rowDataOutputOrder = result.data.map((col) => ({
             ...col,
-            order_status : this.statusOrderMap[col.order_status],
+            output_date: this.dateFormat(col.output_date, "yyyy-MM-dd"),
+            com_name : row.data.com_name,
             })
         );
         console.log("rowDataOutputOrder:",this.rowDataOutputOrder);
     },
+    onOutputReturn(row){
+        let output = row.data;
+        this.outputAmount = output.output_amount;
+        this.productCode = output.product_code;
+        this.outputNum = output.output_num;
+        this.clientNum = output.client_num;
+        console.log("출고할 값",output);
+        
+    },
+    async returninstall(){
+        if(this.outputAmount < this.returnNum){
+            this.$notify({
+                    text: `출고량보다 반품량이 많습니다.`,
+                    type: 'error',
+                });
+            return;
+        }
+
+        let returnInfo ={
+            client_num : this.clientNum,
+            product_code : this.productCode,
+            return_num : Number(this.returnNum),
+            return_code : this.searchReturnCode,
+            emp_num : this.searchEmpNum,
+            output_num : this.outputNum
+        }
+
+        let result = 
+                    await axios.post(`${ajaxUrl}/return/insert`,returnInfo)
+                               .catch(err => console.log(err));
+        console.log(result.data);
+        if(result.statusText === 'OK'){
+                    this.$notify({
+                        text: `반품처리가 완료되었습니다.`,
+                        type: 'success',
+                    });  
+                   
+                }
+    }
         
 
   
@@ -368,39 +391,60 @@ export default{
     border-radius: 10px;
     
 }
-.d-flex {
-  display: flex;
-  justify-content: space-between;
-  //gap: 5px;
-  text-align: center;
+.grid-container {
+  margin-bottom: 20px;
 }
-
-.custom-cell {
-  padding: 2px !important;
+.form-section {
+  margin-bottom: 20px;
+}
+.button-container {
+    display: flex; /* Flex 컨테이너 설정 */
+    gap: 10px; /* 버튼 간 간격 */
+    justify-content: flex-end; /* 오른쪽 정렬 */
+    align-items: center; /* 세로 가운데 정렬 */
 }
 
 /* 버튼이 한 줄에 정렬되도록 조정 */
 .row {
   display: flex;
   align-items: center; /* 수직 정렬 */
+  margin-bottom: 20px;
+}
+.d-flex {
+    display: flex;
+    gap: 10px; /* 입력 필드와 버튼 사이 여백 */
 }
 .text-end {
   text-align: right; /* 오른쪽 정렬 */
+  justify-content: flex-end; /* 버튼을 오른쪽 정렬 */
+}
+.button-group {
+    display: flex; /* 버튼 그룹을 Flexbox로 설정 */
+    gap: 10px; /* 버튼 간 간격 */
+}
+
+.material-button {
+    display: flex; /* Flex 설정 */
+    align-items: center; /* 텍스트와 아이콘 가운데 정렬 */
+    justify-content: center; /* 텍스트 가운데 정렬 */
+    padding: 8px 16px; /* 적절한 패딩 설정 */
+    margin: 0; /* 기존 여백 제거 */
+    cursor: pointer;
 }
 .col-sm-6 {
     display: flex;
     align-items: center; /* 세로 가운데 정렬 */
 }
-.material-button {
-    display: inline-block; /* 버튼을 가로로 정렬 */
-    margin: 0 5px; /* 버튼 간 여백 */
-}
-.select-container{
-    background-color:  #e9ecef;
-    border-radius: 10px;
-    width: 650px;
-    height: 400px;
-    margin-top: 70px;
+
+.select-container {
+  background-color: #e9ecef;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 650px;
+  min-height: 400px;
+  margin-top: 70px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .text-center {

@@ -32,11 +32,11 @@
           </div>
         </div>
 
-        <!-- 자재명 -->
+        <!-- 제품명 -->
         <div class="col-md-3">
-          <label for="mName" class="form-label">자재명</label>
-          <input type="search" id="mName" class="form-control border p-2 cursor-pointer" placeholder="자재명"
-            v-model="searchInfo.mName" />
+          <label for="pName" class="form-label">제품명</label>
+          <input type="search" id="pName" class="form-control border p-2 cursor-pointer" placeholder="제품명"
+            v-model="searchInfo.pName" />
         </div>
 
         <!-- 검색 버튼 -->
@@ -85,7 +85,7 @@ export default {
   data() {
     return {
       searchInfo: {
-        mName: '',
+        pName: '',
         //범위 : 일주일전부터 오늘
         startDate: this.dateFormat(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
         endDate: this.dateFormat(new Date(), 'yyyy-MM-dd'),
@@ -98,15 +98,15 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false },
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
+        { headerName: "공정검사번호", field: "qcProcessId", resizable: false },
+        { headerName: "공정작업번호", field: "processNum", resizable: false },
+        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false },
+        { headerName: "제품명", field: "pName", resizable: false },
         { headerName: "검사담당자", field: "eName", resizable: false },
         { headerName: "총 수량", field: "totalQnt", resizable: false },
-        { headerName: "합격량", field: "passQnt", resizable: false },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false },
+        { headerName: "합격량", field: "passQnt", resizable: false, editable: true, },
+        { headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false },
-        { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
         { headerName: "검사상태", field: "inspecStatus", resizable: false },
 
       ],
@@ -138,33 +138,51 @@ export default {
         return;
       }
 
-      const name = this.searchInfo.mName.replace(/\s+/g, "");
       console.log(this.searchInfo.qcState);
+
+      let searchSelect = '';
+      switch (this.searchInfo.qcState) {
+        case 'qcs1':
+          searchSelect = 'recordQCPPAll'
+          break;
+        case 'qcs2':
+          searchSelect = 'recordQCPP'
+          break;
+        case 'qcs3':
+          searchSelect = 'requestQCPP'
+          break;
+      }
+
+      const name = this.searchInfo.pName.replace(/\s+/g, "");
+
       const result = {
-        mName: name.length != 0 ? name : "",
+        pName: name.length != 0 ? name : "",
         startDate: this.searchInfo.startDate,
         endDate: this.searchInfo.endDate,
-        qcState : this.searchInfo.qcState,
       };
-      let searchResult = await axios.post(`${ajaxUrl}/recordQCM`, result)
+
+      let searchResult = await axios.post(`${ajaxUrl}/${searchSelect}`, result)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
 
       console.log(this.searchList);
 
       // ag grid에 결과값 넣기
-      this.rowData1 = []
+      this.rowData1 = [];
       for (let i = 0; i < this.searchList.length; i++) {
         if(this.searchList[i].inspec_end == null){
           this.searchList[i].inspec_end = "";
         }
         let col = {
-          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": this.searchList[i].inspec_end === "" 
-          ? "" : this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+          "qcProcessId": this.searchList[i].qc_packing_id, 
+          "processNum": this.searchList[i].process_num,                   //공정작업번호(바디)
+          "productionOrderNum" : this.searchList[i].production_order_num, //생산지시코드
+          "pName": this.searchList[i].product_name, 
+          "eName": this.searchList[i].emp_name, 
+          "totalQnt": this.searchList[i].total_qnt,
+          "passQnt": this.searchList[i].pass_qnt, 
+          "rjcQnt": this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), 
           "inspecStatus": this.searchList[i].inspec_status
 
         }
@@ -173,23 +191,26 @@ export default {
     },
     //전체 조회
     async searchRequestAll() {
-      let searchResult = await axios.get(`${ajaxUrl}/recordQCMAll`)
+      let searchResult = await axios.post(`${ajaxUrl}/recordQCPPAll`)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
 
       // ag grid에 결과값 넣기
-      this.rowData1 = []
+      this.rowData1 = [];
       for (let i = 0; i < this.searchList.length; i++) {
         if(this.searchList[i].inspec_end == null){
           this.searchList[i].inspec_end = "";
         }
         let col = {
-          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": this.searchList[i].inspec_end === "" 
-          ? "" : this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+          "qcProcessId": this.searchList[i].qc_packing_id, 
+          "processNum": this.searchList[i].process_num,                   //공정작업번호(바디)
+          "productionOrderNum" : this.searchList[i].production_order_num, //생산지시코드
+          "pName": this.searchList[i].product_name, 
+          "eName": this.searchList[i].emp_name, 
+          "totalQnt": this.searchList[i].total_qnt,
+          "passQnt": this.searchList[i].pass_qnt, 
+          "rjcQnt": this.searchList[i].rjc_qnt,
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), 
           "inspecStatus": this.searchList[i].inspec_status
 
         }

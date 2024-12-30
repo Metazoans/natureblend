@@ -21,11 +21,11 @@
           </div>
         </div>
 
-        <!-- 자재명 -->
+        <!-- 제품명 -->
         <div class="col-md-3">
-          <label for="mName" class="form-label">자재명</label>
-          <input type="search" id="mName" class="form-control border p-2 cursor-pointer" placeholder="자재명"
-            v-model="searchInfo.mName" />
+          <label for="pName" class="form-label">제품명</label>
+          <input type="search" id="pName" class="form-control border p-2 cursor-pointer" placeholder="제품명"
+            v-model="searchInfo.pName" />
         </div>
 
         <!-- 검색 버튼 -->
@@ -39,7 +39,7 @@
   <hr>
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
-    <h4>입고상세정보</h4>
+    <h4>검사상세정보</h4>
     <p>검사항목 클릭 => 불량항목, 수량입력(없으면 그냥 저장)=> 작성완료한 항목 체크후 '검사완료'버튼 클릭</p>
 
     <div class="grid-container">
@@ -70,29 +70,28 @@
   <!-- 불량 상세 모달 -->
 
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
-    @confirm="saveDefectDetailsForRow(selectedRow.qcMaterialId, selectedRow.totalQnt)">
+    @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId)">
     <template v-slot:list>
-      <h4>불량 상세 정보</h4>
-      <p>입고검사번호: {{ selectedRow.qcMaterialId }}</p>
-      <p>자재명: {{ selectedRow.mName }}</p>
-      <p>총 수량: {{ selectedRow.totalQnt }}</p>
+      <h4>검사 상세 정보</h4>
+      <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
+      <p>제품번호: {{ selectedRow.productCode }}</p>
+      <p>자재명: {{ selectedRow.pName }}</p>
+      <b>산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이의 수치를 입력하세요</b>
+      <!-- <p>{{ this.defectDetailsMap }}</p> -->
+      <hr>
+      <!-- <p>{{ this.testDetails[selectedRow.productCode] }}</p> -->
 
-      <!-- 불량 사유 입력 및 불량 수량 입력 -->
-
-      <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcMaterialId]" :key="index" class="defect-item">
-        <label for="reason">불량 사유 {{ index + 1 }}:</label>
-        <select v-model="detail.reason" :id="'reason' + index">
-          <option v-for="reason in defectReasons" :key="reason.code" :value="reason.code">
-            {{ reason.name }}
-          </option>
-        </select>
-        <label for="defectQty">불량 수량 {{ index + 1 }}:</label>
-        <input type="number" v-model="detail.qty" :id="'defectQty' + index" />
-        <button class="btn btn-danger" @click="removeDefectDetailForRow(selectedRow.qcMaterialId, index)">삭제</button>
+      <!-- 검사 항목 리스트 -->
+      <div v-for="(item, index) in this.defectDetailsMap[selectedRow.qcProcessId]" :key="index" class="inspection-item">
+        <label>
+          {{ item.item_name }} : [허용치 {{ item.etc_min }} ~ {{ item.etc_max }} {{ item.item_unit }}]:
+        </label>
+        <input type="number" v-model.number="item.input_value" placeholder="값을 입력하세요" />
       </div>
-      <material-button size="md" class="mt-3" @click="addDefectDetailForRow(selectedRow.qcMaterialId)">불량 항목
-        추가</material-button>
-      <!-- <button @click="saveDefectDetailsForRow(selectedRow.qcMaterialId, selectedRow.totalQnt)">저장</button> -->
+
+
+
+
     </template>
   </Modal>
 
@@ -127,28 +126,25 @@ export default {
   components: { MaterialButton, Modal },
   data() {
     return {
+      //검색 관련
       searchInfo: {
-        mName: '',
+        pName: '',
         //범위 : 일주일전부터 오늘
         startDate: this.dateFormat(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
         endDate: this.dateFormat(new Date(), 'yyyy-MM-dd')
       },
-
-
-
       searchList: [],
 
       //ag grid 관련
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false },
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
+        { headerName: "공정검사번호", field: "qcProcessId", resizable: false },
+        { headerName: "공정작업번호", field: "processNum", resizable: false },
+        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false },
+        { headerName: "제품명", field: "pName", resizable: false },
         { headerName: "검사담당자", field: "eName", resizable: false },
-        { headerName: "총 수량", field: "totalQnt", resizable: false },
-        { headerName: "합격량", field: "passQnt", resizable: false, editable: true, },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, },
+        { headerName: "합격 여부", field: "inspecResult", resizable: false },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false },
         { headerName: "검사상태", field: "inspecStatus", resizable: false },
 
@@ -158,22 +154,20 @@ export default {
         headerClass: "header-center"
       },
 
-      //
-      inspecData: [],
+
       showModalRJC: false, // (불량항목)모달 표시 여부
       selectedRow: {}, // 선택된 행 데이터
-      defectDetails: [], // 불량 항목(불량코드) 여러 개 관리
-      defectReasons: [    // 불량 사유 리스트
-        // { code: "D001", name: "파손" },
-        // { code: "D002", name: "오염" },
-        // { code: "D003", name: "불량품" },
-      ],
-      selectedReason: "", // 선택된 불량 사유 코드
-      defectQty: 0, // 불량 수량
-      /// db에 보낼 자재 한건의 불량항목및 수량
-      defectDetailsMap: {}, // { qcMaterialId: [ { reason, qty }, ... ] }
+
+      //db에서 가져온 제품별 검사 항목과 허용 범위
+      testDetails: {},
+
+
+      defectDetailsMap: {}, //검사번호별로 저장된 검사내용 { qcProcessId: [ { ... }, ... ] }
 
       rowData2: [], //rowData1 중 검사상태(inspecStatus)가 '검사내역작성완료'인 것을 담음
+
+
+      completedDefectDetailsMap: {},
       showModalDone: false,
 
 
@@ -193,6 +187,29 @@ export default {
 
 
     //검색창 관련
+    //검색결과 정리
+    processSearchResults(searchList) {
+      const processedData = [];
+      for (let item of searchList) {
+        processedData.push({
+          "qcProcessId": item.qc_berverage_id,
+          "processNum": item.process_num,
+          "productionOrderNum": item.production_order_num,
+          "productCode": item.product_code,
+          "pName": item.product_name,
+          "eName": item.emp_name,
+          "inspecResult": '미정',
+          "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecStatus": item.inspec_status,
+        });
+
+        // 검사 항목을 defectDetailsMap에 추가
+        this.addDefectDetailForRow(item.qc_berverage_id, item.product_code);
+      }
+      return processedData;
+    },
+
+
     //조건 검색 시작  
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
@@ -204,54 +221,42 @@ export default {
         return;
       }
 
-      const name = this.searchInfo.mName.replace(/\s+/g, "");
+      const name = this.searchInfo.pName.replace(/\s+/g, "");
       const result = {
-        mName: name.length != 0 ? name : "",
+        pName: name.length != 0 ? name : "",
         startDate: this.searchInfo.startDate,
         endDate: this.searchInfo.endDate
       };
-      let searchResult = await axios.post(`${ajaxUrl}/requestQCM`, result)
+      let searchResult = await axios.post(`${ajaxUrl}/requestQCPB`, result)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
+      //console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
       this.defectDetailsMap = {};
-      for (let i = 0; i < this.searchList.length; i++) {
-        let col = {
-          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus": this.searchList[i].inspec_status
 
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
       this.rowData2 = [];
+      this.completedDefectDetailsMap = {};
     },
     //조건 검색 끝
 
 
     //전체 조회 시작
     async searchRequestAll() {
-      let searchResult = await axios.get(`${ajaxUrl}/requestQCMAll`)
+      let searchResult = await axios.post(`${ajaxUrl}/requestQCPB`)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
+      //console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
-      this.defectDetailsMap = [];
-      for (let i = 0; i < this.searchList.length; i++) {
-        let col = {
-          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), "inspecStatus": this.searchList[i].inspec_status
+      this.defectDetailsMap = {};
 
-        }
-        this.rowData1[i] = col;
-        this.rowData2 = [];
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
+      this.rowData2 = [];
+      this.completedDefectDetailsMap = {};
     },
     //전체 조회 끝
 
@@ -273,79 +278,96 @@ export default {
 
 
     ///신청 건의 불량항목 내역 관련
-    addDefectDetailForRow(qcMaterialId) {
-      if (!this.defectDetailsMap[qcMaterialId]) {
-        this.defectDetailsMap[qcMaterialId] = [];
+    //행별로 검사항목 저장
+    addDefectDetailForRow(qcProcessId, productCode) {
+      if (!this.defectDetailsMap[qcProcessId]) {
+        this.defectDetailsMap[qcProcessId] = [];
       }
-      this.defectDetailsMap[qcMaterialId].push({ reason: "", qty: 0 });
+
+      // productCode에 해당하는 검사 항목을 testDetails에서 가져오기
+      const testItems = this.testDetails[productCode] || [];
+
+      // 검사 항목들에 대해 defectDetailsMap에 항목 추가
+      testItems.forEach(item => {
+        this.defectDetailsMap[qcProcessId].push({
+          item_name: item.item_name,
+          item_unit: item.item_unit,
+          etc_min: item.etc_min,
+          etc_max: item.etc_max,
+          input_value: 0, // 초기 입력값은 비워두기
+        });
+      });
     },
-    removeDefectDetailForRow(qcMaterialId, index) {
-      if (this.defectDetailsMap[qcMaterialId]) {
-        this.defectDetailsMap[qcMaterialId].splice(index, 1);
-        if (this.defectDetailsMap[qcMaterialId].length === 0) {
-          delete this.defectDetailsMap[qcMaterialId]; // 데이터가 비었으면 삭제
+
+    saveDefectDetailsForRow(qcProcessId) {
+      const defectDetails = this.defectDetailsMap[qcProcessId] || [];
+      //console.log(defectDetails[0].input_value);
+      if (defectDetails.some(detail => detail.input_value == null || detail.input_value === "" || detail.input_value < 0)) {
+        notify({
+          title: "입력실패",
+          text: "수치 값 중 비워있거나 음수인 수가 있습니다.",
+          type: "warn", // success, warn, error 가능
+        });
+        return;
+      }
+
+      // 각 defectDetail에 대해 is_passed 값 설정
+      defectDetails.forEach(detail => {
+        if (detail.input_value < detail.etc_min || detail.input_value > detail.etc_max) {
+          detail.is_passed = 'no';
+        } else {
+          detail.is_passed = 'yes';
         }
-      }
-    },
-    saveDefectDetailsForRow(qcMaterialId, total) {
-      const defectDetails = this.defectDetailsMap[qcMaterialId] || [];
-      if (defectDetails.some(detail => !detail.reason || detail.qty <= 0)) {
-        notify({
-          title: "입력실패",
-          text: "모든 불량 항목에 대해 불량 사유와 수량을 입력하세요.",
-          type: "warn", // success, warn, error 가능
-        });
-        return;
+      });
+
+      // 검사 완료된 항목만 qcProcessId를 키로 하는 맵에 덮어쓰기
+      if (!this.completedDefectDetailsMap) {
+        this.completedDefectDetailsMap = {}; // 초기화
       }
 
-      const rjcQntSum = defectDetails.reduce((sum, detail) => sum + detail.qty, 0);
-      if (rjcQntSum > total) {
-        notify({
-          title: "입력실패",
-          text: "불량 총합량이 총합량보다 클 수 없습니다.",
-          type: "warn", // success, warn, error 가능
-        });
-        return;
-      }
+      // 해당 qcProcessId에 대해서 검사 완료된 defectDetails만 저장 (덮어쓰기)
+      this.completedDefectDetailsMap[qcProcessId] = defectDetails.filter(detail => detail.is_passed !== undefined);
 
-      const pass = total - rjcQntSum;
-      console.log(`저장 완료: ${qcMaterialId}, 합격량: ${pass}, 불량 총합: ${rjcQntSum}`);
+      // completedDefectDetailsMap을 저장하거나 활용
+      console.log('검사 완료된 항목들 (qcProcessId를 키로 하는 맵):', this.completedDefectDetailsMap);
+
+
+
       // 업데이트 로직
-      const rowIndex = this.rowData1.findIndex(row => row.qcMaterialId === this.selectedRow.qcMaterialId);
+      // 해당 qcProcessId에 대한 rowIndex 찾기
+      const rowIndex = this.rowData1.findIndex(row => row.qcProcessId === this.selectedRow.qcProcessId);
       if (rowIndex !== -1) {
+        // is_passed 값이 모두 'yes'인지 확인 후, inspecResult 값 설정
+        const allPassed = defectDetails.every(detail => detail.is_passed === 'yes');
+        const inspecResult = allPassed ? '합격' : '불합격';
+
         // 새 데이터 배열 생성 (Vue의 반응형 감지를 위해)
         this.rowData1 = this.rowData1.map((row, index) => {
           if (index === rowIndex) {
-            return { ...row, passQnt: pass, rjcQnt: rjcQntSum, inspecStatus: '검사내역입력완료' };
+            return { ...row, inspecStatus: '검사내역입력완료', inspecResult };
           }
           return row;
         });
       }
 
       this.closeModal();
-      console.log('현재 검색결과 테이블');
-      console.log(this.rowData1);
+      // console.log('현재 검색결과 테이블');
+      // console.log(this.rowData1);
       console.log('불량상세테이블');
       console.log(this.defectDetailsMap);
-      console.log('테스트(검사완료 처리할 검사 건수들)')
-      this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료')
-      console.log(this.rowData2);
+      // console.log('테스트(검사완료 처리할 검사 건수들)');
+
+      //검사 완료된 것만 밑에 출력
+      this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료');
+      // console.log(this.rowData2);
     },
-    // openModalForRow(row) {
-    //   this.selectedRow = row;
-    //   const qcMaterialId = row.qcMaterialId;
-    //   if (!this.defectDetailsMap[qcMaterialId]) {
-    //     this.defectDetailsMap[qcMaterialId] = [];
-    //   }
-    //   this.defectDetails = this.defectDetailsMap[qcMaterialId];
-    //   this.showModalRJC = true;
-    // },
 
     //최종 처리 버튼
     openModal() {
       this.showModalDone = !this.showModalDone
       console.log(this.rowData2);
       console.log(this.defectDetailsMap);
+      console.log(this.completedDefectDetailsMap);
     },
     async confirm() {
       console.log('저장처리!')
@@ -357,7 +379,7 @@ export default {
         if (Object.prototype.hasOwnProperty.call(this.defectDetailsMap, qcId)) {
           this.defectDetailsMap[qcId].forEach(detail => {
             defectDetailsArray.push({
-              qcMaterialId: qcId,
+              qcProcessId: qcId,
               faultyCode: detail.reason,
               qty: detail.qty,
             });
@@ -366,51 +388,57 @@ export default {
       }
       //배열 정렬
       defectDetailsArray.sort((a, b) => {
-        if (a.qcMaterialId === b.qcMaterialId) {
+        if (a.qcProcessId === b.qcProcessId) {
           return a.faultyCode.localeCompare(b.faultyCode); // 검사번호 같으면 불량코드 비교
         }
-        return a.qcMaterialId.localeCompare(b.qcMaterialId); // 검사번호 우선 비교
+        return a.qcProcessId.localeCompare(b.qcProcessId); // 검사번호 우선 비교
       });
 
       let qcData = {
-        qcm: this.rowData2,
-        qcmr: defectDetailsArray,
+        qcpc: this.rowData2,
+        qcpcr: defectDetailsArray,
       };
-      let result = await axios.post(`${ajaxUrl}/completeQCM`, qcData)
+      let result = await axios.post(`${ajaxUrl}/completeQCPC`, qcData)
         .catch(err => console.log(err));
       console.log(result);
       notify({
         title: "검사완료",
         text: `완료된 검사:${result.data.updatedRows}, 기록된 불량 내역:${result.data.defectNum}`,
-        // text: `기록된 불량 내역:${result.data.defectNum}`,
         type: "success", // success, warn, error 가능
       });
 
 
 
       this.closeModal();
+      this.searchRequestAll();
     },
 
 
-    //불량코드 불러오기
-    async callFaultyCode() {
-      let faultyCodeList = await axios.get(`${ajaxUrl}/faultyCode`)
-        .catch(err => console.log(err));
-      this.faultyCodeList = faultyCodeList.data;
-      const arrData = [];
-      this.faultyCodeList.forEach((element, index) => {
-        arrData[index] = { "code": element.faulty_code, "name": element.faulty_reason };
 
-      });
-      this.defectReasons = arrData;
+
+
+
+    //음료검사항목및수치 불러오기
+    async callTestDetail() {
+      let testList = await axios.get(`${ajaxUrl}/testDetailsForB`)
+        .catch(err => console.log(err));
+      this.testDetails = testList.data;
+
+      //console.log(this.testDetails);
+      // console.log(this.testDetails.P001[0]);
+      // console.log(this.testDetails.P001[1]);
+      // console.log(this.testDetails.P001[2]);
+      // console.log(this.testDetails.P001[3]);
+      // console.log(this.testDetails.P001[4]);
+
     }
 
 
   },
-  created() {
+  async created() {
+    await this.callTestDetail();
     this.searchRequestAll();
-    this.callFaultyCode();
-
+    // this.callFaultyCode();
   }
 
 
@@ -432,5 +460,23 @@ export default {
   .search {
     margin-top: 24px;
   }
+}
+
+.inspection-item {
+  display: flex;
+  justify-content: space-between;
+  /* 라벨과 입력란 간격 조정 */
+  margin-bottom: 10px;
+  /* 항목 간 여백 */
+}
+
+label {
+  flex: 1;
+  /* 라벨과 입력란 비율을 조정 */
+}
+
+input {
+  width: 40%;
+  /* 입력란의 너비 조정 */
 }
 </style>

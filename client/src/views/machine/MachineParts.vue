@@ -1,6 +1,6 @@
 <template>
-  <div class="container-fluid py-4">
-    <div class="row gx-3 gy-2 align-items-center"> <!-- 부품 이름, 교체 주기(년/월/일) -->
+  <div class="container-fluid py-1">
+    <div class="row gx-3 align-items-center"> <!-- 부품 이름, 교체 주기(년/월/일) -->
       <div class="col-3">
         <div class="row">
           <label for="" class="col-md-auto">부품이름</label>

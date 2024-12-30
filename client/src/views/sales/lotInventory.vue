@@ -51,7 +51,7 @@
                 <!-- 입고된 lot 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
-                     style ="width: 1250px; height: 300px; "
+                     style ="height: 600px; "
                     :rowData="LotNum"
                     :columnDefs="columnLotNum"
                     :theme="theme"
@@ -132,7 +132,7 @@ export default{
                     disposeButton.innerText = '폐기';
                     disposeButton.style.marginRight = '10px';
                     disposeButton.style.cursor = 'pointer';
-                    disposeButton.style.backgroundColor = '#ff0000';
+                    disposeButton.style.backgroundColor = '#f44335';
                     disposeButton.style.width = '60px';
                     disposeButton.style.height = '30px';
                     disposeButton.style.color = 'white';

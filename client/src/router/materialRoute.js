@@ -33,6 +33,11 @@ import Tabletest3 from '@/views/material/temp/z_test.vue';
 //테스트4 (자재 등록)
 import Tabletest4 from '@/views/material/temp/z_material_input.vue';
 
+//공장흐름
+import Factory from '@/views/material/factoryProcess/factoryProcess.vue';
+
+import Main from '@/views/material/mainpage/main.vue';
+
 const materialRoute = [
   {
     path: '',
@@ -92,6 +97,16 @@ const materialRoute = [
     path: 'test4',
     name: 'Tabletest4',
     component: Tabletest4
+  },
+  {
+    path: 'factory',
+    name: 'Factory',
+    component: Factory
+  },
+  {
+    path: 'main',
+    name: 'Main',
+    component: Main
   },
 ];
 

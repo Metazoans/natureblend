@@ -325,8 +325,23 @@ const beforeUpdate =
  SET process_sequence = ?
  WHERE process_chart_num = ?`;
 
+ // 흐름도 삭제
+ const flowDelete = 
+ `DELETE FROM process_chart
+  WHERE process_chart_num = ?`;
+ // 흐름도 삭제후 순서 조정
+
 // 흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도흐름도
-     
+
+// 로그인
+// 아이디 체크
+const idSelect =
+`SELECT emp_num
+ FROM employee
+ WHERE emp_num = ?`;
+// 비밀번호 체크
+const pwSelect =``;
+// 로그인
  module.exports = {
     bomList,
     bomView,
@@ -371,5 +386,5 @@ const beforeUpdate =
     flowUpdate,
     flowNumList,
     beforeUpdate,
-
+    flowDelete,
 }

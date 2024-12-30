@@ -333,6 +333,16 @@ const beforeData = async(beforeData,beforeProcessSequence) => {
   let result = await mysql.query('beforeUpdate',[beforeProcessSequence,beforeData]);
   return result;
 }
+// 흐름도 삭제
+const deleteFlow = async(process_chart_num) => {
+  let result = await mysql.query('flowDelete',[process_chart_num]);
+  if(result.affectedRows > 0){
+    return '성공'
+  }else{
+    return '실패'
+  }
+}
+
 module.exports = {
     findAllBom,
     createNewBom,
@@ -375,4 +385,5 @@ module.exports = {
     updateFlow,
     flowNumList,
     beforeData,
+    deleteFlow,
 }
