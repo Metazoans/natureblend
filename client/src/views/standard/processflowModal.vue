@@ -128,6 +128,46 @@
               
               }
             },
+            { headerName:"공정 삭제",
+              field:"삭제",
+              editable:false,
+              cellRenderer: (params) => {
+                const button3 = document.createElement('button');
+                button3.innerText = '삭제';
+                button3.style.marginRight = '10px';
+                button3.style.cursor = 'pointer';
+                button3.style.backgroundColor = '#f7b84d';
+                button3.style.width = '60px';
+                button3.style.height = '30px';
+                button3.style.color = 'white';
+                button3.style.border = 'none';
+                button3.style.padding = '0';
+                button3.style.borderRadius = '4px';
+                button3.style.textAlign = 'center';
+                button3.style.lineHeight = '30px';
+                button3.addEventListener('click', () => {
+                  console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
+                  const rowData = params.node.data; // 클릭된 행 데이터
+                  console.log(rowData);
+                  if (confirm('삭제하시겠습니까?')){
+                    const deletedProcessSeq = rowData.process_sequence;
+                    axios.delete(`${ajaxUrl}/flowDelete/${params.data.process_chart_num}`)
+                         .then(res => {
+                          if(res.data === '성공'){
+                            alert('삭제되었습니다.');
+                            this.updateProcessSequencesAfterDelete(deletedProcessSeq);
+                            this.flowList();
+                          }else{
+                            alert('삭제 실패');
+                          }
+                      })
+                      .catch(err => console.log(err));
+                  }
+                });
+                return button3;
+              
+              }
+            },
         ],
         flowSelect:[],
         newList:[],
@@ -149,6 +189,29 @@
     //   this.getBomInput();
     },
     methods: {
+      async updateProcessSequencesAfterDelete(deletedProcessSeq) {
+  // 4. 삭제된 공정 순서보다 큰 공정 순서들을 -1
+        const updateDataList = this.rowData.filter(row => row.process_sequence > deletedProcessSeq);
+        for (const row of updateDataList) {
+          const updatedProcessData = {
+            process_chart_num: row.process_chart_num,
+            process_sequence: row.process_sequence - 1 // 순서 -1
+          };
+
+          // 순서 업데이트 요청
+          try {
+            const updateResult = await axios.post(`${ajaxUrl}/flowUpdate`, updatedProcessData);
+            if (updateResult.data === '성공') {
+              console.log('공정 순서가 업데이트되었습니다.');
+            } else {
+              console.log('공정 순서 업데이트 실패');
+            }
+          } catch (error) {
+            console.log('순서 업데이트 오류:', error);
+          }
+        }
+        this.flowList();
+      },
       handleSelectedProcess(process) {
       console.log('전달받은 데이터 확인',process);
       this.selectedProcess = process;
@@ -214,7 +277,6 @@
         // this.result2(beforeData2);
         
       },
-
       async flowUpdate(updateData){
         // 서버에 업데이트 요청
         const result = await axios.post(`${ajaxUrl}/flowUpdate`, updateData)
@@ -310,7 +372,7 @@
   
   <style scoped>
   .modal-dialog {
-    max-width: 54.5%;
+    max-width: 65.5%;
   }
   .modal-body{
     background-color: gray;
