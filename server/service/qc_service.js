@@ -411,7 +411,6 @@ const completeQCPB = async (qcpb, qcpbr) =>{
   return { 'updatedRows': updatedRows, 'defectNum': successNum / 5 };
 
 
-
 }
 
 
