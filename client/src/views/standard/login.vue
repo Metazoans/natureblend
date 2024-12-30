@@ -84,20 +84,23 @@
 
           console.log('dkdkdkdk',this.$store.state.loginInfo);
           if(this.$store.state.loginInfo.name){
-            this.$router.push({name : 'MainPage'});
+            window.location.reload();
+
+            // this.$router.push({name : 'MainPage'});
           }
           // this.$store.dispatch('addLoginInfo', loginObj)
           //this.$router.push({name:'MainPage',params:{loginId:result.data}})
-          // window.location.reload();
         }
       },
       async loginconfig() {
-
+        if(this.$store.state.loginInfo.name){
+          this.$router.push({name : 'MainPage'});
+        }
       },
     },
     mounted() { // 페이지 조회시 바로 발생
         console.log('로그인 테스트');
-        // this.loginconfig();
+        this.loginconfig();
     },
   };
   </script>
