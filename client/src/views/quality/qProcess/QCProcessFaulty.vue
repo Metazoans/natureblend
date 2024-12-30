@@ -68,6 +68,9 @@ import userDateUtils from '@/utils/useDates.js';
 
 import theme from "@/utils/agGridTheme";
 
+import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
+const { notify } = useNotification();  // 노티 내용변수입니다
+
 export default {
   name: "입고검사",
   components: { MaterialButton,  },
@@ -122,7 +125,11 @@ export default {
     //검색창 관련    
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
-        alert("시작 날짜는 종료 날짜보다 이전이어야 합니다.");
+        `${notify({
+          title: "검색실패",
+          text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
+          type: "error", // success, warn, error 가능
+        })}`;
         return;
       }
 

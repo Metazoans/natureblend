@@ -150,7 +150,7 @@ router.post('/recordQCPBAll', async(req, res)=>{
   let list = await qc_service.findQCPB(status, pName, startDate, endDate);
   res.send(list);
 })
-
+//음료검사 완료 처리
 router.post('/completeQCPB', async(req, res)=>{
   let {qcpb, qcpbr} = req.body;
   let result = await qc_service.completeQCPB(qcpb, qcpbr);
@@ -194,8 +194,12 @@ router.post('/completeQCPP', async(req, res)=>{
   res.send(result);
 });
 
-
-
+//포장검사 - 불량내역조회
+router.post('/recordQCPPR', async(req, res)=>{
+  let {pName, startDate, endDate} = req.body;
+  let list = await qc_service.findQCPPR(pName, startDate, endDate);
+  res.send(list);
+})
 
 
 module.exports = router;

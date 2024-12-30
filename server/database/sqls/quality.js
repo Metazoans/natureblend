@@ -326,7 +326,7 @@ FROM qc_packaging qcpp  LEFT JOIN process_work_body pb ON qcpp.process_num = pb.
 								        LEFT JOIN employee e ON qcpp.emp_num = e.emp_num
 `;
 
-//불량코드 가져오기(포장검사용)
+
 
 //포장검사 완료 처리 
 //call qc_packaging_update_list('검사번호', 공정바디번호,  합격수, 불합격수, @result);
@@ -337,6 +337,30 @@ CALL qc_packaging_update_list(?, ?, ?, ?, @result)
 const insertQCPPR = `
 CALL qc_packaging_rjc_input_rjclist(?, ?, ?, @result);
 `;
+//포장검사 - 불량품 조회
+const selectQCPPR = `
+SELECT qpr.packing_rjc_id,
+       qpr.qc_packing_id,
+       ph.production_order_num,
+       qp.process_num,
+      -- pb.product_code,
+       b.product_name,
+     --  qp.emp_num,
+       e.name,
+       qpr.rjc_quantity,
+       qpr.faulty_code,
+       f.faulty_reason,
+       qp.inspec_start,
+       qp.inspec_end	
+FROM qc_packaging_rjc qpr JOIN faulty_code f ON qpr.faulty_code = f.faulty_code
+						  JOIN qc_packaging qp ON qpr.qc_packing_id = qp.qc_packing_id
+                          JOIN employee e ON qp.emp_num = e.emp_num
+                          JOIN process_work_body pb ON qp.process_num = pb.process_num
+                          JOIN process_work_header ph ON pb.process_work_header_num = ph.process_work_header_num
+                          JOIN bom b ON pb.product_code = b.product_code
+`;
+//ORDER BY qpr.packing_rjc_id DESC
+
 
 
 module.exports = {
@@ -369,9 +393,9 @@ module.exports = {
 
 
   selectQCPP,
-
   updateQCPP,
-  insertQCPPR
+  insertQCPPR,
+  selectQCPPR,
 
 
 
