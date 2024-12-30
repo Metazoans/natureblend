@@ -135,6 +135,25 @@ export default {
 
 
     //검색창 관련    
+    processSearchResults(searchList) {
+      const processedData = [];
+      for (let item of searchList) {
+        processedData.push({
+          "qcProcessId": item.qc_cleaning_id,
+          "processNum": item.process_num,                   //공정작업번호(바디)
+          "productionOrderNum": item.production_order_num, //생산지시코드
+          "mName": item.material,
+          "eName": item.emp_name,
+          "totalQnt": item.total_qnt,
+          "passQnt": item.pass_qnt,
+          "rjcQnt": item.rjc_qnt,
+          "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecStatus": item.inspec_status
+        });
+      }
+      return processedData;
+    },
+
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
@@ -173,25 +192,7 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
-      for (let i = 0; i < this.searchList.length; i++) {
-        if (this.searchList[i].inspec_end == null) {
-          this.searchList[i].inspec_end = "";
-        }
-        let col = {
-          "qcProcessId": this.searchList[i].qc_cleaning_id,
-          "processNum": this.searchList[i].process_num,                   //공정작업번호(바디)
-          "productionOrderNum": this.searchList[i].production_order_num, //생산지시코드
-          "mName": this.searchList[i].material,
-          "eName": this.searchList[i].emp_name,
-          "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt,
-          "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecStatus": this.searchList[i].inspec_status
-
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
     },
     //전체 조회
     async searchRequestAll() {
@@ -201,25 +202,7 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
-      for (let i = 0; i < this.searchList.length; i++) {
-        if (this.searchList[i].inspec_end == null) {
-          this.searchList[i].inspec_end = "";
-        }
-        let col = {
-          "qcProcessId": this.searchList[i].qc_cleaning_id,
-          "processNum": this.searchList[i].process_num,                   //공정작업번호(바디)
-          "productionOrderNum": this.searchList[i].production_order_num, //생산지시코드
-          "mName": this.searchList[i].material,
-          "eName": this.searchList[i].emp_name,
-          "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt,
-          "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecStatus": this.searchList[i].inspec_status
-
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
     },
   },
   created() {

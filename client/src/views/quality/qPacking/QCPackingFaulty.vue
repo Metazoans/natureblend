@@ -44,7 +44,7 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" >
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
       </ag-grid-vue>
     </div>
   </div>
@@ -54,7 +54,7 @@
 
 
 
-  
+
 
 
 </template>
@@ -73,7 +73,7 @@ const { notify } = useNotification();  // 노티 내용변수입니다
 
 export default {
   name: "입고검사",
-  components: { MaterialButton,  },
+  components: { MaterialButton, },
   data() {
     return {
       searchInfo: {
@@ -89,7 +89,7 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "불량품번호", field:"qcPackingRjcId", resizable:false },
+        { headerName: "불량품번호", field: "qcPackingRjcId", resizable: false },
         { headerName: "포장검사번호", field: "qcPackingId", resizable: false },
         { headerName: "공정작업번호", field: "processNum", resizable: false },
         { headerName: "생산지시번호", field: "productionOrderNum", resizable: false },
@@ -102,7 +102,7 @@ export default {
         { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
 
       ],
-      
+
       defaultColDef: {
         headerClass: "header-center"
       },
@@ -115,7 +115,7 @@ export default {
     onGridReady(params) {
       this.gridApi = params.api;
       this.gridApi.sizeColumnsToFit();
-      
+
     },
     // 날짜를 YYYY-MM-DD 형식으로 변환
     dateFormat(value, format) {
@@ -124,6 +124,27 @@ export default {
 
 
     //검색창 관련    
+    //검색결과 정리
+    processSearchResults(searchList) {
+      const processedData = [];
+      for (let item of searchList) {
+        processedData.push({
+          "qcPackingRjcId": item.packing_rjc_id,
+          "qcPackingId": item.qc_packing_id,
+          "productionOrderNum": item.production_order_num,
+          "processNum": item.process_num,
+          "pName": item.product_name,
+          "eName": item.name,
+          "rjcQnt": item.rjc_quantity,
+          "faultyCode": item.faulty_code,
+          "faultyReason": item.faulty_reason,
+          "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecEnd": this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+        });
+      }
+      return processedData;
+    },
+    
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
@@ -146,23 +167,7 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = []
-      for (let i = 0; i < this.searchList.length; i++) {
-        let col = {
-          "qcPackingRjcId":this.searchList[i].packing_rjc_id,
-          "qcPackingId": this.searchList[i].qc_packing_id,
-          "productionOrderNum": this.searchList[i].production_order_num,
-          "processNum":this.searchList[i].process_num,
-          "pName": this.searchList[i].product_name, 
-          "eName":this.searchList[i].name, 
-          "rjcQnt" : this.searchList[i].rjc_quantity,
-          "faultyCode": this.searchList[i].faulty_code,
-          "faultyReason":this.searchList[i].faulty_reason,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
-
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
     },
     //전체 조회
     async searchRequestAll() {
@@ -172,29 +177,13 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = []
-      for (let i = 0; i < this.searchList.length; i++) {
-        let col = {
-          "qcPackingRjcId":this.searchList[i].packing_rjc_id,
-          "qcPackingId": this.searchList[i].qc_packing_id,
-          "productionOrderNum": this.searchList[i].production_order_num,
-          "processNum":this.searchList[i].process_num,
-          "pName": this.searchList[i].product_name, 
-          "eName":this.searchList[i].name, 
-          "rjcQnt" : this.searchList[i].rjc_quantity,
-          "faultyCode": this.searchList[i].faulty_code,
-          "faultyReason":this.searchList[i].faulty_reason,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
-
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
     },
   },
-  created(){
+  created() {
     this.searchRequestAll();
   }
-  
+
 
 };
 </script>
