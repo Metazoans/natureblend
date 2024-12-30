@@ -316,6 +316,76 @@ const completeQCPC = async (qcpc, qcpcr) =>{
 }
 
 
+
+///////////////////////////////////////////////////////////////////////////
+//공정검사 - 음료검사
+
+
+
+//검사항목 불러오기
+const loadTestDetails = async() => {
+  let sql = 'selectTestDetails';
+  let list = await mysql.query(sql);
+
+  // 데이터를 product_code 기준으로 그룹화
+  let groupedData = list.reduce((acc, cur) => {
+    const { product_code, ...details } = cur;
+    if (!acc[product_code]) acc[product_code] = [];
+    acc[product_code].push(details);
+    return acc;
+  }, {});
+
+  return groupedData;
+};
+
+
+//공정검사 - 음료검사조회(공통 - 전체, 선택 조회 모두 포함)
+const findQCPB = async (status, pName, startDate, endDate)=>{
+
+  let searchList = [];
+
+  if (status != undefined && status != null && status != '') {
+    let search = `qb.inspec_status LIKE \'%${status}%\'`;
+    searchList.push(search);
+  }
+
+  if (pName != undefined && pName != null && pName != '') {
+    let search = `ph.product_name LIKE \'%${pName}%\'`;
+    searchList.push(search);
+  }
+
+  if (startDate != undefined && startDate != null && startDate != '') {
+    let search = `qb.inspec_start >= \'${startDate} 00:00:00\'`;
+    searchList.push(search);
+  }
+
+  if (endDate != undefined && endDate != null && endDate != '') {
+    let search = `qb.inspec_start <= \'${endDate} 23:59:59\'`;
+
+    searchList.push(search);
+  }
+
+  let querywhere = '';
+  for (let i = 0; i < searchList.length; i++) {
+    let search = searchList[i];
+    querywhere += (i == 0 ? ` ` : `AND `) + search;
+  };
+
+  querywhere = searchList.length == 0 ? "ORDER BY qb.qc_berverage_id DESC " : `WHERE ${querywhere} ORDER BY qb.qc_berverage_id DESC `;
+  //console.log('selected Query', querywhere);
+
+  let result = await mysql.query('selectQCPB', querywhere);
+  return result;
+
+};
+
+
+
+
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////
 //포장검사조회(공통 - 전체, 선택 조회 모두 포함)
 const findQCPP  = async(status, pName, startDate, endDate)=>{
@@ -410,6 +480,10 @@ module.exports = {
   findQCPC,
   findFaultyCodeQCPC,
   completeQCPC,
+
+
+  loadTestDetails,
+  findQCPB,
 
 
   findQCPP,
