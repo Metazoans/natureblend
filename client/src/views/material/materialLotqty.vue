@@ -202,19 +202,19 @@
  
   //그리드 api 컬럼명 들어가는 거
  const columnDefs = ref([
-   { headerName: "No.", field: "lot_seq", width:80, cellStyle: { textAlign: "center" } },
-   { headerName: "자재 LOT번호", field: "lot_code", width:155, cellStyle: { textAlign: "center" } },
+   { headerName: "No.", field: "lot_seq", width:90, cellStyle: { textAlign: "center" } },
+   { headerName: "자재 LOT번호", field: "lot_code", width:160, cellStyle: { textAlign: "center" } },
    { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "left" } },
    { headerName: "업체명", field: "com_name", cellStyle: { textAlign: "left" } },
    { headerName: "입고량", field: "in_qty", width:130, cellStyle: { textAlign: "right" } },
-   { headerName: "입고담당", field: "name", width:110, cellStyle: { textAlign: "center" } },
-   { headerName: "가용", field: "material_nomal", width:75, cellStyle: { textAlign: "center" } },
+   { headerName: "입고담당", field: "name", width:120, cellStyle: { textAlign: "center" } },
+   { headerName: "가용", field: "material_nomal", width:85, cellStyle: { textAlign: "center" } },
    { headerName: "현재고", field: "stok_qty", width:130, cellStyle: { textAlign: "right" } },
    { headerName: "불가용", field: "hold_qty", width:130, cellStyle: { textAlign: "right" } },
    { headerName: "출고재고", field: "out_qty", width:130, cellStyle: { textAlign: "right" } },
    { headerName: "입고일", field: "inset_lot_date", width:130, cellStyle: { textAlign: "center" } },
    { headerName: "유통기한", field: "limit_date", width:130, cellStyle: { textAlign: "center" } },
-   { headerName: "창고위치", field: "warehouse_name", width:110, cellStyle: { textAlign: "left" } },
+   { headerName: "창고위치", field: "warehouse_name", width:120, cellStyle: { textAlign: "left" } },
    { headerName: "폐기", field: "material_lot_state", width:80, cellStyle: { textAlign: "center" } },
    {  
       headerName: "비고", 
