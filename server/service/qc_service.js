@@ -314,6 +314,41 @@ const completeQCPC = async (qcpc, qcpcr) =>{
 
 
 }
+// 세척검사-불량내역조회
+const findQCPCR = async(mName, startDate, endDate)=>{
+
+  let searchList = [];
+
+
+  if (mName != undefined && mName != null && mName != '') {
+    let search = `bm.material LIKE \'%${pName}%\'`;
+    searchList.push(search);
+  }
+
+  if (startDate != undefined && startDate != null && startDate != '') {
+    let search = `qcpc.inspec_start >= \'${startDate} 00:00:00\'`;
+    searchList.push(search);
+  }
+
+  if (endDate != undefined && endDate != null && endDate != '') {
+    let search = `qcpc.inspec_start <= \'${endDate} 23:59:59\'`;
+
+    searchList.push(search);
+  }
+
+  let querywhere = '';
+  for (let i = 0; i < searchList.length; i++) {
+    let search = searchList[i];
+    querywhere += (i == 0 ? ` ` : `AND `) + search;
+  };
+
+  querywhere = searchList.length == 0 ? "ORDER BY qpcr.cleaning_rjc_id DESC " : `AND ${querywhere} ORDER BY qpcr.cleaning_rjc_id DESC `;
+  //console.log('selected Query', querywhere);
+
+  let result = await mysql.query('selectQCPCR', querywhere);
+  return result;
+
+};
 
 
 
@@ -547,6 +582,7 @@ module.exports = {
   findQCPC,
   findFaultyCodeQCPC,
   completeQCPC,
+  findQCPCR,
 
 
   loadTestDetails,

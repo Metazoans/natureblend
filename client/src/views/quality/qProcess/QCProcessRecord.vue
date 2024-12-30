@@ -110,6 +110,7 @@ export default {
         { headerName: "합격량", field: "passQnt", resizable: false, editable: true, },
         { headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false },
+        { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
         { headerName: "검사상태", field: "inspecStatus", resizable: false },
 
       ],
@@ -148,6 +149,8 @@ export default {
           "passQnt": item.pass_qnt,
           "rjcQnt": item.rjc_qnt,
           "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecEnd": item.inspec_end === null 
+          ? "" : this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
           "inspecStatus": item.inspec_status
         });
       }

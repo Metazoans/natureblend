@@ -243,6 +243,30 @@ const insertQCPCR = `
 CALL qc_process_cleaning_rjc_input_rjclist(?, ?, ?, @result);
 `;
 
+//세척검사 불량품 조회
+const selectQCPCR = `
+SELECT qpcr.cleaning_rjc_id
+	   , qpcr.qc_cleaning_id
+     , ph.production_order_num
+     , qpc.process_num
+     , bm.material
+     -- , qp.emp_num
+	   , e.name
+     , qpcr.rjc_quantity
+     , qpcr.faulty_code
+     , f.faulty_reason
+     , qpc.inspec_start
+     , qpc.inspec_end
+     
+FROM   qc_process_cleaning_rjc qpcr LEFT JOIN faulty_code f ON qpcr.faulty_code = f.faulty_code
+                                    LEFT JOIN qc_process_cleaning qpc ON qpcr.qc_cleaning_id = qpc.qc_cleaning_id
+                                    LEFT JOIN employee e ON qpc.emp_num = e.emp_num
+                                    LEFT JOIN process_work_body pb ON qpc.process_num = pb.process_num
+                                    LEFT JOIN process_work_header ph ON pb.process_work_header_num = ph.process_work_header_num
+                                    LEFT JOIN bom b ON pb.product_code =b.product_code
+									LEFT JOIN bom_material bm ON b.bom_num = bm.bom_num
+WHERE bm.material_code IN ('M011', 'M012', 'M013')
+`;
 
 
 //음료검사
@@ -263,7 +287,6 @@ ORDER BY bd.bev_test_details_id
 `;
 
 //신청한 음료 검사 조회(전체/선택)
-
 const selectQCPB = 
 `
 SELECT qb.qc_berverage_id,
@@ -275,6 +298,7 @@ SELECT qb.qc_berverage_id,
        e.name AS emp_name,
     -- qb.inspec_result,
        qb.inspec_start,
+       qb.inspec_end,
        qb.inspec_status
 FROm qc_process_beverage qb
 LEFT JOIN process_work_body pb ON qb.process_num = pb.process_num
@@ -284,8 +308,8 @@ LEFT JOIN employee e ON qb.emp_num = e.emp_num
 //ORDER BY qb.qc_berverage_id DESC
 
 //음료검사 완료처리
-//음료검사테이블 수정 프로시저(검사번호, 공정번호, 검사결과, @result);
-//CALL qc_p_beverage_update_list('QCPB2412280002', 63, '합격', @result);
+//음료검사테이블 수정 프로시저
+//CALL qc_p_beverage_update_list(검사번호, 공정번호, 검사결과, @result);
 const updateQCPB = `
 CALL qc_p_beverage_update_list(?, ?, ?, @result)
 `;
@@ -353,7 +377,7 @@ SELECT qpr.packing_rjc_id,
        qp.inspec_start,
        qp.inspec_end	
 FROM qc_packaging_rjc qpr JOIN faulty_code f ON qpr.faulty_code = f.faulty_code
-						  JOIN qc_packaging qp ON qpr.qc_packing_id = qp.qc_packing_id
+						              JOIN qc_packaging qp ON qpr.qc_packing_id = qp.qc_packing_id
                           JOIN employee e ON qp.emp_num = e.emp_num
                           JOIN process_work_body pb ON qp.process_num = pb.process_num
                           JOIN process_work_header ph ON pb.process_work_header_num = ph.process_work_header_num
@@ -381,6 +405,7 @@ module.exports = {
   selectFaultyCodeQCPC,
   updateQCPC,
   insertQCPCR,
+  selectQCPCR,
 
 
 

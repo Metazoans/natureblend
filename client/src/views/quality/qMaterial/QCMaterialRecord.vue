@@ -135,6 +135,26 @@ export default {
 
 
     //검색창 관련    
+    //검색결과 정리
+    processSearchResults(searchList) {
+      const processedData = [];
+      for (let item of searchList) {
+        processedData.push({
+          "qcMaterialId": item.qc_material_id, 
+          "orderCode": item.order_code,
+          "mName": item.material_name, 
+          "eName": item.name, 
+          "totalQnt": item.total_qnt,
+          "passQnt": item.pass_qnt, 
+          "rjcQnt": item.rjc_qnt,
+          "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'), 
+          "inspecEnd": item.inspec_end === "" 
+          ? "" : this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecStatus": item.inspec_status
+        });
+      }
+      return processedData;
+    },
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
@@ -161,22 +181,7 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = []
-      for (let i = 0; i < this.searchList.length; i++) {
-        if(this.searchList[i].inspec_end == null){
-          this.searchList[i].inspec_end = "";
-        }
-        let col = {
-          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": this.searchList[i].inspec_end === "" 
-          ? "" : this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecStatus": this.searchList[i].inspec_status
-
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
     },
     //전체 조회
     async searchRequestAll() {
@@ -186,22 +191,7 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = []
-      for (let i = 0; i < this.searchList.length; i++) {
-        if(this.searchList[i].inspec_end == null){
-          this.searchList[i].inspec_end = "";
-        }
-        let col = {
-          "qcMaterialId": this.searchList[i].qc_material_id, "orderCode": this.searchList[i].order_code,
-          "mName": this.searchList[i].material_name, "eName": this.searchList[i].name, "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": this.searchList[i].inspec_end === "" 
-          ? "" : this.dateFormat(this.searchList[i].inspec_end, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecStatus": this.searchList[i].inspec_status
-
-        }
-        this.rowData1[i] = col;
-      }
+      this.rowData1 = this.processSearchResults(this.searchList);
     },
   },
   created() {
