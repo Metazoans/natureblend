@@ -10,7 +10,7 @@
           <h6>제품명:</h6>
           <p>{{ processList[0] ? processList[0].product_name : '-' }}</p>
           <h6 class="bold">작업일자:</h6>
-          <p>{{ processList[0] ? processList[0].work_date.split('T')[0] : '-'}}</p>
+          <p>{{ processList[0] ? dateFormat(processList[0].work_date, 'yyyy-MM-dd') : '-'}}</p>
         </div>
       </div>
       <div class="grid-container work">

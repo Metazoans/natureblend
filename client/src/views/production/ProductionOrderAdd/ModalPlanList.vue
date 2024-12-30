@@ -65,10 +65,10 @@
                     <p class="text-sm font-weight-bold mb-0">{{ plan.plan_name }}</p>
                   </td>
                   <td>
-                    <p class="text-sm text-center font-weight-bold mb-0">{{ plan.plan_start_date.split('T')[0] }}</p>
+                    <p class="text-sm text-center font-weight-bold mb-0">{{ dateFormat(plan.plan_start_date, 'yyyy-MM-dd') }}</p>
                   </td>
                   <td>
-                    <p class="text-sm text-center font-weight-bold mb-0">{{ plan.plan_end_date.split('T')[0] }}</p>
+                    <p class="text-sm text-center font-weight-bold mb-0">{{ dateFormat(plan.plan_end_date, 'yyyy-MM-dd') }}</p>
                   </td>
                   <td>
                     <p class="text-sm font-weight-bold mb-0">{{ plan.product_code }}</p>
@@ -95,6 +95,7 @@
 
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
+import userDateUtils from "@/utils/useDates";
 
 export default {
   name: "PlanList",
@@ -115,6 +116,10 @@ export default {
   },
 
   methods: {
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    },
+
     async getPlanList() {
       let result =
           await axios.get(`${ajaxUrl}/production/order/plans`)

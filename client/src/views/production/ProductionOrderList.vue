@@ -23,6 +23,7 @@
 import theme from "@/utils/agGridTheme";
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
+import userDateUtils from "@/utils/useDates";
 
 export default {
   name: "ProductionOrderList",
@@ -92,6 +93,10 @@ export default {
       }
     },
 
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    },
+
     async getProdOrderList() {
       let result = await axios.get(`${ajaxUrl}/production/order`)
           .catch(err => console.log(err));
@@ -110,7 +115,7 @@ export default {
           [keys[0]]: data[keys[0]],
           [keys[1]]: data[keys[1]],
           [keys[2]]: data[keys[2]],
-          [keys[3]]: data[keys[3]].split('T')[0],
+          [keys[3]]: this.dateFormat(data[keys[3]], 'yyyy-MM-dd'),
           [keys[4]]: data[keys[4]],
           [keys[5]]: data[keys[5]],
           [keys[6]]: this.prodOrderStatus[data[keys[6]]],

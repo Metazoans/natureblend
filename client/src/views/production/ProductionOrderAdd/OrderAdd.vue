@@ -48,7 +48,6 @@
               @cell-editing-stopped="onCellEditingStopped"
               :pagination="true"
               :paginationPageSize="10"
-              @cellFocused="onCellFocused"
           />
         </div>
       </div>
