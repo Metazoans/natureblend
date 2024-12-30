@@ -63,7 +63,7 @@
         <div class="d-flex">
             <div class="grid-container">
             <ag-grid-vue
-            style ="width:1250px; height: 500px;"
+            style ="width:900px; height: 500px;"
             :rowData="rowDataOutputOrder"
             :columnDefs="columnOutputOrder"
             :theme="theme"
@@ -201,26 +201,26 @@ export default{
             theme : theme,
             rowData : [],
             columnOrderlist : [
-            { headerName : "주문서번호", field:'orderlist_num'},
-            { headerName : "주문서명", field:'orderlist_title'},
-            { headerName : "거래처명",field:'com_name'},
-            { headerName : "담당자",field:'name'},
-            { headerName : "주문일자",field:'order_date'},
-            { headerName : "납기일자",field:'due_date'},
-            { headerName : "진행상태",field:'orderlist_status'},
+            { headerName : "주문서번호", field:'orderlist_num',width:100,cellStyle: { textAlign: "right" }},
+            { headerName : "주문서명", field:'orderlist_title',width:250,cellStyle: { textAlign: "left" }},
+            { headerName : "거래처명",field:'com_name',width:200,cellStyle: { textAlign: "left" }},
+            { headerName : "담당자",field:'name',width:200,cellStyle: { textAlign: "left" }},
+            { headerName : "주문일자",field:'order_date',width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "납기일자",field:'due_date',width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "진행상태",field:'orderlist_status',width:150,cellStyle: { textAlign: "left" }},
             ],
             //주문조회
             
             rowDataOutputOrder : [],
             columnOutputOrder : [
-                {headerName :"주문번호",field: 'order_num' },
-                {headerName :"출고번호",field: 'output_num'}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
-                {headerName :"제품코드",field: 'product_code'},
-                {headerName :"제품명",field: 'product_name'},
-                {headerName :"주문수량", field: 'order_amount'},
-                {headerName :"출고량", field: 'output_amount'},
-                {headerName :"개당가격",field: 'per_price'},
-                {headerName :"출고날짜",field: 'output_date'}
+                {headerName :"주문번호",field: 'order_num',width:98,cellStyle: { textAlign: "right" } },
+                {headerName :"출고번호",field: 'output_num',width:100,cellStyle: { textAlign: "left" }}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
+                {headerName :"제품코드",field: 'product_code',width:100,cellStyle: { textAlign: "center" }},
+                {headerName :"제품명",field: 'product_name',width:150,cellStyle: { textAlign: "left" }},
+                {headerName :"주문수량", field: 'order_amount',width:100,cellStyle: { textAlign: "right" }},
+                {headerName :"출고량", field: 'output_amount',width:100,cellStyle: { textAlign: "right" }},
+                {headerName :"개당가격",field: 'per_price',width:100,cellStyle: { textAlign: "right" }},
+                {headerName :"출고날짜",field: 'output_date',width:150,cellStyle: { textAlign: "center" }}
             ],
 
             //출고 시킬 제품 선택 
@@ -383,7 +383,7 @@ export default{
         const allPanels = document.querySelectorAll('.ag-paging-panel');
 
             //lot그리드
-            const paginationPanel1 = allPanels[1];
+            const paginationPanel1 = allPanels[2];
         if (paginationPanel1) {
             // 컨테이너 생성
             const container1 = document.createElement('div');

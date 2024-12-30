@@ -202,12 +202,12 @@ export default{
             theme : theme,
             QtData : [],
             columnQtlist : [
-            { headerName : "포장검사코드", field:'qc_packing_id'},
-            { headerName : "제품코드", field:'product_code'},
-            { headerName : "제품명",field:'product_name'},
-            { headerName : "작업번호",field:'process_num'},
-            { headerName : "입고수량",field:'pass_qnt'},
-            { headerName : "통과날짜",field:'inspec_end'},
+            { headerName : "포장검사코드", field:'qc_packing_id',width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "제품코드", field:'product_code',width:100, cellStyle: { textAlign: "center" }},
+            { headerName : "제품명",field:'product_name',width:300, cellStyle: { textAlign: "left" }},
+            { headerName : "작업번호",field:'process_num',width:150, cellStyle: { textAlign: "center" }},
+            { headerName : "입고수량",field:'pass_qnt',width:100, cellStyle: { textAlign: "right" }},
+            { headerName : "통과날짜",field:'inspec_end',width:200, cellStyle: { textAlign: "center" }},
              ],
 
            
@@ -242,14 +242,15 @@ export default{
                 editable: true,
                 sortable: false,
                 checkboxSelection: true,
+                width:100, cellStyle: { textAlign: "center" }
                 },
-                { headerName: "포장검사코드 ", field: "qtId", resizable: true, sortable: true },
-                { headerName: "제품 코드", field: "tempProductCode", resizable: true, sortable: true },
-                { headerName: "제품 명", field: "tempProductName", resizable: true, sortable: true },
-                { headerName: "입고수량", field: "inputAmount", resizable: true, sortable: true },
-                { headerName: "창고 위치", field: "warehouseName", resizable: true, sortable: true },
-                { headerName: "담당자", field: "employeeName", resizable: true, sortable: true },
-                { headerName: "통과 날짜", field: "inspectDate", resizable: true, sortable: true },
+                { headerName: "포장검사코드 ", field: "qtId", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "center" }},
+                { headerName: "제품 코드", field: "tempProductCode", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "center" }},
+                { headerName: "제품 명", field: "tempProductName", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
+                { headerName: "입고수량", field: "inputAmount", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "right" } },
+                { headerName: "창고 위치", field: "warehouseName", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
+                { headerName: "담당자", field: "employeeName", resizable: true, sortable: true,width:200,cellStyle: { textAlign: "left" } },
+                { headerName: "통과 날짜", field: "inspectDate", resizable: true, sortable: true,width:200,cellStyle: { textAlign: "center" } },
             ],
 
 

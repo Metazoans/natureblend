@@ -83,7 +83,7 @@
             <div class=" p-2 flex-fill">
                 <div class="grid-container" v-show="rowDataOrder.length != 0">
                 <ag-grid-vue
-                style ="width: 850px; height: 500px;"
+                style ="width: 750px; height: 500px;"
                 :rowData="rowDataOrder"
                 :columnDefs="columnOrder"
                 :theme="theme"
@@ -102,7 +102,7 @@
             <div class=" p-2 flex-fill">
                 <div class="grid-container" v-show="rowDataOrder.length != 0">
                 <ag-grid-vue
-                style ="width:850px; height: 500px;"
+                style ="width:750px; height: 500px;"
                 :rowData="rowDataLot"
                 :columnDefs="columnLot"
                 :theme="theme"
@@ -192,23 +192,28 @@ export default{
             theme : theme,
             rowData : [],
             columnOrderlist : [
-            { headerName : "주문서번호", field:'orderlist_num'},
-            { headerName : "주문서명", field:'orderlist_title'},
-            { headerName : "거래처명",field:'com_name'},
-            { headerName : "담당자",field:'name'},
-            { headerName : "주문일자",field:'order_date'},
-            { headerName : "납기일자",field:'due_date'},
+            { headerName : "주문서번호", field:'orderlist_num' ,width:150,cellStyle: { textAlign: "center" }},
+            { headerName : "주문서명", field:'orderlist_title' ,width:500,cellStyle: { textAlign: "left" }},
+            { headerName : "거래처명",field:'com_name' ,width:300,cellStyle: { textAlign: "left" }},
+            { headerName : "담당자",field:'name' ,width:200,cellStyle: { textAlign: "left" }},
+            { headerName : "주문일자",field:'order_date' ,width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "납기일자",field:'due_date' ,width:200,cellStyle: { textAlign: "center" }},
             ],
+           
             //주문조회
+           statusOrderMap: {         // DB 상태값과 화면 상태명 매핑
+                "preparing": "미출고",
+                "semiShipped": "부분출고",
+            },
             rowDataOrder : [],
             columnOrder : [
-                {headerName :"주문번호",field: 'order_num' },
-                {headerName :"제품코드",field: 'product_code'},
-                {headerName :"제품명",field: 'product_name'},
-                {headerName :"주문수량",field: 'order_amount'},
-                {headerName :"미출고량",field: 'disorder_amount'}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
-                {headerName :"출고량",field: 'output_amount'},
-                {headerName :"상태여부",field: 'order_status'}
+                {headerName :"주문번호",field: 'order_num',width:100,cellStyle: { textAlign: "center" } },
+                {headerName :"제품코드",field: 'product_code',width:100,cellStyle: { textAlign: "center" }},
+                {headerName :"제품명",field: 'product_name',width:140,cellStyle: { textAlign: "left" }},
+                {headerName :"주문수량",field: 'order_amount',width:100,cellStyle: { textAlign: "right" }},
+                {headerName :"미출고량",field: 'disorder_amount',width:100,cellStyle: { textAlign: "right" }}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
+                {headerName :"출고량",field: 'output_amount',width:90,cellStyle: { textAlign: "right" }},
+                {headerName :"상태여부",field: 'order_status',width:100,cellStyle: { textAlign: "center" }}
             ],
 
             //출고 시킬 제품 선택 
@@ -225,9 +230,10 @@ export default{
             editable: true,
             sortable: false,
             checkboxSelection: true,
-            //cellClass: "custom-cell"
+            width:100
+            ,cellStyle: { textAlign: "center" }
             },
-            {headerName :"제품LOT번호",field: 'product_lot'},
+            {headerName :"제품LOT번호",field: 'product_lot' ,width:200,cellStyle: { textAlign: "center" }},
             { headerName: "출고수",
             field: "output_num",
             resizable: false,
@@ -235,9 +241,11 @@ export default{
             sortable: false,
             // 셀 값이 변경될 때마다 실행되는 함수
             onCellValueChanged: this.onCellValueChanged
+            ,width:100
+            ,cellStyle: { textAlign: "right" }
             },
-            {headerName :"제품 재고수 ",field: 'total_amount'},
-            {headerName :"제품제조일자 ",field: 'inspec_end'},
+            {headerName :"제품 재고수 ",field: 'total_amount',width:150,cellStyle: { textAlign: "right" }},
+            {headerName :"제품제조일자 ",field: 'inspec_end',width:150,cellStyle: { textAlign: "center" }},
 
            
             ],
@@ -343,9 +351,10 @@ export default{
             let result = await axios.get(`${ajaxUrl}/output/disoutput/${order.orderlist_num}`)
                                     .catch(err => console.log(err));
             // this.rowDataOrder = result.data;
-            this.rowDataOrder = result.data.map(function(val) {
+            this.rowDataOrder = result.data.map((col)=> {
                 return {
-                    ...val,
+                    ...col,
+                    order_status : this.statusOrderMap[col.order_status],
                     com_name: row.data.com_name,
                 };
             });

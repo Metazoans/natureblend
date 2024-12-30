@@ -21,19 +21,28 @@ WHERE o.orderlist_status != 'done' `;
 
 //미출고된 주문 조회
 const disoutputOrder = 
-`SELECT  o.order_num
-		,p.product_code
-        ,p.product_name
-        ,o.order_amount
-        ,NVL(op.output_amount, 0) AS output_amount
-        ,order_amount- NVL(op.output_amount, 0) AS disorder_amount
-        ,order_status
-FROM orders o left join product p 
-                     ON o.product_code = p.product_code
-              left join output op
-                     ON o.order_num = op.order_num
-WHERE o.orderlist_num= ?
-AND o.order_status != 'shipped' `;
+`WITH output_summary AS (
+    SELECT 
+        order_num,
+        SUM(output_amount) AS total_output_amount
+    FROM output
+    GROUP BY order_num
+)
+SELECT 
+    o.order_num,
+    p.product_code,
+    p.product_name,
+    o.order_amount,
+    NVL(os.total_output_amount, 0) AS output_amount,
+    o.order_amount - NVL(os.total_output_amount, 0) AS disorder_amount,
+    o.order_status
+FROM orders o
+LEFT JOIN product p 
+    ON o.product_code = p.product_code
+LEFT JOIN output_summary os
+    ON o.order_num = os.order_num
+WHERE o.orderlist_num = ?
+  AND o.order_status != 'shipped' `;
 
 //제품별 lot 조회
 const getLotBaseProduct =

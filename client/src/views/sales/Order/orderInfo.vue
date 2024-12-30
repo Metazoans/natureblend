@@ -87,18 +87,22 @@ export default{
                 editable: true,
                 sortable: false,
                 checkboxSelection: true,
+                width:100,
+                cellStyle: { textAlign: "center" }
                 },
-                { headerName : "주문코드", field:'order_num',resizable: true, sortable: true},
-                { headerName : "제품코드", field:'product_code',resizable: true, sortable: true},
-                { headerName : "제품명", field:'product_name',resizable: true, sortable: true},
-                { headerName : "주문수량", field:'order_amount', editable: true, sortable: true},
-                { headerName : "개당가격", field:'per_price' ,editable: true, sortable: true},
-                { headerName : "총가격", field:'total_price',resizable: true, sortable: true},
-                { headerName : "주문상태", field:'order_status',resizable: true, sortable: true},
+                { headerName : "주문코드", field:'order_num',resizable: true, sortable: true ,width:100,cellStyle: { textAlign: "center" }},
+                { headerName : "제품코드", field:'product_code',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "center" }},
+                { headerName : "제품명", field:'product_name',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
+                { headerName : "주문수량", field:'order_amount', editable: true, sortable: true ,width:200,cellStyle: { textAlign: "right" }},
+                { headerName : "개당가격", field:'per_price' ,editable: true, sortable: true ,width:200,cellStyle: { textAlign: "right" }},
+                { headerName : "총가격", field:'total_price',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "right" }},
+                { headerName : "주문상태", field:'order_status',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
                 {
                     headerName : "삭제",
                     field : "status",
                     editable : false,
+                    width:100
+                    ,cellStyle: { textAlign: "center" },
                     cellRenderer :params =>{
                         const orderNum = params.data.order_num;
                         if(orderNum === "" || orderNum === null){

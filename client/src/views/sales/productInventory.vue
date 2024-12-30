@@ -122,13 +122,13 @@ export default{
             theme : theme,
             productNum : [],
             columnProductNum : [
-            { headerName: "제품코드 ", field: "product_code", resizable: true, sortable: true },
-            { headerName: "제품명", field: "product_name", resizable: true, sortable: true },
-            { headerName: "입고수량 ", field: "valid_input_amount", resizable: true, sortable: true },
-            { headerName: "출고수량 ", field: "valid_output_amount", resizable: true, sortable: true },
-            { headerName: "입고 취소 수량", field: "canceled_amount", resizable: true, sortable: true },
-            { headerName: "제품 폐기 수량", field: "disposed_amount", resizable: true, sortable: true },
-            { headerName: "총 재고", field: "stock_amount", resizable: true, sortable: true },
+            { headerName: "제품코드 ", field: "product_code", width:80,cellStyle: { textAlign: "center" } },
+            { headerName: "제품명", field: "product_name", width:80,cellStyle: { textAlign: "left" } },
+            { headerName: "입고수량 ", field: "valid_input_amount", width:80,cellStyle: { textAlign: "right" }},
+            { headerName: "출고수량 ", field: "valid_output_amount", width:80,cellStyle: { textAlign: "right" } },
+            { headerName: "입고 취소 수량", field: "canceled_amount", width:80,cellStyle: { textAlign: "right" }},
+            { headerName: "제품 폐기 수량", field: "disposed_amount", width:80,cellStyle: { textAlign: "right" }},
+            { headerName: "총 재고", field: "stock_amount",width:80,cellStyle: { textAlign: "right" }},
             ],
 
             // lot별 재고 갯수 조회 
@@ -138,14 +138,14 @@ export default{
 
             LotNum :[],
             columnLotNum :[
-            { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true },
-            { headerName: "제품코드", field: "product_code", resizable: true, sortable: true },
-            { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true },
-            { headerName: "제품수량 ", field: "product_quantity", resizable: true, sortable: true },
-            { headerName: "창고위치 ", field: "warehouse_name", resizable: true, sortable: true },
-            { headerName: "제조일자 ", field: "manufacturing_date", resizable: true, sortable: true },
-            { headerName: "유통기한 ", field: "expire_date", resizable: true, sortable: true },
-            { headerName: "상태", field: "product_status", resizable: true, sortable: true },  
+            { headerName: "제품LOT번호 ", field: "product_lot",width:200,cellStyle: { textAlign: "center" } },
+            { headerName: "제품코드", field: "product_code",width:200,cellStyle: { textAlign: "center" } },
+            { headerName: "제품명 ", field: "product_name",width:200,cellStyle: { textAlign: "center" } },
+            { headerName: "제품수량 ", field: "product_quantity",width:180,cellStyle: { textAlign: "center" } },
+            { headerName: "창고위치 ", field: "warehouse_name",width:180,cellStyle: { textAlign: "center" } },
+            { headerName: "제조일자 ", field: "manufacturing_date",width:180,cellStyle: { textAlign: "center" } },
+            { headerName: "유통기한 ", field: "expire_date",width:180,cellStyle: { textAlign: "center" }},
+            { headerName: "상태", field: "product_status",width:180,cellStyle: { textAlign: "center" } },  
         ],
 
 
@@ -194,7 +194,7 @@ export default{
             event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
-            const paginationPanel = allPanels[0];
+            const paginationPanel = allPanels[1];
             if (paginationPanel) {
                // 컨테이너 생성
                const container = document.createElement('div');
@@ -240,7 +240,7 @@ export default{
             const allPanels = document.querySelectorAll('.ag-paging-panel');
 
              //lot그리드
-             const paginationPanel1 = allPanels[1];
+             const paginationPanel1 = allPanels[2];
             if (paginationPanel1) {
                // 컨테이너 생성
                const container1 = document.createElement('div');
