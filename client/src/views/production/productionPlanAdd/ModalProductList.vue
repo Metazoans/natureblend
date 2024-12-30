@@ -28,7 +28,7 @@
                     :key="product.product_code"
                     class="product"
                     :class="{ selected: selectedCode === product.product_code }"
-                    @click="selectProduct(product)"
+                    @click="clickProduct(product)"
                 >
                   <td>
                     <div class="d-flex justify-content-center px-2">
@@ -59,10 +59,6 @@ import {ajaxUrl} from "@/utils/commons";
 export default {
   name: "productList",
 
-  props: {
-
-  },
-
   data() {
     return {
       productList: [],
@@ -70,7 +66,7 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
       this.getProductList()
   },
 
@@ -82,7 +78,7 @@ export default {
       this.productList = result.data
     },
 
-    selectProduct(product) {
+    clickProduct(product) {
       this.selectedCode = product.product_code
       this.$emit('selectProduct', product)
     },

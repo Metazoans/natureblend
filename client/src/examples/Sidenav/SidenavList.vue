@@ -230,8 +230,9 @@
           <template v-slot:list>
             <li class="sub-item" @click="movePage('qCProcessCleanInspec')">세척검사관리</li>
             <li class="sub-item" @click="movePage('qCProcessBeverageInspec')">음료검사관리</li>
-            <li class="sub-item" @click="movePage('qCProcessRecord')">검사기록조회</li>
-            <li class="sub-item" @click="movePage('qCProcessFaulty')">불량내역조회</li>
+            <li class="sub-item" @click="movePage('qCProcessCleaningRecord')">세척검사기록조회</li>
+            <li class="sub-item" @click="movePage('qCProcessCleaningFaulty')">세척검사불량내역조회</li>
+            <li class="sub-item" @click="movePage('qCProcessBevarageRecord')">음료검사기록조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse

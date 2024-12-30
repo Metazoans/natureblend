@@ -130,14 +130,17 @@ export default {
     const rowData = shallowRef([]);
     const columnDefs = shallowRef([
 
-      { headerName: '번호', field: 'machine_num' },
-      { headerName: '공정코드', field: 'process_code' },
-      { headerName: '공정명', field: 'process_name' },
-      { headerName: '모델번호', field: 'model_num' },
-      { headerName: '설비분류', field: 'machine_type' },
-      { headerName: '설비이름', field: 'machine_name' },
-      { headerName: '설비위치', field: 'machine_location' },
-      { headerName: '작동상태', field: 'machine_state' },
+      { headerName: '번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 1 },
+      { headerName: '공정코드', field: 'process_code', cellStyle: { textAlign: "center" }, flex: 1 },
+      { headerName: '공정명', field: 'process_name', flex: 2 },
+      { headerName: '모델번호', field: 'model_num', flex: 1.5 },
+      { headerName: '설비분류', field: 'machine_type', flex: 2 },
+      { headerName: '설비이름', field: 'machine_name', flex: 2 },
+      { headerName: '설비위치', field: 'machine_location', flex: 1.5 },
+      { headerName: '작동상태', field: 'machine_state',
+        cellStyle: { textAlign: "center" },
+        flex: 1.5,
+      },
     ]);
 
     const getMachineList = async () => {
@@ -185,8 +188,8 @@ export default {
   },
   methods: {
     // ag-grid
-    onReady(param) {
-      param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+    onReady() {
+      // param.api.sizeColumnsToFit(); // column 크기 동일하게 자동 맞춤 => flex 직접 지정으로 변경하면서 제거
 
       // 페이징 영역 요소 추가
       const paginationPanel = document.querySelector('.ag-paging-panel');

@@ -163,6 +163,11 @@ router.post('/completeQCPB', async(req, res)=>{
   res.send(result);
 
 });
+//공정검사 - 음료검사 상세내역불러오기
+router.get('/recordQCPBDetails', async(req, res)=>{
+  let result = await qc_service.findBevTestResult();
+  res.send(result);
+})
 
 
 /////////////////////////////////////

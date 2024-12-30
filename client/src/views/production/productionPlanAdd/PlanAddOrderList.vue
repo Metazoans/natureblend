@@ -45,6 +45,7 @@ import ProductList from "@/views/production/productionPlanAdd/ModalProductList.v
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import theme from "@/utils/agGridTheme";
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+import userDateUtils from "@/utils/useDates";
 
 export default {
   name: "orderList",
@@ -95,6 +96,10 @@ export default {
       this.gridApi.sizeColumnsToFit();
     },
 
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    },
+
     async getOrders() {
       let result =
           await axios.get(`${ajaxUrl}/production/plan/orders${this.searchProduct?.product_code && '?product_code=' + this.searchProduct.product_code}`)
@@ -106,8 +111,8 @@ export default {
       }
 
       this.orders.forEach((order) => {
-        order.order_date = order.order_date.split('T')[0]
-        order.due_date = order.due_date.split('T')[0]
+        order.order_date = this.dateFormat(order.order_date, 'yyyy-MM-dd')
+        order.due_date = this.dateFormat(order.due_date, 'yyyy-MM-dd')
       })
 
       let keys = []

@@ -42,6 +42,8 @@
   import axios from 'axios';
   import { ajaxUrl } from '@/utils/commons.js';
 
+  import { mapMutations } from "vuex";
+
   
   export default {
     name: 'Login',
@@ -53,6 +55,7 @@
       };
     },
     methods: {
+      ...mapMutations(["addLoginInfo"]),
       async login() {
         const loginInfo = {
           empnum : this.empnum,
@@ -61,45 +64,40 @@
         const result = await axios.post(`${ajaxUrl}/login`,loginInfo)
                                   .catch(err => console.log(err));
         console.log('사원번호 비밀번호 출력',result);
-        console.log(result.data);
-        if(result.data==='로그인 성공'){
-          console.log('ddd');
-          this.$router.push({name:'MainPage',params:{loginId:result.data}})
-          window.location.reload();
-          // this.$router.push({name : 'MainPage'});
+        console.log('로그인 데이터 확인',result.data);
+        if(result.data[0].name){
+          console.log('로그인성공');
+          const loginObj = {
+            emp_num: result.data[0].emp_num,
+            name: result.data[0].name,
+            birth: result.data[0].birth,
+            tel: result.data[0].tel,
+            job: result.data[0].job,
+            job_num: result.data[0].job_num,
+            position: result.data[0].position,
+            employment_date: result.data[0].employment_date,
+            resignation_date: result.data[0].resignation_date,
+            level: result.data[0].level,
+          };
+          console.log('aaa', loginObj);
+          this.addLoginInfo(loginObj);
+
+          console.log('dkdkdkdk',this.$store.state.loginInfo);
+          if(this.$store.state.loginInfo.name){
+            this.$router.push({name : 'MainPage'});
+          }
+          // this.$store.dispatch('addLoginInfo', loginObj)
+          //this.$router.push({name:'MainPage',params:{loginId:result.data}})
+          // window.location.reload();
         }
       },
       async loginconfig() {
-        const result = await axios.get(`${ajaxUrl}/loginconfig`)
-                                  .catch(err => console.log(err));
-        console.log('세션 출력',result.data);
-        if(result.data.name){
-          this.$router.push({name : 'MainPage'});
-        }
-        console.log(this.loginData);
+
       },
-      // async eventLogin() {
-      //   try {
-      //     const response = await axios.post('/api/login', {
-      //       empnum: this.empnum,
-      //       password: this.password,
-      //     });
-  
-      //     if (response.data.success) {
-      //       localStorage.setItem('authToken', response.data.token);
-      //       this.$router.push('/dashboard');
-      //     } else {
-      //       this.errorMessage = '로그인에 실패했습니다.';
-      //     }
-      //   } catch (error) {
-      //     this.errorMessage = '서버에 문제가 발생했습니다.';
-      //     console.error(error);
-      //   }
-      // },
     },
     mounted() { // 페이지 조회시 바로 발생
         console.log('로그인 테스트');
-        this.loginconfig();
+        // this.loginconfig();
     },
   };
   </script>
