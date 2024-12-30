@@ -3,13 +3,13 @@
     <h3>설비 조회</h3>
     <!-- 설비 검색 -->
     <div class="main-container">
-      <div class="content">
+      <div class="content overflow-hidden">
 
-        <div class="row justify-content-end mb-3">
+        <div class="row gx-3 align-items-center" style="margin: 0;">
           <!-- 작동 상태 -->
-          <div class="col mb-3">
-            <label class="col-sm-2 col-form-label fw-bold">작동 상태</label>
-            <div class="col-sm-6">
+          <div class="col-sm-auto">
+            <label class="col-form-label fw-bold">작동 상태</label>
+            <div>
               <label v-for="status in statusList" :key="status" class="me-3">
                 {{ status }}
                 <input
@@ -23,8 +23,8 @@
           </div>
   
           <!-- 설비 분류 -->
-          <div class="col mb-3">
-            <label class="col-sm-2 col-form-label fw-bold">설비 분류</label>
+          <div class="col-sm-auto">
+            <label class="col-form-label fw-bold">설비 분류</label>
             <div>
               <label v-for="type in machineType" :key="type" class="me-3">
                 {{ type }}
@@ -38,10 +38,10 @@
           </div>
         </div>
         
-        <div class="row">
-          <label class="col-1 col-form-label fw-bold">이름 검색</label>
+        <div class="row gx-3 align-items-center" style="margin: 10px 0;">
+          <label class="col-auto col-form-label fw-bold">이름 검색</label>
           <!-- 검색 옵션 -->
-          <div class="col-2 mb-3">
+          <div class="col-2">
             <select v-model="selectSearchType" class="form-select">
               <option v-for="option in searchType" :key="option" :value="option">
                 {{ option }}
@@ -50,7 +50,7 @@
           </div>
     
           <!-- 검색 텍스트 -->
-          <div class="col-5 mb-3">
+          <div class="col-5">
             <input
               type="text"
               v-model="searchData"
@@ -58,12 +58,13 @@
               class="form-control"
             />
           </div>
+        </div>
 
-          
+        <div class="row gx-3" style="margin: 20px 0 0; justify-content: center;">
           <!-- 검색 및 초기화 버튼 -->
-          <div class="col-1 mb-3 text-end">
+          <div class="col-sm-auto">
             <button
-              class="btn-sm btn-success mb-0 toast-btn"
+              class="btn-sm btn-success toast-btn"
               type="button"
               data-target="warningToast"
               @click="updateFilter"
@@ -71,9 +72,9 @@
               검색
             </button>
           </div>
-          <div class="col-1 mb-3 text-end">
+          <div class="col-sm-auto">
             <button
-              class="btn-sm btn-warning mb-0 toast-btn"
+              class="btn-sm btn-warning toast-btn"
               type="button"
               data-target="warningToast"
               @click="resetSearch"
@@ -82,6 +83,7 @@
             </button>
           </div>
         </div>
+
       </div>
 
     </div>
@@ -100,15 +102,6 @@
         @cellClicked="cellClickFnc"
       ></ag-grid-vue>
     </div>
-    
-    <material-button
-      class="btn-sucess"
-      @click="machineAddOpen"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-    >
-      설비 등록
-    </material-button>
 
     <MachineManage
       :isShowModal="isShowMachineAdd"
@@ -124,7 +117,6 @@
 <script>
 import MachineManage from "./MachineManage.vue";
 import InActAdd from "./InActAdd.vue";
-import MaterialButton from "@/components/MaterialButton.vue";
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
 import theme from "@/utils/agGridTheme";
@@ -155,22 +147,16 @@ export default {
       rowData.value = result.data;
     }
 
-    const onReady = (params) => {
-      params.api.sizeColumnsToFit();
-    }  
-
     return {
       machineList,
       rowData,
       columnDefs,
       getMachineList,
-      onReady,
     }
   },
   components: {
     MachineManage,
     InActAdd,
-    MaterialButton,
   },
   
   data() {
@@ -198,6 +184,46 @@ export default {
     this.getMachineList();
   },
   methods: {
+    // ag-grid
+    onReady(param) {
+      param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+
+      // 페이징 영역 요소 추가
+      const paginationPanel = document.querySelector('.ag-paging-panel');
+      if (paginationPanel) {
+
+        // 컨테이너 생성
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+        container.style.gap = '5px'; // 버튼과 입력 필드 간격
+
+        // 버튼 생성
+        const button = document.createElement('button');
+        button.textContent = '설비등록';
+        button.style.marginRight = '10px';
+        button.style.cursor = 'pointer';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.padding = '5px 10px';
+        button.style.borderRadius = '4px';
+        button.style.position = 'absolute';
+        button.style.left = '10px';
+        button.className = 'btn-success';
+
+        // 버튼 클릭 이벤트
+        button.addEventListener('click', () => {
+          this.machineAddOpen();
+        });
+
+        // 컨테이너에 버튼과 입력 필드 추가
+        container.appendChild(button);
+        // 버튼을 페이지네이션 패널의 제일 앞에 추가
+        paginationPanel.insertBefore(container, paginationPanel.firstChild);
+      }
+    },
+
+
     // 설비 등록 모달 열기
     machineAddOpen() {
       this.isShowMachineAdd = !this.isShowMachineAdd;
@@ -357,11 +383,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.container-fluid {
-  min-height: 500px;
-  .search {
-    margin-top: 24px;
-  }
+.main-container{
+   background-color:  #e9ecef;
+   margin: 0 20px;
+   border-radius: 10px;
+}
+.content{
+  margin: 10px 20px;
+  padding: 20px 0;
+}
+input {
+  background-color: #ffffff; /* 배경색 흰색 */
+  border: solid 1px #ced4da; /* 테두리 색상 */
+  color: #495057; /* 텍스트 색상 */
 }
 
 </style>

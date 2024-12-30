@@ -31,6 +31,7 @@ const partRouter = require('./router/machine/part_router.js')
 
 // 기준정보
 const standardRouter = require('./router/standard_router.js');
+const loginRouter = require('./router/login_router.js');
 
 // 미들웨어
 app.use(express.json()); // application/json
@@ -68,6 +69,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // 기준정보 라우터
 app.use('/', standardRouter);
+app.use('/', loginRouter);
 
 
 app.listen(3000, ()=>{

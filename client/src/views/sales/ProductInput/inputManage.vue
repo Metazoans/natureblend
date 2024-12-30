@@ -44,8 +44,8 @@
                 </div>
                         <!--검색 및 초기화-->
                 <div class="pb-3 text-center">
-                    <material-button size="sm" color="success" class="button" @click="searchQtResult">검색</material-button>
-                    <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
+                    <material-button  color="success" class="button" @click="searchQtResult">검색</material-button>
+                    <material-button  color="warning" class="button" @click="resetSearch">초기화</material-button>
                 </div>
             </div>
         </div>
@@ -61,7 +61,8 @@
                     :rowData="QtData"
                     :columnDefs="columnQtlist"
                     :theme="theme"
-                    @grid-ready="onGridReady"
+                    @grid-ready="onReady"
+                    :quickFilterText="inputListsearch"
                     rowSelection="multiple"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     @rowClicked="onQtRowClicked"
@@ -191,6 +192,8 @@ export default{
             selectedProCode:"", //선택될 제품 코드 
             productCode:'', //저장될 제품 코드 
 
+            //검색어 검색 (그리드 안)
+            inputListsearch: "", //검색어 1 (제품)
           
 
             // 품질검사 조회 결과 
@@ -301,6 +304,7 @@ export default{
             this.startDate = "";  // 빈 문자열로 초기화
             this.endDate = "";    // 빈 문자열로 초기화
             this.QtData = [];
+            this.tempInput =[];
         },
         //통과 검사 결과 조회 (필터)
         async searchQtResult(){
@@ -335,13 +339,50 @@ export default{
             
 
 
-        onGridReady(params){
-            this.gridApi = params.api;
-            this.gridApi.sizeColumnsToFit();
+        onReady(event){
+            this.gridApi = event.api;
+            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //페이징 영역에 버튼 만들기 
+            const allPanels = document.querySelectorAll('.ag-paging-panel');
+            const paginationPanel = allPanels[0];
+            if (paginationPanel) {
+               // 컨테이너 생성
+               const container = document.createElement('div');
+               container.style.display = 'flex';
+               container.style.alignItems = 'center';
+               container.style.gap = '5px'; // 버튼과 입력 필드 간격
+
+               
+                //입력필드생성 
+                const inputText = document.createElement('input');
+                inputText.type = 'text';
+                inputText.placeholder = '검색';
+                inputText.style.padding = '5px';
+                inputText.style.width = '250px';
+                inputText.style.border = '1px solid #ccc';
+                inputText.style.borderRadius = '4px';
+
+                //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
+                inputText.addEventListener('input',(event)=>{
+                    const value = event.target.value;
+                    //console.log("입력된 값:", value);
+
+                    //검색로직추가기능
+                    this.inputListsearch = value;
+                });
+
+                //컨테이너에 버튼, 입력 필드 추가
+                
+                container.appendChild(inputText);
+
+                //페이징 영역에 컨테이너삽입
+                paginationPanel.insertBefore(container,paginationPanel.firstChild);
+            }
         },
         resetEmpWar(){
             this.warehouseName = "",
-            this.searchEmpName.name = ""
+            this.warehouseCode = "",
+            this.searchEmpName = ""
         },
        
 
@@ -442,10 +483,11 @@ export default{
                     this.$notify({
                         text: `입고가 완료되었습니다.`,
                         type: 'success',
-                    });  
-                    this.resetSearch();
-                    this.resetEmpWar();
-                    this.resetTempInput();
+                    });
+                    window.location.reload();  
+                    // this.resetSearch();
+                    // this.resetEmpWar();
+                    // this.resetTempInput();
 
                 
                 }

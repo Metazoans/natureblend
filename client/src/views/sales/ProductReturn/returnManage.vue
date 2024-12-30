@@ -8,9 +8,10 @@
                     <!--거래처명 검색-->
                     <div class="row align-items-center ms-3 mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >거래처명</label>
-                        <div class="col-sm-6 d-flex">
+                        <div class="col-sm-6 d-flex align-items-center">
+                            <div class="col-sm-4">
                             <input 
-                                id="clientSearch"  class="form-control me-2"
+                                id="clientSearch"  class="form-control"
                                 v-model="searchCom.com_name" @click="openModal('client')" readonly/>
                                 <Modal
                                     :isShowModal="isShowModal.client"
@@ -24,26 +25,31 @@
                                     <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
                                 </template>
                                 </Modal>
-                        </div> 
-                                   <!--검색 및 초기화-->
-                        <div class="button-container d-flex justify-content-end">
-                            <material-button size="md" color="success" class="me-2" @click="searchOrderlists">검색</material-button>
-                            <material-button size="md" color="warning"  @click="resetSearch">초기화</material-button>
-                        </div>   
+                            </div> 
+                                    <!--검색 및 초기화-->
+                            <div class="col-sm-4 text-end">
+                                <material-button size="md" color="success" class="me-2" @click="searchOrderlists">검색</material-button>
+                                <material-button size="md" color="warning"  @click="resetSearch">초기화</material-button>
+                            </div> 
+
+                        </div>
+                         
                     </div>
              
             </div>
         </div>
     </div>
+   <!--주문서조회-->
     <!-- <div class="grid-container" v-show="rowData.length != 0"> -->
     <div class="grid-container">
         <ag-grid-vue
         :rowData="rowData"
         :columnDefs="columnOrderlist"
         :theme="theme"
-        @grid-ready="onGridReady"
+        @grid-ready="onReady"
         :noRowsOverlayComponent="noRowsOverlayComponent"
         @rowClicked="onOrderRowClicked"
+        :quickFilterText="inputListsearch"
         rowSelection="multiple"
         :pagination="true"
         :paginationPageSize="10"
@@ -52,37 +58,37 @@
     <div style="display: none">
         <CustomNoRowsOverlay/>
     </div>
-    <div class="container-fluid py-4">
+    <div class="container-fluid py-4" v-show="rowDataOutputOrder.length != 0">
         <h4>출고 완료 된 주문 조회</h4>
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="grid-container">
-                <ag-grid-vue
-                style ="width: 850px; height: 500px;"
-                :rowData="rowDataOutputOrder"
-                :columnDefs="columnOutputOrder"
-                :theme="theme"
-                @grid-ready="onGridReady"
-                :noRowsOverlayComponent="noRowsOverlayComponent"
-                @rowClicked="onOutputReturn"
-                rowSelection="multiple"
-                :pagination="true"
-                :paginationPageSize="10"
-                />
-                </div>
-                <div style="display: none">
-                    <CustomNoRowsOverlay/>
-                </div>
+        <div class="d-flex">
+            <div class="grid-container">
+            <ag-grid-vue
+            style ="width:1250px; height: 500px;"
+            :rowData="rowDataOutputOrder"
+            :columnDefs="columnOutputOrder"
+            :theme="theme"
+            @grid-ready="onReady1"
+            :quickFilterText="inputListsearch1"
+            :noRowsOverlayComponent="noRowsOverlayComponent"
+            @rowClicked="onOutputReturn"
+            rowSelection="multiple"
+            :pagination="true"
+            :paginationPageSize="10"
+            />
             </div>
-            <div class= "col-lg-4 ps-4" >
-                <div class="select-container p-4">
-                    <div class= "form-section mb-4">
-                            <!--담당자 선택 -->
+            <div style="display: none">
+                <CustomNoRowsOverlay/>
+            </div>
+               
+            <div class="select-container">
+                <div class= "form-section">
+                    <!--담당자 선택 -->
+                    <div class="d-flex flex-column justify-content-center ps-5 pt-5">
                         <div class="row align-items-center mb-3">
                             <label class="col-sm-3  col-form-label fw-bold" >담당자</label>
-                                <div class="col-sm-9">
+                                <div class="col-sm-9 d-flex align-items-center">
                                     <input 
-                                    id="EmpName"  class="form-control" 
+                                    id="EmpName"  class="form-control border p-2" 
                                     v-model="searchEmpName" @click="openModal('emp')" readonly/>
                                     <Modal
                                         :isShowModal="isShowModal.emp"
@@ -98,45 +104,51 @@
                                     </Modal>
                                 </div>
                         </div>
-                        <!--반품수량-->
-                        <div class="form-section mb-4">
-                            <label class="col-sm-3  col-form-label fw-bold" >반품수량</label>
-                                <input 
-                                    id="returnNum"  class="form-control" 
-                                    v-model="returnNum"/>
-                        </div>
-                        <!--반품사유-->
-                        <div class="form-section">
-                            <label class="col-sm-3  col-form-label fw-bold" >반품사유</label>
-                                <div class="col-sm-9">
+                        <div class="row align-items-center mb-3">
+                            <!--반품수량-->
+                            <div class="form-section mb-4">
+                                <label class="col-sm-3  col-form-label fw-bold" >반품수량</label>
+                                <div class="col-sm-9 d-flex align-items-center">
                                     <input 
-                                    id="ReturnReason"  class="form-control border p-2" 
-                                    v-model="searchReturnReason" @click="openModal('returns')" readonly/>
-                                    <Modal
-                                        :isShowModal="isShowModal.returns"
-                                        :modalTitle="'반품사유'"
-                                        :noBtn="'닫기'"
-                                        :yesBtn="'선택'"
-                                        @closeModal="closeModal('returns')"
-                                        @confirm="confirm('returns')"
-                                    >
-                                    <template v-slot:list>
-                                        <ReturnList v-show="isShowModal.returns" @selectreturn="selectreturn"/>
-                                    </template>
-                                    </Modal>
+                                        id="returnNum"  class="form-control border p-2" 
+                                        v-model="returnNum"/>
                                 </div>
+                            </div>
                         </div>
-                    </div> 
-                    <!--검색 및 초기화-->
-                    <div class="text-center pt-4">
-                        <material-button  color="success" class=" me-3" @click="returninstall">등록</material-button>
-                        <material-button color="warning"  @click="resetEmpWar">초기화</material-button>
+                        <div class="row align-items-center mb-3">
+                             <!--반품사유-->
+                             <div class="form-section">
+                                <label class="col-sm-3  col-form-label fw-bold" >반품사유</label>
+                                    <div class="col-sm-9  d-flex align-items-center">
+                                        <input 
+                                        id="ReturnReason"  class="form-control border p-2" 
+                                        v-model="searchReturnReason" @click="openModal('returns')" readonly/>
+                                        <Modal
+                                            :isShowModal="isShowModal.returns"
+                                            :modalTitle="'반품사유'"
+                                            :noBtn="'닫기'"
+                                            :yesBtn="'선택'"
+                                            @closeModal="closeModal('returns')"
+                                            @confirm="confirm('returns')"
+                                        >
+                                        <template v-slot:list>
+                                            <ReturnList v-show="isShowModal.returns" @selectreturn="selectreturn"/>
+                                        </template>
+                                        </Modal>
+                                    </div>
+                            </div>
+                        </div>     
                     </div>
-                </div>        
-            </div>
-       </div>
+                </div> 
+                <!--검색 및 초기화-->
+                <div class=" text-center">
+                    <material-button  color="success" class=" me-3" @click="returninstall">등록</material-button>
+                    <material-button color="warning"  @click="resetReturn">초기화</material-button>
+                </div>
+            </div>        
+        </div>
     </div>
-        
+   
     
 </template>
 
@@ -171,6 +183,10 @@ export default{
             //거래처 모달 
             searchCom:"", // 저장 될 거래처 명 
             selectedCom: "", //선택된 거래처 명
+
+            //검색어 검색 (그리드 안)
+            inputListsearch: "", //검색어 1 (제품)
+            inputListsearch1:"", //검색어2 (lot)
 
           
 
@@ -278,11 +294,16 @@ export default{
         resetSearch(){
             this.searchCom = ""; // 공백 문자 대신 빈 문자열로 초기화
             
-            this.orderData = {};  // 객체 초기화
+            
             this.rowData =[];
-            //console.log(this.orderData);
+            this.rowDataOutputOrder =[],
+         
 
             this.searchEmpName="";
+            this.searchEmpNum = "";
+            this.returnNum ="";
+            this.searchReturnReason ="";
+            this.searchReturnCode ="";
         },
         //주문서조회;
         async searchOrderlists(){
@@ -311,10 +332,93 @@ export default{
             
 
 
-    onGridReady(params){
-        this.gridApi = params.api;
-        this.gridApi.sizeColumnsToFit();
+    onReady(event){
+            this.gridApi = event.api;
+            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //페이징 영역에 버튼 만들기 
+            const allPanels = document.querySelectorAll('.ag-paging-panel');
+            const paginationPanel = allPanels[0];
+            if (paginationPanel) {
+               // 컨테이너 생성
+               const container = document.createElement('div');
+               container.style.display = 'flex';
+               container.style.alignItems = 'center';
+               container.style.gap = '5px'; // 버튼과 입력 필드 간격
+
+               
+                //입력필드생성 
+                const inputText = document.createElement('input');
+                inputText.type = 'text';
+                inputText.placeholder = '검색';
+                inputText.style.padding = '5px';
+                inputText.style.width = '250px';
+                inputText.style.border = '1px solid #ccc';
+                inputText.style.borderRadius = '4px';
+
+                //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
+                inputText.addEventListener('input',(event)=>{
+                    const value = event.target.value;
+                    //console.log("입력된 값:", value);
+
+                    //검색로직추가기능
+                    this.inputListsearch = value;
+                });
+
+                //컨테이너에 버튼, 입력 필드 추가
+                
+                container.appendChild(inputText);
+
+                //페이징 영역에 컨테이너삽입
+                paginationPanel.insertBefore(container,paginationPanel.firstChild);
+            }
+
+           
+
+
     },
+    onReady1(event){
+        this.gridApi = event.api;
+        event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+        //페이징 영역에 버튼 만들기 
+        const allPanels = document.querySelectorAll('.ag-paging-panel');
+
+            //lot그리드
+            const paginationPanel1 = allPanels[1];
+        if (paginationPanel1) {
+            // 컨테이너 생성
+            const container1 = document.createElement('div');
+            container1.style.display = 'flex';
+            container1.style.alignItems = 'center';
+            container1.style.gap = '5px'; // 버튼과 입력 필드 간격
+
+            
+            //입력필드생성 
+            const inputText1 = document.createElement('input');
+            inputText1.type = 'text';
+            inputText1.placeholder = '검색1';
+            inputText1.style.padding = '5px';
+            inputText1.style.width = '250px';
+            inputText1.style.border = '1px solid #ccc';
+            inputText1.style.borderRadius = '4px';
+
+            //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
+            inputText1.addEventListener('input',(event)=>{
+                const value = event.target.value;
+                //console.log("입력된 값:", value);
+
+                //검색로직추가기능
+                this.inputListsearch1 = value;
+            });
+
+            //컨테이너에 버튼, 입력 필드 추가
+            
+            container1.appendChild(inputText1);
+
+            //페이징 영역에 컨테이너삽입
+            paginationPanel1.insertBefore(container1,paginationPanel1.firstChild);
+        }
+    },
+
     //주문서 클릭 시 해당 주문서의 미출고 주문 출력 
     async onOrderRowClicked(row) {
         
@@ -341,6 +445,7 @@ export default{
         console.log("출고할 값",output);
         
     },
+    //반품등록
     async returninstall(){
         if(this.outputAmount < this.returnNum){
             this.$notify({
@@ -367,10 +472,20 @@ export default{
                     this.$notify({
                         text: `반품처리가 완료되었습니다.`,
                         type: 'success',
-                    });  
+                    });
+                    window.location.reload();  
                    
                 }
-    }
+    },
+    //초기화
+    resetReturn(){
+        this.searchEmpName = "";
+        this.searchEmpNum = "";
+        this.returnNum ="";
+        this.searchReturnReason ="";
+        this.searchReturnCode ="";
+
+    },
         
 
   
@@ -397,31 +512,10 @@ export default{
 .form-section {
   margin-bottom: 20px;
 }
-.button-container {
-    display: flex; /* Flex 컨테이너 설정 */
-    gap: 10px; /* 버튼 간 간격 */
-    justify-content: flex-end; /* 오른쪽 정렬 */
-    align-items: center; /* 세로 가운데 정렬 */
-}
 
-/* 버튼이 한 줄에 정렬되도록 조정 */
-.row {
-  display: flex;
-  align-items: center; /* 수직 정렬 */
-  margin-bottom: 20px;
-}
-.d-flex {
-    display: flex;
-    gap: 10px; /* 입력 필드와 버튼 사이 여백 */
-}
-.text-end {
-  text-align: right; /* 오른쪽 정렬 */
-  justify-content: flex-end; /* 버튼을 오른쪽 정렬 */
-}
-.button-group {
-    display: flex; /* 버튼 그룹을 Flexbox로 설정 */
-    gap: 10px; /* 버튼 간 간격 */
-}
+
+
+
 
 .material-button {
     display: flex; /* Flex 설정 */
@@ -431,20 +525,15 @@ export default{
     margin: 0; /* 기존 여백 제거 */
     cursor: pointer;
 }
-.col-sm-6 {
-    display: flex;
-    align-items: center; /* 세로 가운데 정렬 */
-}
+
 
 .select-container {
   background-color: #e9ecef;
   border-radius: 10px;
   width: 100%;
-  max-width: 650px;
-  min-height: 400px;
-  margin-top: 70px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  height: 500px;
+  margin-top: 20px;
 }
 
 .text-center {

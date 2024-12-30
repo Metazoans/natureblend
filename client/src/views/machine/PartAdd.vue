@@ -1,6 +1,6 @@
 <!-- 부품 등록 및 수정 -->
 <template>
-  <ModalMachine>
+  <ModalMachine @click.self="closeModal">
     <template v-slot:header>
       <h2 v-if="isUpdate">부품 수정</h2>
       <h2 v-else>부품 등록</h2>

@@ -12,19 +12,21 @@
       ></ag-grid-vue>
     </div>
 
+    <div style="margin: 40px 0;"></div>
+
     <div class="inActHeader row">
       <div class="col">
-        <h4>비가동 설비 내역</h4>
+        <h3>비가동 설비 내역</h3>
       </div>
       
       <!-- 설비 분류 -->
-      <div class="col-6">
+      <div class="col-auto">
         <div class="row align-items-center">
           <div class="col-auto">
             <label class="col-form-label fw-bold">설비 분류</label>
           </div>
           <div class="col-auto">
-            <div class="row align-items-center" style="margin: auto 0;">
+            <div class="row" style="margin-top: 6px;">
               <div class="col-auto" v-for="type in machineType" :key="type">
                 <label class="me-3">{{ type }}</label>
                 <input type="checkbox" :value="type" v-model="pickedType"/>
@@ -35,7 +37,7 @@
       </div>
 
       <!-- 날짜 선택 -->
-      <div class="col-3">
+      <div class="col-auto gx-5">
         <div class="row">
           <div class="col searchDate">
             <input 
@@ -43,7 +45,7 @@
             id="startDate" class="form-control border p-2"
             v-model="startDate"/>
           </div>
-          <div class="col-1 text-center">~</div>
+          <div class="col-1 align-self-center text-center">~</div>
           <div class="col searchDate">
             <input 
             type="date" 

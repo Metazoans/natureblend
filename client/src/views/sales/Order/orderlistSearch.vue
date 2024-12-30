@@ -17,14 +17,8 @@
                                 >
                                 </label>
                             </div>
-                        <!--체크박스 선택 상태 값 -->
-                        <div class="mt-3">
-                            <p>선택된 상태</p>
-                            <ul>
-                                <li v-for="(item,index) in pickedStatus" :key="index">{{ item }}</li>
-                            </ul>
+
                         </div>
-                    </div>
 
                     <!--거래처명 검색-->
                     <div class="row align-items-center mb-3">
@@ -74,16 +68,12 @@
                         </div>
                     </div>
                 </div>
+                 <!--검색 및 초기화-->
+                <div class="mb-3 pt-2 pb-5 text-center">
+                    <material-button  color="success" class="button" @click="searchOrderlists">검색</material-button>
+                    <material-button color="warning" class="button" @click="resetSearch">초기화</material-button>
+                </div>
             </div>
-                 
-        <!--검색 및 초기화-->
-        <div class="mb-3 pt-2 text-center">
-            <material-button  color="success" class="button" @click="searchOrderlists">검색</material-button>
-            <material-button color="warning" class="button" @click="resetSearch">초기화</material-button>
-        </div>
-        <!--추가 -->
-        <!-- <button type="button" class="btn btn-secondary" @click="addOrder">추가</button> -->
-       
     </div>
     <!--orderList  컴포넌트 : 등록 또는  수정 -->
 <orderList :filters="filters"/>

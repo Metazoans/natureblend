@@ -55,8 +55,8 @@
             </div>
                     <!--검색 및 초기화-->
             <div class="pb-3 text-center">
-                <material-button size="sm" color="success" class="button" @click="searchOrderlists">검색</material-button>
-                <material-button size="sm" color="warning" class="button" @click="resetSearch">초기화</material-button>
+                <material-button  color="success" class="button" @click="searchOrderlists">검색</material-button>
+                <material-button  color="warning" class="button" @click="resetSearch">초기화</material-button>
             </div>
         </div>
     </div>
@@ -289,6 +289,8 @@ export default{
             this.endDate = "";    // 빈 문자열로 초기화
             this.orderData = {};  // 객체 초기화
             this.rowData =[];
+            this.rowDataOrder = [];
+            this.rowDataLot =[];
             //console.log(this.orderData);
 
             this.searchEmpName="";
@@ -428,10 +430,11 @@ export default{
                     text: `출고가 완료되었습니다.`,
                     type: 'success',
                 }); 
-                this.resetSearch();
-                this.resetLot();
-                this.rowDataLot = [];
-                this.rowDataOrder = [];
+                // this.resetSearch();
+                // this.resetLot();
+                // this.rowDataLot = [];
+                // this.rowDataOrder = [];
+                window.location.reload();
              
             }
 

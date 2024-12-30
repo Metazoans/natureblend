@@ -290,6 +290,8 @@ export default {
       // 검사 항목들에 대해 defectDetailsMap에 항목 추가
       testItems.forEach(item => {
         this.defectDetailsMap[qcProcessId].push({
+          item_id: item.item_id,
+          details_id: item.details_id,
           item_name: item.item_name,
           item_unit: item.item_unit,
           etc_min: item.etc_min,
@@ -371,39 +373,40 @@ export default {
     },
     async confirm() {
       console.log('저장처리!')
-      console.log(this.rowData2);
-      console.log(this.defectDetailsMap);
       // 객체를 배열로 변환
-      let defectDetailsArray = [];
-      for (let qcId in this.defectDetailsMap) {
-        if (Object.prototype.hasOwnProperty.call(this.defectDetailsMap, qcId)) {
-          this.defectDetailsMap[qcId].forEach(detail => {
-            defectDetailsArray.push({
+      let completedDefectDetailsArray = [];
+      for (let qcId in this.completedDefectDetailsMap) {
+        if (Object.prototype.hasOwnProperty.call(this.completedDefectDetailsMap, qcId)) {
+          this.completedDefectDetailsMap[qcId].forEach(detail => {
+            completedDefectDetailsArray.push({
               qcProcessId: qcId,
-              faultyCode: detail.reason,
-              qty: detail.qty,
+              itemId: detail.item_id,
+              detailsId: detail.details_id,
+              actualValue: detail.input_value,
+              isPassed: detail.is_passed
             });
           });
         }
       }
       //배열 정렬
-      defectDetailsArray.sort((a, b) => {
-        if (a.qcProcessId === b.qcProcessId) {
-          return a.faultyCode.localeCompare(b.faultyCode); // 검사번호 같으면 불량코드 비교
-        }
+      completedDefectDetailsArray.sort((a, b) => {
         return a.qcProcessId.localeCompare(b.qcProcessId); // 검사번호 우선 비교
       });
 
       let qcData = {
-        qcpc: this.rowData2,
-        qcpcr: defectDetailsArray,
+        qcpb: this.rowData2,
+        qcpbr: completedDefectDetailsArray,
       };
-      let result = await axios.post(`${ajaxUrl}/completeQCPC`, qcData)
+      console.log(qcData);
+
+
+
+      let result = await axios.post(`${ajaxUrl}/completeQCPB`, qcData)
         .catch(err => console.log(err));
       console.log(result);
       notify({
         title: "검사완료",
-        text: `완료된 검사:${result.data.updatedRows}, 기록된 불량 내역:${result.data.defectNum}`,
+        text: `완료된 검사:${result.data.updatedRows}, 기록된 검사 내역:${result.data.defectNum}`,
         type: "success", // success, warn, error 가능
       });
 

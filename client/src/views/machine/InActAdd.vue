@@ -1,60 +1,91 @@
 
 <template>
-  <ModalMachine>
+  <ModalMachine @click.self="closeModal">
     <template v-slot:header>
       <h2>비동기 내역 등록</h2>
     </template>
     <template v-slot:body>
-      <div class="inactBody" v-bind="inActData">
-        <div class="modalRow">
-          <!-- 템플릿 input 컴포넌트 사용시 update:value 메소드 생성해야함 임시로 input 사용 -->
-          <!-- <material-input id="text" placeholder="" @update:value="inputNum" /> -->
-          <label for="machineNum">설비 번호</label>
-          <input type="number" id="machineNum" name="machineNum"
-                 v-model.number="inActData.machine_num" :readonly="machineCheck"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="machineName">설비 이름</label>
-          <input type="text" id="machineName" name="machineName"
-                 v-model="inActData.machine_name" :readonly="machineCheck"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="machineLocation">설비 위치</label>
-          <input type="text" id="machineLocation" name="machineLocation"
-                 v-model="inActData.machine_location" :readonly="machineCheck"/>
-        </div>
-
-        <div class="modalRow">
-          <label for="StartDate">비가동 일시</label>
-          <div class="modalRow">
-            <input type="datetime-local" id="StartDate" name="StartDate" v-model="inActData.inact_start_time"/>
-            <a> ~ </a>
-            <input type="datetime-local" id="EndDate" name="EndDate" v-model="inActData.inact_end_time"/>
+      
+      <div class="container-fluid py-4">
+        <div class="inactBody row gy-3" v-bind="inActData">
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col-3">
+              <label for="machineNum">설비 번호</label>
+            </div>
+            <div class="col">
+              <input class="form-control" type="number" id="machineNum" name="machineNum"
+                     v-model.number="inActData.machine_num" :readonly="machineCheck"/>
+            </div>
           </div>
-        </div>
 
-        <div class="modalRow">
-          <a>비가동 사유</a>
-          <select class="form-select" aria-label="Default select example"
-                  v-model="inActData.inact_type">
-            <option value="점검">점검</option>
-            <option value="고장">고장</option>
-            <option value="휴식">휴식</option>
-            <option value="기타">기타</option>
-          </select>
-        </div>
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col-3">
+              <label for="machineName">설비 이름</label>
+            </div>
+            <div class="col">
+              <input class="form-control" type="text" id="machineName" name="machineName"
+                     v-model="inActData.machine_name" :readonly="machineCheck"/>
+            </div>
+          </div>
 
-        <div class="modalRow">
-          <label for="inActInfo">비고</label>
-          <input type="text" id="inActInfo" name="inActInfo" v-model="inActData.inact_info" />
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col-3">
+              <label for="machineLocation">설비 위치</label>
+            </div>
+            <div class="col">
+              <input class="form-control" type="text" id="machineLocation" name="machineLocation"
+                     v-model="inActData.machine_location" :readonly="machineCheck"/>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col-3">
+              <label for="StartDate">비가동 일시</label>
+            </div>
+            <div class="col">
+              <div class="row">
+                <div class="col-sm-5">
+                  <input class="form-control" type="datetime-local" id="StartDate" name="StartDate" v-model="inActData.inact_start_time"/>
+                </div>
+                <div class="col-sm-2 align-self-center text-center"><a> ~ </a></div>
+                <div class="col-sm-5">
+                  <input class="form-control" type="datetime-local" id="EndDate" name="EndDate" v-model="inActData.inact_end_time"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col-3">
+              <a>비가동 사유</a>
+            </div>
+            <div class="col">
+              <select class="form-select" aria-label="Default select example"
+                      v-model="inActData.inact_type">
+                <option value="점검">점검</option>
+                <option value="고장">고장</option>
+                <option value="휴식">휴식</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row gx-3 gy-2 align-items-center">
+            <div class="col-3">
+              <label for="inActInfo">비고</label>
+            </div>
+            <div class="col">
+              <input class="form-control" type="text" id="inActInfo" name="inActInfo" v-model="inActData.inact_info" />
+            </div>
+          </div>
+
         </div>
       </div>
     </template>
     <template v-slot:footer>
+      
       <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+          class="btn btn-success w-100 mb-0 toast-btn"
           type="button"
           data-target="warningToast"
           @click="confirm"
@@ -63,7 +94,7 @@
           등록
         </button>
         <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
+          class="btn btn-danger w-100 mb-0 toast-btn"
           type="button"
           data-target="warningToast"
           @click="closeModal"
@@ -253,5 +284,22 @@ input::-webkit-inner-spin-button {
 /* Firefox  */
 input[type='number'] {
   -moz-appearance: textfield;
+}
+
+
+/* 일반 input 태그 스타일 */
+input {
+  background-color: #ffffff; /* 배경색 흰색 */
+  border: solid 1px #ced4da; /* 테두리 색상 */
+  color: #495057; /* 텍스트 색상 */
+}
+
+button {
+  width: 100px !important;
+  color: white !important;
+}
+
+.machineBody {
+  padding-left: 29px;
 }
 </style>

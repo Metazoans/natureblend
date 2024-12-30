@@ -1,43 +1,49 @@
 <!-- 설비 상세 페이지 machine/machineInfo -->
 <template>
-  <div class="container">
+  <div class="container py-4">
     <!-- 설비 이름(설비 위치) / 설비 수정 버튼 / 설비 제거 버튼 -->
-    <div class="row">
-      <div class="col-8 mname">
+    <div class="row align-items-center">
+      <div class="col-9 mname">
         <h3>{{ machineData.machine_name }}({{ machineData.machine_location }})</h3>
       </div>
-      <div class="col-2 mbtn">
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="machineUpdate"
-          style="margin: 5px;"
-        >
-          설비 수정
-        </button>
-      </div>
-      <MachineManage
-        :isShowModal="isShowModal"
-        :machineNo="machineNo"
-        :isUpdate="true"
-        @closeModal="closeModal"
-        @confirm="confirmModal"
-      />
 
-      <div class="col-2 mbtn">
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="machineDelete"
-          style="margin: 5px;"
-        >
-          설비 제거
-        </button>
+      <div class="col-auto">
+        <div class="row" style="justify-content: end;">
+          <div class="col">
+            <button
+              class="btn btn-success w-100 mb-0 toast-btn"
+              type="button"
+              data-target="warningToast"
+              @click="machineUpdate"
+              style="margin: 5px;"
+            >
+              설비 수정
+            </button>
+          </div>
+          <div class="col">
+            <button
+              class="btn btn-danger w-100 mb-0 toast-btn"
+              type="button"
+              data-target="warningToast"
+              @click="machineDelete"
+              style="margin: 5px;"
+            >
+              설비 제거
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
 
+    <MachineManage
+      :isShowModal="isShowModal"
+      :machineNo="machineNo"
+      :isUpdate="true"
+      @closeModal="closeModal"
+      @confirm="confirmModal"
+    />
+      
     <!-- 이미지 / 설비 정보 항목-->
     <div class="row">
       <!-- 설비 이미지 -->

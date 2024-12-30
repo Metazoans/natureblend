@@ -32,7 +32,7 @@ router.post('/insertQCM', async (req, res)=>{
 router.get('/faultyCode', async (req, res)=>{
   let faultyList = await qc_service.findFaultyCodeOneToFive();
   res.send(faultyList);
-})
+});
 
 
 
@@ -91,105 +91,121 @@ router.post('/recordQCMR', async(req, res)=>{
 router.get('/faultyCodeQCPC', async (req, res)=>{
   let faultyList = await qc_service.findFaultyCodeQCPC();
   res.send(faultyList);
-})
+});
 
-//공정검사 -세척검사조회(미검사만)
+//공정검사 - 세척검사조회(미검사만)
 router.post('/requestQCPC', async(req, res)=>{
   let {mName, startDate, endDate} = req.body;
   let status = '검사요청완료';
   let list = await qc_service.findQCPC(status, mName, startDate, endDate);
   res.send(list);
-})
-//공정검사 -세척검사조회(검사완료만)
+});
+//공정검사 - 세척검사조회(검사완료만)
 router.post('/recordQCPC', async(req, res)=>{
   let {mName, startDate, endDate} = req.body;
   let status = '검사완료';
   let list = await qc_service.findQCPC(status, mName, startDate, endDate);
   res.send(list);
-})
-//공정검사 -세척검사조회(모두)
+});
+//공정검사 - 세척검사조회(모두)
 router.post('/recordQCPCAll', async(req, res)=>{
   let {mName, startDate, endDate} = req.body;
   let status = '';
   let list = await qc_service.findQCPC(status, mName, startDate, endDate);
   res.send(list);
-})
-//공정검사- 세척검사완료처리
+});
+//공정검사 - 세척검사완료처리
 router.post('/completeQCPC', async(req, res)=>{
   let {qcpc, qcpcr} = req.body;
   let result = await qc_service.completeQCPC(qcpc, qcpcr);
   res.send(result);
 });
+//공정검사 - 세척검사불량내역조회
+router.post('/recordQCPCR', async(req, res)=>{
+  let {mName, startDate, endDate} = req.body;
+  let list = await qc_service.findQCPCR(mName, startDate, endDate);
+  res.send(list);
+});
 
 ///////////////////////////////////////////////////
-//음료검사항목및수치 불러오기
+//공정검사 - 음료검사항목및수치 불러오기
 router.get('/testDetailsForB', async(req, res)=>{
   let result = await qc_service.loadTestDetails();
   res.send(result);
   
 });
 
-//포장검사조회(미검사만)
+//공정검사 - 음료검사조회(미검사만)
 router.post('/requestQCPB', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '검사요청완료';
   let list = await qc_service.findQCPB(status, pName, startDate, endDate);
   res.send(list);
-})
-//포장검사조회(검사완료만)
+});
+//공정검사 - 음료검사조회(검사완료만)
 router.post('/recordQCPB', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '검사완료';
   let list = await qc_service.findQCPB(status, pName, startDate, endDate);
   res.send(list);
-})
-//포장검사조회(모두)
+});
+//공정검사 - 음료검사조회(모두)
 router.post('/recordQCPBAll', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '';
   let list = await qc_service.findQCPB(status, pName, startDate, endDate);
   res.send(list);
-})
+});
+//공정검사 - 음료검사 완료 처리
+router.post('/completeQCPB', async(req, res)=>{
+  let {qcpb, qcpbr} = req.body;
+  let result = await qc_service.completeQCPB(qcpb, qcpbr);
+  res.send(result);
 
+});
 
 
 /////////////////////////////////////
-//검사관리-불량코드조회(포장검사관련) 임시 => 수정필요
+//포장검사 - 검사관리-불량코드조회(포장검사관련) 임시 => 수정필요
 router.get('/faultyCodeQCPC', async (req, res)=>{
   let faultyList = await qc_service.findFaultyCodeQCPC();
   res.send(faultyList);
-})
+});
 
-//포장검사조회(미검사만)
+//포장검사 - 포장검사조회(미검사만)
 router.post('/requestQCPP', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '검사요청완료';
   let list = await qc_service.findQCPP(status, pName, startDate, endDate);
   res.send(list);
-})
-//포장검사조회(검사완료만)
+});
+//포장검사 - 포장검사조회(검사완료만)
 router.post('/recordQCPP', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '검사완료';
   let list = await qc_service.findQCPP(status, pName, startDate, endDate);
   res.send(list);
-})
-//포장검사조회(모두)
+});
+//포장검사 - 포장검사조회(모두)
 router.post('/recordQCPPAll', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '';
   let list = await qc_service.findQCPP(status, pName, startDate, endDate);
   res.send(list);
-})
-//포장검사- 세척검사완료처리
+});
+//포장검사 - 세척검사완료처리
 router.post('/completeQCPP', async(req, res)=>{
   let {qcpp, qcppr} = req.body;
   let result = await qc_service.completeQCPP(qcpp, qcppr);
   res.send(result);
 });
 
-
-
+//포장검사 - 불량내역조회
+router.post('/recordQCPPR', async(req, res)=>{
+  let {pName, startDate, endDate} = req.body;
+  let list = await qc_service.findQCPPR(pName, startDate, endDate);
+  res.send(list);
+});
 
 
 module.exports = router;

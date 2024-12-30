@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" :class="[modalSize]">
       <div class="modal-content">
         <div class="modal-header">
@@ -36,7 +36,19 @@ export default {
 
 
 
+
 <style scoped>
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  .modal-body {
+    max-height: 500px;
+  }
+}
 .show {
   display: block;
 }

@@ -24,7 +24,7 @@
                                     <!--검색 및 초기화-->
                                 <div class="col-sm-4 text-end">
                                     <material-button  size = "md" color="success" class="me-2" @click="searchProductNum">검색</material-button>
-                                    <material-button  size = "md" color="warning" >초기화</material-button>
+                                    <material-button  size = "md" color="warning" @click="resetSearch">초기화</material-button>
                                 </div>
                         </div>   
                     </div>
@@ -56,9 +56,11 @@
 
         
         <div class="container-fluid py-4">
+            
             <div>
                 <!-- 제품별 lot 조회 -->
                 <div class="grid-container" v-show="LotNum.length != 0">
+                    <h4>제품별 LOT 조회</h4>
                     <ag-grid-vue
                     :rowData="LotNum"
                     :columnDefs="columnLotNum"
@@ -305,7 +307,15 @@ export default{
                 })
             );  
 
-        }
+        },
+
+        resetSearch(){
+            this.productName = "",
+            this.productCode = "",
+            this.productNum =[],
+            this.LotNum =[]
+
+        },
 
       
 

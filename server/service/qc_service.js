@@ -314,6 +314,41 @@ const completeQCPC = async (qcpc, qcpcr) =>{
 
 
 }
+// 세척검사-불량내역조회
+const findQCPCR = async(mName, startDate, endDate)=>{
+
+  let searchList = [];
+
+
+  if (mName != undefined && mName != null && mName != '') {
+    let search = `bm.material LIKE \'%${pName}%\'`;
+    searchList.push(search);
+  }
+
+  if (startDate != undefined && startDate != null && startDate != '') {
+    let search = `qcpc.inspec_start >= \'${startDate} 00:00:00\'`;
+    searchList.push(search);
+  }
+
+  if (endDate != undefined && endDate != null && endDate != '') {
+    let search = `qcpc.inspec_start <= \'${endDate} 23:59:59\'`;
+
+    searchList.push(search);
+  }
+
+  let querywhere = '';
+  for (let i = 0; i < searchList.length; i++) {
+    let search = searchList[i];
+    querywhere += (i == 0 ? ` ` : `AND `) + search;
+  };
+
+  querywhere = searchList.length == 0 ? "ORDER BY qpcr.cleaning_rjc_id DESC " : `AND ${querywhere} ORDER BY qpcr.cleaning_rjc_id DESC `;
+  //console.log('selected Query', querywhere);
+
+  let result = await mysql.query('selectQCPCR', querywhere);
+  return result;
+
+};
 
 
 
@@ -380,6 +415,40 @@ const findQCPB = async (status, pName, startDate, endDate)=>{
 };
 
 
+const completeQCPB = async (qcpb, qcpbr) =>{
+  let sql1 = 'updateQCPB';
+  let sql2 = 'insertBevTestResult';
+  let updatedRows = 0;  // 수정된 수(검사완료처리)
+  let successNum = 0;   // 등록된 수 (불량품처리)
+
+  //검사 완료 처리
+  for (let item of qcpb) {
+    let { qcProcessId, processNum, inspecResult} = item;
+
+    // '검사번호', 공정바디번호,  합격수, 불합격수
+    let result = await mysql.query(sql1, [qcProcessId, processNum, inspecResult]);
+    if (result[0][0].result == 'Success') {
+      updatedRows++;
+    }
+  }
+
+  //불량 등록 처리
+  for (let item of qcpbr) {
+    let { qcProcessId, detailsId, itemId, actualValue, isPassed } = item;
+    let result = await mysql.query(sql2, [qcProcessId, detailsId, itemId, actualValue, isPassed]);
+    console.log(result);
+    // 영향을 받은 행 수를 확인
+    if (result.affectedRows > 0) {
+      successNum++;
+    }
+  }
+  //수정된 행수, 불량품내역 추가된 수 return
+  return { 'updatedRows': updatedRows, 'defectNum': successNum / 5 };
+
+
+}
+
+
 
 
 
@@ -427,7 +496,7 @@ const findQCPP  = async(status, pName, startDate, endDate)=>{
 
 };
 
-// 세척검사 완료 처리
+// 포장검사 완료 처리
 const completeQCPP = async (qcpp, qcppr) =>{
   let sql1 = 'updateQCPP';
   let sql2 = 'insertQCPPR';
@@ -457,10 +526,43 @@ const completeQCPP = async (qcpp, qcppr) =>{
   //수정된 행수, 불량품내역 추가된 수 return
   return { 'updatedRows': updatedRows, 'defectNum': successNum };
 
-
-
 }
 
+//포장검사조회(공통 - 전체, 선택 조회 모두 포함)
+const findQCPPR  = async(pName, startDate, endDate)=>{
+
+  let searchList = [];
+
+
+  if (pName != undefined && pName != null && pName != '') {
+    let search = `b.product_name LIKE \'%${pName}%\'`;
+    searchList.push(search);
+  }
+
+  if (startDate != undefined && startDate != null && startDate != '') {
+    let search = `qp.inspec_start >= \'${startDate} 00:00:00\'`;
+    searchList.push(search);
+  }
+
+  if (endDate != undefined && endDate != null && endDate != '') {
+    let search = `qp.inspec_start <= \'${endDate} 23:59:59\'`;
+
+    searchList.push(search);
+  }
+
+  let querywhere = '';
+  for (let i = 0; i < searchList.length; i++) {
+    let search = searchList[i];
+    querywhere += (i == 0 ? ` ` : `AND `) + search;
+  };
+
+  querywhere = searchList.length == 0 ? "ORDER BY qpr.packing_rjc_id DESC " : `WHERE ${querywhere} ORDER BY qpr.packing_rjc_id DESC `;
+  //console.log('selected Query', querywhere);
+
+  let result = await mysql.query('selectQCPPR', querywhere);
+  return result;
+
+};
 
 
 
@@ -480,14 +582,17 @@ module.exports = {
   findQCPC,
   findFaultyCodeQCPC,
   completeQCPC,
+  findQCPCR,
 
 
   loadTestDetails,
   findQCPB,
+  completeQCPB,
 
 
   findQCPP,
 
   completeQCPP,
+  findQCPPR,
 
 };

@@ -39,7 +39,7 @@
                             <div class="col-sm-4 text-end">
                                 <!--검색 및 초기화-->
                                 <material-button  size = "md" color="success" class="button" @click="searchLotNum">검색</material-button>
-                                <material-button  size = "md" color="warning" class="button" >초기화</material-button>
+                                <material-button  size = "md" color="warning" class="button" @click="resetSearch">초기화</material-button>
                             </div>
                         </div>   
                     </div>
@@ -262,10 +262,13 @@ export default{
                     type: 'error',
                 });
             }
-                
-          
 
-     
+        },
+        resetSearch(){
+            this.startDate = "",
+            this.endDate = "",
+            this.pickedStatus = [],
+            this.LotNum = []
         },
       
 
