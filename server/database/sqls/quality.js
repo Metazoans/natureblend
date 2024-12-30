@@ -253,6 +253,7 @@ const selectTestDetails =
 `
 SELECT 	bi.item_name, 
 		    bi.item_unit,
+        bd.bev_test_details_id AS details_id,
         bd.bev_test_item_id AS item_id,
 		    bd.etc_min,
         bd.etc_max,
@@ -282,7 +283,18 @@ LEFT JOIN employee e ON qb.emp_num = e.emp_num
 `;
 //ORDER BY qb.qc_berverage_id DESC
 
+//음료검사 완료처리
+//음료검사테이블 수정 프로시저(검사번호, 공정번호, 검사결과, @result);
+//CALL qc_p_beverage_update_list('QCPB2412280002', 63, '합격', @result);
+const updateQCPB = `
+CALL qc_p_beverage_update_list(?, ?, ?, @result)
+`;
 
+//음료검사 결과 세부내용 등록
+const insertBevTestResult = `
+INSERT INTO bev_test_result (qc_berverage_id, bev_test_details_id, bev_test_item_id, actual_value, is_passed)
+VALUES(?, ?, ?, ?, ?)
+`;
 
 
 
@@ -350,6 +362,9 @@ module.exports = {
 
   selectTestDetails,
   selectQCPB,
+  updateQCPB,
+  insertBevTestResult,
+
 
 
 

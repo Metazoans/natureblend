@@ -380,6 +380,41 @@ const findQCPB = async (status, pName, startDate, endDate)=>{
 };
 
 
+const completeQCPB = async (qcpb, qcpbr) =>{
+  let sql1 = 'updateQCPB';
+  let sql2 = 'insertBevTestResult';
+  let updatedRows = 0;  // 수정된 수(검사완료처리)
+  let successNum = 0;   // 등록된 수 (불량품처리)
+
+  //검사 완료 처리
+  for (let item of qcpb) {
+    let { qcProcessId, processNum, inspecResult} = item;
+
+    // '검사번호', 공정바디번호,  합격수, 불합격수
+    let result = await mysql.query(sql1, [qcProcessId, processNum, inspecResult]);
+    if (result[0][0].result == 'Success') {
+      updatedRows++;
+    }
+  }
+
+  //불량 등록 처리
+  for (let item of qcpbr) {
+    let { qcProcessId, detailsId, itemId, actualValue, isPassed } = item;
+    let result = await mysql.query(sql2, [qcProcessId, detailsId, itemId, actualValue, isPassed]);
+    console.log(result);
+    // 영향을 받은 행 수를 확인
+    if (result.affectedRows > 0) {
+      successNum++;
+    }
+  }
+  //수정된 행수, 불량품내역 추가된 수 return
+  return { 'updatedRows': updatedRows, 'defectNum': successNum / 5 };
+
+
+
+}
+
+
 
 
 
@@ -484,6 +519,7 @@ module.exports = {
 
   loadTestDetails,
   findQCPB,
+  completeQCPB,
 
 
   findQCPP,

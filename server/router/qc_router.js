@@ -129,21 +129,21 @@ router.get('/testDetailsForB', async(req, res)=>{
   
 });
 
-//포장검사조회(미검사만)
+//음료검사조회(미검사만)
 router.post('/requestQCPB', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '검사요청완료';
   let list = await qc_service.findQCPB(status, pName, startDate, endDate);
   res.send(list);
 })
-//포장검사조회(검사완료만)
+//음료검사조회(검사완료만)
 router.post('/recordQCPB', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '검사완료';
   let list = await qc_service.findQCPB(status, pName, startDate, endDate);
   res.send(list);
 })
-//포장검사조회(모두)
+//음료검사조회(모두)
 router.post('/recordQCPBAll', async(req, res)=>{
   let {pName, startDate, endDate} = req.body;
   let status = '';
@@ -151,6 +151,12 @@ router.post('/recordQCPBAll', async(req, res)=>{
   res.send(list);
 })
 
+router.post('/completeQCPB', async(req, res)=>{
+  let {qcpb, qcpbr} = req.body;
+  let result = await qc_service.completeQCPB(qcpb, qcpbr);
+  res.send(result);
+
+})
 
 
 /////////////////////////////////////
