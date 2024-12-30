@@ -54,11 +54,15 @@
           rowSelection="multiple"
           :getRowClass="getRowClass"
           :quickFilterText="listSearch"
-          @cellValueChanged="onCellValueChanged"
-          @selectionChanged="onSelectionChanged"
+          @cell-editing-stopped="onCellEditingStopped"
       >
       </ag-grid-vue>
     </div>
+    <h6 class="guide">
+      * 수정 시, 셀을 더블 클릭하여 수정해주세요. 수정이 완료되면 상단 오른쪽에 메세지가 나타납니다.
+      <br/>
+      <span>대기중</span>인 계획만 수정 가능합니다.
+    </h6>
     <Modal
         :isShowModal="isShowModal"
         :modalTitle="modalTitle"
@@ -79,6 +83,7 @@ import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
 import ProductList from "@/views/production/productionPlanAdd/ModalProductList.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import userDateUtils from "@/utils/useDates";
 
 export default {
   name: "tables",
@@ -107,9 +112,29 @@ export default {
           field: 'plan_num',
           cellStyle: {textAlign: 'right'}
         },
-        { headerName: "생산계획명", field: 'plan_name' },
-        { headerName: "계획시작일자", field: 'plan_start_date', cellStyle: {textAlign: 'center'} },
-        { headerName: "계획종료일자", field: 'plan_end_date', cellStyle: {textAlign: 'center'} },
+        {
+          headerName: "생산계획명",
+          field: 'plan_name',
+          editable: params => {
+            return params.data.plan_status === '대기중'
+          }
+        },
+        {
+          headerName: "계획시작일자",
+          field: 'plan_start_date',
+          cellStyle: {textAlign: 'center'},
+          editable: params => {
+            return params.data.plan_status === '대기중'
+          }
+        },
+        {
+          headerName: "계획종료일자",
+          field: 'plan_end_date',
+          cellStyle: {textAlign: 'center'},
+          editable: params => {
+            return params.data.plan_status === '대기중'
+          }
+        },
         {
           headerName: "진행상태",
           field: 'plan_status',
@@ -118,9 +143,22 @@ export default {
           },
           cellStyle: {textAlign: 'center'}
         },
-        { headerName: "제품명", field: 'product_name' },
-        { headerName: "계획수량", field: 'plan_qty', cellStyle: {textAlign: 'right'} },
+        {
+          headerName: "제품명",
+          field: 'product_name',
+          editable: params => {
+            return params.data.plan_status === '대기중'
+          }
+        },
+        { headerName: "계획수량",
+          field: 'plan_qty',
+          cellStyle: {textAlign: 'right'},
+          editable: params => {
+            return params.data.plan_status === '대기중'
+          }
+        },
         { headerName: "주문계획번호", field: 'order_plan_num', hide: true },
+        { headerName: "제품 번호", field: 'product_code', hide: true },
       ],
       planStatus: {
         'plan_waiting': '대기중',
@@ -136,7 +174,6 @@ export default {
         product_code: '',
         product_name: '',
       },
-      selectedRows: [],
     }
   },
 
@@ -151,14 +188,37 @@ export default {
   },
 
   methods: {
-    onSelectionChanged() {
-      const selectedNodes = this.$refs.agGrid.api.getSelectedNodes();
-      this.selectedRows = selectedNodes.map(node => node.rowIndex);
-      this.$refs.agGrid.api.refreshCells(); // 셀 다시 렌더링
-    },
+    async onCellEditingStopped(params) {
+      let data = params.data
+      let planInfo = {
+        plan: {
+          planStartDate: data.plan_start_date,
+          planEndDate: data.plan_end_date,
+          planName: data.plan_name,
+          planNum: data.plan_num
+        },
+        orderPlanRelation: {
+          productCode: data.product_code,
+          planQty: data.plan_qty,
+          orderPlanNum: data.order_plan_num
+        }
+      }
 
-    onCellValueChanged(params) {
-      console.log("수정된 값:", params.data);
+      let result = await axios.put(`${ajaxUrl}/production/plan`, planInfo)
+          .catch(err => console.log(err));
+
+      if(result.data.message === 'success') {
+        this.$notify({
+          text: "수정되었습니다.",
+          type: 'success',
+        });
+        await this.getPlanList()
+      } else {
+        this.$notify({
+          text: "수정 실패하였습니다.",
+          type: 'error',
+        });
+      }
     },
 
     search() {
@@ -236,22 +296,6 @@ export default {
           this.deletePlan()
         });
 
-        const button2 = document.createElement('button');
-        button2.textContent = '수정';
-        button2.style.marginRight = '10px';
-        button2.style.cursor = 'pointer';
-        button2.style.backgroundColor = '#fb8c00';
-        button2.style.color = 'white';
-        button2.style.border = 'none';
-        button2.style.padding = '5px 10px';
-        button2.style.borderRadius = '4px';
-        button2.style.position = 'absolute';
-        button2.style.left = '70px';
-        // 버튼 클릭 이벤트
-        button2.addEventListener('click', () => {
-          this.editPlan()
-        });
-
         const inputText1 = document.createElement('input');
         inputText1.type = 'text';
         inputText1.placeholder = '검색';
@@ -260,23 +304,16 @@ export default {
         inputText1.style.border = '1px solid #ccc';
         inputText1.style.borderRadius = '4px';
         inputText1.style.position = 'absolute';
-        inputText1.style.left = '130px';
+        inputText1.style.left = '70px';
 
         inputText1.addEventListener('input', (event) => {
           this.listSearch = event.target.value;
         });
 
         container1.appendChild(button);
-        container1.appendChild(button2);
         container1.appendChild(inputText1);
         paginationPanel.insertBefore(container1, paginationPanel.firstChild);
       }
-    },
-
-    editPlan() {
-      const selectedRows = this.gridApi.startEditingCell
-      // const selectedRows = this.gridApi.getSelectedRows()
-      console.log(selectedRows)
     },
 
     async deletePlan() {
@@ -312,6 +349,10 @@ export default {
       }
     },
 
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    },
+
     async getPlanList(params) {
       let result = null
 
@@ -338,23 +379,25 @@ export default {
           this.rowData[idx] = {
             [keys[1]]: data[keys[1]],
             [keys[2]]: data[keys[2]],
-            [keys[3]]: data[keys[3]].split('T')[0],
-            [keys[4]]: data[keys[4]].split('T')[0],
+            [keys[3]]: this.dateFormat(data[keys[3]], 'yyyy-MM-dd'),
+            [keys[4]]: this.dateFormat(data[keys[4]], 'yyyy-MM-dd'),
             [keys[5]]: this.planStatus[data[keys[5]]],
             [keys[6]]: data[keys[6]],
             [keys[7]]: data[keys[7]],
             [keys[8]]: data[keys[8]],
+            [keys[9]]: data[keys[9]],
           }
         } else {
           this.rowData[idx] = {
             [keys[1]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : data[keys[1]],
             [keys[2]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : data[keys[2]],
-            [keys[3]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : data[keys[3]].split('T')[0],
-            [keys[4]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : data[keys[4]].split('T')[0],
+            [keys[3]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : this.dateFormat(data[keys[3]], 'yyyy-MM-dd'),
+            [keys[4]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : this.dateFormat(data[keys[4]], 'yyyy-MM-dd'),
             [keys[5]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : this.planStatus[data[keys[5]]],
             [keys[6]]: data[keys[6]],
             [keys[7]]: data[keys[7]],
-            [keys[8]]: data[keys[8]]
+            [keys[8]]: data[keys[8]],
+            [keys[9]]: data[keys[9]]
           }
         }
       })
@@ -402,5 +445,16 @@ input {
   background-color: $white;
   border: solid 1px  ;
 }
-
+.guide {
+  margin-left: 16px;
+  > span {
+    margin: 8px 2px 0 12px;
+    line-height: 30px;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-weight: 900;
+    color: white;
+    background-color: #b82e24;
+  }
+}
 </style>

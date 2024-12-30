@@ -23,6 +23,7 @@
 import theme from "@/utils/agGridTheme";
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
+import userDateUtils from "@/utils/useDates";
 
 export default {
   name: "ProductionOrderList",
@@ -92,6 +93,10 @@ export default {
       }
     },
 
+    dateFormat(value, format) {
+      return userDateUtils.dateFormat(value, format);
+    },
+
     async getWorkDoneList() {
       let result = await axios.get(`${ajaxUrl}/production/work/done`)
           .catch(err => console.log(err));
@@ -116,8 +121,8 @@ export default {
           [keys[6]]: data[keys[7]] + data[keys[8]],
           [keys[7]]: data[keys[7]],
           [keys[8]]: data[keys[8]],
-          [keys[9]]: data[keys[9]].split('T')[0],
-          [keys[10]]: data[keys[10]].split('T')[0],
+          [keys[9]]: this.dateFormat(data[keys[9]], 'yyyy-MM-dd'),
+          [keys[10]]: this.dateFormat(data[keys[10]], 'yyyy-MM-dd'),
         }
       })
     }

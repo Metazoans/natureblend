@@ -59,6 +59,17 @@ const deletePlan = async (orderPlanNums)=>{
     }
 }
 
+const editPlan = async (planInfo)=>{
+    let resultPlan = await mysql.query('updatePlan', Object.values(planInfo.plan))
+    let resultOrderPlanRelation = await mysql.query('updateOrderPlanRelation', Object.values(planInfo.orderPlanRelation))
+
+    if(resultPlan.affectedRows === 1 && resultOrderPlanRelation.affectedRows === 1) {
+        return { message: 'success' }
+    } else {
+        return { message: 'fail' }
+    }
+}
+
 module.exports = {
     findAllProducts,
     findOrders,
@@ -66,5 +77,6 @@ module.exports = {
     getProductionEmpList,
     addPlan,
     planList,
-    deletePlan
+    deletePlan,
+    editPlan
 }
