@@ -2,7 +2,7 @@
   <div class="container-fluid product-order-add py-4">
     <div class="top">
       <h1>생산지시 등록</h1>
-      <material-button size="lg" color="warning" class="button" @click="openModal">등록</material-button>
+      <material-button size="lg" color="success" class="button" @click="openModal">등록</material-button>
     </div>
     <div class="main-container">
       <div class="con-top">

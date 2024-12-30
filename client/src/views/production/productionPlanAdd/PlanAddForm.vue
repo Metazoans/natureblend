@@ -2,7 +2,7 @@
   <div>
     <div class="add-top mt-4">
       <h3>생산계획 등록</h3>
-      <material-button size="sm" color="warning" class="button" @click="addPlan">등록</material-button>
+      <material-button size="sm" color="success" class="button" @click="addPlan">등록</material-button>
     </div>
     <div class="main-container">
       <div class="table-responsive p-0">

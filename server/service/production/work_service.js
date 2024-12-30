@@ -97,7 +97,7 @@ const qcCleaning = async (qcInfo)=>{
 }
 
 const qcJuice = async (qcInfo)=>{
-    return await mysql.query('insertJuiceQc', Object.values(qcInfo))
+    return await mysql.query('insertJuiceQc', [qcInfo.processNum, qcInfo.empNum])
 }
 
 const qcPackaging = async (qcInfo)=>{
