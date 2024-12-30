@@ -36,7 +36,6 @@
                 <!-- 입고된 주문건 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
-                     style ="width: 1250px; height: 300px; "
                     :rowData="productNum"
                     :columnDefs="columnProductNum"
                     :theme="theme"
@@ -59,9 +58,8 @@
         <div class="container-fluid py-4">
             <div>
                 <!-- 제품별 lot 조회 -->
-                <div class="grid-container">
+                <div class="grid-container" v-show="LotNum.length != 0">
                     <ag-grid-vue
-                     style ="width: 1250px; height: 300px; "
                     :rowData="LotNum"
                     :columnDefs="columnLotNum"
                     :theme="theme"
@@ -145,12 +143,7 @@ export default{
             { headerName: "창고위치 ", field: "warehouse_name", resizable: true, sortable: true },
             { headerName: "제조일자 ", field: "manufacturing_date", resizable: true, sortable: true },
             { headerName: "유통기한 ", field: "expire_date", resizable: true, sortable: true },
-            { headerName: "상태", field: "product_status", resizable: true, sortable: true },
-            {
-                headerName : "폐기",
-                field : "status",
-                editable : false,
-            }    
+            { headerName: "상태", field: "product_status", resizable: true, sortable: true },  
         ],
 
 

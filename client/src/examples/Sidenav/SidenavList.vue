@@ -67,7 +67,7 @@
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('returnManage')">제품반품등록</li>
-            <li class="sub-item">제품반품조회</li>
+            <li class="sub-item" @click="movePage('returnList')">제품반품조회</li>
           </template>
         </sidenav-collapse>
         <sidenav-collapse

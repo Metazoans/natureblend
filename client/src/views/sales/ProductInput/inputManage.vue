@@ -80,7 +80,7 @@
                             <div class="col-sm-9 d-flex">
                                 <input 
                                     id="EmpName"  class="form-control border p-2" 
-                                    v-model="searchEmpName.name" @click="openModal('emp')" readonly/>
+                                    v-model="searchEmpName" @click="openModal('emp')" readonly/>
                                     <Modal
                                         :isShowModal="isShowModal.emp"
                                         :modalTitle="'담당자선택'"
@@ -268,7 +268,7 @@ export default{
             this.selectedProName = product.product_name;
         },
         selectemp(emp){
-            this.selectedEmpName = emp;
+            this.selectedEmpName = emp.name;
         },
         selectwarehouse(warehouse){
             this.selectedWarehouseCode = warehouse.warehouse_code;
@@ -355,15 +355,15 @@ export default{
             this.inspectDate= order.inspec_end;
             this.tempProcessNum = order.process_num;
 
-            console.log("클릭된데이터:",this.tempProductCode,this.tempProductName);
-            console.log(this.warehouseName , this.searchEmpName.name);
+            console.log("클릭된데이터:",this.tempProductCode,this.tempProductName,this.inputAmount,this.qtId,this.inspectDate,this.searchEmpName,this.warehouseCode,this.tempProcessNum);
+            console.log(this.warehouseName , this.searchEmpName);
             // 입고를 원하는 검사 결과 클릭한 정보 +  담당자,창고 선택 폼 등장 
             // => 여기서 입고 정보 다 가지고 있어야 함   
         },
 
         // 밑에 위에서 작성한 입고 정보 출력 해서 체크박스 선택 받아서 입고 등록 
         tempInputInfo(){
-            if(!this.tempProductCode || !this.tempProductName || !this.inputAmount || !this.qtId || !this.inspectDate || !this.searchEmpName.name || !this.warehouseName || !this.warehouseCode || !this.tempProcessNum ){
+            if(!this.tempProductCode || !this.tempProductName || !this.inputAmount || !this.qtId || !this.inspectDate || !this.searchEmpName || !this.warehouseName || !this.warehouseCode || !this.tempProcessNum ){
                 this.$notify({ text: '품질결과,담당자,창고는 필수사항입니다.', type: 'error' });
                 return;  
             }
@@ -374,7 +374,7 @@ export default{
                 inputAmount : this.inputAmount,
                 qtId : this.qtId,
                 inspectDate : this.inspectDate,
-                employeeName : this.searchEmpName.name,
+                employeeName : this.searchEmpName,
                 warehouseName : this.warehouseName,
                 warehouseCode : this.warehouseCode,
                 processNum: this.tempProcessNum,
