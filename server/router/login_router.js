@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
                 return;
             }
             // res.redirect('/home');
-            res.send('로그인 성공');
+            res.send(login);
         });
     }else{
         res.status(401).send('아이디 또는 비밀번호가 잘못되었습니다.');
