@@ -42,12 +42,12 @@ const partCol = shallowRef([
     headerName: "",
     width:75,
   },
-  { headerName: '번호', field: 'part_num' },
-  { headerName: '부품이름', field: 'part_name' },
-  { headerName: '설비분류', field: 'machine_type' },
-  { headerName: '거래처', field: 'client_num' },
-  { headerName: '교체주기', field: 'replace_cycle' },
-  { headerName: '구매일자', field: 'buy_date' },
+  { headerName: '번호', field: 'part_num', cellStyle: { textAlign: "center" }, flex: 2 },
+  { headerName: '부품이름', field: 'part_name', flex: 4 },
+  { headerName: '설비분류', field: 'machine_type', flex: 4 },
+  { headerName: '거래처', field: 'client_num', flex: 3 },
+  { headerName: '교체주기', field: 'replace_cycle', cellStyle: { textAlign: "right" }, flex: 3 },
+  { headerName: '구매일자', field: 'buy_date', cellStyle: { textAlign: "center" }, flex: 5 },
 ]);
 
 let isShowModal = ref(false);
@@ -82,7 +82,6 @@ const selectDel = async () => {
 const gridApi = ref();
 const onReady = (param) => {
   gridApi.value = param.api;
-  param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
 
   // 페이징 영역 요소 추가
   const paginationPanel = document.querySelector('.ag-paging-panel');

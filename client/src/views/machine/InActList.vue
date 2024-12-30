@@ -87,26 +87,26 @@ export default {
     // 비가동 설비 정보
     const machineRow = shallowRef([]);
     const machineCol = shallowRef([
-      { headerName: '번호', field: 'machine_num' },
-      { headerName: '공정코드', field: 'process_code' },
-      { headerName: '공정명', field: 'process_name' },
-      { headerName: '모델번호', field: 'model_num' },
-      { headerName: '설비분류', field: 'machine_type' },
-      { headerName: '설비이름', field: 'machine_name' },
-      { headerName: '설비위치', field: 'machine_location' },
-      { headerName: '작동상태', field: 'machine_state' },
+      { headerName: '번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 2 },
+      { headerName: '공정코드', field: 'process_code', cellStyle: { textAlign: "center" }, flex: 3 },
+      { headerName: '공정명', field: 'process_name', flex: 4 },
+      { headerName: '모델번호', field: 'model_num', flex: 3 },
+      { headerName: '설비분류', field: 'machine_type', flex: 4 },
+      { headerName: '설비이름', field: 'machine_name', flex: 4 },
+      { headerName: '설비위치', field: 'machine_location', flex: 3 },
+      { headerName: '작동상태', field: 'machine_state', cellStyle: { textAlign: "center" }, flex: 3 },
     ]);
 
     // 비가동 내역 정보
     const inActRow = shallowRef([]);
     const inActCol = shallowRef([
-      { headerName: '번호', field: 'inact_num' },
-      { headerName: '모델번호', field: 'model_num' },
-      { headerName: '설비분류', field: 'machine_type' },
-      { headerName: '설비이름', field: 'machine_name' },
-      { headerName: '사유', field: 'inact_type' },
-      { headerName: '시작일시', field: 'inact_start_time' },
-      { headerName: '종료일시', field: 'inact_end_time' },
+      { headerName: '번호', field: 'inact_num', cellStyle: { textAlign: "center" }, flex: 2 },
+      { headerName: '모델번호', field: 'model_num', flex: 3 },
+      { headerName: '설비분류', field: 'machine_type', flex: 4 },
+      { headerName: '설비이름', field: 'machine_name', flex: 4 },
+      { headerName: '사유', field: 'inact_type', cellStyle: { textAlign: "center" }, flex: 2 },
+      { headerName: '시작일시', field: 'inact_start_time', cellStyle: { textAlign: "center" }, flex: 4 },
+      { headerName: '종료일시', field: 'inact_end_time', cellStyle: { textAlign: "center" }, flex: 4 },
     ]);
 
     const dateFormat = (value, format) => {
@@ -132,10 +132,6 @@ export default {
       }
     };
 
-    const onReady = (params) => {
-      params.api.sizeColumnsToFit();
-    };
-
     return {
       machineRow,
       machineCol,
@@ -144,7 +140,6 @@ export default {
       getInActMachines,
       getInActList,
       dateFormat,
-      onReady,
     }
   },
 
@@ -263,7 +258,6 @@ export default {
     // 비가동 ag-grid onReady
     inActOnReady(event) {
       this.gridApi = event.api;
-      event.api.sizeColumnsToFit();
 
       // 그리드 안에 검색창 추가
       const allPanels = document.querySelectorAll('.ag-paging-panel');
