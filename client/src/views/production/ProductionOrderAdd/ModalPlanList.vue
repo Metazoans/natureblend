@@ -57,20 +57,18 @@
                     @click="selectPlan(plan)"
                 >
                   <td>
-                    <div class="d-flex px-2">
-                      <div class="my-auto">
-                        <h6 class="mb-0 text-sm">{{ plan.plan_num }}</h6>
-                      </div>
+                    <div class="d-flex justify-content-end px-2">
+                      <h6 class="mb-0 text-sm">{{ plan.plan_num }}</h6>
                     </div>
                   </td>
                   <td>
                     <p class="text-sm font-weight-bold mb-0">{{ plan.plan_name }}</p>
                   </td>
                   <td>
-                    <p class="text-sm font-weight-bold mb-0">{{ plan.plan_start_date.split('T')[0] }}</p>
+                    <p class="text-sm text-center font-weight-bold mb-0">{{ plan.plan_start_date.split('T')[0] }}</p>
                   </td>
                   <td>
-                    <p class="text-sm font-weight-bold mb-0">{{ plan.plan_end_date.split('T')[0] }}</p>
+                    <p class="text-sm text-center font-weight-bold mb-0">{{ plan.plan_end_date.split('T')[0] }}</p>
                   </td>
                   <td>
                     <p class="text-sm font-weight-bold mb-0">{{ plan.product_code }}</p>
@@ -79,7 +77,7 @@
                     <p class="text-sm font-weight-bold mb-0">{{ plan.product_name }}</p>
                   </td>
                   <td>
-                    <p class="text-sm font-weight-bold mb-0">{{ plan.total_plan_qty }}</p>
+                    <p class="text-sm text-end font-weight-bold mb-0">{{ plan.total_plan_qty }}</p>
                   </td>
 
                 </tr>

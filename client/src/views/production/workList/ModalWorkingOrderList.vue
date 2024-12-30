@@ -12,29 +12,29 @@
                   <thead>
                   <tr>
                     <th
-                        class="text-uppercase text-secondary text-md font-weight-bolder opacity-7"
+                        class="text-uppercase text-center text-secondary text-md font-weight-bolder opacity-7"
                     >
                       생산지시 코드
                     </th>
                     <th
-                        class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
+                        class="text-uppercase text-center text-secondary text-md font-weight-bolder opacity-7 ps-2"
                     >
                       생산지시명
                     </th>
                     <th
-                        class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
+                        class="text-uppercase text-center text-secondary text-md font-weight-bolder opacity-7 ps-2"
                     >
                       작업일자
                     </th>
                     <th
-                        class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
+                        class="text-uppercase text-center text-secondary text-md font-weight-bolder opacity-7 ps-2"
                     >
                       제품명
                     </th>
                     <th
-                        class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
+                        class="text-uppercase text-center text-secondary text-md font-weight-bolder opacity-7 ps-2"
                     >
-                      지시수량
+                      지시수량(개)
                     </th>
 <!--                    <th-->
 <!--                        class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"-->
@@ -52,23 +52,19 @@
                       @click="selectOrder(workingOrder)"
                   >
                     <td>
-                      <div class="d-flex px-2">
-                        <div class="my-auto">
-                          <h6 class="mb-0 text-sm">{{ workingOrder.production_order_num }}</h6>
-                        </div>
-                      </div>
+                      <h6 class="mb-0 text-end text-sm">{{ workingOrder.production_order_num }}</h6>
                     </td>
                     <td>
                       <p class="text-sm font-weight-bold mb-0">{{ workingOrder.production_order_name }}</p>
                     </td>
                     <td>
-                      <p class="text-sm font-weight-bold mb-0">{{ workingOrder.work_date }}</p>
+                      <p class="text-sm text-center font-weight-bold mb-0">{{ workingOrder.work_date }}</p>
                     </td>
                     <td>
                       <p class="text-sm font-weight-bold mb-0">{{ workingOrder.product_name }}</p>
                     </td>
                     <td>
-                      <p class="text-sm font-weight-bold mb-0">{{ workingOrder.production_order_qty }}개</p>
+                      <p class="text-sm text-end font-weight-bold mb-0">{{ workingOrder.production_order_qty }}</p>
                     </td>
 <!--                    <td>-->
 <!--                      <p class="text-sm font-weight-bold mb-0">생산수량(진행전이나 진행중일 때)개</p>-->
