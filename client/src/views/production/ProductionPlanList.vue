@@ -8,7 +8,7 @@
         <form class="row gx-3 gy-2 align-items-center">
           <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="product">제품명</label>
-            <input type="text" readonly @click="openModal" :value="searchProduct.product_name" class="form-control cursor-pointer" style="background-color: white; padding-left: 20px;" id="product">
+            <input type="text" readonly @click="openModal(false)" :value="searchProduct.product_name" class="form-control cursor-pointer" style="background-color: white; padding-left: 20px;" id="product">
           </div>
           <div class="radio-con">
             <label class="col-form-label fw-bold" for="planStatusOption">진행상태</label>
@@ -55,6 +55,7 @@
           :getRowClass="getRowClass"
           :quickFilterText="listSearch"
           @cell-editing-stopped="onCellEditingStopped"
+          @cellDoubleClicked="onCellDoubleClicked"
       >
       </ag-grid-vue>
     </div>
@@ -91,6 +92,7 @@ export default {
 
   data() {
     return {
+      isForProductChange: false,
       startDate: '',
       endDate: '',
       planStatusOption: [],
@@ -146,9 +148,6 @@ export default {
         {
           headerName: "제품명",
           field: 'product_name',
-          editable: params => {
-            return params.data.plan_status === '대기중'
-          }
         },
         { headerName: "계획수량",
           field: 'plan_qty',
@@ -174,6 +173,7 @@ export default {
         product_code: '',
         product_name: '',
       },
+      planInfo: {}
     }
   },
 
@@ -188,9 +188,26 @@ export default {
   },
 
   methods: {
-    async onCellEditingStopped(params) {
-      let data = params.data
-      let planInfo = {
+    onCellDoubleClicked(params) {
+      if(params.colDef.field === 'product_name') {
+        this.setPlanInfo(params.data)
+        this.openModal(true)
+      }
+    },
+
+    confirm() {
+      if(!this.isForProductChange) {
+        this.searchProduct = this.selectedProduct
+      } else {
+        this.planInfo.orderPlanRelation.productCode = this.selectedProduct.product_code
+        this.editPlan()
+      }
+
+      this.closeModal()
+    },
+
+    setPlanInfo(data) {
+      this.planInfo = {
         plan: {
           planStartDate: data.plan_start_date,
           planEndDate: data.plan_end_date,
@@ -203,8 +220,10 @@ export default {
           orderPlanNum: data.order_plan_num
         }
       }
+    },
 
-      let result = await axios.put(`${ajaxUrl}/production/plan`, planInfo)
+    async editPlan() {
+      let result = await axios.put(`${ajaxUrl}/production/plan`, this.planInfo)
           .catch(err => console.log(err));
 
       if(result.data.message === 'success') {
@@ -219,6 +238,11 @@ export default {
           type: 'error',
         });
       }
+    },
+
+    async onCellEditingStopped(params) {
+      this.setPlanInfo(params.data)
+      await this.editPlan()
     },
 
     search() {
@@ -251,7 +275,8 @@ export default {
       this.selectedProduct = product
     },
 
-    openModal() {
+    openModal(isForProductChange) {
+      this.isForProductChange = isForProductChange
       this.isShowModal = !this.isShowModal
     },
 
@@ -261,13 +286,8 @@ export default {
       } else {
         return 'noBorder'
       }
-
     },
 
-    confirm() {
-      this.searchProduct = this.selectedProduct
-      this.closeModal()
-    },
 
     onReady(param){
       this.gridApi = param.api
