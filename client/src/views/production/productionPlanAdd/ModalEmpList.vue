@@ -13,12 +13,12 @@
 
                 <tr>
                   <th
-                      class="text-uppercase text-secondary text-md font-weight-bolder opacity-7"
+                      class="text-center text-uppercase text-secondary text-md font-weight-bolder opacity-7"
                   >
                     사원번호
                   </th>
                   <th
-                      class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
+                      class="text-center text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
                   >
                     이름
                   </th>
@@ -32,15 +32,11 @@
                     :class="{ selected: selectedEmpNum === emp.emp_num }"
                     @click="selectEmp(emp)"
                 >
-                  <td>
-                    <div class="d-flex px-2">
-                      <div class="my-auto">
-                        <h6 class="mb-0 text-sm">{{ emp.emp_num }}</h6>
-                      </div>
-                    </div>
+                  <td class="w-50">
+                    <h6 class="mb-0 text-end text-sm">{{ emp.emp_num }}</h6>
                   </td>
-                  <td>
-                    <p class="text-sm font-weight-bold mb-0">{{ emp.name }}</p>
+                  <td class="w-50">
+                    <p class="text-sm text-center font-weight-bold mb-0">{{ emp.name }}</p>
                   </td>
                 </tr>
                 </tbody>

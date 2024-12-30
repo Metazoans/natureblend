@@ -25,20 +25,37 @@ const addPlan = async (planInfo)=>{
 
 const planList = async (urlQuery)=>{
     if(Object.keys(urlQuery).length === 0) {
-        return await mysql.query('planDetailList');
+        return await mysql.query('planDetailList')
     } else {
-        // query {
-        //     productCode: 'P002',
-        //         status: 'plan_in_process,plan_complete',
-        //         startDate: '2024-12-14',
-        //         endDate: '2025-01-07'
-        // }
+        let dbQuery = ''
+        if(urlQuery.productCode) {
+            dbQuery += ` and product_code = '${urlQuery.productCode}'`
+        }
+        if(urlQuery.status) {
+            let output = urlQuery.status
+                .split(',')
+                .map(item => `'${item}'`)
+                .join(',')
+            dbQuery += ` and plan_status in (${output})`
+        }
+        if(urlQuery.startDate) {
+            dbQuery += ` and plan_start_date >= '${urlQuery.startDate}'`
+        }
+        if(urlQuery.endDate) {
+            dbQuery += ` and plan_end_date <= '${urlQuery.endDate}'`
+        }
 
-        // let dbQuery = ''
-        // if(urlQuery.productCode) {
-        //     dbQuery += ` and product_code = ${urlQuery.productCode}`
-        // }
+        return await mysql.query('planDetailList', dbQuery)
+    }
+}
 
+const deletePlan = async (orderPlanNums)=>{
+    let result = await mysql.query('deletePlan', [orderPlanNums])
+
+    if(result.affectedRows > 0) {
+        return { message: 'success' }
+    } else {
+        return { message: 'fail' }
     }
 }
 
@@ -48,5 +65,6 @@ module.exports = {
     findProductStock,
     getProductionEmpList,
     addPlan,
-    planList
+    planList,
+    deletePlan
 }

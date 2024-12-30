@@ -11,12 +11,12 @@
                 <thead>
                 <tr>
                   <th
-                      class="text-uppercase text-secondary text-md font-weight-bolder opacity-7"
+                      class="text-center text-uppercase text-secondary text-md font-weight-bolder opacity-7"
                   >
                     제품번호
                   </th>
                   <th
-                      class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
+                      class="text-center text-uppercase text-secondary text-md font-weight-bolder opacity-7 ps-2"
                   >
                     제품이름
                   </th>
@@ -31,14 +31,14 @@
                     @click="selectProduct(product)"
                 >
                   <td>
-                    <div class="d-flex px-2">
+                    <div class="d-flex justify-content-center px-2">
                       <div class="my-auto">
                         <h6 class="mb-0 text-sm">{{ product.product_code }}</h6>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <p class="text-sm font-weight-bold mb-0">{{ product.product_name }}</p>
+                    <p class="text-center text-sm font-weight-bold mb-0">{{ product.product_name }}</p>
                   </td>
                 </tr>
                 </tbody>

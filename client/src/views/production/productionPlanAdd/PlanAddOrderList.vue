@@ -15,6 +15,8 @@
           @grid-ready="onGridReady"
           :noRowsOverlayComponent="noRowsOverlayComponent"
           @rowClicked="onRowClicked"
+          :pagination="true"
+          :paginationPageSize="10"
       />
     </div>
     <Modal
@@ -67,14 +69,14 @@ export default {
       rowData: [],
 
       columnDefs: [
-        { headerName: "주문번호", field: 'orderNum'},
-        { headerName: "주문일자", field: 'orderDate' },
-        { headerName: "납기일자", field: 'dueDate' },
+        { headerName: "주문번호", field: 'orderNum', cellStyle: { textAlign: 'right' }},
+        { headerName: "주문일자", field: 'orderDate', cellStyle: { textAlign: 'center' } },
+        { headerName: "납기일자", field: 'dueDate', cellStyle: { textAlign: 'center' } },
         { headerName: "제품명", field: 'productName' },
-        { headerName: "주문량", field: 'orderQty' },
-        { headerName: "기계획량", field: 'plannedQty' },
-        { headerName: "미계획량", field: 'unplannedQty' },
-        { headerName: "부분출고량", field: 'partialOutputQty' },
+        { headerName: "주문량", field: 'orderQty', cellStyle: { textAlign: 'right' }  },
+        { headerName: "기계획량", field: 'plannedQty', cellStyle: { textAlign: 'right' } },
+        { headerName: "미계획량", field: 'unplannedQty', cellStyle: { textAlign: 'right' } },
+        { headerName: "부분출고량", field: 'partialOutputQty', cellStyle: { textAlign: 'right' } },
         { headerName: "재고", field: 'stockQty', hide: true },
         { headerName: "상품코드", field: 'productCode', hide: true },
       ],
@@ -122,7 +124,7 @@ export default {
           [keys[3]]: order.product_name,
           [keys[4]]: order.order_amount,
           [keys[5]]: order.plan_qty,
-          [keys[6]]: order.unplanned_qty,
+          [keys[6]]: order.unplanned_qty < 0 ? 0 : order.unplanned_qty,
           [keys[7]]: order.output_amount === null ? 0 : order.output_amount,
           [keys[8]]: '재고',
           [keys[9]]: order.product_code

@@ -82,7 +82,7 @@
             <tbody>
             <tr v-for="(partialWork) in partialWorkList" :key="partialWork.process_num">
               <td>
-                <h6 class="mb-0 text-sm text-center">{{ partialWork.process_num }}</h6>
+                <h6 class="mb-0 text-sm text-end">{{ partialWork.process_num }}</h6>
               </td>
               <td>
                 <h6 v-if="partialWork.emp_num !== null" class="mb-0 text-sm text-center">{{ partialWork.emp_name }}</h6>
@@ -93,25 +93,25 @@
                 <input v-else readonly @click="openModal('machine')" :value="searchMachine.machine_name" class="form-control border p-2 cursor-pointer" />
               </td>
               <td>
-                <h6 v-if="partialWork.process_todo_qty !== null" class="mb-0 text-sm text-center">{{ partialWork.process_todo_qty }}</h6>
-                <input v-else v-model="partialWork.new_process_todo_qty" type="number" class="form-control border p-2 cursor-pointer" />
+                <h6 v-if="partialWork.process_todo_qty !== null" class="mb-0 text-sm text-end">{{ partialWork.process_todo_qty }}</h6>
+                <input v-else v-model="partialWork.new_process_todo_qty" type="number" class="form-control border p-2 cursor-pointer text-end" />
               </td>
               <td>
-                <h6 v-if="partialWork.fail_qty !== null" class="mb-0 text-sm text-center">{{ partialWork.fail_qty }}</h6>
-                <input v-else v-model="partialWork.new_fail_qty" type="number" class="form-control border p-2 cursor-pointer" />
+                <h6 v-if="partialWork.fail_qty !== null" class="mb-0 text-sm text-end">{{ partialWork.fail_qty }}</h6>
+                <input v-else v-model="partialWork.new_fail_qty" type="number" class="form-control border p-2 cursor-pointer text-end" />
               </td>
               <td>
-                <h6 v-if="partialWork.success_qty !== null" class="mb-0 text-sm text-center">{{ partialWork.success_qty }}</h6>
-                <input v-else v-model="partialWork.new_success_qty" type="number" class="form-control border p-2 cursor-pointer" />
+                <h6 v-if="partialWork.success_qty !== null" class="mb-0 text-sm text-end">{{ partialWork.success_qty }}</h6>
+                <input v-else v-model="partialWork.new_success_qty" type="number" class="form-control border p-2 cursor-pointer text-end" />
               </td>
               <td class="text-center">
-                <button @click="startPartialWork(partialWork)" :disabled="partialWork.partial_process_start_time">시작</button>
+                <button @click="startPartialWork(partialWork)" class="start" :disabled="partialWork.partial_process_start_time">시작</button>
               </td>
               <td>
                 <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_start_time ? dateFormat(partialWork.partial_process_start_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>
               </td>
               <td class="text-center">
-                <button @click="endPartialWork(partialWork)" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>
+                <button @click="endPartialWork(partialWork)" class="end" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>
               </td>
               <td>
                 <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_end_time ? dateFormat(partialWork.partial_process_end_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>
@@ -198,11 +198,11 @@ export default {
       rowData: [],
 
       columnDefs: [
-        { headerName: "작업번호", field: 'process_work_header_num'},
-        { headerName: "공정코드", field: 'process_code' },
+        { headerName: "작업번호", field: 'process_work_header_num', cellStyle: { textAlign: 'right' }},
+        { headerName: "공정코드", field: 'process_code', cellStyle: { textAlign: 'center' } },
         { headerName: "공정명", field: 'process_name' },
         { headerName: "설비분류", field: 'machine_type' },
-        { headerName: "지시량", field: 'production_order_qty' },
+        { headerName: "지시량(개)", field: 'production_order_qty', cellStyle: { textAlign: 'right' }  },
         { headerName: "진행상태",
           field: 'process_status',
           cellClass: (params) => {
@@ -385,7 +385,7 @@ export default {
     },
 
     getPartialWorkFinalStatus() {
-      let production_order_qty = Number(this.selectedRow.production_order_qty.split('개')[0])
+      let production_order_qty = Number(this.selectedRow.production_order_qty)
 
       let isStarted = false
       this.partialWorkList.forEach((work) => {
@@ -539,7 +539,7 @@ export default {
           [keys[1]]: process[keys[1]],
           [keys[2]]: process[keys[2]],
           [keys[3]]: process[keys[3]],
-          [keys[4]]: process[keys[4]] + '개',
+          [keys[4]]: process[keys[4]],
           [keys[5]]: this.processStatus[process[keys[5]]],
         }
       })
@@ -788,6 +788,7 @@ export default {
           line-height: 20px;
           font-weight: 900;
           color: $white;
+          margin: auto;
         }
         .green {
           background: $green;
@@ -797,6 +798,28 @@ export default {
         }
         .gray {
           background: $gray-600;
+        }
+        tr button {
+          background: #fff;
+          border-radius: 4px;
+          line-height: 25px;
+          font-weight: 700;
+          &.start {
+            border: 2px solid #4caf50;
+            color: #4caf50;
+
+          }
+          &.end {
+            border: 2px solid #f44335;
+            color: #f44335;
+          }
+          &:disabled {
+            border: 2px solid $gray-400;
+            color: $gray-400;
+          }
+        }
+        .form-control {
+          background-color: #fff;
         }
       }
     }
