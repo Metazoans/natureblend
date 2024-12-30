@@ -306,7 +306,7 @@ const flowList = async (product_code) => {
 // 공정흐름도 등록
 const insertFlow = async(product_code, process_code, process_name) =>{
   console.log(product_code);
-  let result = await mysql.query('flowInsert', [product_code, process_code, process_name]);
+  let result = await mysql.query('flowInsert', [product_code,product_code, process_code, process_name]);
   console.log('result 확인',result[1]);
   if(result[1].affectedRows > 0){
     return '성공';

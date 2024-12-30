@@ -5,6 +5,9 @@
         <li v-for="(item, index) in navItems" :key="index" @click="handleClick(item)" :class="{ active: item.active }">
           {{ item.text }}
         </li>
+        <li>
+          <buttonTemplet/>
+        </li>
       </ul>
       <div>
         <ul class="navbar-nav justify-content-end">
@@ -30,9 +33,13 @@
   
   <script>
   import {mapActions, mapMutations, mapState} from "vuex";
+  import buttonTemplet from "@/views/standard/buttonTemplet.vue";
+
   export default {
     name: "AppHeader",
-    components: {},
+    components: {
+      buttonTemplet
+    },
     data() {
       return {
         navItems: [
@@ -48,6 +55,7 @@
     methods: {
       ...mapMutations(["navbarMinimize"]),
       ...mapActions(["setHeaderMenu"]),
+      
 
       handleClick(item) {
         this.navItems.forEach(i => i.active = false);

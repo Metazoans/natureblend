@@ -29,7 +29,7 @@ const part = require('./sqls/machine/part.js');
 // 기준정보
 const bomlist = require('./sqls/standard/bomlist.js');
 const processflow = require('./sqls/standard/processflow.js');
-
+const loginquery = require('./sqls/standard/loginquery.js');
 
 module.exports = {
   ...boards,
@@ -63,4 +63,5 @@ module.exports = {
   // 기준정보
   ...bomlist,
   ...processflow,
+  ...loginquery,
 }
