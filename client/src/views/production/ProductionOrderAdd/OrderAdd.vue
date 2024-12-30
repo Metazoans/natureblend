@@ -31,6 +31,8 @@
               :columnDefs="columnDefsStock"
               :theme="theme"
               @grid-ready="onGridReady"
+              :pagination="true"
+              :paginationPageSize="10"
           />
         </div>
       </div>
@@ -44,6 +46,9 @@
               @grid-ready="onGridReady"
               :stopEditingWhenCellsLoseFocus="true"
               @cell-editing-stopped="onCellEditingStopped"
+              :pagination="true"
+              :paginationPageSize="10"
+              @cellFocused="onCellFocused"
           />
         </div>
       </div>
@@ -82,15 +87,15 @@ export default {
       rowDataNeed: [],
       columnDefsNeed: [
         { headerName: "자재명", field: 'needMaterialName'},
-        { headerName: "용량", field: 'needAmount' },
+        { headerName: "용량", field: 'needAmount', cellStyle: { textAlign: 'right' } },
       ],
 
       rowDataStock: [],
       columnDefsStock: [
-        { headerName: "자재Lot번호", field: 'stockLot'},
+        { headerName: "자재Lot번호", field: 'stockLot', cellStyle: { textAlign: 'center' }},
         { headerName: "자재명", field: 'stockMaterialName' },
-        { headerName: "용량", field: 'stockAmount' },
-        { headerName: "유통기한", field: 'expiryDate' },
+        { headerName: "용량", field: 'stockAmount', cellStyle: { textAlign: 'right' } },
+        { headerName: "유통기한", field: 'expiryDate', cellStyle: { textAlign: 'center' } },
         { headerName: "자재코드", field: 'stockMaterialCode', hide: true },
         {
           headerName: "사용",
@@ -99,6 +104,13 @@ export default {
           cellRenderer: params => {
             const button = document.createElement('button');
             button.innerText = '사용';
+            button.style.backgroundColor = '#fff'
+            button.style.border = "1px solid #fb8c00"
+            button.style.borderRadius = '4px'
+            button.style.height = '35px'
+            button.style.color = '#fb8c00'
+            button.style.padding = '0 12px'
+            button.style.lineHeight = '35px'
             button.addEventListener('click', () => {
               this.selectStock(params)
             });
@@ -109,16 +121,28 @@ export default {
 
       rowDataUse: [],
       columnDefsUse: [
-        { headerName: "자재Lot번호", field: 'useLot'},
+        { headerName: "자재Lot번호", field: 'useLot', cellStyle: { textAlign: 'center' }},
         { headerName: "자재명", field: 'useMaterialName' },
         { headerName: "자재코드", field: 'useMaterialCode', hide: true },
-        { headerName: "용량", field: 'useAmount', editable: true},
+        {
+          headerName: "용량",
+          field: 'useAmount',
+          editable: true,
+          cellStyle: { textAlign: 'right' },
+        },
         {
           headerName: "삭제",
           field: 'deleteBtn',
           cellRenderer: params => {
             const button = document.createElement('button');
             button.innerText = '삭제';
+            button.style.backgroundColor = '#fff'
+            button.style.border = "1px solid #f44335"
+            button.style.borderRadius = '4px'
+            button.style.height = '35px'
+            button.style.color = '#f44335'
+            button.style.padding = '0 12px'
+            button.style.lineHeight = '35px'
             button.addEventListener('click', () => {
               this.deleteMaterial(params)
             });
@@ -298,7 +322,7 @@ export default {
     margin-top: 12px;
     .grid-container {
       > div {
-        height: 300px;
+        height: inherit;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
       }
@@ -309,13 +333,13 @@ export default {
       justify-content: space-between;
 
       .grid-1 {
-        height: 300px;
+        height: 400px;
         width: 30%;
         padding: 0 20px 20px 28px;
 
       }
       .grid-2 {
-        height: 300px;
+        height: 400px;
         width: 60%;
         padding: 0 0 20px 20px;
 
@@ -324,8 +348,8 @@ export default {
     .con-bottom {
       display: flex;
       justify-content: flex-end;
-      margin-left: auto;
       width: calc(100% - 316px);
+      margin: 100px 0 100px auto;
       .grid-3 {
         height: 500px;
         width: 100%;

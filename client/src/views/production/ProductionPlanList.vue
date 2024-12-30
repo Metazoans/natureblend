@@ -90,19 +90,20 @@ export default {
       listSearch: '',
       rowData: [],
       columnDefs: [
-        { headerName: "생산계획번호", field: 'plan_num'},
+        { headerName: "생산계획번호", field: 'plan_num', cellStyle: {textAlign: 'right'}},
         { headerName: "생산계획명", field: 'plan_name' },
-        { headerName: "계획시작일자", field: 'plan_start_date' },
-        { headerName: "계획종료일자", field: 'plan_end_date' },
+        { headerName: "계획시작일자", field: 'plan_start_date', cellStyle: {textAlign: 'center'} },
+        { headerName: "계획종료일자", field: 'plan_end_date', cellStyle: {textAlign: 'center'} },
         {
           headerName: "진행상태",
           field: 'plan_status',
           cellClass: (params) => {
             return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
-          }
+          },
+          cellStyle: {textAlign: 'center'}
         },
         { headerName: "제품명", field: 'product_name' },
-        { headerName: "계획수량", field: 'plan_qty' },
+        { headerName: "계획수량", field: 'plan_qty', cellStyle: {textAlign: 'right'} },
       ],
       planStatus: {
         'plan_waiting': '대기중',

@@ -26,7 +26,7 @@
           <tbody v-show="selectedOrders.length">
           <tr v-for="order in selectedOrders" :key="order.orderNum">
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.orderNum }}</h6>
+              <h6 class="mb-0 text-sm text-end">{{ order.orderNum }}</h6>
             </td>
             <td>
               <h6 class="mb-0 text-sm text-center">{{ order.orderDate }}</h6>
@@ -35,22 +35,22 @@
               <h6 class="mb-0 text-sm text-center">{{ order.dueDate }}</h6>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.productName }}</h6>
+              <h6 class="mb-0 text-sm">{{ order.productName }}</h6>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.orderQty }}</h6>
+              <h6 class="mb-0 text-sm text-end">{{ order.orderQty }}</h6>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.plannedQty }}</h6>
+              <h6 class="mb-0 text-sm text-end">{{ order.plannedQty }}</h6>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.unplannedQty }}</h6>
+              <h6 class="mb-0 text-sm text-end">{{ order.unplannedQty }}</h6>
+            </td>
+            <td class="input-group w-50 h-25 text-end m-lg-auto">
+              <input type="number" class="mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
             </td>
             <td>
-              <input type="number" class="mb-0 text-sm text-center" v-model="order.planQty"/>
-            </td>
-            <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.stockQty }}</h6>
+              <h6 class="mb-0 text-sm text-end">{{ order.stockQty }}</h6>
             </td>
           </tr>
           </tbody>

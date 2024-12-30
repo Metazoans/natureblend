@@ -129,6 +129,7 @@ export default {
     .green {
       height: auto;
       margin-top: 6px;
+      margin-left: 20px;
       border-radius: 4px;
       padding: 4px 6px;
       width: fit-content !important;
@@ -140,6 +141,7 @@ export default {
     .red {
       height: auto;
       margin-top: 6px;
+      margin-left: 20px;
       border-radius: 4px;
       padding: 4px 6px;
       width: fit-content !important;
@@ -151,6 +153,7 @@ export default {
     .gray {
       height: auto;
       margin-top: 6px;
+      margin-left: 20px;
       border-radius: 4px;
       padding: 4px 6px;
       width: fit-content !important;

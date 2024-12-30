@@ -32,12 +32,12 @@ export default {
       listSearch: '',
       rowData: [],
       columnDefs: [
-        { headerName: "생산지시번호", field: 'production_order_num'},
+        { headerName: "생산지시번호", field: 'production_order_num', cellStyle: { textAlign: 'right' }},
         { headerName: "생산지시명", field: 'production_order_name' },
         { headerName: "생산계획명", field: 'plan_name' },
-        { headerName: "작업일자", field: 'work_date' },
+        { headerName: "작업일자", field: 'work_date', cellStyle: { textAlign: 'center' } },
         { headerName: "제품명", field: 'product_name' },
-        { headerName: "지시량(개)", field: 'production_order_qty' },
+        { headerName: "지시량(개)", field: 'production_order_qty', cellStyle: { textAlign: 'right' } },
         {
           headerName: "작업진행",
           field: 'production_order_status',
