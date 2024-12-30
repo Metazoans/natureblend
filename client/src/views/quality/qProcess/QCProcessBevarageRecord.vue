@@ -10,6 +10,17 @@
       </div>
 
       <div class="row g-3">
+        <!-- 재고 상태 -->
+        <div class="col-md-2">
+          <label for="qcStat" class="form-label">재고 상태</label>
+          <select class="form-select text-center border cursor-pointer" v-model="searchInfo.qcState"
+            aria-label="재고 상태 선택">
+            <option value="qcs1">전체</option>
+            <option value="qcs2">검사완료</option>
+            <option value="qcs3">검사미완료</option>
+          </select>
+        </div>
+
         <!-- 날짜 범위 -->
         <div class="col-md-4">
           <label for="startDate" class="form-label">날짜 범위</label>
@@ -55,22 +66,12 @@
 
 
 
-  <!-- 검사처리내역 시작 -->
-  <div class="container-fluid py-4">
-    <h4>검사처리내역</h4>
-    <div class="grid-container">
-      <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20">
-      </ag-grid-vue>
-    </div>
-    <material-button size="md" class="mt-3" v-on:click="openModal">검사완료</material-button>
-  </div>
-  <!-- 검사처리내역 끝 -->
+  
 
   <!-- 불량 상세 모달 -->
 
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
-    @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId)">
+    @confirm="closeModal">
     <template v-slot:list>
       <h4>검사 상세 정보</h4>
       <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
@@ -131,7 +132,8 @@ export default {
         pName: '',
         //범위 : 일주일전부터 오늘
         startDate: this.dateFormat(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
-        endDate: this.dateFormat(new Date(), 'yyyy-MM-dd')
+        endDate: this.dateFormat(new Date(), 'yyyy-MM-dd'),
+        qcState: 'qcs1',
       },
       searchList: [],
 
@@ -146,6 +148,7 @@ export default {
         { headerName: "검사담당자", field: "eName", resizable: false },
         { headerName: "합격 여부", field: "inspecResult", resizable: false },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false },
+        { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
         { headerName: "검사상태", field: "inspecStatus", resizable: false },
 
       ],
@@ -164,10 +167,11 @@ export default {
 
       defectDetailsMap: {}, //검사번호별로 저장된 검사내용 { qcProcessId: [ { ... }, ... ] }
 
-      rowData2: [], //rowData1 중 검사상태(inspecStatus)가 '검사내역작성완료'인 것을 담음
+      
 
 
       completedDefectDetailsMap: {},
+      completedTestDetails: [],
       showModalDone: false,
 
 
@@ -198,8 +202,11 @@ export default {
           "productCode": item.product_code,
           "pName": item.product_name,
           "eName": item.emp_name,
-          "inspecResult": '미정',
+          "inspecResult": item.inspec_result === null
+          ? '미정' : item.inspec_result,
           "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecEnd": item.inspec_end === null 
+          ? "" : this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
           "inspecStatus": item.inspec_status,
         });
 
@@ -221,13 +228,26 @@ export default {
         return;
       }
 
+      let searchSelect = ''
+      switch (this.searchInfo.qcState) {
+        case 'qcs1':
+          searchSelect = 'recordQCPBAll'
+          break;
+        case 'qcs2':
+          searchSelect = 'recordQCPB'
+          break;
+        case 'qcs3':
+          searchSelect = 'requestQCPB'
+          break;
+      }
+
       const name = this.searchInfo.pName.replace(/\s+/g, "");
       const result = {
         pName: name.length != 0 ? name : "",
         startDate: this.searchInfo.startDate,
         endDate: this.searchInfo.endDate
       };
-      let searchResult = await axios.post(`${ajaxUrl}/requestQCPB`, result)
+      let searchResult = await axios.post(`${ajaxUrl}/${searchSelect}`, result)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
       //console.log(searchResult.data);
@@ -237,7 +257,6 @@ export default {
       this.defectDetailsMap = {};
 
       this.rowData1 = this.processSearchResults(this.searchList);
-      this.rowData2 = [];
       this.completedDefectDetailsMap = {};
     },
     //조건 검색 끝
@@ -245,7 +264,7 @@ export default {
 
     //전체 조회 시작
     async searchRequestAll() {
-      let searchResult = await axios.post(`${ajaxUrl}/requestQCPB`)
+      let searchResult = await axios.post(`${ajaxUrl}/recordQCPBAll`)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
       //console.log(searchResult.data);
@@ -255,7 +274,6 @@ export default {
       this.defectDetailsMap = {};
 
       this.rowData1 = this.processSearchResults(this.searchList);
-      this.rowData2 = [];
       this.completedDefectDetailsMap = {};
     },
     //전체 조회 끝
@@ -287,8 +305,16 @@ export default {
       // productCode에 해당하는 검사 항목을 testDetails에서 가져오기
       const testItems = this.testDetails[productCode] || [];
 
+      // console.log(this.completedTestDetails);
+      // console.log(testItems);
       // 검사 항목들에 대해 defectDetailsMap에 항목 추가
       testItems.forEach(item => {
+        // let matchingTestDetail = this.completedTestDetails.find(detail =>
+        //   detail.bev_test_item_id === item.item_id &&
+        //   detail.bev_test_details_id === item.details_id
+        // );
+
+
         this.defectDetailsMap[qcProcessId].push({
           item_id: item.item_id,
           details_id: item.details_id,
@@ -296,125 +322,21 @@ export default {
           item_unit: item.item_unit,
           etc_min: item.etc_min,
           etc_max: item.etc_max,
-          input_value: 0, // 초기 입력값은 비워두기
+          // input_value: matchingTestDetail ? matchingTestDetail.actual_value : 0, 
+          input_value: 0, 
         });
       });
     },
 
-    saveDefectDetailsForRow(qcProcessId) {
-      const defectDetails = this.defectDetailsMap[qcProcessId] || [];
-      //console.log(defectDetails[0].input_value);
-      if (defectDetails.some(detail => detail.input_value == null || detail.input_value === "" || detail.input_value < 0)) {
-        notify({
-          title: "입력실패",
-          text: "수치 값 중 비워있거나 음수인 수가 있습니다.",
-          type: "warn", // success, warn, error 가능
-        });
-        return;
-      }
-
-      // 각 defectDetail에 대해 is_passed 값 설정
-      defectDetails.forEach(detail => {
-        if (detail.input_value < detail.etc_min || detail.input_value > detail.etc_max) {
-          detail.is_passed = 'no';
-        } else {
-          detail.is_passed = 'yes';
-        }
-      });
-
-      // 검사 완료된 항목만 qcProcessId를 키로 하는 맵에 덮어쓰기
-      if (!this.completedDefectDetailsMap) {
-        this.completedDefectDetailsMap = {}; // 초기화
-      }
-
-      // 해당 qcProcessId에 대해서 검사 완료된 defectDetails만 저장 (덮어쓰기)
-      this.completedDefectDetailsMap[qcProcessId] = defectDetails.filter(detail => detail.is_passed !== undefined);
-
-      // completedDefectDetailsMap을 저장하거나 활용
-      console.log('검사 완료된 항목들 (qcProcessId를 키로 하는 맵):', this.completedDefectDetailsMap);
-
-
-
-      // 업데이트 로직
-      // 해당 qcProcessId에 대한 rowIndex 찾기
-      const rowIndex = this.rowData1.findIndex(row => row.qcProcessId === this.selectedRow.qcProcessId);
-      if (rowIndex !== -1) {
-        // is_passed 값이 모두 'yes'인지 확인 후, inspecResult 값 설정
-        const allPassed = defectDetails.every(detail => detail.is_passed === 'yes');
-        const inspecResult = allPassed ? '합격' : '불합격';
-
-        // 새 데이터 배열 생성 (Vue의 반응형 감지를 위해)
-        this.rowData1 = this.rowData1.map((row, index) => {
-          if (index === rowIndex) {
-            return { ...row, inspecStatus: '검사내역입력완료', inspecResult };
-          }
-          return row;
-        });
-      }
-
-      this.closeModal();
-      // console.log('현재 검색결과 테이블');
-      // console.log(this.rowData1);
-      console.log('불량상세테이블');
-      console.log(this.defectDetailsMap);
-      // console.log('테스트(검사완료 처리할 검사 건수들)');
-
-      //검사 완료된 것만 밑에 출력
-      this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료');
-      // console.log(this.rowData2);
-    },
+    
 
     //최종 처리 버튼
     openModal() {
       this.showModalDone = !this.showModalDone
-      console.log(this.rowData2);
       console.log(this.defectDetailsMap);
       console.log(this.completedDefectDetailsMap);
     },
-    async confirm() {
-      console.log('저장처리!')
-      // 객체를 배열로 변환
-      let completedDefectDetailsArray = [];
-      for (let qcId in this.completedDefectDetailsMap) {
-        if (Object.prototype.hasOwnProperty.call(this.completedDefectDetailsMap, qcId)) {
-          this.completedDefectDetailsMap[qcId].forEach(detail => {
-            completedDefectDetailsArray.push({
-              qcProcessId: qcId,
-              itemId: detail.item_id,
-              detailsId: detail.details_id,
-              actualValue: detail.input_value,
-              isPassed: detail.is_passed
-            });
-          });
-        }
-      }
-      //배열 정렬
-      completedDefectDetailsArray.sort((a, b) => {
-        return a.qcProcessId.localeCompare(b.qcProcessId); // 검사번호 우선 비교
-      });
-
-      let qcData = {
-        qcpb: this.rowData2,
-        qcpbr: completedDefectDetailsArray,
-      };
-      console.log(qcData);
-
-
-
-      let result = await axios.post(`${ajaxUrl}/completeQCPB`, qcData)
-        .catch(err => console.log(err));
-      console.log(result);
-      notify({
-        title: "검사완료",
-        text: `완료된 검사:${result.data.updatedRows}, 기록된 검사 내역:${result.data.defectNum}`,
-        type: "success", // success, warn, error 가능
-      });
-
-
-
-      this.closeModal();
-      this.searchRequestAll();
-    },
+    
 
 
 
@@ -426,11 +348,34 @@ export default {
       let testList = await axios.get(`${ajaxUrl}/testDetailsForB`)
         .catch(err => console.log(err));
       this.testDetails = testList.data;
+    },
+
+    //행별 검사 수치 불러오기
+    async callCompletedTestDetail() {
+      let list = await axios.get(`${ajaxUrl}/recordQCPBDetails`)
+        .catch(err => console.log(err));
+      // console.log(list.data[0]);
+      this.completedTestDetails = list.data;
+      console.log(this.completedTestDetails);
+
+      // if (list && list.data) {
+      //   // 배열을 Map으로 변환
+      //   const map = list.data.reduce((acc, item) => {
+      //     acc[item.qc_berverage_id] = item;
+      //     return acc;
+      //   }, {});
+
+      //   console.log(map);
+      // } else {
+      //   console.log("No data received");
+      // }
+
     }
 
 
   },
   async created() {
+    await this.callCompletedTestDetail();
     await this.callTestDetail();
     this.searchRequestAll();
     // this.callFaultyCode();
@@ -455,23 +400,5 @@ export default {
   .search {
     margin-top: 24px;
   }
-}
-
-.inspection-item {
-  display: flex;
-  justify-content: space-between;
-  /* 라벨과 입력란 간격 조정 */
-  margin-bottom: 10px;
-  /* 항목 간 여백 */
-}
-
-label {
-  flex: 1;
-  /* 라벨과 입력란 비율을 조정 */
-}
-
-input {
-  width: 40%;
-  /* 입력란의 너비 조정 */
 }
 </style>

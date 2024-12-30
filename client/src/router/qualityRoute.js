@@ -27,10 +27,12 @@ import QCMaterialFaulty from '../views/quality/qMaterial/QCMaterialFaulty.vue';
 import QCProcessCleanInspec from '../views/quality/qProcess/QCProcessCleanInspec.vue';
 //음료검사처리
 import QCProcessBeverageInspec from '../views/quality/qProcess/QCProcessBeverageInspec.vue';
-//검사기록조회
-import QCProcessRecord from '../views/quality/qProcess/QCProcessRecord.vue';
-//불량내역조회
-import QCProcessFaulty from '../views/quality/qProcess/QCProcessFaulty.vue';
+//세척검사기록조회
+import QCProcessCleaningRecord from '../views/quality/qProcess/QCProcessCleaningRecord.vue';
+//세척검사 불량내역조회
+import QCProcessCleaningFaulty from '../views/quality/qProcess/QCProcessCleaningFaulty.vue';
+//음료검사기록조회
+import QCProcessBevarageRecord from '../views/quality/qProcess/QCProcessBevarageRecord.vue';
 
 //포장검사
 //검사처리
@@ -98,19 +100,25 @@ const qualityRoute = [
     name: 'qCProcessBeverageInspec',
     component: QCProcessBeverageInspec
   },
-  // - 검사 기록 조회
+  // -세척 검사 기록 조회
   {
-    path: 'process/record',
-    name: 'qCProcessRecord',
-    component: QCProcessRecord
+    path: 'process/record/cleaning',
+    name: 'qCProcessCleaningRecord',
+    component: QCProcessCleaningRecord
+  },
+  // - 세척 불량 내역 조회
+  {
+    path: 'process/faulty/cleaning',
+    name: 'qCProcessCleaningFaulty',
+    component: QCProcessCleaningFaulty
+  },
+  // - 음료 검사 기록 조회
+  {
+    path: 'process/record/bevarage',
+    name: 'qCProcessBevarageRecord',
+    component: QCProcessBevarageRecord
   },
 
-  // - 불량 내역 조회
-  {
-    path: 'process/faulty',
-    name: 'qCProcessFaulty',
-    component: QCProcessFaulty
-  },
 
   // 포장검사
   {

@@ -296,7 +296,7 @@ SELECT qb.qc_berverage_id,
        ph.product_name,
        qb.emp_num,
        e.name AS emp_name,
-    -- qb.inspec_result,
+       qb.inspec_result,
        qb.inspec_start,
        qb.inspec_end,
        qb.inspec_status
@@ -318,6 +318,32 @@ CALL qc_p_beverage_update_list(?, ?, ?, @result)
 const insertBevTestResult = `
 INSERT INTO bev_test_result (qc_berverage_id, bev_test_details_id, bev_test_item_id, actual_value, is_passed)
 VALUES(?, ?, ?, ?, ?)
+`;
+
+//음료검사 결과 세부내용 불러오기
+// SELECT  bev_test_result_id,
+// 		    qc_berverage_id,
+//         bev_test_details_id,
+//         bev_test_item_id,
+//         actual_value,
+//         is_passed
+// FROM bev_test_result
+const selectBevTestResult = `
+
+SELECT  br.qc_berverage_id,
+		br.bev_test_result_id,
+		bi.item_name,
+        bi.item_unit,
+		
+        br.bev_test_details_id,
+        br.bev_test_item_id,
+        br.actual_value,
+        br.is_passed,
+        bd.etc_min,
+        bd.etc_max
+FROM bev_test_result br LEFT JOIN bev_test_details bd ON br.bev_test_details_id = bd.bev_test_details_id
+                        LEFT JOIN bev_test_item bi ON br.bev_test_item_id = bi.bev_test_item_id
+ORDER BY br.bev_test_result_id
 `;
 
 
@@ -413,6 +439,7 @@ module.exports = {
   selectQCPB,
   updateQCPB,
   insertBevTestResult,
+  selectBevTestResult,
 
 
 
