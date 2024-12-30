@@ -3,22 +3,20 @@
             <h2>주문서등록</h2>
                 <div class= "main-container">
                 <div class="content">
-                    <form class="row gx-3 gy-2 align-items-center">
-                        <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="orderlistNum">주문서코드</label>
-                            <input type="text" class="form-control" id="orderlistNum" v-model="orderlistNum" readonly>
-                            <div>
+                    <div class="orderlistForm">
+                        <form class="row gx-3 gy-2 align-items-center">
+                            <div class="col-sm-2">
+                                <label class="col-form-label fw-bold" for="orderlistNum">주문서코드</label>
+                                <input type="text" class="form-control" id="orderlistNum" v-model="orderlistNum" readonly>
                             </div>
-                            
-                        </div>
-                        <div class="sm-2">
-                            <label class="col-form-label fw-bold" for="orderlistName">주문서명</label>
-                            <input type="text" class="form-control" id="orderlistName" v-model="orderName">
-                        </div>
-                        <div class="col-sm-4">
-                            <label class="col-form-label fw-bold" for="clientName">거래처명</label>
-                            <div class="input-group">
-                            <input type="text" class="form-control" id="clientName" @click="openModal('client')" v-model="searchCom.com_name" readonly>
+                            <div class="sm-2">
+                                <label class="col-form-label fw-bold" for="orderlistName">주문서명</label>
+                                <input type="text" class="form-control" id="orderlistName" v-model="orderName">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="col-form-label fw-bold" for="clientName">거래처명</label>
+                                <div class="input-group">
+                                <input type="text" class="form-control" id="clientName" @click="openModal('client')" v-model="searchCom.com_name" readonly>
                             </div>
                             <Modal
                                 :isShowModal="isShowModal.client"
@@ -28,39 +26,43 @@
                                 @closeModal="closeModal('client')"
                                 @confirm="confirm('client')"
                             >
-                            <template v-slot:list>
-                                <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
-                            </template>
+                                <template v-slot:list>
+                                    <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
+                                </template>
                             </Modal>
-                        </div>
-                        <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="EmpName">담당자</label>
-                            <div class="input-group">
-                            <input type="text" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name" readonly>
                             </div>
-                            <Modal
-                                :isShowModal="isShowModal.emp"
-                                :modalTitle="'담당자선택'"
-                                :noBtn="'닫기'"
-                                :yesBtn="'선택'"
-                                @closeModal="closeModal('emp')"
-                                @confirm="confirm('emp')"
-                            >
-                            <template v-slot:list>
-                                <EmpList v-show="isShowModal.emp" @selectemp="selectemp"/>
-                            </template>
-                            </Modal>
-                        </div>
-                        <div class="col-sm-4">
-                            <label class="col-form-label fw-bold" for="dueDate">납기일자</label>
-                            <div class="input-group">
-                            <input type="date" class="form-control" id="dueDate" v-model="dueDate">
+                            <div class="col-sm-2">
+                                <label class="col-form-label fw-bold" for="EmpName">담당자</label>
+                                <div class="input-group">
+                                <input type="text" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name" readonly>
+                                </div>
+                                <Modal
+                                    :isShowModal="isShowModal.emp"
+                                    :modalTitle="'담당자선택'"
+                                    :noBtn="'닫기'"
+                                    :yesBtn="'선택'"
+                                    @closeModal="closeModal('emp')"
+                                    @confirm="confirm('emp')"
+                                >
+                                <template v-slot:list>
+                                    <EmpList v-show="isShowModal.emp" @selectemp="selectemp"/>
+                                </template>
+                                </Modal>
                             </div>
+                            <div class="col-sm-4">
+                                <label class="col-form-label fw-bold" for="dueDate">납기일자</label>
+                                <div class="input-group">
+                                <input type="date" class="form-control" id="dueDate" v-model="dueDate">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mb-3 text-end">
+                            <material-button size="sm" color="success" class="button"  @click="addMaterial">+</material-button>
                         </div>
-                    </form>
-                    <div class="mb-3 text-end">
-                        <material-button size="sm" color="warning" class="button"  @click="addMaterial">+</material-button>
+
                     </div>
+                    
+
                     <div v-for="(material, index) in materials" :key="index" class="row gx-3 gy-2 align-items-center">
                         <form class="row gx-3 gy-2 align-items-center mt-2">
                             <div class="col-sm-2">
@@ -107,7 +109,7 @@
                    
 
                     <div class="col-auto mt-5 text-center">
-                            <material-button type="button" class="button" color="success" @click="insertOrder">저장</material-button>
+                            <material-button type="button" class="button me-4" color="success" @click="insertOrder">저장</material-button>
                             <material-button type="button" class="button" color="warning" @click="resetSearch">초기화</material-button>
                     </div>
                 </div>
@@ -323,9 +325,15 @@ export default{
 
 <style lang="scss" scoped>
 .main-container {
-  background-color: #e9ecef;
+//   background-color: #e9ecef;
   margin: 20px;
   border-radius: 10px;
+}
+.orderlistForm{
+    background-color: #ffeacc;
+    padding: 60px;
+    padding-bottom: 20px;
+    border-radius: 10px;
 }
 .content {
   margin: 20px;

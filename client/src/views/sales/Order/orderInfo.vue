@@ -164,7 +164,7 @@ export default{
             const allPanels = document.querySelectorAll('.ag-paging-panel');
 
              //lot그리드
-             const paginationPanel1 = allPanels[1];
+             const paginationPanel1 = allPanels[2];
             if (paginationPanel1) {
                // 컨테이너 생성
                const container1 = document.createElement('div');
@@ -335,6 +335,13 @@ export default{
 
         selectedRows.forEach(row=>{
             console.log(row.order_status);
+            if(row.product_code === '' || row.product_code === null || row.order_amount === '' || row.order_amount === null || row.per_price === '' || row.per_price === null ){
+                this.$notify({
+                    text: `제품명과 주문수량, 개별금액은 필수로 입력해야 합니다.`,
+                    type: 'error',
+                });
+                return;
+            }
             if(row.order_status === '미출고' || row.order_num === '' || row.order_num === null){
                 orderAmounts.push(Number(row.order_amount));
                 productCodes.push(row.product_code);

@@ -195,9 +195,38 @@ DELIMITER ; CALL outputProduct(
 const outputOrders = 
 `CALL outputProduct(?, ?, ?, ?, ? )`;
 
+
+// 필터조건에 맞게 출고 조회
+const outputListSearch = 
+`SELECT op.output_num
+	  ,ol.orderlist_title
+      ,c.com_name
+      ,op.product_code
+      ,p.product_name
+      ,ib.product_lot
+      ,op.output_amount
+      ,op.output_date
+FROM output op JOIN orders o
+				ON op.order_num = o.order_num
+                JOIN orderlists ol
+				ON o.orderlist_num = ol.orderlist_num
+                JOIN product p 
+                ON op.product_code = p.product_code
+                JOIN input_body ib
+                ON op.input_num = ib.input_num
+                JOIN client c 
+                ON op.client_num = c.client_num `;
+/**WHERE c.com_name = ?
+AND p.product_name = ?
+AND ol.orderlist_title = ?
+AND op.output_date <= ? 
+AND op.output_date >= ?
+ORDER BY op.output_date; */
+
 module.exports = {
     outputOrderlist,
 	disoutputOrder,
 	getLotBaseProduct,
 	outputOrders,
+	outputListSearch,
 }

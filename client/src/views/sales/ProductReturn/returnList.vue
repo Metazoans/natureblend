@@ -51,7 +51,7 @@
         </div>
     </div>
     <!-- <div class="grid-container" v-show="rowData.length != 0"> -->
-    <div class="grid-container" v-show="rowData.length != 0">
+    <div class="grid-container">
         <ag-grid-vue
         :rowData="rowData"
         :columnDefs="columnOrderlist"
@@ -421,6 +421,10 @@ export default{
                         type: 'error',
                     });
                 }
+        },
+        //초기화
+        resetReturnInfo(){
+            this.gridApi.deselectAll();
         },
 
         
