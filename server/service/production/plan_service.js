@@ -49,11 +49,22 @@ const planList = async (urlQuery)=>{
     }
 }
 
+const deletePlan = async (orderPlanNums)=>{
+    let result = await mysql.query('deletePlan', [orderPlanNums])
+
+    if(result.affectedRows > 0) {
+        return { message: 'success' }
+    } else {
+        return { message: 'fail' }
+    }
+}
+
 module.exports = {
     findAllProducts,
     findOrders,
     findProductStock,
     getProductionEmpList,
     addPlan,
-    planList
+    planList,
+    deletePlan
 }

@@ -35,5 +35,10 @@ router.get('/', async (req, res)=>{
     res.send(await planService.planList(query));
 });
 
+router.post('/delete', async (req, res)=>{
+    let orderPlanNums = req.body;
+    res.send(await planService.deletePlan(orderPlanNums));
+});
+
 
 module.exports = router

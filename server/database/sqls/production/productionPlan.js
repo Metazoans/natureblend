@@ -196,11 +196,15 @@ const planDetailList = `
       p.plan_emp, 
       p.plan_num,
       your_product(o.product_code, 'product_name') as product_name,
-      o.plan_qty
+      o.plan_qty,
+      o.order_plan_num
   from production_plan p join order_plan_relation o
   where p.plan_num = o.plan_num
 `
-        
+const deletePlan = `
+  delete from order_plan_relation
+  where order_plan_num in (?)
+`
 module.exports = {
   productList,
   orders,
@@ -208,5 +212,6 @@ module.exports = {
   productStock,
   insertPlanByOrders,
   productionEmployees,
-  planDetailList
+  planDetailList,
+  deletePlan
 }

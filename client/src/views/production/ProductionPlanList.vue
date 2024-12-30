@@ -43,6 +43,7 @@
     </div>
     <div class="grid-container work" style="padding-top: 10px;">
       <ag-grid-vue
+          ref="agGrid"
           :rowData="rowData"
           :columnDefs="columnDefs"
           :theme="theme"
@@ -53,6 +54,8 @@
           rowSelection="multiple"
           :getRowClass="getRowClass"
           :quickFilterText="listSearch"
+          @cellValueChanged="onCellValueChanged"
+          @selectionChanged="onSelectionChanged"
       >
       </ag-grid-vue>
     </div>
@@ -90,7 +93,20 @@ export default {
       listSearch: '',
       rowData: [],
       columnDefs: [
-        { headerName: "생산계획번호", field: 'plan_num', cellStyle: {textAlign: 'right'}},
+        { headerName: "",
+          headerCheckboxSelection: true,
+          field: "check",
+          resizable: false,
+          editable: true,
+          sortable: false,
+          checkboxSelection: true,
+          width: 50
+        },
+        {
+          headerName: "생산계획번호",
+          field: 'plan_num',
+          cellStyle: {textAlign: 'right'}
+        },
         { headerName: "생산계획명", field: 'plan_name' },
         { headerName: "계획시작일자", field: 'plan_start_date', cellStyle: {textAlign: 'center'} },
         { headerName: "계획종료일자", field: 'plan_end_date', cellStyle: {textAlign: 'center'} },
@@ -104,6 +120,7 @@ export default {
         },
         { headerName: "제품명", field: 'product_name' },
         { headerName: "계획수량", field: 'plan_qty', cellStyle: {textAlign: 'right'} },
+        { headerName: "주문계획번호", field: 'order_plan_num', hide: true },
       ],
       planStatus: {
         'plan_waiting': '대기중',
@@ -119,6 +136,7 @@ export default {
         product_code: '',
         product_name: '',
       },
+      selectedRows: [],
     }
   },
 
@@ -133,11 +151,17 @@ export default {
   },
 
   methods: {
+    onSelectionChanged() {
+      const selectedNodes = this.$refs.agGrid.api.getSelectedNodes();
+      this.selectedRows = selectedNodes.map(node => node.rowIndex);
+      this.$refs.agGrid.api.refreshCells(); // 셀 다시 렌더링
+    },
+
+    onCellValueChanged(params) {
+      console.log("수정된 값:", params.data);
+    },
+
     search() {
-      console.log(this.searchProduct)
-      console.log(this.planStatusOption)
-      console.log(this.startDate)
-      console.log(this.endDate)
       let listInfo = {
         product: this.searchProduct.product_code,
         status: this.planStatusOption, //array
@@ -187,6 +211,7 @@ export default {
     },
 
     onReady(param){
+      this.gridApi = param.api
       param.api.sizeColumnsToFit();
 
       const paginationPanel = document.querySelector('.ag-paging-panel');
@@ -194,6 +219,39 @@ export default {
         const container1 = document.createElement('div');
         container1.style.display = 'flex';
         container1.style.alignItems = 'center';
+        container1.style.gap = '5px';
+
+        const button = document.createElement('button');
+        button.textContent = '삭제';
+        button.style.marginRight = '10px';
+        button.style.cursor = 'pointer';
+        button.style.backgroundColor = '#f44335';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.padding = '5px 10px';
+        button.style.borderRadius = '4px';
+        button.style.position = 'absolute';
+        button.style.left = '10px';
+        // 버튼 클릭 이벤트
+        button.addEventListener('click', () => {
+          this.deletePlan()
+        });
+
+        const button2 = document.createElement('button');
+        button2.textContent = '수정';
+        button2.style.marginRight = '10px';
+        button2.style.cursor = 'pointer';
+        button2.style.backgroundColor = '#fb8c00';
+        button2.style.color = 'white';
+        button2.style.border = 'none';
+        button2.style.padding = '5px 10px';
+        button2.style.borderRadius = '4px';
+        button2.style.position = 'absolute';
+        button2.style.left = '70px';
+        // 버튼 클릭 이벤트
+        button2.addEventListener('click', () => {
+          this.editPlan()
+        });
 
         const inputText1 = document.createElement('input');
         inputText1.type = 'text';
@@ -203,14 +261,55 @@ export default {
         inputText1.style.border = '1px solid #ccc';
         inputText1.style.borderRadius = '4px';
         inputText1.style.position = 'absolute';
-        inputText1.style.left = '20px';
+        inputText1.style.left = '130px';
 
         inputText1.addEventListener('input', (event) => {
           this.listSearch = event.target.value;
         });
 
+        container1.appendChild(button);
+        container1.appendChild(button2);
         container1.appendChild(inputText1);
         paginationPanel.insertBefore(container1, paginationPanel.firstChild);
+      }
+    },
+
+    editPlan() {
+      const selectedRows = this.gridApi.startEditingCell
+      // const selectedRows = this.gridApi.getSelectedRows()
+      console.log(selectedRows)
+    },
+
+    async deletePlan() {
+      const selectedRows = this.gridApi.getSelectedRows()
+
+      if(selectedRows.length === 0) {
+        this.$notify({
+          text: "삭제할 계획을 선택해주세요.",
+          type: 'error',
+        });
+        return
+      }
+
+      let orderPlanNums = []
+      selectedRows.forEach((row) => {
+        orderPlanNums.push(row.order_plan_num)
+      })
+
+      let result = await axios.post(`${ajaxUrl}/production/plan/delete`, orderPlanNums)
+          .catch(err => console.log(err));
+
+      if(result.data.message === 'success') {
+        this.$notify({
+          text: "삭제되었습니다.",
+          type: 'success',
+        });
+        await this.getPlanList()
+      } else {
+        this.$notify({
+          text: "삭제 실패하였습니다.",
+          type: 'error',
+        });
       }
     },
 
@@ -238,27 +337,27 @@ export default {
       result.data.forEach((data, idx, arr) => {
         if(idx === 0) {
           this.rowData[idx] = {
-            [keys[0]]: data[keys[0]],
             [keys[1]]: data[keys[1]],
-            [keys[2]]: data[keys[2]].split('T')[0],
+            [keys[2]]: data[keys[2]],
             [keys[3]]: data[keys[3]].split('T')[0],
-            [keys[4]]: this.planStatus[data[keys[4]]],
-            [keys[5]]: data[keys[5]],
+            [keys[4]]: data[keys[4]].split('T')[0],
+            [keys[5]]: this.planStatus[data[keys[5]]],
             [keys[6]]: data[keys[6]],
+            [keys[7]]: data[keys[7]],
+            [keys[8]]: data[keys[8]],
           }
         } else {
           this.rowData[idx] = {
-            [keys[0]]: data[keys[0]] === arr[idx - 1][keys[0]] ? null : data[keys[0]],
-            [keys[1]]: data[keys[0]] === arr[idx - 1][keys[0]] ? null : data[keys[1]],
-            [keys[2]]: data[keys[0]] === arr[idx - 1][keys[0]] ? null : data[keys[2]].split('T')[0],
-            [keys[3]]: data[keys[0]] === arr[idx - 1][keys[0]] ? null : data[keys[3]].split('T')[0],
-            [keys[4]]: data[keys[0]] === arr[idx - 1][keys[0]] ? null : this.planStatus[data[keys[4]]],
-            [keys[5]]: data[keys[5]],
-            [keys[6]]: data[keys[6]]
+            [keys[1]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : data[keys[1]],
+            [keys[2]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : data[keys[2]],
+            [keys[3]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : data[keys[3]].split('T')[0],
+            [keys[4]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : data[keys[4]].split('T')[0],
+            [keys[5]]: data[keys[1]] === arr[idx - 1][keys[1]] ? null : this.planStatus[data[keys[5]]],
+            [keys[6]]: data[keys[6]],
+            [keys[7]]: data[keys[7]],
+            [keys[8]]: data[keys[8]]
           }
         }
-
-
       })
     }
   }
@@ -276,7 +375,6 @@ export default {
   border-radius: 10px;
   form {
     display: flex;
-    //justify-content: space-between;
   }
   .radio-con {
     width: 345px;
@@ -284,9 +382,6 @@ export default {
     flex-direction: column;
     > div {
       height: 42px;
-    }
-    input {
-      //border-radius: 50% !important;
     }
   }
   .calendar-con {
@@ -308,4 +403,5 @@ input {
   background-color: $white;
   border: solid 1px  ;
 }
+
 </style>
