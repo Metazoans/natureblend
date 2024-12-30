@@ -196,7 +196,6 @@ export default {
     },
 
     getRowClass(params) {
-      console.log(params)
       if (params.data.plan_num !== null) {
         return "borderTop"
       } else {
