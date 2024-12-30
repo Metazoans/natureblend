@@ -1,88 +1,149 @@
 <template>
 
-  <div class="requestMain">
+  <div class="container-fluid py-4">
 
-    
-    <!-- 정비 요청 내역 그리드 -->
-    <div class="grid-container" >
-      <h2>정비 요청 내역</h2>
-      <ag-grid-vue
-        :rowData="requestRow"
-        :columnDefs="requestCol"
-        :theme="theme"
-        @grid-ready="onReady"
-        style="height: 500px;"
-        :pagination="true"
-        :paginationPageSize="5"
-        @rowClicked="rowClick"
-      ></ag-grid-vue>
+    <div class="row align-items-center">
+
+      <div class="col-8">
+        <!-- 정비 요청 내역 그리드 -->
+        <div class="grid-container" >
+          <h2>정비 요청 내역</h2>
+          <ag-grid-vue
+            :rowData="requestRow"
+            :columnDefs="requestCol"
+            :theme="theme"
+            @grid-ready="onReady"
+            style="height: 500px;"
+            :pagination="true"
+            :paginationPageSize="5"
+            @rowClicked="rowClick"
+          ></ag-grid-vue>
+        </div>
+      </div>
+
+      <!-- 입력페이지 -->
+      <div class="col-4 requestInfo">
+        <div class="row my-3 align-items-center">
+          
+        </div>
+
+        <div class="row my-3 align-items-center" style="text-align: center;">
+          <h4 v-if="isUpdate">요청 내역 수정</h4>
+          <h4 v-else>정비 작업 완료</h4>
+        </div>
+
+        <div class="row my-3 align-items-center">
+          <div class="col-auto">
+            <label>설비 번호 : </label>
+          </div>
+          <div class="col">
+            <input class="form-control" type="text" style="background-color: white;"
+                   v-model="maintenanceInfo.machine_num">
+          </div>
+        </div>
+
+        <div class="row my-3 align-items-center">
+          <div class="col-auto">
+            <label>설비 이름 : </label>
+          </div>
+          <div class="col">
+            <input class="form-control" type="text" style="background-color: white;"
+                   v-model="maintenanceInfo.machine_name">
+          </div>
+        </div>
+
+        <div class="row my-3 align-items-center">
+          <div class="col-auto">
+            <label>설비 분류 : </label>
+          </div>
+          <div class="col">
+            <input class="form-control" type="text" style="background-color: white;"
+                   v-model="maintenanceInfo.machine_type">
+          </div>
+        </div>
+
+        <div class="row my-3 align-items-center">
+          <div class="col-auto">
+            <label>설비 위치 : </label>
+          </div>
+          <div class="col">
+            <input class="form-control" type="text" style="background-color: white;"
+                   v-model="maintenanceInfo.machine_location">
+          </div>
+        </div>
+
+        <div class="row my-3 align-items-center">
+          <div class="col-auto">
+            <label>요청 사유 : </label>
+          </div>
+          <div class="col">
+            <input class="form-control" type="text" style="background-color: white;"
+                   v-model="maintenanceInfo.request">
+          </div>
+        </div>
+
+        <div class="row my-3 align-items-center">
+          <div class="col-auto">
+            <label>요청 일자 : </label>
+          </div>
+          <div class="col">
+            <input class="form-control" type="text" style="background-color: white;"
+                   v-model="maintenanceInfo.request_date">
+          </div>
+        </div>
+
+        <div class="row my-3 align-items-center">
+          <div class="col-auto">
+            <label>정비 내역 : </label>
+          </div>
+          <div class="col">
+            <input class="form-control" type="text" readonly style="border: 1px solid;"
+                   v-model="maintenanceInfo.maintenance_detail" v-if="isUpdate">
+            <input class="form-control" type="text" style="background-color: white;"
+                   v-model="maintenanceInfo.maintenance_detail" v-else>
+          </div>
+        </div>
+
+        <div class="row my-3 align-items-center justify-content-center">
+          <div class="col-auto">
+            <button
+              class="btn btn-warning w-100 mb-0 toast-btn"
+              type="button"
+              data-target="warningToast"
+              @click="changeForm"
+            >
+              수정 / 완료
+            </button>
+          </div>
+          <div class="col-auto">
+            <button
+              class="btn btn-success w-100 mb-0 toast-btn"
+              type="button"
+              data-target="warningToast"
+              @click="updateBtn"
+            >
+              완료
+            </button>
+          </div>
+          <div class="col-auto">
+            <button
+              class="btn btn-danger w-100 mb-0 toast-btn"
+              type="button"
+              data-target="warningToast"
+              @click="delBtn"
+            >
+              초기화
+            </button>
+          </div>
+        </div>
+      </div>
+      
     </div>
 
     <!-- 정비 요청 등록 모달 -->
     <RequestAdd :isShowModal="isShowModal"  @closeModal="closeModal" @confirm="confirm"/>
 
-    <!-- 정비 상세 내역 및 수정/완료 -->
-    <!--
-      설비 번호
-      설비 이름
-      설비 분류
-      설비 위치
-      요청 사유
-      요청 일자
-      정비 내역
-
-      전환버튼
-      완료버튼
-    -->
-    <div class="maintenanceInfo">
-      <div class="row">
-        <label>설비 번호 : </label>
-        <input type="text" v-model="maintenanceInfo.machine_num">
-      </div>
-      <div class="row">
-        <label>설비 이름 : </label>
-        <input type="text" v-model="maintenanceInfo.machine_name">
-      </div>
-      <div class="row">
-        <label>설비 분류 : </label>
-        <input type="text" v-model="maintenanceInfo.machine_type">
-      </div>
-      <div class="row">
-        <label>설비 위치 : </label>
-        <input type="text" v-model="maintenanceInfo.machine_location">
-      </div>
-      <div class="row">
-        <label>요청 사유 : </label>
-        <input type="text" v-model="maintenanceInfo.request">
-      </div>
-      <div class="row">
-        <label>요청 일자 : </label>
-        <input type="text" v-model="maintenanceInfo.request_date">
-      </div>
-      <div class="row" v-if="!isUpdate">
-        <label>정비 내역 : </label>
-        <input type="text" v-model="maintenanceInfo.maintenance_detail">
-      </div>
-      <div class="row">
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="changeForm"
-        >
-          전환
-        </button>
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="updateBtn"
-        >
-          완료
-        </button>
-      </div>
-
-    </div>
+    
 
   </div>
 
@@ -180,6 +241,9 @@ const onReady = (param) => {
 // 행 클릭
 const rowClick = (row) => {
   selectNo.value = row.data.maintenance_num;
+  isUpdate.value = true;
+  // 로그인 유저가 작성자인 경우 -> 수정 페이지
+  // 로그인 유저가 설비파트인 경우 -> 완료 페이지
   getmaintenanceInfo();
 }
 
@@ -252,12 +316,19 @@ onBeforeMount(()=>{
 </script>
 
 
-<style scoped>
-.maintenanceInfo {
-  width: 1000px;
-  margin: auto;
+<style scoped lang="scss">
+.requestInfo {
+  background-color:  #e9ecef;
+  border-radius: 10px;
 }
-.row > *{
-  display: inline-block;
+
+input {
+  background-color: #ffffff; /* 배경색 흰색 */
+  border: solid 1px; /* 테두리 색상 */
+  color: #495057; /* 텍스트 색상 */
 }
+
+
+
 </style>
+

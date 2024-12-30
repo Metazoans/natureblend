@@ -1,6 +1,6 @@
 <template>
   <!-- 모달로 구성 -->
-  <ModalMachine>
+  <ModalMachine @click.self="closeModal">
     <template v-slot:header>
       <h2>정비 요청 등록</h2>
       <!--

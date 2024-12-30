@@ -1,5 +1,5 @@
 <template>
-  <ModalMachine :modalSize="modalSize">
+  <ModalMachine @click.self="closeModal" :modalSize="modalSize">
     <template v-slot:header>
       <h2 v-if="isUpdate">설비 수정</h2>
       <h2 v-else>설비 등록</h2>
