@@ -8,7 +8,7 @@
                     <!--거래처명 검색-->
                     <div class="row align-items-center ms-3 mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >거래처명</label>
-                        <div class="col-sm-6 d-flex">
+                        <div class="col-sm-">
                             <input 
                                 id="clientSearch"  class="form-control me-2"
                                 v-model="searchCom.com_name" @click="openModal('client')" readonly/>
@@ -74,7 +74,7 @@
                     <CustomNoRowsOverlay/>
                 </div>
             </div>
-            <div class= "col-lg-4 ps-4" >
+            <div class= "col-lg-4 ps-4 " >
                 <div class="select-container p-4">
                     <div class= "form-section mb-4">
                             <!--담당자 선택 -->
