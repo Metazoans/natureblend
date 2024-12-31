@@ -298,7 +298,7 @@ export default {
                 }
             });
             if(NOOK==='OK'){
-                this.$notify({ title:'발주성공', text: '발주처리중 잠시 기다려주세요.', type: 'success' });    //error , success
+                //this.$notify({ title:'발주성공', text: '발주처리중 잠시 기다려주세요.', type: 'success' });    //error , success
                 this.$emit('goPOlist', selectedRows);
             }
         }

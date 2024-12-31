@@ -125,6 +125,27 @@
  import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
  const { notify } = useNotification();  // 노티 내용변수입니다
  
+
+//라우팅 정보 가져오기
+import { useRouter } from 'vue-router';
+const router = useRouter();
+// 로그인 정보 가져오기
+import { useStore } from 'vuex'; // Vuex 스토어 가져오
+const store = useStore();
+const loginfo = ref({});
+const loginInfo = () => {
+   loginfo.value = store.state.loginInfo;
+   if(loginfo.value.name){
+      console.log(loginfo.value.job);
+   }else{
+      notify({
+         title: "로그인요청",
+         text: "로그인 하셔야 접속 가능합니다.",
+         type: "error", // success, warn, error 가능
+      });
+      router.push({ name: 'MainPage' });
+   }
+};
  
  const qty_state = ref('a1'); //재고상태
  const materialCode = ref('');   //자재명
@@ -222,7 +243,7 @@
       width:100,
       editable: false,
       cellRenderer: params => {
-         if(params.data.material_lot_state === "정상"){
+         if(params.data.material_lot_state === "정상" && (loginfo.value.job === '자재' || loginfo.value.job === '관리자') ){
             const div = document.createElement('div');
             div.style.display = 'flex';
             div.style.justifyContent = 'center';
@@ -285,7 +306,7 @@
     const newObject = {
       lot_seq: deleteList.value.lot_seq,
       trush_reason: data1,
-      emp_num: 1, // 로그인 세션 받아야함
+      emp_num: loginfo.value.emp_num, // 로그인 세션 받아야함
     };
     if( deleteList.value.lot_seq && data1){
        trush_go(newObject);
@@ -353,6 +374,7 @@
  // 화면 생성되는 시점
  onBeforeMount(()=>{
    lotqtylist();   //전체조회 쿼리 실행
+   loginInfo();
  });
  
  </script>

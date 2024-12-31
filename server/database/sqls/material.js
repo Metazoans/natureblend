@@ -156,7 +156,7 @@ LIMIT 1
 // 자재 입고 처리 하기 (LOT 부여)
 const input_lot_material =
 `
-CALL material_lot_input(?, ?, ?, ?, ?, ?, ?, 1, @v_result);
+CALL material_lot_input(?, ?, ?, ?, ?, ?, ?, ?, @v_result);
 `;
 //CALL material_lot_input('19Z24004', 'PO241218004', '식용색소', 999000, 'W001', 1000, 'W002', 1, @v_result)
 //CALL material_lot_input(?, ?, ?, ?, ?, ?, ?, ?, @v_result)

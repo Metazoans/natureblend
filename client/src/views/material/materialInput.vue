@@ -53,6 +53,27 @@ const { notify } = useNotification();  // 노티 내용변수입니다
 
  import MaterialProgress from "@/components/MaterialProgress.vue";
 
+ //라우팅 정보 가져오기
+import { useRouter } from 'vue-router';
+const router = useRouter();
+// 로그인 정보 가져오기
+import { useStore } from 'vuex'; // Vuex 스토어 가져오
+const store = useStore();
+const loginfo = ref({});
+const loginInfo = () => {
+   loginfo.value = store.state.loginInfo;
+   if(loginfo.value.job === '자재' || loginfo.value.job === '관리자'){
+      console.log(loginfo.value.job);
+   }else{
+      notify({
+         title: "로그인요청",
+         text: "자재팀 또는 관리자만 접속 가능합니다.",
+         type: "error", // success, warn, error 가능
+      });
+      router.push({ name: 'MainPage' });
+   }
+};
+
  //프로그래스 돌릴 숫자
  const number2 = ref(0);
  const showprogress = ref(false);
@@ -375,7 +396,7 @@ const lotMaking = async function(){
       warehouse1: nuwList.value[i].warehouse1,
       rjc_qnt:  nuwList.value[i].material_name.includes('병') ? ( Number( parseFloat(nuwList.value[i].rjc_qnt.replace(/,/g, '')) ) ) : ( Number( parseFloat(nuwList.value[i].rjc_qnt.replace(/,/g, '')) ) * 1000 ),
       warehouse2: nuwList.value[i].warehouse2,
-      emp_num: 1,   // 사원번호는 로그인한 세션으로 해야할꺼같음
+      emp_num: loginfo.value.emp_num,   // 사원번호는 로그인한 세션으로 해야할꺼같음
     };
     
     console.log(materialObj.value);
@@ -435,6 +456,7 @@ const confirm = () => {
 // 화면 생성되는 시점
 onBeforeMount(()=>{
   matrialQcInput();   //전체조회 쿼리 실행
+  loginInfo();
 });
 
 </script>

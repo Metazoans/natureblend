@@ -113,6 +113,26 @@
 
  import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
  
+  //라우팅 정보 가져오기
+  import { useRouter } from 'vue-router';
+const router = useRouter();
+// 로그인 정보 가져오기
+import { useStore } from 'vuex'; // Vuex 스토어 가져오
+const store = useStore();
+const loginfo = ref({});
+const loginInfo = () => {
+   loginfo.value = store.state.loginInfo;
+   if(loginfo.value.name){
+      console.log(loginfo.value.job);
+   }else{
+      notify({
+         title: "로그인요청",
+         text: "로그인 하셔야 접속 가능합니다.",
+         type: "error", // success, warn, error 가능
+      });
+      router.push({ name: 'MainPage' });
+   }
+};
  
  const qty_state = ref('a1'); //재고상태
  const materialCode = ref('');   //자재코드
@@ -227,6 +247,7 @@
  // 화면 생성되는 시점
  onBeforeMount(()=>{
    qtylist();   //전체조회 쿼리 실행
+   loginInfo();
  });
  
  </script>

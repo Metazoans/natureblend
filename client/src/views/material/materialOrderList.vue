@@ -93,6 +93,26 @@ import { ref, onBeforeMount } from 'vue'; //onBeforeMount
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 const { notify } = useNotification();  // 노티 내용변수입니다
 
+//라우팅 정보 가져오기
+import { useRouter } from 'vue-router';
+const router = useRouter();
+// 로그인 정보 가져오기
+import { useStore } from 'vuex'; // Vuex 스토어 가져오
+const store = useStore();
+const loginfo = ref({});
+const loginInfo = () => {
+   loginfo.value = store.state.loginInfo;
+   if(loginfo.value.job === '자재' || loginfo.value.job === '관리자'){
+      console.log(loginfo.value.job);
+   }else{
+      notify({
+         title: "로그인요청",
+         text: "자재팀 또는 관리자만 접속 가능합니다.",
+         type: "error", // success, warn, error 가능
+      });
+      router.push({ name: 'MainPage' });
+   }
+};
 
 const materialCode = ref('');   //자재명
 const clientName = ref('');  //업체명
@@ -546,6 +566,7 @@ const matrialOrderList2 = async function(){
 // 화면 생성되는 시점
 onBeforeMount(()=>{
   matrialOrderList2();   //전체조회 쿼리 실행
+  loginInfo();
 });
 
 </script>
