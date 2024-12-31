@@ -169,10 +169,16 @@ const partInsert = async () => {
   // 등록 성공 체크
   if(addRes.part_num > 0){
     // 등록메시지 수정 예정
-    alert('등록 성공');
+    this.$notify({
+      text: "부품 등록 성공",
+      type: 'success',
+    });
     emit('confirm');
   } else {
-    alert('등록 실패');
+    this.$notify({
+      text: "부품 등록 실패",
+      type: 'error',
+    });
     emit('confirm');
   }
 }

@@ -33,7 +33,10 @@ export default createStore({
     navbarFixed:
       "position-sticky blur shadow-blur left-auto top-1 z-index-sticky px-0 mx-4",
     absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
-    headerMenu: '영업',
+    headerMenu: '',
+
+    // 헤더용 사이드바 상태 기록
+    sidebarState: false,
   },
   mutations: {
     toggleConfigurator(state) {
@@ -49,6 +52,8 @@ export default createStore({
         sidenav_show.classList.add("g-sidenav-pinned");
         state.isPinned = false;
       }
+
+      state.sidebarState = !state.sidebarState;
     },
     navbarFixed(state) {
       if (state.isNavFixed === false) {
@@ -69,13 +74,19 @@ export default createStore({
       state.color = payload;
     },
     selectHeaderMenu(state, headerMenu) {
-      state.headerMenu = headerMenu
+      state.headerMenu = headerMenu;
     },
     addLoginInfo(state, loginObj) {
       state.loginInfo = {
         ...state.loginInfo, // 기존 데이터 유지
         ...loginObj,        // 새로운 데이터 추가 또는 업데이트
       };
+    },
+
+    // 상태 초기화
+    resetState(state) {
+      state.headerMenu = '';
+      state.sidebarState = false;
     },
   },
   actions: {

@@ -33,17 +33,14 @@
 
 
 <급한거>
-레이아웃 정리 / ag-grid 텍스트 정렬
 유효성 체크 => 로그인 정보 디코의 협업에 사용법 있음
 검색창 통합
-경고창 noti로 변경
 
 
 
 --부품 등록 : 설비 선택 / 구매날짜 date
 --설비 상세 : 부품 정보 - 교체 모달
 
-->날짜 표시 변경
 
 
 
@@ -58,5 +55,87 @@
 
 
 
+=================================================================================================
+<notify>
+1. text에 내용 적고
+2. type에는 세가지 문자열 값만 들어갈 수 있음
+    1. success: 초록색
+    2. error: 빨간색
+    3. warn: 주황색
+
+this.$notify({
+      text: "중복 주문은 등록 불가합니다",
+      type: 'fail',
+});
 
 
+
+
+
+
+=================================================================================================
+<session>
+
+== options ==
+<!-- 모달 샘플 -->
+<template>
+  <div>
+      <h3>{{ testing }}</h3>
+  </div>
+</template>
+
+<script>
+import { mapMutations } from "vuex";
+
+export default {
+  data() {
+    return {
+      testing: {},
+    };
+  },
+  methods: {
+    ...mapMutations(["addLoginInfo"]),
+    test(){
+      this.testing = this.$store.state.loginInfo;
+      console.log('ddd', this.$store.state.loginInfo);
+    },
+  },
+
+  mounted() {
+      this.test();
+  },
+};
+</script>
+
+
+
+
+
+
+== composition ==
+<!-- 모달 샘플 -->
+<template>
+  <div>
+      <h3>{{ testing }}</h3>
+  </div>
+</template>
+
+
+<script setup>
+import { onBeforeMount, ref } from 'vue'; // onBeforeMount
+import { useStore } from 'vuex'; // Vuex 스토어 가져오기
+
+// Vuex 스토어 인스턴스 가져오기
+const store = useStore();
+
+const testing = ref({});
+const test = () => {
+  testing.value = store.state.loginInfo;
+  console.log('ccc', store.state.loginInfo);
+};
+
+// 화면 생성되는 시점
+onBeforeMount(() => {
+  test();
+});
+</script>

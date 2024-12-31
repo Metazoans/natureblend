@@ -312,11 +312,17 @@ export default {
       // 등록 성공 체크
       if(addRes.machine_num > 0){
         // 등록메시지 수정 예정
-        alert('등록 성공');
+        this.$notify({
+          text: "설비 등록 성공",
+          type: 'success',
+        });
         this.isInsert = true;
         this.$emit('confirm', this.isInsert);
       } else {
-        alert('등록 실패');
+        this.$notify({
+          text: "설비 등록 실패",
+          type: 'error',
+        });
         this.$emit('confirm', this.isInsert);
       }
     },

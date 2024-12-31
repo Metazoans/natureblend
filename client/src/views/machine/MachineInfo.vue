@@ -181,10 +181,16 @@ export default {
                               .catch(err => console.log(err));
       let delRes = result.data;
       if(delRes.result == 'success') {
-        alert('삭제 성공');
+        this.$notify({
+          text: "설비 삭제 성공",
+          type: 'success',
+        });
         this.$router.go(-1); // 삭제 성공시 뒤로가기(설비 리스트로 이동)
       } else {
-        alert('삭제 실패');
+        this.$notify({
+          text: "설비 삭제 실패",
+          type: 'error',
+        });
       }
     },
     // 형변환 파트 작업중

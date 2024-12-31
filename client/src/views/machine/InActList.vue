@@ -250,9 +250,6 @@ export default {
         this.inActRow[idx].inact_start_time = this.dateFormat(this.inActRow[idx].inact_start_time, 'yyyy-MM-dd');
         this.inActRow[idx].inact_end_time = this.dateFormat(this.inActRow[idx].inact_end_time, 'yyyy-MM-dd');
       }
-      console.log(this.inActRow);
-      // this.inActRow.value.inact_start_time = this.dateFormat(this.inActRow.value.inact_start_time, 'yyyy-MM-dd');
-      // this.inActRow.value.inact_end_time = this.dateFormat(this.inActRow.value.inact_end_time, 'yyyy-MM-dd');
     },
 
     // 비가동 ag-grid onReady
