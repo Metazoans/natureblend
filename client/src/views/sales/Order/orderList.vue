@@ -59,13 +59,13 @@ export default {
       theme : theme,
       rowData : [],
       columnDefs : [
-        { headerName : "주문서코드", field:'orderlist_num',resizable: true, sortable: true ,width:100,cellStyle: { textAlign: "center" }},
-        { headerName : "주문서명", field:'orderlist_title',editable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
-        { headerName : "거래처명",field:'com_name',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
-        { headerName : "담당자",field:'name',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
-        { headerName : "주문일자",field:'order_date',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "center" }},
-        { headerName : "납기일자",field:'due_date', editable: true, sortable: true ,width:200,cellStyle: { textAlign: "center" }},
-        { headerName : "진행상태",field:'orderlist_status',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
+        { headerName : "주문서코드", field:'orderlist_num',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
+        { headerName : "주문서명", field:'orderlist_title',editable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 4},
+        { headerName : "거래처명",field:'com_name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
+        { headerName : "담당자",field:'name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
+        { headerName : "주문일자",field:'order_date',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
+        { headerName : "납기일자",field:'due_date', editable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
+        { headerName : "진행상태",field:'orderlist_status',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
 
       ],
       order : {},
@@ -94,7 +94,7 @@ export default {
   methods:{
     onReady(event){
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
             const paginationPanel = allPanels[0];

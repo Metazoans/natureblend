@@ -81,7 +81,7 @@
     <!-- <div class="grid-container" v-show="rowData.length != 0"> -->
     <div class="grid-container">
         <ag-grid-vue
-        style ="height: 450px;"
+        style ="height: 600px; "
         :rowData="rowData"
         :columnDefs="columnOrderlist"
         :theme="theme"
@@ -147,14 +147,14 @@ export default{
             theme : theme,
             rowData : [],
             columnOrderlist : [
-            { headerName : "출고번호", field:'output_num',width:200,cellStyle: { textAlign: "center" }},
-            { headerName : "주문서명", field:'orderlist_title' ,width:400,cellStyle: { textAlign: "left" }},
-            { headerName : "거래처명",field:'com_name' ,width:200,cellStyle: { textAlign: "left" }},
-            { headerName : "제품코드",field:'product_code' ,width:200,cellStyle: { textAlign: "center" }},
-            { headerName : "제품명",field:'product_name' ,width:200,cellStyle: { textAlign: "left" }},
-            { headerName : "제품LOT번호",field:'product_lot' ,width:200,cellStyle: { textAlign: "center" }},
-            { headerName : "출고수량",field:'output_amount' ,width:200,cellStyle: { textAlign: "right" }},
-            { headerName : "출고날짜",field:'output_date' ,width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "출고번호", field:'output_num',flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "주문서명", field:'orderlist_title' ,flex: 4,cellStyle: { textAlign: "left" }},
+            { headerName : "거래처명",field:'com_name' ,flex: 3,cellStyle: { textAlign: "left" }},
+            { headerName : "제품코드",field:'product_code' ,flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "제품명",field:'product_name' ,flex: 3,cellStyle: { textAlign: "left" }},
+            { headerName : "제품LOT번호",field:'product_lot' ,flex: 3,cellStyle: { textAlign: "center" }},
+            { headerName : "출고수량",field:'output_amount' ,flex: 2,cellStyle: { textAlign: "right" }},
+            { headerName : "출고날짜",field:'output_date' ,flex: 3,cellStyle: { textAlign: "center" }},
             ],
            
             //검색어 검색 (그리드 안)
@@ -261,7 +261,7 @@ export default{
 
     onReady(event){
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
             const paginationPanel = allPanels[0];
