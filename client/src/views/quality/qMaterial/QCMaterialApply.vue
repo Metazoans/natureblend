@@ -326,10 +326,9 @@ export default {
     },
     //저장하면 입고검사테이블에 추가처리
     async confirm() {
-      console.log('rowData2');
-      console.log(this.rowData2);
+      // console.log('rowData2');
+      // console.log(this.rowData2);
       
-      //let objs = []
       const rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
       // console.log(rawData);
       // console.log(`${rawData[0].mName}`);
@@ -364,10 +363,10 @@ export default {
     },
 
     updateQnt(orderCD, qty){
-      console.log('값수정');
-      console.log(orderCD);
-      console.log(qty);
-      console.log(this.selectedRow);
+      // console.log('값수정');
+      // console.log(orderCD);
+      // console.log(qty);
+      // console.log(this.selectedRow);
       if(qty <=0){
         notify({
             title: "입력 오류",

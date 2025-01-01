@@ -6,7 +6,7 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h3 class="me-3">검색조건</h3>
-        <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
+        <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
       <div class="row g-3">
@@ -32,6 +32,9 @@
         <div class="col-md-2 d-flex align-items-end">
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+        </div>
       </div>
     </div>
   </div>
@@ -40,7 +43,7 @@
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
     <h4>입고상세정보</h4>
-    <p>검사항목 클릭 => 불량항목, 수량입력(없으면 그냥 저장)=> 작성완료한 항목 체크후 '검사완료'버튼 클릭</p>
+    <p class="ps-4">검사항목을 선택한 다음, 불량항목, 수량을 입력후 저장하세요.(없을 시 그냥 저장하세요.)</p>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
@@ -63,8 +66,17 @@
         @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20" style="height: 400px;">
       </ag-grid-vue>
     </div>
-    <material-button size="md" class="mt-3" v-on:click="openModal">검사완료</material-button>
+    <!-- <material-button size="md" class="mt-3" v-on:click="openModal">검사완료</material-button> -->
+    
   </div>
+  <div class="row justify-content-center">
+      <div class="col-auto">
+        <material-button class="btn btn-success" size="lg" @click="openModal">저장</material-button>
+      </div>
+      <div class="col-auto">
+        <material-button class="btn btn-warning" size="lg" @click="searchRequestAll">초기화</material-button>
+      </div>
+    </div>
   <!-- 검사처리내역 끝 -->
 
   <!-- 불량 상세 모달 -->
@@ -99,7 +111,7 @@
 
   <Modal :isShowModal="showModalDone" @closeModal="closeModal" @confirm="confirm">
     <template v-slot:list>
-      <p>신청내역대로 저장하시겠습니까?</p>
+      <p>해당 검사내역대로 저장하시겠습니까?</p>
     </template>
   </Modal>
 
@@ -326,13 +338,13 @@ export default {
       }
 
       this.closeModal();
-      console.log('현재 검색결과 테이블');
-      console.log(this.rowData1);
-      console.log('불량상세테이블');
-      console.log(this.defectDetailsMap);
-      console.log('테스트(검사완료 처리할 검사 건수들)')
+      // console.log('현재 검색결과 테이블');
+      // console.log(this.rowData1);
+      // console.log('불량상세테이블');
+      // console.log(this.defectDetailsMap);
+      // console.log('테스트(검사완료 처리할 검사 건수들)')
       this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료')
-      console.log(this.rowData2);
+      // console.log(this.rowData2);
     },
     // openModalForRow(row) {
     //   this.selectedRow = row;
@@ -346,14 +358,22 @@ export default {
 
     //최종 처리 버튼
     openModal() {
+      if (this.rowData2.length == 0){
+        notify({
+            title: "저장 실패",
+            text: "검사처리내역이 비었습니다.",
+            type: "error", // success, warn, error 가능
+        });
+        return;
+      }
       this.showModalDone = !this.showModalDone
-      console.log(this.rowData2);
-      console.log(this.defectDetailsMap);
+      // console.log(this.rowData2);
+      // console.log(this.defectDetailsMap);
     },
     async confirm() {
       console.log('저장처리!')
-      console.log(this.rowData2);
-      console.log(this.defectDetailsMap);
+      // console.log(this.rowData2);
+      // console.log(this.defectDetailsMap);
       // 객체를 배열로 변환
       let defectDetailsArray = [];
       for (let qcId in this.defectDetailsMap) {

@@ -6,7 +6,7 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h3 class="me-3">검색조건</h3>
-        <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
+        <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
       <div class="row g-3">
@@ -42,6 +42,9 @@
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -83,7 +86,7 @@ import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠�
 const { notify } = useNotification();  // 노티 내용변수입니다
 
 export default {
-  name: "입고검사",
+  name: "세척검사기록",
   components: { MaterialButton, },
   data() {
     return {

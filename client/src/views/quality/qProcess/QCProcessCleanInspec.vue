@@ -6,7 +6,7 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h3 class="me-3">검색조건</h3>
-        <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
+        <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
       <div class="row g-3">
@@ -31,6 +31,9 @@
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -98,7 +101,7 @@
 
   <Modal :isShowModal="showModalDone" @closeModal="closeModal" @confirm="confirm">
     <template v-slot:list>
-      <p>신청내역대로 저장하시겠습니까?</p>
+      <p>해당 검사내역대로 저장하시겠습니까?</p>
     </template>
   </Modal>
 
@@ -123,7 +126,7 @@ import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠�
 const { notify } = useNotification();  // 노티 내용변수입니다
 
 export default {
-  name: "입고검사관리",
+  name: "세척검사관리",
   components: { MaterialButton, Modal },
   data() {
     return {
@@ -261,7 +264,7 @@ export default {
 
     //신청 건의 합격량, 불합격량(불량항목, 각각의 수량) 처리
     onCellClicked(event) {
-      console.log('클릭됨');
+      // console.log('클릭됨');
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = event.data;
       this.showModalRJC = true;
@@ -327,25 +330,33 @@ export default {
       }
 
       this.closeModal();
-      console.log('현재 검색결과 테이블');
-      console.log(this.rowData1);
-      console.log('불량상세테이블');
-      console.log(this.defectDetailsMap);
-      console.log('테스트(검사완료 처리할 검사 건수들)')
+      // console.log('현재 검색결과 테이블');
+      // console.log(this.rowData1);
+      // console.log('불량상세테이블');
+      // console.log(this.defectDetailsMap);
+      // console.log('테스트(검사완료 처리할 검사 건수들)')
       this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료')
-      console.log(this.rowData2);
+      // console.log(this.rowData2);
     },
 
     //최종 처리 버튼
     openModal() {
+      if (this.rowData2.length == 0){
+        notify({
+            title: "저장실패",
+            text: "검사처리내역이 비었습니다.",
+            type: "error", // success, warn, error 가능
+        });
+        return;
+      }
       this.showModalDone = !this.showModalDone
-      console.log(this.rowData2);
-      console.log(this.defectDetailsMap);
+      // console.log(this.rowData2);
+      // console.log(this.defectDetailsMap);
     },
     async confirm() {
-      console.log('저장처리!')
-      console.log(this.rowData2);
-      console.log(this.defectDetailsMap);
+      // console.log('저장처리!')
+      // console.log(this.rowData2);
+      // console.log(this.defectDetailsMap);
       // 객체를 배열로 변환
       let defectDetailsArray = [];
       for (let qcId in this.defectDetailsMap) {
