@@ -1,11 +1,11 @@
 <template>
-    <div>
+    <div class = "title" >
        <h3>공정 흐름도 관리</h3>
     </div>
-    <div class="main-container" style="width: 800px; height: auto;">
+    <div class="main-container" style="width: 800px; height: auto; ">
         <div class="content" style="height: auto;">
             <form class="row gx-3 gy-2 align-items-center">
-                <div class="grid-container" style="padding-top: 10px;">
+                <div class="grid-container" style="padding-top: 10px; ">
                     <ag-grid-vue
                     :rowData="rowData"
                     :columnDefs="columnDefs"
@@ -54,6 +54,7 @@ import processflowModal from "./processflowModal.vue";
                     {
                         headerName:"공정흐름도조회",
                         field:"공정흐름도조회",
+                        cellStyle: { textAlign: 'center' },
                         editable:false,
                         cellRenderer: (params) => {
                             const button1 = document.createElement('button');

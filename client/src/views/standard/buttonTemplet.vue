@@ -49,9 +49,10 @@
                 };
               this.addLoginInfo(loginObj);
               console.log('로그인이름',this.$store.state.loginInfo.name);
-              if(!this.$store.state.loginInfo.name){
-                  this.$router.push({name : 'login'});
-              }
+              // if(!this.$store.state.loginInfo.name){
+              //     this.$router.push({name : 'login'});
+              // }
+              window.location.reload();
         }
         // try {
         //   const result = await axios.post(`${ajaxUrl}/logout`);
