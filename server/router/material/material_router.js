@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const materialService = require('../service/material_service.js');
+const materialService = require('../../service/material/material_service.js');
 
 
 // 미지시생산계획 material_order_head (allmaterial)

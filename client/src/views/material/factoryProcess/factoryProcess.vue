@@ -4,84 +4,171 @@
         <h3>&nbsp;&nbsp;실시간 공정 흐름도&nbsp;&nbsp;&nbsp;&nbsp;현재시각 : [ {{ formattedDate }} ]</h3>
     </div>
     <div class="d-flex flex-row mb-3">
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;자재검사대기</h6>
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;자재검사대기</h5>
                 <materialOrder :orderOk="orderOk"/>
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;자재검사중</h6>
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;자재검사중</h5>
                 <materialQcing :material_qcing="material_qcing"/>
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;자재입고대기</h6>
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;자재입고대기</h5>
                 <materialInput :material_input="material_input"/>
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;포장검사</h6>
-                <process3qc />
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;제품입고대기</h6>
-                <productInput />
+        <div class="p-0">
+            <div style="width: 280px;">
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;제품출고대기</h6>
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;제품출고대기</h5>
                 <productOut />
             </div>
         </div>
     </div>
+
+
+
+
+
+
+
     <div class="d-flex flex-row mb-3">
-        <div class="p-2">
-            <div style="width: 250px; height: 70px;">
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;생산지시</h5>
+                <processOrder :process_list="process_list"/>
+            </div>
+            <div class="p-0">
+                <div style="width: 280px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample_bottom.png" height="25"/>
+                </div>
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 280px;">
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 280px;">
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;제품입고대기</h5>
+                <productInput />
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+                <img src="http://yeonsus.com/academy/arrow_sample_left.png" alt="화살표" width="25"/>
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;포장검사</h5>
+                <process3qc />
+            </div>
+            <div class="p-0">
+                <div style="width: 280px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample_top.png" height="25"/>
+                </div>
             </div>
         </div>
     </div>
+
+
+
+
+
+
+
     <div class="d-flex flex-row mb-3">
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;생산지시</h6>
-                <processOrder />
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;착즙공정</h5>
+                <process1 :process1_list="process1_list" />
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;착즙공정</h6>
-                <process1 />
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;착즙검사</h6>
-                <process1qc />
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;착즙검사</h5>
+                <process1qc :process1_qc_list="process1_qc_list"/>
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;병세척공정</h6>
-                <process2 />
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
             </div>
         </div>
-        <div class="p-2">
-            <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;세척병검사</h6>
-                <process2qc />
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;병세척공정</h5>
+                <process2 :process2_list="process2_list"/>
             </div>
         </div>
-        <div class="p-2">
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 280px;">
+                <h5 class="mb-0">&nbsp;&nbsp;세척병검사</h5>
+                <process2qc :process2_qc_list="process2_qc_list"/>
+            </div>
+        </div>
+        <div class="p-0">
+            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
+                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            </div>
+        </div>
+        <div class="p-0">
             <div style="width: 250px;">
-                <h6 class="mb-0">&nbsp;&nbsp;포장공정</h6>
-                <process3 />
+                <h5 class="mb-0">&nbsp;&nbsp;포장공정</h5>
+                <process3 :process3_list="process3_list"/>
             </div>
         </div>
     </div>
@@ -121,9 +208,9 @@
             endDate: '',
             materialState: ['a1'],
         };
-        let result = await axios.put(`${ajaxUrl}/material/polistorder2`, seachcondition)
+        let result = await axios.put(`${ajaxUrl}/material/configloding`, seachcondition)
                                 .catch(err=>console.log(err));
-        //console.log(result.data);
+        console.log('aaaaaa',result.data);
         orderOk.value = result.data.map((col) => ({
             ...col,
             ord_qty: col.material_name.includes('병') ? Number(col.ord_qty).toLocaleString() + " 개" : (Number(col.ord_qty) * 0.001).toLocaleString() + " kg",
@@ -146,7 +233,7 @@
             endDate: null,
             qcState : 'qcs3',
         };
-        let searchResult = await axios.post(`${ajaxUrl}/recordQCM`, result)
+        let searchResult = await axios.post(`${ajaxUrl}/material/recordQCM2`, result)
                                         .catch(err => console.log(err));
         material_qcing.value = searchResult.data.map((col) => ({
             ...col,
@@ -159,7 +246,7 @@
     //자재 입고해야할 목록(자재입고대기)
     const material_input = ref([]);
     const matrialQcInput = async function(){
-        let result = await axios.get(`${ajaxUrl}/material/miql`)
+        let result = await axios.get(`${ajaxUrl}/material/miql2`)
                             .catch(err=>console.log(err));
         material_input.value = result.data;
         material_input.value = result.data.map(col => ({
@@ -175,6 +262,60 @@
         console.log('자재입고대기',material_input.value);
     }
 
+    // 생산 지시 목록
+    const process_list = ref([]);
+    const processList = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/processlist`)
+                            .catch(err=>console.log(err));
+        process_list.value = result.data;
+        console.log('생산 지시 목록 ',process_list.value);
+    };
+
+    // 착즙 공정 목록
+    const process1_list = ref([]);
+    const process1List = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/process1list`)
+                            .catch(err=>console.log(err));
+        process1_list.value = result.data;
+        console.log('착즙',process1_list.value);
+    };
+
+    // 착즙 공정 완료 (품질)
+    const process1_qc_list = ref([]);
+    const process1QcList = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/process1QcList`)
+                            .catch(err=>console.log(err));
+        process1_qc_list.value = result.data;
+        console.log('착즙 품질',process1_qc_list.value);
+    };
+
+    // 세척 공정 목록
+    const process2_list = ref([]);
+    const process2List = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/process2List`)
+                            .catch(err=>console.log(err));
+        process2_list.value = result.data;
+        console.log('세척 목록 ',process2_list.value);
+    };
+
+    // 세척 공정 품질
+    const process2_qc_list = ref([]);
+    const process2QcList = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/process2QcList`)
+                            .catch(err=>console.log(err));
+        process2_qc_list.value = result.data;
+        console.log('세척 품질',process2_qc_list.value);
+    };
+
+    // 포장 공정 목록
+    const process3_list = ref([]);
+    const process3List = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/process3List`)
+                            .catch(err=>console.log(err));
+        process3_list.value = result.data;
+        console.log('포장 목록 ',process3_list.value);
+    };
+
     //날짜와 매초 데이터 불러오는곳
     const formattedDate = ref('');
     let timer = null;
@@ -188,15 +329,21 @@
             matrialOrderList2();   //자재발주서 생성(검수대기항목들)
             searchRequestAll(); //검사중인 자재(자재검사중)
             matrialQcInput();        //자재 입고해야할 목록(자재입고대기)
+            processList();  //생산 지시 목록
+            process1List(); //착즙 공정
+            process1QcList();   // 착즙 공정 QC
+            process2List(); //세척 공정
+            process2QcList(); //세척 공정 품질
+            process3List(); //포장 공정
         }
     };
 
     // 화면 생성되는 시점 (최초 1회 실행 이후에 startprocess 메소드에서 5초마다 실행)
     onBeforeMount(()=>{
         startprocess();     //현재시간 불러오는 메소드
-        matrialOrderList2();   //자재발주서 생성(검수대기항목들)
-        searchRequestAll(); //검사중인 자재(자재검사중)
-        matrialQcInput();        //자재 입고해야할 목록(자재입고대기)
+        //matrialOrderList2();   //자재발주서 생성(검수대기항목들)
+        //searchRequestAll(); //검사중인 자재(자재검사중)
+        //matrialQcInput();        //자재 입고해야할 목록(자재입고대기)
         timer = setInterval(startprocess, 1000);    // 1초마다 타이머 돌아감
     });
 
