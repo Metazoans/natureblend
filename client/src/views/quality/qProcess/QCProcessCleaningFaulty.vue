@@ -89,17 +89,17 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "불량품번호", field: "qcCleaningRjcId", resizable: false },
-        { headerName: "포장검사번호", field: "qcCleaningId", resizable: false },
-        { headerName: "공정작업번호", field: "processNum", resizable: false },
-        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
-        { headerName: "검사담당자", field: "eName", resizable: false },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false },
-        { headerName: "불량코드", field: "faultyCode", resizable: false },
-        { headerName: "불량명", field: "faultyReason", resizable: false },
-        { headerName: "검사시작시각", field: "inspecStart", resizable: false },
-        { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
+        { headerName: "불량품번호", field: "qcCleaningRjcId", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.5 },
+        { headerName: "포장검사번호", field: "qcCleaningId", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.5 },
+        { headerName: "공정작업번호", field: "processNum", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.25 },
+        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.25 },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1.25 },
+        { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1.1 },
+        { headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "불량코드", field: "faultyCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
+        { headerName: "불량명", field: "faultyReason", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.5 },
+        { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.5 },
 
       ],
 
@@ -114,7 +114,7 @@ export default {
   methods: {
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      //this.gridApi.sizeColumnsToFit();
 
     },
     // 날짜를 YYYY-MM-DD 형식으로 변환

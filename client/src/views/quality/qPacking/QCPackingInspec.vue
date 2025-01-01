@@ -142,16 +142,16 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "공정검사번호", field: "qcProcessId", resizable: false },
-        { headerName: "공정작업번호", field: "processNum", resizable: false },
-        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false },
-        { headerName: "제품명", field: "pName", resizable: false },
-        { headerName: "검사담당자", field: "eName", resizable: false },
-        { headerName: "총 수량", field: "totalQnt", resizable: false },
-        { headerName: "합격량", field: "passQnt", resizable: false, editable: true, },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, },
-        { headerName: "검사시작시각", field: "inspecStart", resizable: false },
-        { headerName: "검사상태", field: "inspecStatus", resizable: false },
+        { headerName: "공정검사번호", field: "qcProcessId", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
+        { headerName: "공정작업번호", field: "processNum", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
+        { headerName: "제품명", field: "pName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "합격량", field: "passQnt", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.5 },
+        { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
 
       ],
 
@@ -189,7 +189,7 @@ export default {
 
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      // this.gridApi.sizeColumnsToFit();
     },
 
 

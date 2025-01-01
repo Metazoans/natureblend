@@ -101,16 +101,16 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false },
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
-        { headerName: "검사담당자", field: "eName", resizable: false },
-        { headerName: "총 수량", field: "totalQnt", resizable: false },
-        { headerName: "합격량", field: "passQnt", resizable: false },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false },
-        { headerName: "검사시작시각", field: "inspecStart", resizable: false },
-        { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
-        { headerName: "검사상태", field: "inspecStatus", resizable: false },
+        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.5 },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.1 },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1.2 },
+        { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "합격량", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
+        { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
+        { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
 
       ],
 
@@ -125,7 +125,7 @@ export default {
   methods: {
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      //this.gridApi.sizeColumnsToFit();
 
     },
     // 날짜를 YYYY-MM-DD 형식으로 변환

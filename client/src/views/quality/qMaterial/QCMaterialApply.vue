@@ -140,23 +140,25 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "체크",
+        { headerName: "",
           field: "check",
           resizable: false,
           editable: true,
           sortable: false,
+          cellStyle: { textAlign: "center" }, 
+          flex: 0.0625
         },
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
-        { headerName: "발주수량", field: "ordQty", resizable: false },
-        { headerName: "발주신청일", field: "orderDate", resizable: false },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.5  },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "발주수량(g, 개)", field: "ordQty", resizable: false, cellStyle: { textAlign: "right" }, flex: 0.5  },
+        { headerName: "발주신청일", field: "orderDate", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.25 },
       ],
       rowData2: [],   //신청 내역
       columnDefs2: [
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
-        { headerName: "실제수량", field: "ordQty", resizable: false, editable: true,},
-        { headerName: "발주신청일", field: "orderDate", resizable: false },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.5  },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "실제수량", field: "ordQty", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 0.5},
+        { headerName: "발주신청일", field: "orderDate", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.2 },
         {
           cellRenderer: (params) => {
             return `
@@ -170,6 +172,7 @@ export default {
           sortable: false,
           filter: false,
           cellStyle: { textAlign: "center" }
+          , flex: 0.25
         }
       ],
       defaultColDef: {
@@ -181,7 +184,7 @@ export default {
 
 
   methods: {
-    //검색창 관련    
+    //검색창 관련
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
@@ -231,7 +234,7 @@ export default {
 
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      //this.gridApi.sizeColumnsToFit();
 
       // 기존 이벤트 리스너 제거
         document.removeEventListener("click", this.handleDeleteButtonClick);
