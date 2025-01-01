@@ -60,7 +60,7 @@
     <h4>검사처리내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20" style="height: 400px;">
       </ag-grid-vue>
     </div>
     <material-button size="md" class="mt-3" v-on:click="openModal">검사완료</material-button>

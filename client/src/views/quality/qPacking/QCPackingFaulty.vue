@@ -44,7 +44,7 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" style="height: 700px;">
       </ag-grid-vue>
     </div>
   </div>
