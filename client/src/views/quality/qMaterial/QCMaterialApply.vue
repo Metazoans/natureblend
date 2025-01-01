@@ -7,12 +7,13 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h3 class="me-3">검색조건</h3>
-        <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
+        <!-- <button class="btn btn-success" size="sm" v-on:click="searchRequestAll">전체 조회</button> -->
       </div>
 
       <div class="row g-3">
         <!-- 날짜 범위 -->
-        <div class="col-md-4">
+        <!-- ps-5 추가하기 -->
+        <div class="col-md-4 ps-5">
           <label for="startDate" class="form-label">날짜 범위</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
@@ -33,22 +34,30 @@
         <div class="col-md-2 d-flex align-items-end">
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+        </div>
+        
       </div>
     </div>
   </div>
   <!-- 검사조건 부분 끝 -->
   <hr>
   <!-- 검사결과 시작 -->
-  <div class="container-fluid py-4">
+  <div class="container-fluid py-4 ">
     <h4>검색 결과</h4>
-    <p>생산 내역에 추가할 건을 선택해주세요.</p>
-    <div class="col-2">
-      <material-button size="md" color="primary" @click="addCheckedRows">선택 항목 추가</material-button>
+    <!-- ps-4 추가하기 -->
+    <div class="ps-4">
+      <p>생산 내역에 추가할 건을 선택해주세요.</p>
+    </div>
+    <!-- ps-4 추가하기 -->
+    <div class="col-2 ps-4"> 
+      <material-button class="btn-danger" size="md" color="primary" @click="addCheckedRows">선택 항목 추가</material-button>
     </div>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" >
       </ag-grid-vue>
 
     </div>
@@ -61,19 +70,19 @@
     <h4>신청내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" @cell-clicked="onCellClicked" :paginationPageSize="20">
+        @grid-ready="onGridReady" :pagination="true" @cell-clicked="onCellClicked" :paginationPageSize="20" style="height: 400px;">
       </ag-grid-vue>
 
     </div>
     <!-- 신청내역 끝 -->
     <hr>
     <!-- 버튼 구역 -->
-    <div class="row">
-      <div class="col">
-        <material-button color="warning" size="lg" @click="openModal">저장</material-button>
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <material-button class="btn btn-success" size="lg" @click="openModal">저장</material-button>
       </div>
-      <div class="col">
-        <material-button color="dark" size="lg" @click="resetAll">초기화</material-button>
+      <div class="col-auto">
+        <material-button class="btn btn-warning" size="lg" @click="resetAll">초기화</material-button>
       </div>
     </div>
     <!-- 버튼 구역 끝-->
@@ -140,23 +149,25 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "체크",
+        { headerName: "",
           field: "check",
           resizable: false,
           editable: true,
           sortable: false,
+          cellStyle: { textAlign: "center" }, 
+          flex: 0.0625
         },
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
-        { headerName: "발주수량", field: "ordQty", resizable: false },
-        { headerName: "발주신청일", field: "orderDate", resizable: false },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.5  },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "발주수량(g, 개)", field: "ordQty", resizable: false, cellStyle: { textAlign: "right" }, flex: 0.5  },
+        { headerName: "발주신청일", field: "orderDate", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.25 },
       ],
       rowData2: [],   //신청 내역
       columnDefs2: [
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
-        { headerName: "실제수량", field: "ordQty", resizable: false, editable: true,},
-        { headerName: "발주신청일", field: "orderDate", resizable: false },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.5  },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "실제수량", field: "ordQty", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 0.5},
+        { headerName: "발주신청일", field: "orderDate", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.2 },
         {
           cellRenderer: (params) => {
             return `
@@ -170,6 +181,7 @@ export default {
           sortable: false,
           filter: false,
           cellStyle: { textAlign: "center" }
+          , flex: 0.25
         }
       ],
       defaultColDef: {
@@ -181,7 +193,7 @@ export default {
 
 
   methods: {
-    //검색창 관련    
+    //검색창 관련
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
@@ -231,7 +243,7 @@ export default {
 
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      //this.gridApi.sizeColumnsToFit();
 
       // 기존 이벤트 리스너 제거
         document.removeEventListener("click", this.handleDeleteButtonClick);
@@ -314,10 +326,9 @@ export default {
     },
     //저장하면 입고검사테이블에 추가처리
     async confirm() {
-      console.log('rowData2');
-      console.log(this.rowData2);
+      // console.log('rowData2');
+      // console.log(this.rowData2);
       
-      //let objs = []
       const rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
       // console.log(rawData);
       // console.log(`${rawData[0].mName}`);
@@ -352,10 +363,10 @@ export default {
     },
 
     updateQnt(orderCD, qty){
-      console.log('값수정');
-      console.log(orderCD);
-      console.log(qty);
-      console.log(this.selectedRow);
+      // console.log('값수정');
+      // console.log(orderCD);
+      // console.log(qty);
+      // console.log(this.selectedRow);
       if(qty <=0){
         notify({
             title: "입력 오류",
