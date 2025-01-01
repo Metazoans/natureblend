@@ -54,10 +54,11 @@
 
         <div class="container-fluid py-4">
             <div class="d-flex">
+         
                 <!-- 품질검사 조회(입고 안된 것들 )-->
                 <div class="grid-container" v-show="QtData.length != 0">
                     <ag-grid-vue
-                    style ="width: 1100px; height: 500px;"
+                    style ="width: 850px; height: 500px;"
                     :rowData="QtData"
                     :columnDefs="columnQtlist"
                     :theme="theme"
@@ -202,12 +203,12 @@ export default{
             theme : theme,
             QtData : [],
             columnQtlist : [
-            { headerName : "포장검사코드", field:'qc_packing_id',width:200,cellStyle: { textAlign: "center" }},
-            { headerName : "제품코드", field:'product_code',width:100, cellStyle: { textAlign: "center" }},
-            { headerName : "제품명",field:'product_name',width:300, cellStyle: { textAlign: "left" }},
-            { headerName : "작업번호",field:'process_num',width:150, cellStyle: { textAlign: "center" }},
-            { headerName : "입고수량",field:'pass_qnt',width:100, cellStyle: { textAlign: "right" }},
-            { headerName : "통과날짜",field:'inspec_end',width:200, cellStyle: { textAlign: "center" }},
+            { headerName : "포장검사코드", field:'qc_packing_id',flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "제품코드", field:'product_code',flex: 2, cellStyle: { textAlign: "center" }},
+            { headerName : "제품명",field:'product_name',flex: 2, cellStyle: { textAlign: "left" }},
+            { headerName : "작업번호",field:'process_num',flex: 2, cellStyle: { textAlign: "right" }},
+            { headerName : "입고수량",field:'pass_qnt',flex: 2, cellStyle: { textAlign: "right" }},
+            { headerName : "통과날짜",field:'inspec_end',flex: 2, cellStyle: { textAlign: "center" }},
              ],
 
            
@@ -242,15 +243,15 @@ export default{
                 editable: true,
                 sortable: false,
                 checkboxSelection: true,
-                width:100, cellStyle: { textAlign: "center" }
+                flex: 1, cellStyle: { textAlign: "center" }
                 },
-                { headerName: "포장검사코드 ", field: "qtId", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "center" }},
-                { headerName: "제품 코드", field: "tempProductCode", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "center" }},
-                { headerName: "제품 명", field: "tempProductName", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
-                { headerName: "입고수량", field: "inputAmount", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "right" } },
-                { headerName: "창고 위치", field: "warehouseName", resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
-                { headerName: "담당자", field: "employeeName", resizable: true, sortable: true,width:200,cellStyle: { textAlign: "left" } },
-                { headerName: "통과 날짜", field: "inspectDate", resizable: true, sortable: true,width:200,cellStyle: { textAlign: "center" } },
+                { headerName: "포장검사코드 ", field: "qtId", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "center" }},
+                { headerName: "제품 코드", field: "tempProductCode", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "center" }},
+                { headerName: "제품 명", field: "tempProductName", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "left" }},
+                { headerName: "입고수량", field: "inputAmount", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "right" } },
+                { headerName: "창고 위치", field: "warehouseName", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "left" }},
+                { headerName: "담당자", field: "employeeName", resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "left" } },
+                { headerName: "통과 날짜", field: "inspectDate", resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "center" } },
             ],
 
 
@@ -342,7 +343,7 @@ export default{
 
         onReady(event){
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
             const paginationPanel = allPanels[0];

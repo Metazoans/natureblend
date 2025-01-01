@@ -144,13 +144,16 @@ export default{
               editable: true,
               sortable: false,
               checkboxSelection: true,
+              flex: 1,
+              cellStyle: { textAlign: "center" },
+
             },
-            { headerName: "완제품코드", field: "product_code", resizable: true, sortable: true },
-            { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true },
-            { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true },
-            { headerName: "입고수량 ", field: "input_amount", resizable: true, sortable: true },
-            { headerName: "창고위치 ", field: "warehouse_name", editable: true, sortable: true },
-            { headerName: "입고날짜 ", field: "input_date", resizable: true, sortable: true },
+            { headerName: "완제품코드", field: "product_code", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" } },
+            { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "left" } },
+            { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true ,flex: 3, cellStyle: { textAlign: "center" }},
+            { headerName: "입고수량 ", field: "input_amount", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "right" }},
+            { headerName: "창고위치 ", field: "warehouse_name", editable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "left" }},
+            { headerName: "입고날짜 ", field: "input_date", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" } },
             
         ],
 
@@ -239,7 +242,7 @@ export default{
 
         onReady(event){
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            // event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
             const paginationPanel = allPanels[1];

@@ -87,21 +87,20 @@ export default{
                 editable: true,
                 sortable: false,
                 checkboxSelection: true,
-                width:100,
-                cellStyle: { textAlign: "center" }
+                cellStyle: { textAlign: "center" },flex: 1
                 },
-                { headerName : "주문코드", field:'order_num',resizable: true, sortable: true ,width:100,cellStyle: { textAlign: "center" }},
-                { headerName : "제품코드", field:'product_code',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "center" }},
-                { headerName : "제품명", field:'product_name',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
-                { headerName : "주문수량", field:'order_amount', editable: true, sortable: true ,width:200,cellStyle: { textAlign: "right" }},
-                { headerName : "개당가격", field:'per_price' ,editable: true, sortable: true ,width:200,cellStyle: { textAlign: "right" }},
-                { headerName : "총가격", field:'total_price',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "right" }},
-                { headerName : "주문상태", field:'order_status',resizable: true, sortable: true ,width:200,cellStyle: { textAlign: "left" }},
+                { headerName : "주문번호", field:'order_num',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
+                { headerName : "제품코드", field:'product_code',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 3},
+                { headerName : "제품명", field:'product_name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 4},
+                { headerName : "주문수량", field:'order_amount', editable: true, sortable: true ,cellStyle: { textAlign: "right" },flex: 2},
+                { headerName : "개당가격", field:'per_price' ,editable: true, sortable: true ,cellStyle: { textAlign: "right" },flex: 2},
+                { headerName : "총가격", field:'total_price',resizable: true, sortable: true ,cellStyle: { textAlign: "right" },flex: 2},
+                { headerName : "주문상태", field:'order_status',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
                 {
                     headerName : "삭제",
                     field : "status",
                     editable : false,
-                    width:100
+                    flex: 1
                     ,cellStyle: { textAlign: "center" },
                     cellRenderer :params =>{
                         const orderNum = params.data.order_num;
@@ -163,7 +162,7 @@ export default{
     methods:{
         onReady1(event){
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
 
