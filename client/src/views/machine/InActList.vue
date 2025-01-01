@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid py-4">
     <h3>비가동 설비 현황</h3>
-    <div class="grid-container" >
+    <div class="grid-container work" >
       <ag-grid-vue
         :rowData="machineRow"
         :columnDefs="machineCol"
@@ -89,12 +89,18 @@ export default {
     const machineCol = shallowRef([
       { headerName: '번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 2 },
       { headerName: '공정코드', field: 'process_code', cellStyle: { textAlign: "center" }, flex: 3 },
-      { headerName: '공정명', field: 'process_name', flex: 4 },
+      { headerName: '공정이름', field: 'process_name', flex: 4 },
       { headerName: '모델번호', field: 'model_num', flex: 3 },
       { headerName: '설비분류', field: 'machine_type', flex: 4 },
       { headerName: '설비이름', field: 'machine_name', flex: 4 },
       { headerName: '설비위치', field: 'machine_location', flex: 3 },
-      { headerName: '작동상태', field: 'machine_state', cellStyle: { textAlign: "center" }, flex: 3 },
+      { 
+        headerName: '작동상태',
+        field: 'machine_state',
+        cellStyle: { textAlign: "center" },
+        flex: 3,
+        cellClass: () => { return 'red'; }
+      },
     ]);
 
     // 비가동 내역 정보
@@ -118,6 +124,11 @@ export default {
       let result = await axios.get(`${ajaxUrl}/inActs/inActMachines`)
                               .catch(err => console.log(err));
       machineRow.value = result.data;
+
+      
+      for(let i in machineRow.value) {
+        machineRow.value[i].machine_state = '작동정지';
+      }
     };
     // 비가동 리스트 가져오기
     const getInActList = async () => {
@@ -171,7 +182,7 @@ export default {
     // 설비 현황 셀 클릭 : stop인 경우 작동상태로 변경, 이외는 상세 페이지로 이동
     cellClickFnc(col) {
       switch(col.value) {
-        case 'stop': // stop -> run
+        case '작동정지': // stop -> run
           this.reStart(col.data.machine_num);
           break;
         default: // 설비 상세

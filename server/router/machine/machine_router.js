@@ -41,6 +41,12 @@ router.get('/machinePrdInfo/:mno', async (req,res)=>{
   let info = await machineService.findMachinePrdInfo(machineNo);
   res.send(info);
 });
+// 설비 부품 정보
+router.get('/machinePartList/:mno', async (req, res) => {
+  let machineNo = req.params.mno;
+  let partList = await machineService.findMachinePartList(machineNo);
+  res.send(partList);
+});
 
 // 설비 등록
 router.post('/machineInsert', async(req, res) => {

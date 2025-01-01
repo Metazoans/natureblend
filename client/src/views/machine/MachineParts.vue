@@ -58,6 +58,7 @@ const props = defineProps({
 
 onUpdated (() => {
   partInfo.value = props.partDataList[props.rowNum - 1];
+  console.log('rowNum : ', props.rowNum);
 })
 
 // emit

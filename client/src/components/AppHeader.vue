@@ -62,9 +62,6 @@
         if(this.headerMenu == item.text) {
           console.log('동일 헤더 클릭');
           this.navbarMinimize();
-          // this.sidebarState = !this.sidebarState; // on/off
-          console.log('사이드바 상태 : ', this.sidebarState);
-
         }
         else {
           console.log('다른 헤더 클릭');
@@ -90,21 +87,12 @@
               break;
           }
 
-          if(!this.sidebarState) {
+          const sidenav_show = document.querySelector(".g-sidenav-show");
+
+          if (!sidenav_show.classList.contains("g-sidenav-pinned")) {
             this.navbarMinimize();
-            // this.sidebarState = !this.sidebarState; // on/off
           }
-          console.log('사이드바 상태 : ', this.sidebarState);
         }
-        // if(this.$store.state.headerMenu == item.text) { // 동일 헤더 클릭시 사이드바 닫기
-        // } else if(this.$store.state.headerMenu != item.text) {
-          
-
-        //   if(!this.$store.state.sidebarState) { // 사이드바 안켜져있으면 킴
-        //     this.navbarMinimize();
-        //   }
-        // }
-
 
         this.navItems.forEach(i => i.active = false);
         item.active = true;

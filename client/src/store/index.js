@@ -34,9 +34,6 @@ export default createStore({
       "position-sticky blur shadow-blur left-auto top-1 z-index-sticky px-0 mx-4",
     absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
     headerMenu: '',
-
-    // 헤더용 사이드바 상태 기록
-    sidebarState: false,
   },
   mutations: {
     toggleConfigurator(state) {
@@ -52,8 +49,6 @@ export default createStore({
         sidenav_show.classList.add("g-sidenav-pinned");
         state.isPinned = false;
       }
-
-      state.sidebarState = !state.sidebarState;
     },
     navbarFixed(state) {
       if (state.isNavFixed === false) {
@@ -86,7 +81,6 @@ export default createStore({
     // 상태 초기화
     resetState(state) {
       state.headerMenu = '';
-      state.sidebarState = false;
     },
   },
   actions: {
