@@ -10,12 +10,110 @@
 
 
 
-<추가 작업 예정>  ===> 1/1일까지 내 작업 못끝내면 팀원들한테 말하기
-상단바 클릭시 젤 윗 페이지 이동
-새로고침시 현재 페이지의 사이드바 정보 출력
-상단바 클릭시 사이드바 on/off
+
+=================================================================================================
+
+<할일>
+설비 수정에서 부품 수정 및 삭제
+유효성 체크 => 로그인 정보 디코의 협업에 사용법 있음
+
+
+[레이아웃]
+비가동 내역에 상세 내용 표시(비동기 사유, 등록자, 종료자)
+정비 요청 등록 - 선택창 변경
+
+
+-- 비가동 완료시간 정해져 있는 경우 자동으로 설비 상태 run으로 변경
+
+
+
+
+<작업완료>
+
+
+
+
+=================================================================================================
+<notify>
+1. text에 내용 적고
+2. type에는 세가지 문자열 값만 들어갈 수 있음
+    1. success: 초록색
+    2. error: 빨간색
+    3. warn: 주황색
+
+this.$notify({
+      text: "중복 주문은 등록 불가합니다",
+      type: 'fail',
+});
 
 
 
 
 
+
+=================================================================================================
+<session>
+
+== options ==
+<!-- 모달 샘플 -->
+<template>
+  <div>
+      <h3>{{ testing }}</h3>
+  </div>
+</template>
+
+<script>
+import { mapMutations } from "vuex";
+
+export default {
+  data() {
+    return {
+      testing: {},
+    };
+  },
+  methods: {
+    ...mapMutations(["addLoginInfo"]),
+    test(){
+      this.testing = this.$store.state.loginInfo;
+      console.log('ddd', this.$store.state.loginInfo);
+    },
+  },
+
+  mounted() {
+      this.test();
+  },
+};
+</script>
+
+
+
+
+
+
+== composition ==
+<!-- 모달 샘플 -->
+<template>
+  <div>
+      <h3>{{ testing }}</h3>
+  </div>
+</template>
+
+
+<script setup>
+import { onBeforeMount, ref } from 'vue'; // onBeforeMount
+import { useStore } from 'vuex'; // Vuex 스토어 가져오기
+
+// Vuex 스토어 인스턴스 가져오기
+const store = useStore();
+
+const testing = ref({});
+const test = () => {
+  testing.value = store.state.loginInfo;
+  console.log('ccc', store.state.loginInfo);
+};
+
+// 화면 생성되는 시점
+onBeforeMount(() => {
+  test();
+});
+</script>

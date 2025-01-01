@@ -10,7 +10,8 @@ const inputlist = require('./sqls/sales/inputlist.js')
 const returnlist = require('./sqls/sales/returnlist.js');
 
 // 자재
-const material = require('./sqls/material.js');
+const material = require('./sqls/material/material.js');
+const material2 = require('./sqls/material/material2.js'); //공정흐름도
 
 // 생산
 const productionPlan = require('./sqls/production/productionPlan');
@@ -45,6 +46,7 @@ module.exports = {
 
   // 자재
   ...material,
+  ...material2,
 
   // 생산
   ...productionPlan,

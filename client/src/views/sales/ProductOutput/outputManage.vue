@@ -80,10 +80,9 @@
     <div class="container-fluid py-4">
         <h4 v-show="rowDataOrder.length != 0">미출고조회</h4>
         <div class="d-flex">
-            <div class=" p-2 flex-fill">
+            <div class="p-2" style="flex: 6;">
                 <div class="grid-container" v-show="rowDataOrder.length != 0">
                 <ag-grid-vue
-                style ="width: 750px; height: 500px;"
                 :rowData="rowDataOrder"
                 :columnDefs="columnOrder"
                 :theme="theme"
@@ -99,10 +98,9 @@
                     <CustomNoRowsOverlay/>
                 </div>
             </div>
-            <div class=" p-2 flex-fill">
+            <div class="p-2" style="flex: 4;">
                 <div class="grid-container" v-show="rowDataOrder.length != 0">
                 <ag-grid-vue
-                style ="width:750px; height: 500px;"
                 :rowData="rowDataLot"
                 :columnDefs="columnLot"
                 :theme="theme"
@@ -192,12 +190,12 @@ export default{
             theme : theme,
             rowData : [],
             columnOrderlist : [
-            { headerName : "주문서번호", field:'orderlist_num' ,width:150,cellStyle: { textAlign: "center" }},
-            { headerName : "주문서명", field:'orderlist_title' ,width:500,cellStyle: { textAlign: "left" }},
-            { headerName : "거래처명",field:'com_name' ,width:300,cellStyle: { textAlign: "left" }},
-            { headerName : "담당자",field:'name' ,width:200,cellStyle: { textAlign: "left" }},
-            { headerName : "주문일자",field:'order_date' ,width:200,cellStyle: { textAlign: "center" }},
-            { headerName : "납기일자",field:'due_date' ,width:200,cellStyle: { textAlign: "center" }},
+            { headerName : "주문서번호", field:'orderlist_num' ,flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "주문서명", field:'orderlist_title' ,flex: 4,cellStyle: { textAlign: "left" }},
+            { headerName : "거래처명",field:'com_name' ,flex: 2,cellStyle: { textAlign: "left" }},
+            { headerName : "담당자",field:'name' ,flex: 2,cellStyle: { textAlign: "left" }},
+            { headerName : "주문일자",field:'order_date' ,flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "납기일자",field:'due_date' ,flex: 2,cellStyle: { textAlign: "center" }},
             ],
            
             //주문조회
@@ -207,13 +205,13 @@ export default{
             },
             rowDataOrder : [],
             columnOrder : [
-                {headerName :"주문번호",field: 'order_num',width:100,cellStyle: { textAlign: "center" } },
-                {headerName :"제품코드",field: 'product_code',width:100,cellStyle: { textAlign: "center" }},
-                {headerName :"제품명",field: 'product_name',width:140,cellStyle: { textAlign: "left" }},
-                {headerName :"주문수량",field: 'order_amount',width:100,cellStyle: { textAlign: "right" }},
-                {headerName :"미출고량",field: 'disorder_amount',width:100,cellStyle: { textAlign: "right" }}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
-                {headerName :"출고량",field: 'output_amount',width:90,cellStyle: { textAlign: "right" }},
-                {headerName :"상태여부",field: 'order_status',width:100,cellStyle: { textAlign: "center" }}
+                {headerName :"주문번호",field: 'order_num',flex: 2,cellStyle: { textAlign: "center" } },
+                {headerName :"제품코드",field: 'product_code',flex: 2,cellStyle: { textAlign: "center" }},
+                {headerName :"제품명",field: 'product_name',flex: 3,cellStyle: { textAlign: "left" }},
+                {headerName :"주문수량",field: 'order_amount',flex: 2,cellStyle: { textAlign: "right" }},
+                {headerName :"미출고량",field: 'disorder_amount',flex: 2,cellStyle: { textAlign: "right" }}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
+                {headerName :"출고량",field: 'output_amount',flex: 2,cellStyle: { textAlign: "right" }},
+                {headerName :"상태여부",field: 'order_status',flex: 2,cellStyle: { textAlign: "center" }}
             ],
 
             //출고 시킬 제품 선택 
@@ -230,10 +228,10 @@ export default{
             editable: true,
             sortable: false,
             checkboxSelection: true,
-            width:100
+            flex: 1
             ,cellStyle: { textAlign: "center" }
             },
-            {headerName :"제품LOT번호",field: 'product_lot' ,width:200,cellStyle: { textAlign: "center" }},
+            {headerName :"제품LOT번호",field: 'product_lot' ,flex: 5,cellStyle: { textAlign: "center" }},
             { headerName: "출고수",
             field: "output_num",
             resizable: false,
@@ -241,11 +239,11 @@ export default{
             sortable: false,
             // 셀 값이 변경될 때마다 실행되는 함수
             onCellValueChanged: this.onCellValueChanged
-            ,width:100
+            ,flex: 3
             ,cellStyle: { textAlign: "right" }
             },
-            {headerName :"제품 재고수 ",field: 'total_amount',width:150,cellStyle: { textAlign: "right" }},
-            {headerName :"제품제조일자 ",field: 'inspec_end',width:150,cellStyle: { textAlign: "center" }},
+            {headerName :"재고수 ",field: 'total_amount',flex: 4,cellStyle: { textAlign: "right" }},
+            {headerName :"제조일자 ",field: 'inspec_end',flex: 4,cellStyle: { textAlign: "center" }},
 
            
             ],
@@ -341,7 +339,7 @@ export default{
 
         onGridReady(params){
             this.gridApi = params.api;
-            this.gridApi.sizeColumnsToFit();
+            //this.gridApi.sizeColumnsToFit();
         },
         //주문서 클릭 시 해당 주문서의 미출고 주문 출력 
         async onOrderRowClicked(row) {

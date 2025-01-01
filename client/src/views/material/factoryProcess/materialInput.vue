@@ -1,11 +1,11 @@
-<template>
+h5<template>
     <div class="d-flex flex-row mb-3">
-        <div class="p-2">
+        <div class="P-0">
             <img src="http://yeonsus.com/academy/materialInput.gif" alt="자재입고대기" height="75" width="75"/>
         </div>
-        <div class="p-2">
-            <div style="height: 200px;">
-                <table class="table align-items-center">
+        <div class="P-0">
+            <div style="height: 170px; width: 190px;">
+                <table class="table align-items-center text-center">
                     <tr>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                             자재명
@@ -14,11 +14,11 @@
                             수량
                         </th>
                     </tr>
-                    <tr v-for="(cl, index) in material_input.slice(0, 10)" :key="index">
-                        <td class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">
+                    <tr v-for="(cl, index) in material_input.slice(0, 5)" :key="index">
+                        <td class="text-uppercase text-dark fs-6 font-weight-bolder opacity-7 ps-2" style="text-align: left;">
                             {{ cl.material_name }}
                         </td>
-                        <td class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">
+                        <td class="text-uppercase text-dark fs-6 font-weight-bolder opacity-7 ps-2" style="text-align: right;">
                             {{ cl.ord_qty }}
                         </td>
                     </tr>

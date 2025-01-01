@@ -6,7 +6,7 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h3 class="me-3">검색조건</h3>
-        <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
+        <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
       <div class="row g-3">
@@ -43,6 +43,9 @@
         <div class="col-md-2 d-flex align-items-end">
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+        </div>
       </div>
     </div>
   </div>
@@ -55,7 +58,7 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" style="height: 700px;">
       </ag-grid-vue>
     </div>
   </div>
@@ -101,16 +104,16 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false },
-        { headerName: "자재발주코드", field: "orderCode", resizable: false },
-        { headerName: "자재명", field: "mName", resizable: false },
-        { headerName: "검사담당자", field: "eName", resizable: false },
-        { headerName: "총 수량", field: "totalQnt", resizable: false },
-        { headerName: "합격량", field: "passQnt", resizable: false },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false },
-        { headerName: "검사시작시각", field: "inspecStart", resizable: false },
-        { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
-        { headerName: "검사상태", field: "inspecStatus", resizable: false },
+        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.5 },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.1 },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1.2 },
+        { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "합격량", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
+        { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
+        { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
 
       ],
 
@@ -125,7 +128,7 @@ export default {
   methods: {
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      //this.gridApi.sizeColumnsToFit();
 
     },
     // 날짜를 YYYY-MM-DD 형식으로 변환

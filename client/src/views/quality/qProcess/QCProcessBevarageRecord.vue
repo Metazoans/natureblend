@@ -1,12 +1,12 @@
 <template>
   <div class="px-4 py-4">
-    <h1 class="mb-3">공정검사-음료검사관리</h1>
+    <h1 class="mb-3">공정검사-음료검사기록조회</h1>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h3 class="me-3">검색조건</h3>
-        <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button>
+        <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
       <div class="row g-3">
@@ -43,6 +43,9 @@
         <div class="col-md-2 d-flex align-items-end">
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+        </div>
       </div>
     </div>
   </div>
@@ -55,7 +58,7 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20" style="height: 700px;">
       </ag-grid-vue>
     </div>
 
@@ -76,8 +79,8 @@
       <h4>검사 상세 정보</h4>
       <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
       <p>제품번호: {{ selectedRow.productCode }}</p>
-      <p>자재명: {{ selectedRow.pName }}</p>
-      <b>산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이의 수치를 입력하세요</b>
+      <p>음료 제품명: {{ selectedRow.pName }}</p>
+      <b>검사 항목 : 산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이</b>
       <!-- <p>{{ this.defectDetailsMap }}</p> -->
       <hr>
       <!-- <p>{{ this.testDetails[selectedRow.productCode] }}</p> -->
@@ -87,7 +90,7 @@
         <label>
           {{ item.item_name }} : [허용치 {{ item.etc_min }} ~ {{ item.etc_max }} {{ item.item_unit }}]:
         </label>
-        <input type="number" v-model.number="item.input_value" placeholder="값을 입력하세요" />
+        <input type="number" v-model.number="item.input_value" placeholder="값을 입력하세요" readonly/>
       </div>
 
 
@@ -123,7 +126,7 @@ import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠�
 const { notify } = useNotification();  // 노티 내용변수입니다
 
 export default {
-  name: "입고검사관리",
+  name: "음료검사관리",
   components: { MaterialButton, Modal },
   data() {
     return {
@@ -141,15 +144,15 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "공정검사번호", field: "qcProcessId", resizable: false },
-        { headerName: "공정작업번호", field: "processNum", resizable: false },
-        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false },
-        { headerName: "제품명", field: "pName", resizable: false },
-        { headerName: "검사담당자", field: "eName", resizable: false },
-        { headerName: "합격 여부", field: "inspecResult", resizable: false },
-        { headerName: "검사시작시각", field: "inspecStart", resizable: false },
-        { headerName: "검사완료시각", field: "inspecEnd", resizable: false },
-        { headerName: "검사상태", field: "inspecStatus", resizable: false },
+        { headerName: "공정검사번호", field: "qcProcessId", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
+        { headerName: "공정작업번호", field: "processNum", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "생산지시번호", field: "productionOrderNum", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
+        { headerName: "제품명", field: "pName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "합격 여부", field: "inspecResult", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
+        { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
+        { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
+        { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1},
 
       ],
 
@@ -186,7 +189,7 @@ export default {
 
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      //this.gridApi.sizeColumnsToFit();
     },
 
 
@@ -309,39 +312,28 @@ export default {
       // console.log(testItems);
       // 검사 항목들에 대해 defectDetailsMap에 항목 추가
       testItems.forEach(item => {
-        // let matchingTestDetail = this.completedTestDetails.find(detail =>
-        //   detail.bev_test_item_id === item.item_id &&
-        //   detail.bev_test_details_id === item.details_id
-        // );
+        let matchingTestDetail = this.completedTestDetails.find(detail =>
+             detail.qc_berverage_id === qcProcessId &&
+          detail.bev_test_item_id === item.item_id &&
+          detail.bev_test_details_id === item.details_id
+        );
 
 
         this.defectDetailsMap[qcProcessId].push({
+          qcProcessId: qcProcessId,
           item_id: item.item_id,
           details_id: item.details_id,
           item_name: item.item_name,
           item_unit: item.item_unit,
           etc_min: item.etc_min,
           etc_max: item.etc_max,
-          // input_value: matchingTestDetail ? matchingTestDetail.actual_value : 0, 
-          input_value: 0, 
+          input_value: matchingTestDetail ? matchingTestDetail.actual_value : 0, 
+          // input_value: 0, 
         });
       });
     },
 
     
-
-    //최종 처리 버튼
-    openModal() {
-      this.showModalDone = !this.showModalDone
-      console.log(this.defectDetailsMap);
-      console.log(this.completedDefectDetailsMap);
-    },
-    
-
-
-
-
-
 
     //음료검사항목및수치 불러오기
     async callTestDetail() {

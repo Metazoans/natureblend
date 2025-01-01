@@ -10,7 +10,7 @@
         aria-hidden="true"
         id="iconSidenav"
       ></i>
-      <a class="m-0 navbar-brand" href="/">
+      <a class="m-0 navbar-brand" href="/" @click="resetState">
         <span class="text-2xl font-weight-bold text-white"
           ><img src="http://yeonsus.com/moive/jussionejo.png" width="35" alt="Nature Blend" class="logimg">Nature Blend</span
         >
@@ -24,7 +24,7 @@
 import SidenavList from "./SidenavList.vue";
 import logo from "@/assets/img/logo-ct.png";
 import logoDark from "@/assets/img/logo-ct-dark.png";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "index",
@@ -41,6 +41,10 @@ export default {
     // 사이드바 테마 설정
     ...mapState(["sidebarType", "isDarkMode", 'isModalOpen']),
   },
+
+  methods: {
+    ...mapMutations(["resetState"]),
+  }
 };
 </script>
 

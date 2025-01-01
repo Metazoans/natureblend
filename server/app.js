@@ -13,7 +13,8 @@ const outputRouter = require('./router/sales/output_router.js');
 const inputRouter = require('./router/sales/input_router.js');
 const returnRouter = require('./router/sales/return_router.js');
 // 자재
-const materialRouter = require('./router/material_router.js');
+const materialRouter = require('./router/material/material_router.js');
+const materialRouter2 = require('./router/material/material_router2.js');  //공정흐름도
 
 // 생산
 const productionPlanRouter = require('./router/production/plan_router');
@@ -50,6 +51,7 @@ app.use('/', returnRouter);
 
 // 자재 라우터
 app.use('/', materialRouter);
+app.use('/', materialRouter2);  // 공정 흐름도
 
 // 생산 라우터
 app.use('/production/plan', productionPlanRouter);

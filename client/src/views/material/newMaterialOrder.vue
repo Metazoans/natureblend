@@ -31,6 +31,8 @@ import newMaterialOrderOffer from '@/views/material/newMaterialOrderOffer.vue';
 
 import MaterialProgress from "@/components/MaterialProgress.vue";
 
+import { mapMutations } from "vuex";   //로그인정보
+
 export default {
     name: "myBestPage",
     components: {
@@ -42,6 +44,7 @@ export default {
     // 변수 선언
     data() {
         return {
+            loginInfo: {},
             showprogress2: false,
             productorderlist: [],
             planMaterialList: [],
@@ -57,12 +60,20 @@ export default {
     },
     //각종 메소드들
     methods: {
+        ...mapMutations(["addLoginInfo"]),
         //계획 리스트 불러옴
         async productorder(){
-            let result = await axios.get(`${ajaxUrl}/material/orderplan`)
-                            .catch(err => console.log(err));
-            this.productorderlist = result.data;
-            //console.log(result.data);
+            this.loginInfo = this.$store.state.loginInfo;
+            console.log('직업',this.loginInfo);
+            if(this.loginInfo.job === '자재' || this.loginInfo.job === '관리자'){
+                let result = await axios.get(`${ajaxUrl}/material/orderplan`)
+                                .catch(err => console.log(err));
+                this.productorderlist = result.data;
+                //console.log(result.data);
+            }else{
+                this.$notify({ title:'로그인요청', text: '자재팀 또는 관리자만 접속 가능합니다.', type: 'error' });    // success, warn, error 가능
+                this.$router.push({ name : 'MainPage' });
+            }
         },
         needMaterialList(data) {
             this.planMaterialList = [];
@@ -88,7 +99,7 @@ export default {
             // 담당사원번호는 나중에 세션에서
             this.polist = this.polist.map((val) => ({
                 ...val,
-                emp_num: 1,
+                emp_num: this.loginInfo.emp_num,
                 go_qty: val.material.includes('병') ? Number(val.go_qty) : Number(val.go_qty)*1000,
                 go_price: val.material.includes('병') ? Number(val.go_price) : Number(val.go_price)*1000,
                 go_total_price: val.material.includes('병') ? val.go_total_price : val.go_total_price*1000,

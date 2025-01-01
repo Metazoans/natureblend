@@ -42,7 +42,7 @@
           <label class="col-auto col-form-label fw-bold">이름 검색</label>
           <!-- 검색 옵션 -->
           <div class="col-2">
-            <select v-model="selectSearchType" class="form-select">
+            <select v-model="selectSearchType" class="form-select" style="background-color: white;">
               <option v-for="option in searchType" :key="option" :value="option">
                 {{ option }}
               </option>
@@ -90,7 +90,7 @@
     
 
     <!-- 설비 리스트 -->
-    <div class="grid-container" >
+    <div class="grid-container work" >
       <ag-grid-vue
         :rowData="rowData"
         :columnDefs="columnDefs"
@@ -129,17 +129,21 @@ export default {
     const machineList = shallowRef([]);
     const rowData = shallowRef([]);
     const columnDefs = shallowRef([
-
-      { headerName: '번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 1 },
-      { headerName: '공정코드', field: 'process_code', cellStyle: { textAlign: "center" }, flex: 1 },
-      { headerName: '공정명', field: 'process_name', flex: 2 },
-      { headerName: '모델번호', field: 'model_num', flex: 1.5 },
-      { headerName: '설비분류', field: 'machine_type', flex: 2 },
-      { headerName: '설비이름', field: 'machine_name', flex: 2 },
-      { headerName: '설비위치', field: 'machine_location', flex: 1.5 },
-      { headerName: '작동상태', field: 'machine_state',
+      { headerName: '번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 2 },
+      { headerName: '공정코드', field: 'process_code', cellStyle: { textAlign: "center" }, flex: 3 },
+      { headerName: '공정이름', field: 'process_name', flex: 4 },
+      { headerName: '모델번호', field: 'model_num', flex: 3 },
+      { headerName: '설비분류', field: 'machine_type', flex: 4 },
+      { headerName: '설비이름', field: 'machine_name', flex: 4 },
+      { headerName: '설비위치', field: 'machine_location', flex: 3 },
+      { 
+        headerName: '작동상태',
+        field: 'machine_state',
         cellStyle: { textAlign: "center" },
-        flex: 1.5,
+        flex: 3,
+        cellClass: (params) => {
+          return params.value === '작동중' ? 'green' : params.value === '작동정지' ? 'red' : ''
+        }
       },
     ]);
 
@@ -147,7 +151,11 @@ export default {
       let result = await axios.get(`${ajaxUrl}/machine/machineList`)
                               .catch(err => console.log(err));
       machineList.value = result.data;
-      rowData.value = result.data;
+      rowData.value = [...result.data];
+
+      for(let i in rowData.value) {
+        rowData.value[i].machine_state = rowData.value[i].machine_state == 'run' ? '작동중' : '작동정지';
+      }
     }
 
     return {
@@ -175,8 +183,8 @@ export default {
       pickedStatus: "", // 작동상태 선택
       machineType: ["세척기기", "음료제작기기", "포장기기"], // 설비 분류 옵션
       pickedType: [], // 설비 분류 선택
-      searchType: ["전체", "공정명", "설비이름"], // 검색 옵션
-      selectSearchType: "", // 선택된 검색 옵션
+      searchType: ["이름검색", "공정이름", "설비이름"], // 검색 옵션
+      selectSearchType: "이름검색", // 선택된 검색 옵션
       searchData: "", // 검색 내용
 
       filters: [],
@@ -263,11 +271,11 @@ export default {
     // 셀 클릭 : 작동상태 클릭시 비가동 모달, 이외의 경우 설비 상세 페이지로 이동
     cellClickFnc(col) {
       switch(col.value) {
-        case 'run': // run -> stop
+        case '작동중': // run -> stop
           this.machineNo = col.data.machine_num;
           this.inActAddOpen();
           break;
-        case 'stop': // stop -> run
+        case '작동정지': // stop -> run
           this.reStart(col.data.machine_num);
           break;
         default: // 설비 상세
@@ -345,10 +353,10 @@ export default {
           break;
       }
       switch(this.filters.selectSearchType) {
-        case "전체":
+        case "이름검색":
           this.filters.selectSearchType = "all";
           break;
-        case "공정명":
+        case "공정이름":
           this.filters.selectSearchType = "process_name";
           break;
         case "설비이름":

@@ -40,7 +40,7 @@
 
           <div class="grid-bom" >
            <ag-grid-vue 
-             style ="width: 600px; height: 500px;"
+             style ="width: 650px; height: 500px;"
              :rowData="bomBox"
              :columnDefs="columnBoms"
              :theme="theme"
@@ -133,17 +133,29 @@
             { checkboxSelection: true, headerCheckboxSelection: true, width: 50},
             { headerName:"자재코드", field : "material_code"},
             { headerName:"자재" , field: "material"},
-            { headerName:"수량" , field: "material_con" , editable: true}
+            { headerName:"수량" , field: "material_con" , editable: true, cellStyle: { textAlign: 'right' }}
           ],
           columnDefs: [
             { headerName: "제품명", field: "product_name" , width : 150 },
-            { headerName: "용량", field: "capacity" , width : 150 },
+            { headerName: "용량", field: "capacity" , width : 150 ,cellStyle: { textAlign: 'right' }},
             {
             width : 80,
             editable: false,
+            cellStyle: { textAlign: 'center' },
             cellRenderer: params => {
               const button = document.createElement('button');
               button.innerText = '조회';
+              button.style.marginRight = '10px';
+              button.style.cursor = 'pointer';
+              button.style.backgroundColor = '#f7b84d';
+              button.style.width = '60px';
+              button.style.height = '30px';
+              button.style.color = 'white';
+              button.style.border = 'none';
+              button.style.padding = '0';
+              button.style.borderRadius = '4px';
+              button.style.textAlign = 'center';
+              button.style.lineHeight = '30px';
               button.addEventListener('click', () => {
                 console.log("레코드 확인 : ", JSON.stringify(params.data));
                 console.log(params.data.product_code);
@@ -155,9 +167,21 @@
         {
           width : 80,
           editable: false,
+          cellStyle: { textAlign: 'center' },
           cellRenderer: params => {
             const button = document.createElement('button');
             button.innerText = '삭제';
+            button.style.marginRight = '10px';
+            button.style.cursor = 'pointer';
+            button.style.backgroundColor = '#f7b84d';
+            button.style.width = '60px';
+            button.style.height = '30px';
+            button.style.color = 'white';
+            button.style.border = 'none';
+            button.style.padding = '0';
+            button.style.borderRadius = '4px';
+            button.style.textAlign = 'center';
+            button.style.lineHeight = '30px';
             button.addEventListener('click', () => {
               console.log("레코드 확인 : ", JSON.stringify(params.data));
               this.dele(params.data.bom_num);
@@ -425,9 +449,19 @@
 </script>
 
 <style scoped>
+
 .d-flex {
   display: flex;
   justify-content: space-between;
+}
+
+.grid-container {
+  margin-top: 215px;
+}
+
+.grid-bom {
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .form-container {

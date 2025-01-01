@@ -35,7 +35,7 @@ SELECT
     o.order_amount,
     NVL(os.total_output_amount, 0) AS output_amount,
     o.order_amount - NVL(os.total_output_amount, 0) AS disorder_amount,
-    o.order_status
+    o.order_status 
 FROM orders o
 LEFT JOIN product p 
     ON o.product_code = p.product_code

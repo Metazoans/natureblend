@@ -43,6 +43,7 @@
     <!-- <div class="grid-container" v-show="rowData.length != 0"> -->
     <div class="grid-container">
         <ag-grid-vue
+        style ="width:1360px;"
         :rowData="rowData"
         :columnDefs="columnOrderlist"
         :theme="theme"
@@ -201,26 +202,26 @@ export default{
             theme : theme,
             rowData : [],
             columnOrderlist : [
-            { headerName : "주문서번호", field:'orderlist_num',width:100,cellStyle: { textAlign: "right" }},
-            { headerName : "주문서명", field:'orderlist_title',width:250,cellStyle: { textAlign: "left" }},
-            { headerName : "거래처명",field:'com_name',width:200,cellStyle: { textAlign: "left" }},
-            { headerName : "담당자",field:'name',width:200,cellStyle: { textAlign: "left" }},
-            { headerName : "주문일자",field:'order_date',width:200,cellStyle: { textAlign: "center" }},
-            { headerName : "납기일자",field:'due_date',width:200,cellStyle: { textAlign: "center" }},
-            { headerName : "진행상태",field:'orderlist_status',width:150,cellStyle: { textAlign: "left" }},
+            { headerName : "주문서번호", field:'orderlist_num',flex: 2,cellStyle: { textAlign: "right" }},
+            { headerName : "주문서명", field:'orderlist_title',flex: 4,cellStyle: { textAlign: "left" }},
+            { headerName : "거래처명",field:'com_name',flex: 2,cellStyle: { textAlign: "left" }},
+            { headerName : "담당자",field:'name',flex: 3,cellStyle: { textAlign: "left" }},
+            { headerName : "주문일자",field:'order_date',flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "납기일자",field:'due_date',flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "진행상태",field:'orderlist_status',flex: 2,cellStyle: { textAlign: "left" }},
             ],
             //주문조회
             
             rowDataOutputOrder : [],
             columnOutputOrder : [
-                {headerName :"주문번호",field: 'order_num',width:98,cellStyle: { textAlign: "right" } },
-                {headerName :"출고번호",field: 'output_num',width:100,cellStyle: { textAlign: "left" }}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
-                {headerName :"제품코드",field: 'product_code',width:100,cellStyle: { textAlign: "center" }},
-                {headerName :"제품명",field: 'product_name',width:150,cellStyle: { textAlign: "left" }},
-                {headerName :"주문수량", field: 'order_amount',width:100,cellStyle: { textAlign: "right" }},
-                {headerName :"출고량", field: 'output_amount',width:100,cellStyle: { textAlign: "right" }},
-                {headerName :"개당가격",field: 'per_price',width:100,cellStyle: { textAlign: "right" }},
-                {headerName :"출고날짜",field: 'output_date',width:150,cellStyle: { textAlign: "center" }}
+                {headerName :"주문번호",field: 'order_num',flex: 2,cellStyle: { textAlign: "right" } },
+                {headerName :"출고번호",field: 'output_num',flex: 2,cellStyle: { textAlign: "right" }}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
+                {headerName :"제품코드",field: 'product_code',flex: 2,cellStyle: { textAlign: "center" }},
+                {headerName :"제품명",field: 'product_name',flex: 3,cellStyle: { textAlign: "left" }},
+                {headerName :"주문수량", field: 'order_amount',flex: 2,cellStyle: { textAlign: "right" }},
+                {headerName :"출고량", field: 'output_amount',flex: 2,cellStyle: { textAlign: "right" }},
+                {headerName :"개당가격",field: 'per_price',flex: 2,cellStyle: { textAlign: "right" }},
+                {headerName :"출고날짜",field: 'output_date',flex: 2,cellStyle: { textAlign: "center" }}
             ],
 
             //출고 시킬 제품 선택 
@@ -334,7 +335,7 @@ export default{
 
     onReady(event){
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            // event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
             const paginationPanel = allPanels[0];

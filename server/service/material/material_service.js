@@ -1,4 +1,4 @@
-const mysql = require('../database/mapper.js');
+const mysql = require('../../database/mapper.js');
 
 
 // 미지시생산계획 material_order_head

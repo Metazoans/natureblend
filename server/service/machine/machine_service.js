@@ -18,6 +18,12 @@ const findMachinePrdInfo = async (no) => {
   let info = list[0];
   return info;
 }
+// 설비 부품 정보
+const findMachinePartList = async (no) => {
+  let list = await mariadb.query('machinePartList', [no]);
+  return list;
+}
+
 
 // 설비 등록
 const createNewMachine = async (machineInfo) => {
@@ -108,6 +114,7 @@ module.exports = {
   findMachineType,
   findMachineInfo,
   findMachinePrdInfo,
+  findMachinePartList,
   updateMachineInfo,
   searchMachineList,
   delMachineInfo,

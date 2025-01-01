@@ -4,7 +4,6 @@
     <h1>부품 관리 페이지</h1>
     <!-- 사용 가능 부품 리스트 -->
     <div class="grid-container" >
-      <h2>정비 요청 내역</h2>
       <ag-grid-vue
         :rowData="partRow"
         :columnDefs="partCol"
@@ -30,7 +29,7 @@ import PartsAdd from './PartAdd.vue';
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
 import theme from "@/utils/agGridTheme";
-// import userDateUtils from "@/utils/useDates.js";
+import userDateUtils from "@/utils/useDates.js";
 import {ref, shallowRef, onBeforeMount} from 'vue';
 
 
@@ -42,12 +41,12 @@ const partCol = shallowRef([
     headerName: "",
     width:75,
   },
-  { headerName: '번호', field: 'part_num' },
-  { headerName: '부품이름', field: 'part_name' },
-  { headerName: '설비분류', field: 'machine_type' },
-  { headerName: '거래처', field: 'client_num' },
-  { headerName: '교체주기', field: 'replace_cycle' },
-  { headerName: '구매일자', field: 'buy_date' },
+  { headerName: '번호', field: 'part_num', cellStyle: { textAlign: "center" }, flex: 2 },
+  { headerName: '부품이름', field: 'part_name', flex: 4 },
+  { headerName: '설비분류', field: 'machine_type', flex: 4 },
+  { headerName: '거래처', field: 'client_num', flex: 3 },
+  { headerName: '교체주기', field: 'replace_cycle', cellStyle: { textAlign: "right" }, flex: 3 },
+  { headerName: '구매일자', field: 'buy_date', cellStyle: { textAlign: "center" }, flex: 5 },
 ]);
 
 let isShowModal = ref(false);
@@ -61,6 +60,10 @@ const getParts = async () => {
   let result = await axios.get(`${ajaxUrl}/parts/partList`)
                           .catch(err => console.log(err));
   partRow.value = result.data;
+
+  for(let i in partRow.value) {
+    partRow.value[i].buy_date = userDateUtils.dateFormat(partRow.value[i].buy_date, 'yyyy-MM-dd');
+  }
 }
 
 // 선택 삭제
@@ -82,7 +85,6 @@ const selectDel = async () => {
 const gridApi = ref();
 const onReady = (param) => {
   gridApi.value = param.api;
-  param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
 
   // 페이징 영역 요소 추가
   const paginationPanel = document.querySelector('.ag-paging-panel');
@@ -103,6 +105,7 @@ const onReady = (param) => {
     delBtn.style.border = 'none';
     delBtn.style.padding = '5px 10px';
     delBtn.style.borderRadius = '4px';
+    delBtn.style.position = 'absolute';
     delBtn.style.left = '10px';
     delBtn.className = 'btn-danger';
 
@@ -115,7 +118,8 @@ const onReady = (param) => {
     addBtn.style.border = 'none';
     addBtn.style.padding = '5px 10px';
     addBtn.style.borderRadius = '4px';
-    addBtn.style.left = '10px';
+    addBtn.style.position = 'absolute';
+    addBtn.style.left = '125px';
     addBtn.className = 'btn-success';
 
     // 삭제 이벤트

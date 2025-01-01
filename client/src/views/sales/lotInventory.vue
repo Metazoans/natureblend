@@ -51,7 +51,7 @@
                 <!-- 입고된 lot 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
-                     style ="height: 600px; "
+                    style ="height: 600px; "
                     :rowData="LotNum"
                     :columnDefs="columnLotNum"
                     :theme="theme"
@@ -110,14 +110,14 @@ export default{
 
             LotNum :[],
             columnLotNum :[
-            { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true },
-            { headerName: "제품코드", field: "product_code", resizable: true, sortable: true },
-            { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true },
-            { headerName: "제품수량 ", field: "product_quantity", resizable: true, sortable: true },
-            { headerName: "창고위치 ", field: "warehouse_name", resizable: true, sortable: true },
-            { headerName: "제조일자 ", field: "manufacturing_date", resizable: true, sortable: true },
-            { headerName: "유통기한 ", field: "expire_date", resizable: true, sortable: true },
-            { headerName: "상태", field: "product_status", resizable: true, sortable: true },
+            { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true ,flex: 3, cellStyle: { textAlign: "center" }},
+            { headerName: "제품코드", field: "product_code", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" }},
+            { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true,flex: 3, cellStyle: { textAlign: "left" } },
+            { headerName: "제품수량 ", field: "product_quantity", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "right" }},
+            { headerName: "창고위치 ", field: "warehouse_name", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "left" }},
+            { headerName: "제조일자 ", field: "manufacturing_date", resizable: true, sortable: true,flex: 2, cellStyle: { textAlign: "center" } },
+            { headerName: "유통기한 ", field: "expire_date", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" }},
+            { headerName: "상태", field: "product_status", resizable: true, sortable: true ,flex: 1, cellStyle: { textAlign: "center" }},
             {
                 headerName : "폐기",
                 field : "status",
@@ -169,7 +169,7 @@ export default{
     methods:{
           onReady1(event){
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            // event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
 

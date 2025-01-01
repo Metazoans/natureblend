@@ -241,10 +241,15 @@ export default {
   updated() {
     // update 여부 확인
     if(this.machineNo > 0) {
-      //수정
+      // 수정용 설비 정보
       this.getMachineInfo(this.machineNo);
+
+      // 부품 정보
+      this.getMachinePartInfo(this.machineNo);
     }
-    this.machineData.buy_date = this.getToday();
+    else {
+      this.machineData.buy_date = this.getToday();
+    }
 
 
   },
@@ -309,14 +314,29 @@ export default {
                               .catch(err => console.log(err));
       let addRes = result.data;
 
+      // 부품 등록
+      for(let i in this.partDataList) {
+        let cycle = this.partDataList[i].yearCycle + this.partDataList[i].monthCycle + this.partDataList[i].dayCycle;
+        if(this.partDataList[i].part_name != '' && cycle > 0) {
+          let check = await this.partInsert(this.partDataList[i], obj, addRes.machine_num);
+          console.log(check);
+        }
+      }
+
       // 등록 성공 체크
       if(addRes.machine_num > 0){
         // 등록메시지 수정 예정
-        alert('등록 성공');
+        this.$notify({
+          text: "설비 등록 성공",
+          type: 'success',
+        });
         this.isInsert = true;
         this.$emit('confirm', this.isInsert);
       } else {
-        alert('등록 실패');
+        this.$notify({
+          text: "설비 등록 실패",
+          type: 'error',
+        });
         this.$emit('confirm', this.isInsert);
       }
     },
@@ -394,6 +414,55 @@ export default {
       }
     },
 
+    // 부품 등록
+    async partInsert(partData, machineData, machineNo) {
+      let cycle = (partData.yearCycle * 365) + (partData.monthCycle * 30) + partData.dayCycle;
+
+      let obj = {
+        machine_type: machineData.process_code,
+        part_name: partData.partName,
+        replace_cycle: cycle,
+        client_num: machineData.client_num,
+        part_location: machineData.machine_location,
+        buy_date: machineData.buy_date,
+        replace_date: machineData.buy_date,
+        machine_num: machineNo
+      }
+
+      let result = await axios.post(`${ajaxUrl}/parts/partInsert`, obj)
+                              .catch(err => console.log(err));
+      let addRes = result.data;
+
+      if(addRes.part_num > 0){
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    // 설비 수정용 부품 정보
+    async getMachinePartInfo(selectNo) {
+      // this.partNum = 0;
+      let result = await axios.get(`${ajaxUrl}/machine/machinePartList/${selectNo}`)
+                              .catch(err => console.log(err));
+
+      this.partNum = result.data.length;
+      for(let i in result.data) {
+        let partNo = result.data[i].part_num;
+        let partInfo = await this.getPartInfo(partNo);
+
+        this.partDataList[i].partName = partInfo.part_name;
+        this.partDataList[i].yearCycle = Math.floor(partInfo.replace_cycle / 365);
+        this.partDataList[i].monthCycle = Math.floor((partInfo.replace_cycle % 365) / 30);
+        this.partDataList[i].dayCycle = Math.floor(((partInfo.replace_cycle % 365) % 30));
+      }
+    },
+    // 부품 상세 정보
+    async getPartInfo(pno) {
+      let result = await axios.get(`${ajaxUrl}/parts/partInfo/${pno}`)
+                              .catch(err => console.log(err));
+      return result.data;
+    },
 
 
     // 날짜 관련
