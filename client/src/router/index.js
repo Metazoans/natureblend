@@ -22,12 +22,28 @@ import QualityApp from '@/views/quality/QualityApp.vue';
 import qualityRoute from "./qualityRoute";
 import AgGridExample from "@/views/natureBlendComponents/grid/AgGridExample.vue";
 
+// this.$store.state.loginInfo
+
+// 페이지 접근 권한 나누기
+// 1. 로그인 정보 없이 접근 가능
+// 2. 로그인 정보만 있으면 접근 가능
+// 3.
+
+const checkAuth = (pageName) => {
+
+}
+
 const routes = [
     // test
   {
     path: '/grid',
     name: 'AgGridExample',
-    component: AgGridExample
+    component: AgGridExample,
+    beforeEnter: (to, from, next) => {
+      console.log('to', to)
+      console.log('from', from)
+      console.log('next', next)
+    }
   },
 
   // 공용 페이지
