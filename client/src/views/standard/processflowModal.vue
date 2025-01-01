@@ -75,11 +75,12 @@
         theme: theme,
         rowData:[],
         columnDefs:[
-            { headerName:"공정순서" , field: "process_sequence" },
+            { headerName:"공정순서" , field: "process_sequence",cellStyle: { textAlign: 'right' }},
             { headerName:"공정코드" , field:"process_code" },
             { headerName:"공정명" , field:"process_name" },
             { headerName:"▲",
               field:"UP",
+              cellStyle: { textAlign: 'center' },
               editable:false,
               cellRenderer: (params) => {
                 const button1 = document.createElement('button');
@@ -106,6 +107,7 @@
             { headerName:"▼",
               field:"DOWN",
               editable:false,
+              cellStyle: { textAlign: 'center' },
               cellRenderer: (params) => {
                 const button2 = document.createElement('button');
                 button2.innerText = 'DOWN';
@@ -131,6 +133,7 @@
             { headerName:"공정 삭제",
               field:"삭제",
               editable:false,
+              cellStyle: { textAlign: 'center' },
               cellRenderer: (params) => {
                 const button3 = document.createElement('button');
                 button3.innerText = '삭제';

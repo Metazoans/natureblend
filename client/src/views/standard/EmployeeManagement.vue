@@ -14,7 +14,7 @@
                       <!-- 사원번호 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="empNum">사원번호</label>
-                         <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="empNum" v-model="empNum" >
+                         <input type="text" class="form-control" style="background-color: white; " id="empNum" v-model="empNum" >
                       </div>
                       <!-- 생년월일 -->
                       <div class="mb-3">
@@ -119,9 +119,9 @@
         employmentDate: '', // 입사일
         resignationDate: '', // 퇴사일
        columnDefs: [
-         { headerName: "사원번호", field: "emp_num", width: 220 },
+         { headerName: "사원번호", field: "emp_num", width: 220 ,cellStyle: { textAlign: 'right' }},
          { headerName: "이름", field: "name" },
-         { headerName: "연락처", field: "tel" },
+         { headerName: "연락처", field: "tel" ,cellStyle: { textAlign: 'center' }},
          { headerName: "부서", field: "job" },
         //  { headerName: "부서번호", field: "job_num" },
          { headerName: "직급", field: "position" },
@@ -130,6 +130,7 @@
            field: "삭제",
            upin : '',
            editable: false,
+           cellStyle: { textAlign: 'center' },
            cellRenderer: (params) => {
              const button2 = document.createElement('button');
              button2.innerText = '삭제';
@@ -224,6 +225,31 @@
  </script>
  
  <style lang="scss" scoped>
+input.form-control {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+#empNum{
+text-align: right;
+}
+#birth{
+text-align: center;
+}
+#tel{
+text-align: center;
+}
+#employmentDate{
+text-align: center;
+}
+#resignationDate{
+  text-align: center;
+}
+#jobNum{
+  text-align: right;
+}
+#level{
+  text-align: right;
+}
  .main-container{
      background-color:  #e9ecef;
      margin-left: 20px;
