@@ -206,10 +206,16 @@ export default {
                               .catch(err => console.log(err));
       let addRes = result.data;
       if(addRes.inact_num > 0){
-        alert('등록 성공');
+        this.$notify({
+          text: "비가동 내역 등록 성공",
+          type: 'success',
+        });
         this.inActUpdate();
       } else {
-        alert('등록 실패');
+        this.$notify({
+          text: "비가동 내역 등록 실패",
+          type: 'error',
+        });
         this.$emit('confirm', this.isInsert);
       }
     },

@@ -44,6 +44,13 @@ FROM process_work_body
 WHERE machine_num = 2
   AND success_qty IS NOT NULL;
 `;
+// 설비 부품 정보
+const machinePartList = `
+SELECT part_num
+FROM machine_part
+WHERE machine_num = ?
+`;
+
 
 // 설비 등록
 const machineInsert = `
@@ -92,6 +99,7 @@ module.exports = {
   typeList,
   machineInfo,
   machinePrdInfo,
+  machinePartList,
   machineUpdate,
   machineDelete,
   searchMachineList,

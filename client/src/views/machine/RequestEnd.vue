@@ -24,19 +24,18 @@
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
 import theme from "@/utils/agGridTheme";
-// import userDateUtils from "@/utils/useDates.js";
+import userDateUtils from "@/utils/useDates.js";
 import {shallowRef, onBeforeMount} from 'vue';
 
 
 const requestRow = shallowRef([]);
 const requestCol = shallowRef([
-  { headerName: '번호', field: 'maintenance_num' },
-  { headerName: '설비번호', field: 'machine_num' },
-  { headerName: '설비분류', field: 'machine_type' },
-  { headerName: '설비이름', field: 'machine_name' },
-  { headerName: '정비내용', field: 'maintenance_detail' },
-  { headerName: '작업자', field: 'work_emp' },
-  { headerName: '완료일자', field: 'end_date' },
+  { headerName: '설비번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 2 },
+  { headerName: '설비분류', field: 'machine_type', flex: 3 },
+  { headerName: '설비이름', field: 'machine_name', flex: 3 },
+  { headerName: '정비내용', field: 'maintenance_detail', flex: 4 },
+  { headerName: '작업자', field: 'work_emp', cellStyle: { textAlign: "center" }, flex: 2 },
+  { headerName: '완료일자', field: 'end_date', cellStyle: { textAlign: "center" }, flex: 3 },
 ]);
 
 
@@ -52,13 +51,11 @@ const getRequests = async () => {
     }
   }
   requestRow.value = newary;
-  console.log(requestRow.value);
-}
 
-const onReady = (param) => {
-  param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+  for(let i in requestRow.value) {
+    requestRow.value[i].end_date = userDateUtils.dateFormat(requestRow.value[i].end_date, 'yyyy-MM-dd');
+  }
 }
-
 
 
 // 마운트전

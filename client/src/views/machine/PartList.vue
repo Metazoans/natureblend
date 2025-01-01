@@ -4,7 +4,6 @@
     <h1>부품 관리 페이지</h1>
     <!-- 사용 가능 부품 리스트 -->
     <div class="grid-container" >
-      <h2>정비 요청 내역</h2>
       <ag-grid-vue
         :rowData="partRow"
         :columnDefs="partCol"
@@ -30,7 +29,7 @@ import PartsAdd from './PartAdd.vue';
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
 import theme from "@/utils/agGridTheme";
-// import userDateUtils from "@/utils/useDates.js";
+import userDateUtils from "@/utils/useDates.js";
 import {ref, shallowRef, onBeforeMount} from 'vue';
 
 
@@ -61,6 +60,10 @@ const getParts = async () => {
   let result = await axios.get(`${ajaxUrl}/parts/partList`)
                           .catch(err => console.log(err));
   partRow.value = result.data;
+
+  for(let i in partRow.value) {
+    partRow.value[i].buy_date = userDateUtils.dateFormat(partRow.value[i].buy_date, 'yyyy-MM-dd');
+  }
 }
 
 // 선택 삭제
@@ -102,6 +105,7 @@ const onReady = (param) => {
     delBtn.style.border = 'none';
     delBtn.style.padding = '5px 10px';
     delBtn.style.borderRadius = '4px';
+    delBtn.style.position = 'absolute';
     delBtn.style.left = '10px';
     delBtn.className = 'btn-danger';
 
@@ -114,7 +118,8 @@ const onReady = (param) => {
     addBtn.style.border = 'none';
     addBtn.style.padding = '5px 10px';
     addBtn.style.borderRadius = '4px';
-    addBtn.style.left = '10px';
+    addBtn.style.position = 'absolute';
+    addBtn.style.left = '125px';
     addBtn.className = 'btn-success';
 
     // 삭제 이벤트

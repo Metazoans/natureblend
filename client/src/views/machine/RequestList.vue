@@ -150,11 +150,11 @@ import {shallowRef, onBeforeMount, ref} from 'vue';
 
 const requestRow = shallowRef([]);
 const requestCol = shallowRef([
-  { headerName: '설비번호', field: 'machine_num' },
-  { headerName: '설비분류', field: 'machine_type' },
-  { headerName: '설비이름', field: 'machine_name' },
-  { headerName: '요청사유', field: 'request' },
-  { headerName: '요청일자', field: 'request_date' },
+  { headerName: '설비번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 2 },
+  { headerName: '설비분류', field: 'machine_type', flex: 3 },
+  { headerName: '설비이름', field: 'machine_name', flex: 3 },
+  { headerName: '요청사유', field: 'request', flex: 3 },
+  { headerName: '요청일자', field: 'request_date', cellStyle: { textAlign: "center" }, flex: 3 },
 ]);
 
 const maintenanceInfo = shallowRef({
@@ -184,12 +184,13 @@ const getRequests = async () => {
     }
   }
   requestRow.value = newary;
-  console.log(requestRow.value);
+
+  for(let i in requestRow.value) {
+    requestRow.value[i].request_date = userDateUtils.dateFormat(requestRow.value[i].request_date, 'yyyy-MM-dd');
+  }
 }
 
-const onReady = (param) => {
-  param.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
-
+const onReady = () => {
   // 페이징 영역 요소 추가
   const paginationPanel = document.querySelector('.ag-paging-panel');
   if (paginationPanel) {
@@ -289,9 +290,15 @@ const requestInsert = async () => {
                           .catch(err => console.log(err));
   let addRes = result.data;
   if(addRes.maintenance_num > 0){
-    alert('등록 성공');
+    this.$notify({
+      text: "정비 요청 등록 성공",
+      type: 'success',
+    });
   } else {
-    alert('등록 실패');
+    this.$notify({
+      text: "정비 요청 등록 실패",
+      type: 'error',
+    });
   }
 }
 
@@ -314,10 +321,16 @@ const requestUpdate = async () => {
   let updateRes = result.data;
 
   if(updateRes.result) {
-    alert('수정 성공');
+    this.$notify({
+      text: "정비 요청 수정 성공",
+      type: 'success',
+    });
     getRequests();
   } else {
-    alert('수정 실패');
+    this.$notify({
+      text: "정비 요청 수정 실패",
+      type: 'error',
+    });
   }
 }
 

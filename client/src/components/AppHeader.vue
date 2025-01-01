@@ -49,7 +49,7 @@
           { text: "품질", active: false },
           { text: "설비", active: false },
           { text: "기준정보", active: false }
-        ]
+        ],
       };
     },
     methods: {
@@ -58,26 +58,69 @@
       
 
       handleClick(item) {
+        // 사이드바 동작
+        if(this.headerMenu == item.text) {
+          console.log('동일 헤더 클릭');
+          this.navbarMinimize();
+        }
+        else {
+          console.log('다른 헤더 클릭');
+          // 페이지 이동
+          switch(item.text) {
+            case '영업':
+              this.movePage('orderForm');
+              break;
+            case '자재':
+              this.movePage('materialList2');
+              break;
+            case '생산':
+              this.movePage('productionPlanAdd');
+              break;
+            case '품질':
+              this.movePage('qCMaterialApply');
+              break;
+            case '설비':
+              this.movePage('machineList');
+              break;
+            case '기준정보':
+              this.movePage('employeemanagement');
+              break;
+          }
+
+          const sidenav_show = document.querySelector(".g-sidenav-show");
+
+          if (!sidenav_show.classList.contains("g-sidenav-pinned")) {
+            this.navbarMinimize();
+          }
+        }
+
         this.navItems.forEach(i => i.active = false);
         item.active = true;
-        console.log(item.text)
         this.setHeaderMenu(item.text)
       },
 
       toggleSidebar() {
-      this.navbarMinimize();
+        this.navbarMinimize();
+      },
 
-    },
-      
+      // 헤더용 페이지 이동
+      movePage(page) {
+        this.$router.push({ name: page });
+      },
     },
 
-      computed: {
-      ...mapState(["isAbsolute"]),
+    computed: {
+      ...mapState([
+        "isAbsolute",
+        "headerMenu",
+        "sidebarState",
+      ]),
 
       currentRouteName() {
         return this.$route.name;
       },
     },
+
   };
   </script>
   
