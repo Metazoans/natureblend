@@ -35,9 +35,8 @@
 
   <!--검색 및 초기화-->
     <div class="mb-3 pt-2 text-center">
-        <material-button  color="success" class="button" @click="updateOrder">수정</material-button>
-        <material-button  color="danger" class="button" @click="deleteOrder">삭제</material-button>
-        <material-button color="warning" class="button" @click="resetData">초기화</material-button>
+        <material-button  color="success" class="button me-5" @click="updateOrder">수정</material-button>
+        <material-button  color="danger" class="button" @click="deleteOrder">주문서삭제</material-button>
     </div>
 </template>
 <script>
@@ -69,7 +68,7 @@ export default{
     data(){
         return{
             Scol : 0,
-            orderNum : this.order.orderlist_num,
+            // orderNum : this.order.orderlist_num,
            //주문조회
            statusOrderMap: {         // DB 상태값과 화면 상태명 매핑
                 "preparing": "미출고",
@@ -103,7 +102,7 @@ export default{
                     flex: 1
                     ,cellStyle: { textAlign: "center" },
                     cellRenderer :params =>{
-                        const orderNum = params.data.order_num;
+                        let orderNum = params.data.order_num;
                         if(orderNum === "" || orderNum === null){
                             const deleteButton = document.createElement('button');
                             deleteButton.innerText = '삭제';
@@ -147,12 +146,12 @@ export default{
 
     created(){
        
-        this.getOrderInfo(this.orderNum);
+        this.getOrderInfo();
     }, 
     watch: {
         order:{
             handler(){
-                this.getOrderInfo(this.orderNum);
+                this.getOrderInfo();
             },
             deep:true
         },
@@ -189,6 +188,34 @@ export default{
                 //주문추가
                 this.addMaterial();
                  });
+                  // 버튼 생성
+               const button2 = document.createElement('button');
+               button2.textContent = '주문삭제';
+               button2.style.cursor = 'pointer';
+               button2.style.backgroundColor = '#f44335';
+               button2.style.color = 'white';
+               button2.style.border = 'none';
+               button2.style.padding = '5px 10px';
+               button2.style.borderRadius = '4px';
+                //버튼클릭이벤트
+                button2.addEventListener('click',()=>{
+                //주문삭제
+                this.deleteOrders();
+                 });
+                     // 버튼 생성
+               const button3 = document.createElement('button');
+               button3.textContent = '초기화';
+               button3.style.cursor = 'pointer';
+               button3.style.backgroundColor = '#fb8c00';
+               button3.style.color = 'white';
+               button3.style.border = 'none';
+               button3.style.padding = '5px 10px';
+               button3.style.borderRadius = '4px';
+                //버튼클릭이벤트
+                button3.addEventListener('click',()=>{
+                //초기화
+                this.resetData();
+                 });
 
                
                 //입력필드생성 
@@ -212,6 +239,8 @@ export default{
 
                 //컨테이너에 버튼, 입력 필드 추가
                 container1.appendChild(button1);
+                container1.appendChild(button2);
+                container1.appendChild(button3);
                 container1.appendChild(inputText1);
 
                 //페이징 영역에 컨테이너삽입
@@ -220,10 +249,10 @@ export default{
         },
 
         // 부모로 부터 (주문서조회) 부터 받은 order 
-        async getOrderInfo(orderNum) { 
+        async getOrderInfo() { 
             
             console.log("넘어온값",this.order);
-            let result = await axios.get(`${ajaxUrl}/orderInfo/${orderNum}`)
+            let result = await axios.get(`${ajaxUrl}/orderInfo/${this.order.orderlist_num}}`)
                                     .catch(err=> console.log(err));
                        
             this.rowData = result.data;
@@ -271,21 +300,47 @@ export default{
         },
 
         confirm(){
-            console.log(this.Scol);
+            console.log("선택된변경컬럼====",this.Scol);
             // this.rowData[this.Scol] = this.rowData[this.Scol].map((col) => ({
             //     ...col,
             //     product_code : this.selectedProCode,
             //     product_name : this.selectedProName,
             //      })
             // );  
+            console.log(this.rowData[this.Scol].order_num ,this.rowData[this.Scol].order_status )
 
-            this.rowData[this.Scol] = {
-                order_num: null,
-                product_code : this.selectedProCode,
-                product_name : this.selectedProName,
-                order_amount: null,
-                per_price: null
+            if(this.rowData[this.Scol].order_status == "미출고"){
+                    this.rowData[this.Scol] ={
+                    order_num : this.rowData[this.Scol].order_num,
+                    product_code : this.selectedProCode,
+                    product_name : this.selectedProName,
+                    order_amount : this.rowData[this.Scol].order_amount,
+                    per_price : this.rowData[this.Scol].per_price,
+                    order_status : this.rowData[this.Scol].order_status,
+
+                    }
+            } else if (
+                this.rowData[this.Scol].order_status === "출고완료" ||
+                this.rowData[this.Scol].order_status === "부분출고"
+            ) {
+                // 출고완료 또는 부분출고 상태일 때 알림 추가
+                this.$notify({
+                    text: `출고완료 또는 부분출고 상태에서는 수정할 수 없습니다.`,
+                    type: "warning",
+                });
+            }else {
+                    this.rowData[this.Scol] = {
+                    order_num: null,
+                    product_code : this.selectedProCode,
+                    product_name : this.selectedProName,
+                    order_amount: null,
+                    per_price: null
+                    }
             }
+                
+            
+
+           
             // 넣고 나서 다시 풀었다가 다시 배열 형성 
             this.rowData = [... this.rowData]
             
@@ -321,7 +376,7 @@ export default{
     },
    
 
-
+    //주문수정
     async updateOrder(){
     
         //주문  업데이트
@@ -378,7 +433,7 @@ export default{
        
       },
 
-      // 삭제 
+      // 삭제 (주문서)
       async deleteOrder(){
         console.log("삭제 실행 ", this.order);
         if(this.order.orderlist_status === '등록'){
@@ -388,8 +443,8 @@ export default{
                         this.$notify({
                             text: `${this.order.orderlist_title}이 삭제되었습니다.` ,
                             type: 'success',
-                        });  
-                        this.$router.push({name :'orderlistSearch'}); 
+                        });
+                        window.location.reload();
                 }else if (result.data.result === 'fail'){
                         this.$notify({
                             text: '삭제 오류 발생',
@@ -437,6 +492,61 @@ export default{
         // }
        
       }, 
+      //주문삭제 
+      async deleteOrders(){
+        const selectedRows = this.gridApi.getSelectedRows();
+        console.log("삭제될것==",selectedRows);
+
+        let errorMessage = null; // 알림 메시지를 저장할 변수
+
+        let orderNums = []
+
+        selectedRows.forEach(row=>{
+            if(row.order_status == "미출고"){
+                orderNums.push(row.order_num);
+            }else if(row.order_status == "출고완료" || row.order_status == "부분출고"){
+                errorMessage = "기존의 주문이 진행 중이거나 완료 건은 삭제 불가 합니다.";
+            }else if (row.order_num == null){
+                errorMessage = "주문번호가 없는 건은 삭제할 수 없습니다.";
+            }
+        });
+         // 오류 메시지가 있으면 알림을 띄우고 종료
+        if (errorMessage) {
+            this.$notify({
+                text: errorMessage,
+                type: 'error',
+            });
+            return;
+        }
+        // 삭제 요청 전송 (필요 시 추가)
+        if (orderNums.length > 0) {
+            let deleteOrder = {
+                orderNum : JSON.stringify(orderNums)
+            }
+
+            console.log("서버에 보낼 데이터==",deleteOrder);
+
+            let result = await axios.put(`${ajaxUrl}/order/delete`,deleteOrder)
+                                    .catch(err => console.log(err));
+            if(result.data.result === true){
+                    this.$notify({
+                    text: `해당 입고건의 삭제가 완료되었습니다. `,
+                    type: 'success',
+                });
+                window.location.reload(); 
+            }else{
+                    this.$notify({
+                        text: `해당 입고건의 삭제를 실패 했습니다. `,
+                        type: 'error',
+                    });
+            }   
+        }
+
+      },
+      resetData(){
+        // 체크박스 해제
+        this.gridApi.deselectAll();
+      },
         
     }//end method
 }

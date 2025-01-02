@@ -351,6 +351,7 @@ export default{
                 this.openModal('returns');
             }
         },
+        //반품수정
         async updateReturn(){
             const selectedRows = this.gridApi.getSelectedRows();
             let returnlistNums = []
@@ -389,6 +390,7 @@ export default{
                         text: `해당 반품건의 수정이 완료되었습니다. `,
                         type: 'success',
                     });
+                    window.location.reload(); 
                 }else{
                     this.$notify({
                         text: `해당 반품건의 수정을 실패 했습니다. `,
@@ -417,6 +419,7 @@ export default{
                         text: `해당 반품품건의 삭제 완료되었습니다. `,
                         type: 'success',
                     });
+                    window.location.reload(); 
                 }else{
                     this.$notify({
                         text: `해당 반품건의 삭제을 실패 했습니다. `,

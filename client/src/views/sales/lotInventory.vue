@@ -122,6 +122,8 @@ export default{
                 headerName : "폐기",
                 field : "status",
                 editable : false,
+                flex: 1, 
+                cellStyle: { textAlign: "center" },
                 cellRenderer: params =>{
                       // 유통기한 값을 받아옵니다.
                 const expireDate = params.data.expire_date; // 유통기한이 날짜 형식이라 가정
@@ -256,6 +258,7 @@ export default{
                     text: `해당 LOT는 폐기 되었습니다. `,
                     type: 'success',
                 });
+                window.location.reload(); 
             }else{
                 this.$notify({
                     text: `해당 LOT는 폐기 처리 실패 했습니다. `,
