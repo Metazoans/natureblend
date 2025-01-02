@@ -56,7 +56,7 @@
         :modalTitle="modalTitle"
         :noBtn="'닫기'"
         :yesBtn="'선택'"
-        :width="modalType === 'plan' ? 1000 : 500"
+        :width="modalType === 'plan' ? 1100 : 500"
         @closeModal="closeModal"
         @confirm="confirm"
     >

@@ -28,7 +28,8 @@ const waitingPlanList = `
         o.product_code,
         p.product_name,
         pp.plan_start_date,
-        pp.plan_end_date`;
+        pp.plan_end_date
+    order by pp.plan_num desc`
 
 const processFlow = `
     select process_sequence, pc.process_name, pc.process_code, machine_type

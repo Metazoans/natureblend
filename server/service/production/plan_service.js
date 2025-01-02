@@ -24,10 +24,9 @@ const addPlan = async (planInfo)=>{
 }
 
 const planList = async (urlQuery)=>{
-    if(Object.keys(urlQuery).length === 0) {
-        return await mysql.query('planDetailList')
-    } else {
-        let dbQuery = ''
+    let dbQuery = ''
+
+    if(Object.keys(urlQuery).length !== 0) {
         if(urlQuery.productCode) {
             dbQuery += ` and product_code = '${urlQuery.productCode}'`
         }
@@ -44,9 +43,9 @@ const planList = async (urlQuery)=>{
         if(urlQuery.endDate) {
             dbQuery += ` and plan_end_date <= '${urlQuery.endDate}'`
         }
-
-        return await mysql.query('planDetailList', dbQuery)
     }
+    dbQuery += ' order by order_plan_num desc'
+    return await mysql.query('planDetailList', dbQuery)
 }
 
 const deletePlan = async (orderPlanNums)=>{

@@ -77,7 +77,6 @@ export default {
         { headerName: "주문량", field: 'orderQty', cellStyle: { textAlign: 'right' }  },
         { headerName: "기계획량", field: 'plannedQty', cellStyle: { textAlign: 'right' } },
         { headerName: "미계획량", field: 'unplannedQty', cellStyle: { textAlign: 'right' } },
-        { headerName: "부분출고량", field: 'partialOutputQty', cellStyle: { textAlign: 'right' } },
         { headerName: "재고", field: 'stockQty', hide: true },
         { headerName: "상품코드", field: 'productCode', hide: true },
       ],
@@ -105,6 +104,7 @@ export default {
           await axios.get(`${ajaxUrl}/production/plan/orders${this.searchProduct?.product_code && '?product_code=' + this.searchProduct.product_code}`)
               .catch(err => console.log(err));
       this.orders = result.data
+      this.rowData = []
 
       if(!this.orders.length) {
         return
@@ -130,9 +130,8 @@ export default {
           [keys[4]]: order.order_amount,
           [keys[5]]: order.plan_qty,
           [keys[6]]: order.unplanned_qty < 0 ? 0 : order.unplanned_qty,
-          [keys[7]]: order.output_amount === null ? 0 : order.output_amount,
-          [keys[8]]: '재고',
-          [keys[9]]: order.product_code
+          [keys[7]]: '재고',
+          [keys[8]]: order.product_code
         }
       })
     },
