@@ -254,7 +254,7 @@
           console.log(this.empTel);
           if(number === 1){
             if(this.comName === '' || this.boss === '' || this.empName === '' || this.trade === '' || this.comNum === '' || this.address === '' || this.bossTel === '' || this.empTel === ''){
-                alert('빈칸에 내용을 입력해주세요');
+              this.$notify({ title:'빈칸확인',text: '빈칸을 입력해주세요', type: 'error' });
                 return;
             }else{
                 console.log('등록');

@@ -21,7 +21,7 @@
 
           <!-- 저장 버튼 -->
           <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+             <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
           </div>
        </form>
     </div>

@@ -33,7 +33,7 @@
  
           <!-- 저장 버튼 -->
           <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+             <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
           </div>
        </form>
     </div>
@@ -100,10 +100,10 @@ import { mapMutations } from "vuex";
                  axios.delete(`${ajaxUrl}/productDelete/${params.data.product_code }`)
                    .then((res) => {
                      if (res.data === '성공') {
-                       alert('삭제되었습니다.');
+                      this.$notify({ title:'제품삭제', text: '제품이 삭제되었습니다.', type: 'success' });
                        this.productSelect();
                      } else {
-                       alert('삭제에 실패하였습니다.');
+                      this.$notify({ title:'삭제실패', text: '삭제 실패하였습니다.', type: 'error' });
                      }
                    })
                    .catch((err) => {
@@ -160,14 +160,14 @@ import { mapMutations } from "vuex";
         console.log(this.capacity);
          if(number === 1){
              if(this.productCode === '' || this.productName === '' || this.expirationDate === '' || this.capacity === ''){
-               alert('빈칸을 채워주세요');
+              this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
                return;
              }else{
               console.log('빈칸 없음');
               let dataresult = 'ok';
               for(let i = 0; i < this.rowData.length; i++){
                 if(this.rowData[i].product_code === this.productCode){
-                  alert('이미 존재하는 제품코드입니다.');
+                  this.$notify({ title:'중복', text: '이미 존재하는 제품코드입니다.', type: 'error' });
                   dataresult = 'no';
                   return;
                 }
@@ -214,10 +214,10 @@ import { mapMutations } from "vuex";
         const result = await axios.post(`${ajaxUrl}/productInsert`, newList)
                                 .catch(err => console.log(err));
         if (result.data === '성공'){
-            alert('제품이 등록되었습니다.');
+          this.$notify({ title:'제품등록', text: '제품이 등록되었습니다.', type: 'success' });
             this.productSelect();
         }else{
-            alert('제품 등록에 실패하였습니다.');
+          this.$notify({ title:'등록실패', text: '등록 실패하였습니다.', type: 'error' });
         }
      }
    },

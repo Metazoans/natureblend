@@ -409,6 +409,14 @@
 
           },
           async insertBom() { 
+            if(this.searchProductcode === ''){
+              this.$notify({
+                title: '제품코드 미입력',
+                text: '제품코드를 입력해주세요.',
+                type: 'error'
+              });
+              return;
+            }
             const isConfirmed = window.confirm('BOM 등록을 진행하시겠습니까?');
               if (!isConfirmed) {
                 // 사용자가 취소를 누르면 등록을 취소하고 함수를 종료
@@ -479,6 +487,7 @@
             this.$router.push({ name : 'bomInfo', params : { bomno : bomNum }});
           },
           updateBom() {
+
             for(let i =0; i<this.bomBox2.length; i++){
               console.log(i);
             }
@@ -488,14 +497,10 @@
                   item.bom_num = this.searchBomnum;
                 }
               });// 새로 만든 칸에 bomnum을 같은 값으로 넣어줌
-              // console.log(this.bomBox);
-              // console.log(this.bomBox2);
-              for(let i = 0; i<this.bomBox.length; i++){
-
-                if(i < this.bomBox2.length ){
-                  // console.log(this.boxBox[i]['material'],'=',this.bomBox2[i]['material']);
-                  // console.log(this.boxBox[i]['material_code'],'=',this.bomBox2[i]['material_code']);
-                  // console.log(this.boxBox[i]['material_con'],'=',this.bomBox2[i]['material_con']);
+                for(let i = 0; i<this.bomBox.length; i++){
+                  if(this.bomBox.length === 0||this.searchBomnum === '' || this.searchProductcode === '' || this.searchProduct === '' || this.searchCapacity === ''){
+                this.$notify({ title:'빈칸확인', text: '수정할 내용이 없습니다.', type: 'error' });
+              }else if(i < this.bomBox2.length ){
                   if(this.bomBox[i]['material'] != this.bomBox2[i]['material'] || this.bomBox[i]['material_code'] != this.bomBox2[i]['material_code']
                     || this.bomBox[i]['material_con'] != this.bomBox2[i]['material_con']
                   ){
@@ -503,15 +508,12 @@
                     this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
                     // console.log(this.bomBox[i]);
                     this.updateBomlist(this.bomBox[i]);
-                  }else{
-                    console.log('같은값');
                   }
-
                 }else{
                   this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
                   console.log('insert 해야하는 데이터');
                   console.log(this.bomBox[i]);
-                  this.insertBomlist(this.bomBox[i]);
+                  // this.insertBomlist(this.bomBox[i]);
                 }
               }
             }

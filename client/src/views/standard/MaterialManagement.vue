@@ -39,7 +39,7 @@
  
           <!-- 저장 버튼 -->
           <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+             <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
           </div>
        </form>
     </div>
@@ -108,10 +108,10 @@
                   axios.delete(`${ajaxUrl}/materialDel/${params.data.material_code}`)
                        .then(res => {
                           if(res.data === '성공'){
-                             alert('삭제되었습니다.');
+                           this.$notify({ title:'삭제성공', text: '자재가 삭제되었습니다.', type: 'success' });
                              this.materialList();
                           }else{
-                             alert('삭제에 실패하였습니다.');
+                           this.$notify({ title:'삭제실패', text: '삭제 실패하였습니다.', type: 'error' });
                           }
                        })
                        .catch(err => console.log(err));
@@ -181,14 +181,14 @@
          console.log(this.expirationDate);
        if (number === 1) {
          if (this.materialCode === '' || this.materialName === '' || this.safetyInventory === '' || this.expirationDate === '') {
-           alert('빈칸을 채워주세요.');
+            this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
            return;
          }else{
            console.log('등록');
            let dataresult = 'ok';
            for(let i = 0; i < this.rowData.length; i++){
              if(this.rowData[i].material_code === this.materialCode){
-               alert('이미 존재하는 자재코드입니다.');
+               this.$notify({ title:'중복', text: '이미 존재하는 자재코드입니다.', type: 'error' });
                dataresult = 'no';
                return;
              }
@@ -236,10 +236,10 @@
                                     .catch(err => console.log(err));
          console.log('확인용용',result.data);
          if(result.data === '성공'){
-            alert('등록되었습니다.');
+            this.$notify({ title:'등록성공', text: '자재가 등록되었습니다.', type: 'success' });
             this.materialList();
          }else{
-            alert('등록에 실패하였습니다.');
+            this.$notify({ title:'등록실패', text: '등록 실패', type: 'error' });
          }
       
       },

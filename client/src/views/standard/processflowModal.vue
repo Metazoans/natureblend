@@ -28,7 +28,6 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="saveModal">저장</button>
             <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="processAdd">공정추가</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
           </div>
@@ -157,7 +156,7 @@
                     axios.delete(`${ajaxUrl}/flowDelete/${params.data.process_chart_num}`)
                          .then(res => {
                           if(res.data === '성공'){
-                            alert('삭제되었습니다.');
+                            this.$notify({ title:'공정삭제', text: '공정이 삭제되었습니다.', type: 'success' });
                             this.updateProcessSequencesAfterDelete(deletedProcessSeq);
                             this.flowList();
                           }else{
@@ -318,10 +317,10 @@
                                   .catch(err => console.log(err));
                                   console.log('result data 확인',result.data);
             if(result.data === '성공'){
-                alert('등록되었습니다.');
+              this.$notify({ title:'등록성공', text: '공정이 등록되었습니다.', type: 'success' });
                 this.flowList();
             }else{
-                alert('등록 실패');
+              this.$notify({ title:'등록실패', text: '등록 실패하였습니다.', type: 'error' });
             }
       },
 
