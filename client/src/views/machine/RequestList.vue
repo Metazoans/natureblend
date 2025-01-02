@@ -24,7 +24,7 @@
       <!-- 입력페이지 -->
       <div class="col-4 requestInfo">
         <!-- 수정 / 완료 탭 버튼 -->
-        <div class="row my-3 align-items-center">
+        <div class="row my-3 align-items-center tapDiv">
           <div class="col tap" style="border-right: 2px solid black;"><a class="tapBtn" @click="updateTap">요청 수정</a></div>
           <div class="col tap"><a class="tapBtn" @click="completeTap">작업 완료</a></div>
         </div>
@@ -369,6 +369,7 @@ onBeforeMount(()=>{
 .requestInfo {
   background-color:  #e9ecef;
   border-radius: 10px;
+  padding: 0;
 }
 
 input {
@@ -382,8 +383,16 @@ input {
   border-style: solid;
   border-color: black;
 }
+.inputDiv > .row {
+  margin: 0 10px;
+}
 
 
+
+.tapDiv {
+  margin: 0 !important;
+  height: 40px;
+}
 .tap {
   text-align: center;
   padding: 0;

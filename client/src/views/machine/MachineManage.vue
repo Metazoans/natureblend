@@ -288,7 +288,6 @@ export default {
       // else // 수정 페이지인 경우
     },
     confirm() {
-      console.log('confirm 동작 : ', this.machineData);
       this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
 
 
@@ -370,6 +369,9 @@ export default {
       this.machineData = result.data;
       this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
       this.machineData.emp_num = this.$store.state.loginInfo.emp_num;
+      this.machineData.machine_state = this.machineData.machine_state == 'run' ? '사용' : '미사용';
+
+      console.log('getinfo img : ', this.machineData.machine_img);
     },
     // update
     async machineUpdate() {
@@ -400,12 +402,10 @@ export default {
 
       // 부품 교체시 제거된 부품 삭제
       for(let i in this.oldPartNum) {
-        console.log(this.oldPartNum[i]);
         await this.partDelete(this.oldPartNum[i]);
       }
       // 부품 교체
       for(let i in this.partDataList) {
-        console.log('부품 정보 : ', this.partDataList[i].partNum);
         await this.partUpdate(this.partDataList[i].partNum);
       }
 
