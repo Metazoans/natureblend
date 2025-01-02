@@ -7,6 +7,12 @@ const allmaterial = async ()=>{
   return list;
 }
 
+// 자재리스트 조회 ( 개별 자재 주문 할때 사용)
+const material_list = async ()=>{
+  let list = await mysql.query('material_list');
+  return list;
+}
+
 // 발주 필요 자재 조회 need_order_material
 const needOrderMaterial = async (plan_code)=>{
   let list = await mysql.query('need_order_material', [plan_code]);
@@ -429,5 +435,6 @@ module.exports = {
   inspectionInfo,
   materialQtyList,
   trushGo,
+  material_list,
 
 };

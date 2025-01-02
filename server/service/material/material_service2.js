@@ -103,6 +103,25 @@ const process3list = async ()=>{
   return list;
 }
 
+//포장 공정 품질
+const process3qclist = async ()=>{
+  let list = await mysql.query('process3qclist');
+  return list;
+  }
+
+
+// 제품 입고 대기
+const product_input_wait = async ()=>{
+  let list = await mysql.query('product_input_wait');
+  return list;
+}
+
+// 제품 출고 대기
+const produce_out_wait = async ()=>{
+  let list = await mysql.query('produce_out_wait');
+  return list;
+}
+
 module.exports = {
     configLoding,
     findQCMRecord2,
@@ -113,5 +132,8 @@ module.exports = {
     process2list,
     process2qclist,
     process3list,
+    process3qclist,
+    product_input_wait,
+    produce_out_wait,
 
 };

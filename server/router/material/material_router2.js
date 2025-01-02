@@ -63,6 +63,22 @@ router.get('/material/process3list', async (req, res)=>{
     res.send(materialInputQcListinfo);
 });
 
+// 포장 공정 품질
+router.get('/material/process3qclist', async (req, res)=>{
+    let materialInputQcListinfo = await materialService2.process3qclist();
+    res.send(materialInputQcListinfo);
+});
 
+// 제품 입고 대기
+router.get('/material/productInputWait', async (req, res)=>{
+    let materialInputQcListinfo = await materialService2.product_input_wait();
+    res.send(materialInputQcListinfo);
+});
+
+// 제품 출고 대기
+router.get('/material/produceoutwait', async (req, res)=>{
+    let materialInputQcListinfo = await materialService2.produce_out_wait();
+    res.send(materialInputQcListinfo);
+});
 
 module.exports = router;
