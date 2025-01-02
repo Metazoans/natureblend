@@ -453,9 +453,7 @@ export default {
   },
 
   computed: {
-    ...mapState([
-      "headerMenu"
-    ]),
+    ...mapState(["headerMenu"]),
   },
 
   created() {

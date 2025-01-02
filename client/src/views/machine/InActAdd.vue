@@ -112,6 +112,7 @@ import ModalMachine from "@/views/natureBlendComponents/modal/ModalMachine.vue";
 import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
+import { mapMutations } from "vuex";
 
 export default {
   name: "inActAdd",
@@ -131,8 +132,8 @@ export default {
         inact_end_time: '', // null 허용
         inact_type: '',
         inact_info: '', // type이 기타인 경우만 체크
-        inact_start_emp: 1, // 현재 작업자
-        inact_end_emp: 0,
+        inact_start_emp: this.$store.state.loginInfo.emp_num, // 현재 작업자
+        inact_end_emp: '',
       },
 
       // 설비 정보 확인
@@ -154,6 +155,9 @@ export default {
     }
   },
   methods: {
+    // 로그인 정보
+    ...mapMutations(["addLoginInfo"]),
+
     async getMachinData() {
       let result = await axios.get(`${ajaxUrl}/machine/machineInfo/${this.machineNo}`)
                               .catch(err => console.log(err));
@@ -181,11 +185,13 @@ export default {
 
     // 모달 데이터 삭제
     deleteVal() {
+      let startNo = this.inActData.inact_start_emp;
+      let endNo = this.inActData.inact_end_emp;
       for(let key in this.inActData){
         this.inActData[key] = '';
       }
-      this.inActData.inact_start_emp = 1;
-      this.inActData.inact_end_emp = 0;
+      this.inActData.inact_start_emp = startNo;
+      this.inActData.inact_end_emp = endNo;
     },
 
     // insert 동작

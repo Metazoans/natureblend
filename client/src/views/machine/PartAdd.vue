@@ -83,7 +83,7 @@
         type="button"
         data-target="warningToast"
         @click="confirm"
-        v-bind:disabled="!fullInput"
+        :disabled="!fullInput || !checkJob"
       >
         <a v-if="props.isUpdate">수정</a>
         <a v-else>등록</a>
@@ -108,6 +108,13 @@ import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
 import { ref, onBeforeMount, onUpdated , watch } from "vue";
+import { useStore } from 'vuex';
+
+
+const store = useStore();
+const checkJob = ref(
+  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.job == '관리자' ? true : false
+);
 
 // props
 const props = defineProps({

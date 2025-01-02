@@ -37,5 +37,11 @@ router.delete('/partDelete/:pno', async (req, res) => {
   res.send(result);
 });
 
+// 교체 가능한 부품 목록
+router.get('/changePartList/:mType', async (req, res)=>{
+  let mType = req.params.mType;
+  let partList = await partService.findChangeParts(mType);
+  res.send(partList);
+});
 
 module.exports = router;

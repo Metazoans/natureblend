@@ -80,6 +80,7 @@ import {shallowRef} from 'vue';
 import theme from "@/utils/agGridTheme";
 import userDateUtils from "@/utils/useDates.js";
 
+import { mapMutations } from "vuex";
 
 export default {
   name: "inActList",
@@ -154,12 +155,11 @@ export default {
     }
   },
 
-  // options
-  components: {
-  },
-  
   data() {
     return {
+      // 로그인 사원 권한 체크
+      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.job == '관리자' ? true : false,
+
       isShowModal: false,
       theme: theme,
 
@@ -179,11 +179,16 @@ export default {
     this.getInActList();
   },
   methods: {
+    // 로그인 정보
+    ...mapMutations(["addLoginInfo"]),
+
     // 설비 현황 셀 클릭 : stop인 경우 작동상태로 변경, 이외는 상세 페이지로 이동
     cellClickFnc(col) {
       switch(col.value) {
         case '작동정지': // stop -> run
-          this.reStart(col.data.machine_num);
+          if(this.checkJob) {
+            this.reStart(col.data.machine_num);
+          }
           break;
         default: // 설비 상세
           this.$router.push({name: 'machineInfo', params : {mno : col.data.machine_num}});
@@ -194,7 +199,7 @@ export default {
     async reStart(machineNo) {
       let obj = {
         inact_end_time: this.getToday(),
-        inact_end_emp: 99,
+        inact_end_emp: this.$store.state.loginInfo.emp_num,
       }
 
       let result = await axios.put(`${ajaxUrl}/inActs/lastInAct/${machineNo}`, obj)
