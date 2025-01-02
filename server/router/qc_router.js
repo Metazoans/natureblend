@@ -19,8 +19,8 @@ router.post('/meterialOrderQC', async (req, res)=>{
 router.post('/insertQCM', async (req, res)=>{
   let insertObj = []
   for(let i=0;i<req.body.length;i++){
-    let { orderCode, mName, ordQty, orderDate} = req.body[i];
-    insertObj[i] = { orderCode, mName, ordQty, orderDate };
+    let { orderCode, mName, ordQty, orderDate, empNum} = req.body[i];
+    insertObj[i] = { orderCode, mName, ordQty, orderDate, empNum};
   }
   let result =await qc_service.requestInspectionForM(insertObj);
    res.send(result);
@@ -144,9 +144,20 @@ router.post('/requestQCPB', async(req, res)=>{
 });
 //공정검사 - 음료검사조회(검사완료만)
 router.post('/recordQCPB', async(req, res)=>{
-  let {pName, startDate, endDate} = req.body;
+  let {pName, startDate, endDate, isPassed} = req.body;
   let status = '검사완료';
-  let list = await qc_service.findQCPB(status, pName, startDate, endDate);
+  let passResult = '';
+  switch(isPassed){
+    case 'passed':
+      passResult = '합격';
+      break;
+    case 'failed':
+      passResult = '불합격';
+      break;
+    default:
+      break;
+  }
+  let list = await qc_service.findQCPB(status, pName, startDate, endDate, passResult);
   res.send(list);
 });
 //공정검사 - 음료검사조회(모두)

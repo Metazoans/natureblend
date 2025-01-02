@@ -9,12 +9,12 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row g-3">
-        <!-- 재고 상태 -->
-        <div class="col-md-2">
-          <label for="qcStat" class="form-label">재고 상태</label>
+      <div class="row gx-3 p-4 rounded border shadow">
+        <!-- 검사 상태 -->
+        <div class="col-md-2 ps-5">
+          <label for="qcStat" class="form-label">검사 상태</label>
           <select class="form-select text-center border cursor-pointer" v-model="searchInfo.qcState"
-            aria-label="재고 상태 선택">
+            aria-label="검사 상태 선택">
             <option value="qcs1">전체</option>
             <option value="qcs2">검사완료</option>
             <option value="qcs3">검사미완료</option>
@@ -33,7 +33,7 @@
         </div>
 
         <!-- 자재명 -->
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="mName" class="form-label">자재명</label>
           <input type="search" id="mName" class="form-control border p-2 cursor-pointer" placeholder="자재명"
             v-model="searchInfo.mName" />
@@ -58,18 +58,17 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" style="height: 700px;">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" style="height: 700px;"
+        :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
   </div>
   <!-- 검사결과 끝 -->
 
   <hr>
-
-
-
-
-
+  <div style="display: none">
+       <CustomNoRowsOverlay/>
+  </div>
 
 </template>
 
@@ -85,9 +84,12 @@ import theme from "@/utils/agGridTheme";
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 const { notify } = useNotification();  // 노티 내용변수입니다
 
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
+
 export default {
   name: "입고검사",
-  components: { MaterialButton, },
+  components: { MaterialButton, CustomNoRowsOverlay},
   data() {
     return {
       searchInfo: {
@@ -101,6 +103,7 @@ export default {
       searchList: [],
 
       //ag grid 관련
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
@@ -219,6 +222,15 @@ export default {
 
   .search {
     margin-top: 24px;
+  }
+}
+
+//검색창 라벨
+.mb-4{
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
   }
 }
 </style>
