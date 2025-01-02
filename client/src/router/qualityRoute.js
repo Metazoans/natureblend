@@ -41,107 +41,177 @@ import QCPackingInspec from '../views/quality/qPacking/QCPackingInspec.vue';
 import QCPackingRecord from '../views/quality/qPacking/QCPackingRecord.vue';
 //불량내역조회
 import QCPackingFaulty from '../views/quality/qPacking/QCPackingFaulty.vue';
+import store from '@/store/index.js'
+import { notify } from "@kyvg/vue3-notification";
 
+const checkAuth = (to, next) => {
+  if(!store.state.loginInfo.name) {
+    notify({
+      text: "로그인이 필요한 페이지입니다.",
+      type: 'error',
+    });
+    next(false)
+  } else if(store.state.loginInfo.job_num !== 4) {
+    notify({
+      text: "품질부서 직원만 접근 가능합니다.",
+      type: 'error',
+    });
+    next(false)
+  } else {
+    next()
+  }
+}
 
 const qualityRoute = [
   //입고검사 
   // - 신청
   {
     path: '',
-    redirect : { name : 'qualityList'}
+    redirect : { name : 'qualityList'},
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   {
     path: 'material',
-    redirect : { name : 'qualityList'}
+    redirect : { name : 'qualityList'},
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   {
     path: 'material/apply',
     name: 'qCMaterialApply',
-    component: QCMaterialApply
+    component: QCMaterialApply,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 검사 처리
   {
     path: 'material/inspec',
     name: 'qCMaterialInspec',
-    component: QCMaterialInspec
+    component: QCMaterialInspec,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 검사 기록 조회
   {
     path: 'material/record',
     name: 'qCMaterialRecord',
-    component: QCMaterialRecord
+    component: QCMaterialRecord,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 불량 내역 조회
   {
     path: 'material/faulty',
     name: 'qCMaterialFaulty',
-    component: QCMaterialFaulty
+    component: QCMaterialFaulty,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
 
   //  공정검사
   {
     path: 'process',
-    redirect : { name : 'qCProcessCleanInspec'}
+    redirect : { name : 'qCProcess'},
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   {
     path: 'process/inspec',
-    redirect : { name : 'qCProcessCleanInspec'}
+    redirect : { name : 'qCProcessCleanInspection'},
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
 
   // - 세척 검사 처리
   {
     path: 'process/inspec/clean',
     name: 'qCProcessCleanInspec',
-    component: QCProcessCleanInspec
+    component: QCProcessCleanInspec,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 음료 검사 처리
   {
     path: 'process/inspec/beverage',
     name: 'qCProcessBeverageInspec',
-    component: QCProcessBeverageInspec
+    component: QCProcessBeverageInspec,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // -세척 검사 기록 조회
   {
     path: 'process/record/cleaning',
     name: 'qCProcessCleaningRecord',
-    component: QCProcessCleaningRecord
+    component: QCProcessCleaningRecord,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 세척 불량 내역 조회
   {
     path: 'process/faulty/cleaning',
     name: 'qCProcessCleaningFaulty',
-    component: QCProcessCleaningFaulty
+    component: QCProcessCleaningFaulty,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 음료 검사 기록 조회
   {
     path: 'process/record/bevarage',
     name: 'qCProcessBevarageRecord',
-    component: QCProcessBevarageRecord
+    component: QCProcessBevarageRecord,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
 
 
   // 포장검사
   {
     path: 'packing',
-    redirect : { name : 'qCPackingInspec'}
+    redirect : { name : 'qCPackingInspec'},
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 포장 검사 처리
   {
     path: 'packing/inspec',
     name: 'qCPackingInspec',
-    component: QCPackingInspec
+    component: QCPackingInspec,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 검사 기록 조회
   {
     path: 'packing/record',
     name: 'qCPackingRecord',
-    component: QCPackingRecord
+    component: QCPackingRecord,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
   // - 불량 내역 조회
   {
     path: 'packing/faulty',
     name: 'qCPackingFaulty',
-    component: QCPackingFaulty
+    component: QCPackingFaulty,
+    beforeEnter: (to, from, next) => {
+      checkAuth(to, next)
+    }
   },
 
 
