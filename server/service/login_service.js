@@ -4,7 +4,6 @@ const mysql = require('../database/mapper.js');
 const loginInfo = async( empnum,password ) => {
     let result = await mysql.query('loginCheck',[empnum,password]);
     return result;
-    console.log(result);
 }
 
 module.exports = {

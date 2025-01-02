@@ -40,7 +40,7 @@
 
           <div class="grid-bom" >
            <ag-grid-vue 
-             style ="width: 650px; height: 500px;"
+             style ="width: 652px; height: 530px;"
              :rowData="bomBox"
              :columnDefs="columnBoms"
              :theme="theme"
@@ -57,20 +57,20 @@
           <button type="button" @click="updateBom" class="btn btn-success">
               수정 완료
           </button>
-          <button type="button" @click="addMaterial" class="btn btn-primary">
+          <button type="button" @click="addMaterial" class="btn btn-secondary">
              자재 추가
           </button>
-          <button type="button" @click="insertBom" class="btn btn-danger">
+          <button type="button" @click="insertBom" class="btn btn-info">
             BOM 등록
           </button>
-          <button type="button" @click="deleteBomList" class="btn btn-light">
+          <button type="button" @click="deleteBomList" class="btn btn-danger">
             선택한 자재 삭제
           </button>
         </div>
         <!-- 조회 그리드 -->
         <div class="grid-container" >
            <ag-grid-vue 
-             style ="width: 600px; height: 500px;"
+             style ="width: 479px; height: 513px;"
              :rowData="bomList"
              :columnDefs="columnDefs"
              :theme="theme"
@@ -115,6 +115,7 @@
   import theme from "@/utils/agGridTheme";
   import Modal from "@/views/standard/Modal.vue";
   import materialModal from "@/views/standard/materialModal.vue";
+  import { mapMutations } from "vuex";
 
   
   export default { 
@@ -212,6 +213,17 @@
         this.getBomList();
       },
       methods: {
+        ...mapMutations(["addLoginInfo"]),
+      async checkLogin(){
+          this.loginInfo = this.$store.state.loginInfo;
+          console.log('직업',this.loginInfo);
+          if(this.loginInfo.job === '관리자'){
+            console.log('성공');
+          }else{
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$router.push({ name : 'MainPage' });
+          }
+      },
         openModal(modalType) {
           this.modalType = modalType;  // Set the modal type
           this.modalTitle = '제품 코드 선택';
@@ -269,26 +281,54 @@
         rowSelection(event){
           console.log('이벤트발생',event);
         },
-        async deleteBomList(){
-          console.log('삭제할 데이터',this.bomBox);
-          console.log(this.allInputData.getSelectedRows());
-          for(let i = 0; i<this.allInputData.getSelectedRows().length; i++){
-            console.log(this.allInputData.getSelectedRows()[i].bom_seq);
-            let bom_seq = this.allInputData.getSelectedRows()[i].bom_seq;
-            console.log(bom_seq);
-            let Result = await axios.get(`${ajaxUrl}/materialdelete/${bom_seq}`)
-                                                 .catch(err => console.log(err));
-            console.log(Result.data);
-          }
-          // 조회한 데이터를 자재 삭제후 남아있게 다시 조회하기
-          this.view(this.searchProduct,this.searchCapacity,this.allInputData.getSelectedRows()[0].bom_num,this.searchMaterialcode,this.searchProductcode);
-          // let bom_seq = this.allInputData.getSelectedRows()[0].bom_seq;
-          // console.log(bom_seq);
-          // this.bomBox = this.bomBox.filter(item => !item.checkboxSelection);
-          // let Result = await axios.get(`${ajaxUrl}/materialdelete/${bom_seq}`)
-          //                                      .catch(err => console.log(err));
-          // console.log(Result.data);
+    async deleteBomList(){
+            console.log('삭제할 데이터', this.bomBox);
+            const selectedRows = this.allInputData.getSelectedRows();
+            
+            if (selectedRows.length === 0) {
+                this.$notify({
+                    title: '선택된 자재가 없습니다',
+                    text: '삭제할 자재를 선택해주세요.',
+                    type: 'warning'
+                });
+                return;
+              }
+            const isConfirmed = window.confirm('선택한 자재를 삭제하시겠습니까?');
+            if (isConfirmed) {
+                for (let i = 0; i < selectedRows.length; i++) {
+                    const bomSeq = selectedRows[i].bom_seq;
+                    console.log('삭제할 bom_seq:', bomSeq);
+                    
+                    try {
+                        const result = await axios.get(`${ajaxUrl}/materialdelete/${bomSeq}`);
+                        console.log('삭제 결과:', result.data);
+                    } catch (err) {
+                        console.error('삭제 중 오류 발생:', err);
+                    }
+                }
+                this.view(this.searchProduct, this.searchCapacity, this.allInputData.getSelectedRows()[0].bom_num, this.searchMaterialcode, this.searchProductcode);
+            } else {
+                this.$notify({
+                    title: '삭제 취소',
+                    text: '삭제가 취소되었습니다.',
+                    type: 'info'
+                });
+            }
         },
+        // async deleteBomList(){
+        //   console.log('삭제할 데이터',this.bomBox);
+        //   console.log(this.allInputData.getSelectedRows());
+        //   for(let i = 0; i<this.allInputData.getSelectedRows().length; i++){
+        //     console.log(this.allInputData.getSelectedRows()[i].bom_seq);
+        //     let bom_seq = this.allInputData.getSelectedRows()[i].bom_seq;
+        //     console.log(bom_seq);
+        //     let Result = await axios.get(`${ajaxUrl}/materialdelete/${bom_seq}`)
+        //                                          .catch(err => console.log(err));
+        //     console.log(Result.data);
+        //   }
+        //   // 조회한 데이터를 자재 삭제후 남아있게 다시 조회하기
+        //   this.view(this.searchProduct,this.searchCapacity,this.allInputData.getSelectedRows()[0].bom_num,this.searchMaterialcode,this.searchProductcode);
+        // },
         onCellEditingStopped(event) {
               // 현재 편집된 행 데이터 가져오기
               const updatedRowData = event.data;
@@ -398,7 +438,7 @@
             console.log(result2);
           },
           addMaterial() {
-            this.bomBox.push({ bom_num:this.searchBomnum, material_code: '', material: '', material_con: '' });
+            this.bomBox.push({ bom_num:this.searchBomnum, material_code: '', material: '', material_con: 0 });
             this.bomBox = [...this.bomBox];
           },
           goToDetail(bomNum) {
@@ -444,7 +484,10 @@
         },
         onReady(param){
           param.api.sizeColumnsToFit();
-        }
+        },
+        mounted() {
+          this.checkLogin();
+        },
     }
 </script>
 
@@ -456,7 +499,7 @@
 }
 
 .grid-container {
-  margin-top: 215px;
+  margin-top: 211px;
 }
 
 .grid-bom {

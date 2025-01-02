@@ -39,6 +39,8 @@ import theme from "@/utils/agGridTheme";
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
 import processflowModal from "./processflowModal.vue";
+import { mapMutations } from "vuex";
+
     export default {
         components:{processflowModal},
         data(){
@@ -95,6 +97,17 @@ import processflowModal from "./processflowModal.vue";
         //     },
         // },
         methods:{
+            ...mapMutations(["addLoginInfo"]),
+            async checkLogin(){
+                this.loginInfo = this.$store.state.loginInfo;
+                console.log('직업',this.loginInfo);
+                if(this.loginInfo.job === '관리자'){
+                    console.log('성공');
+                }else{
+                    this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+                    this.$router.push({ name : 'MainPage' });
+                }
+            },
             onReady(param){
                 param.api.sizeColumnsToFit();
             },
@@ -138,6 +151,7 @@ import processflowModal from "./processflowModal.vue";
 
         },
         mounted() { // 페이지 조회시 바로 발생
+            this.checkLogin();
             this.productSelect();
         },
     };

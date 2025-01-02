@@ -60,12 +60,14 @@
         const loginInfo = {
           empnum : this.empnum,
           password : this.password,
-        }
-        const result = await axios.post(`${ajaxUrl}/login`,loginInfo)
-                                  .catch(err => console.log(err));
-        console.log('사원번호 비밀번호 출력',result);
-        console.log('로그인 데이터 확인',result.data);
-        if(result.data[0].name){
+        };
+        this.errorMessage = '';
+        
+        try {
+        const result = await axios.post(`${ajaxUrl}/login`, loginInfo);
+        console.log('abcd');
+        // 로그인 성공 시 처리
+        if (result && result.data && result.data[0] && result.data[0].name) {
           console.log('로그인성공');
           const loginObj = {
             emp_num: result.data[0].emp_num,
@@ -79,19 +81,23 @@
             resignation_date: result.data[0].resignation_date,
             level: result.data[0].level,
           };
-          console.log('aaa', loginObj);
+          
           this.addLoginInfo(loginObj);
 
-          console.log('dkdkdkdk',this.$store.state.loginInfo);
-          if(this.$store.state.loginInfo.name){
+          if (this.$store.state.loginInfo.name) {
             window.location.reload();
-
-            // this.$router.push({name : 'MainPage'});
           }
-          // this.$store.dispatch('addLoginInfo', loginObj)
-          //this.$router.push({name:'MainPage',params:{loginId:result.data}})
+        } else {
+          // 로그인 실패
+          this.errorMessage = '아이디 또는 비밀번호가 잘못되었습니다.';
+          // window.location.reload();
         }
-      },
+      } catch (error) {
+        this.errorMessage = '로그인 중 문제가 발생했습니다. 다시 시도해주세요.';
+        console.error('로그인 오류: ', error);
+        // window.location.reload();
+      }
+    },
       async loginconfig() {
         if(this.$store.state.loginInfo.name){
           this.$router.push({name : 'MainPage'});

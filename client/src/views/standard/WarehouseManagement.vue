@@ -78,6 +78,7 @@
  import { ajaxUrl } from '@/utils/commons.js';
  // import userDateUtils from '@/utils/useDates.js';
  import theme from "@/utils/agGridTheme";
+ import { mapMutations } from "vuex";
  
  export default {
    data() {
@@ -144,6 +145,17 @@
      };
    },
    methods: {
+      ...mapMutations(["addLoginInfo"]),
+      async checkLogin(){
+          this.loginInfo = this.$store.state.loginInfo;
+          console.log('직업',this.loginInfo);
+          if(this.loginInfo.job === '관리자'){
+            console.log('성공');
+          }else{
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$router.push({ name : 'MainPage' });
+          }
+      },
     async warehouseList(){ // 조회하기
         const result = await axios.get(`${ajaxUrl}/warehouseList`)
                                         .catch(err => console.log(err));
@@ -188,6 +200,7 @@
    // 화면 생성되는 시점
    mounted() {
      // 전체조회 쿼리 실행
+     this.checkLogin();
      this.warehouseList();
    },
  };

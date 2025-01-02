@@ -19,12 +19,24 @@
                       <!-- 생년월일 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="birth">생년월일</label>
-                         <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="birth" v-model="birth" >
+                         <input type="date" class="form-control"  style="background-color: white; padding-left: 20px;" id="birth" v-model="birth" >
                       </div>
                       <!-- 부서 -->
                       <div class="mb-3">
-                         <label class="col-form-label fw-bold" for="job">부서</label>
-                         <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="job" v-model="job" >
+                        <label class="col-form-label fw-bold" for="job">부서</label>
+                        <select
+                          class="form-select"
+                          v-model="job"
+                          @change="updateJobNum"
+                          style="background-color: white; text-align: center; border: solid 1px;"
+                          aria-label="부서 선택"
+                        >
+                          <option value="">부서 선택</option>
+                          <option value="인사">인사</option>
+                          <option value="영업">영업</option>
+                          <option value="품질">품질</option>
+                          <option value="생산">생산</option>
+                        </select>
                       </div>
                         <!-- 직급 -->
                       <div class="mb-3">
@@ -34,7 +46,7 @@
                       <!-- 입사일 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="employmentDate">입사일</label>
-                         <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="employmentDate" v-model="employmentDate" >
+                         <input type="date" class="form-control" style="background-color: white; padding-left: 20px;" id="employmentDate" v-model="employmentDate" >
                       </div>
                   </div>
                   <div class="p-2 flex-fill">
@@ -46,12 +58,12 @@
                          <!-- 연락처 -->
                          <div class="mb-3">
                             <label class="col-form-label fw-bold" for="tel">연락처</label>
-                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="tel" v-model="tel" >
+                            <input type="tel" class="form-control" placeholder="010-0000-0000" style="background-color: white; padding-left: 20px;" id="tel" v-model="tel" >
                         </div>
                         <!-- 부서번호 -->
                         <div class="mb-3">
                             <label class="col-form-label fw-bold" for="jobNum">부서번호</label>
-                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="jobNum" v-model="jobNum" >
+                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px; text-align: right;" id="jobNum='101'" v-model="jobNum" readonly >
                         </div>
                         <!-- 등급 -->
                         <div class="mb-3">
@@ -68,14 +80,21 @@
                         <!-- 퇴사일 -->
                         <div class="mb-3">
                            <label class="col-form-label fw-bold" for="resignationDate">퇴사일</label>
-                           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="resignationDate" v-model="resignationDate" >
+                           <input type="date" class="form-control" style="background-color: white; padding-left: 20px;" id="resignationDate" v-model="resignationDate" >
                         </div>
                   </div>
                 </div>
           <!-- 저장 버튼 -->
           <div class="col-sm-5">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="input_update" text-align: right >등록/수정</button>
+            <div class="d-flex">
+              <div class="p-2 flex-fill">
+                <button style="position:relative; width:120px ; top:29px;" type="button" class="btn btn-success me-5" @click="input_update" text-align: right >등록/수정</button>
+              </div>
+              <div class="p-2 flex-fill">
+                <button style="position:relative; width:120px ; top:29px;" type="button" class="btn btn-warning me-5" @click="refresh"  >새로고침</button>
+              </div>
           </div>
+        </div>
        </form>
     </div>
         <!-- 검색 메뉴 레이아웃 끝 -->
@@ -104,6 +123,7 @@
  import { ajaxUrl } from '@/utils/commons.js';
  // import userDateUtils from '@/utils/useDates.js';
  import theme from "@/utils/agGridTheme";
+ import { mapMutations } from "vuex";
  
  export default {
    data() {
@@ -171,11 +191,47 @@
      };
    },
    methods: {
+    refresh(){
+            this.employeeList();
+            this.upin = '';
+            this.empNum = '';
+            this.name = '';
+            this.birth = '';
+            this.tel = '';
+            this.job = '';
+            this.jobNum = '';
+            this.position = '';
+            this.level = '';
+            this.employmentDate = '';
+            this.resignationDate = '';
+    },
+    updateJobNum() {
+    console.log('hjkhjkhkj',this.job);
+      // 부서에 맞는 부서번호를 설정
+      const departmentJobNumbers = {
+        "인사": "101",
+        "영업": "102",
+        "품질": "103",
+        "생산": "104",
+      };
+      this.jobNum = departmentJobNumbers[this.job] || ''; // 부서번호 설정
+    },
     async employeeList() {
         const result = await axios.get(`${ajaxUrl}/employeeList`)
                                   .catch(err => console.log(err));
           this.rowData = result.data;
     },
+    ...mapMutations(["addLoginInfo"]),
+      async checkLogin(){
+          this.loginInfo = this.$store.state.loginInfo;
+          console.log('직업',this.loginInfo);
+          if(this.loginInfo.job === '관리자'){
+            console.log('성공');
+          }else{
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$router.push({ name : 'MainPage' });
+          }
+      },
     onReady(param) {
       param.api.sizeColumnsToFit(); // 그리드 api 넓이 슬라이드 안 생기게 하는 거
     },
@@ -201,6 +257,15 @@
         this.employeeList();
     },
     input_update() {
+      if(this.empNum === '' || this.name === '' || this.birth === '' || this.tel === '' || this.job === '' || this.jobNum === '' || this.position === '' || this.employmentDate === ''){
+        this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+        return;
+      }
+      if(this.tel.length !== 13){
+        this.$notify({ title:'연락처 확인', text: '연락처를 확인해주세요', type: 'error' });
+        return;
+      }
+
       console.log('등록 또는 수정 기능여기서 추가');
       this.newList = { emp_num: this.empNum,
                        name: this.name,
@@ -209,9 +274,9 @@
                        job: this.job, 
                        job_num: this.jobNum, 
                        position: this.position, 
-                       level: this.level, 
+                       level: this.level || null, 
                        employment_date: this.employmentDate, 
-                       resignation_date: this.resignationDate };
+                       resignation_date: this.resignationDate || null };
       this.employeeInsert(this.newList);
       this.employeeList();
     },
@@ -219,6 +284,7 @@
    // 화면 생성되는 시점
    mounted() {
      // 전체조회 쿼리 실행
+     this.checkLogin();
      this.employeeList();
    },
  };

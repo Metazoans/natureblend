@@ -1,8 +1,8 @@
 <template>
-    <button v-if = "loginData.name" @click = "logout">
+    <button class="btn-secondary" v-if = "loginData.name" @click = "logout">
         logout
     </button>
-    <button v-else @click = "login">
+    <button class="btn-success" v-else @click = "login">
         login
     </button>
 </template>
