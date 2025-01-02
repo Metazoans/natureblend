@@ -23,15 +23,26 @@
     <div style="display: none">
         <CustomNoRowsOverlay/>
     </div>
+    <div>
+        <Modal :isShowModal="isShowModal" :modalTitle="'자재선택'" :noBtn="'닫기'" :yesBtn="'선택'" @closeModal="closeModal" @confirm="confirm">
+            <template v-slot:list>
+                <matelList v-show="isShowModal" />
+            </template>
+        </Modal>
+    </div>
 </template>
 <script>
 import theme from "@/utils/agGridTheme";
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import matelList from "@/views/material/newMaterialOrderOfferModal.vue"
 
 export default {
     //컴포넌트 선언했어
     components: {
         CustomNoRowsOverlay,
+        Modal,
+        matelList,
     },
     //엄마가 주는 데이터 받을꺼
     props: {
@@ -73,6 +84,7 @@ export default {
     //변수 넣는 통은 너야
     data(){
         return{
+            isShowModal: false, //모달 기본 숨겨짐
             noRowsOverlayComponent: 'CustomNoRowsOverlay',
             materialcolumnDefs: [
                 { 
@@ -217,7 +229,38 @@ export default {
                 });
 
                 paginationPanel2.insertBefore(button2, paginationPanel2.firstChild);
+
+
+                const button3 = document.createElement('button');
+                button3.textContent = '개별주문';
+                button3.style.marginRight = '10px';
+                button3.style.cursor = 'pointer';
+                button3.style.backgroundColor = '#4caf50';
+                button3.style.color = 'white';
+                button3.style.border = 'none';
+                button3.style.padding = '5px 10px';
+                button3.style.borderRadius = '4px';
+                button3.style.position = 'absolute';
+                button3.style.left = '100px';
+
+                // 버튼 클릭 이벤트
+                button3.addEventListener('click', () => {
+                    console.log('개별주문 버튼 클릭');
+                    this.isShowModal = !this.isShowModal;
+                    console.log(this.isShowModal);
+                });
+
+                paginationPanel2.insertBefore(button3, paginationPanel2.firstChild);
             }
+        },
+        //모달 취소버튼
+        closeModal() {
+            this.isShowModal = false;
+        },
+        //모달 확인버튼
+        confirm(data) {
+            console.log('모달확인', data);
+            this.closeModal();
         },
         onCellValueChanged(event) {
             //console.log('여기옴');

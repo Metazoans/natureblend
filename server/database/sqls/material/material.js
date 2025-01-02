@@ -15,6 +15,23 @@ WHERE pp.plan_status = 'plan_waiting'
   AND orde.order_status != 'shipped'
 `;
 
+// 자재리스트 조회 ( 개별 자재 주문 할때 사용)
+const material_list =
+`
+WITH material_lot_qty AS
+  (SELECT material_code,
+          COALESCE(SUM(stok_qty), 0) AS stok_qty
+   FROM material_lot_qty1
+   GROUP BY material_code)
+SELECT mat.material_code,
+       mat.material_name,
+       mat.safety_inventory,
+       COALESCE(mlq.stok_qty, 0) AS stok_qty
+FROM material mat
+LEFT JOIN material_lot_qty mlq ON mat.material_code = mlq.material_code
+ORDER BY mat.material_code ASC
+`;
+
 
 //발주계획 필요 자재 조회
 const need_order_material =
@@ -382,5 +399,6 @@ module.exports = {
 	inspection_info,
 	material_qty_list,
 	trush_go,
+  material_list,
 
 };
