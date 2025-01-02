@@ -22,7 +22,7 @@ const checkAuth = (to, next) => {
       type: 'error',
     });
     next(false)
-  } else if(store.state.loginInfo.job_num !== 5) {
+  } else if(store.state.loginInfo.job_num !== 5 && store.state.loginInfo.level !== 3) {
     notify({
       title: "로그인요청",
       text: "설비팀 또는 관리자만 접속 가능합니다.",
