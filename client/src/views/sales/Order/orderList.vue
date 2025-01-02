@@ -153,7 +153,7 @@ export default {
         let result = await axios.put(`${ajaxUrl}/orderlist/search`,obj)
                                 .catch(err=> console.log(err));
         this.rowData = result.data;
-
+      console.log("rowdata===",this.rowData)
         this.rowData = result.data.map((col) => ({
             ...col,
             order_date: this.dateFormat(col.order_date, "yyyy-MM-dd"),

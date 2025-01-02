@@ -164,6 +164,7 @@ import userDateUtils from '@/utils/useDates.js';
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
+import { mapMutations } from "vuex";
 
 export default{
     name :"orderlistSearch",
@@ -179,6 +180,7 @@ export default{
     data(){
         return{
             
+            testing: {},
 
             //검색 필터 데이터
             //거래처 모달 
@@ -257,9 +259,18 @@ export default{
             
         }
     },
+    mounted() {
+      this.test();
+    },
  
 
     methods:{
+        ...mapMutations(["addLoginInfo"]),
+        test(){
+        this.testing = this.$store.state.loginInfo;
+        console.log('ddd', this.$store.state.loginInfo);
+        this.searchEmpName = this.$store.state.loginInfo.name;
+        },
         selectclient(client){
             this.selectedCom = client; 
         },

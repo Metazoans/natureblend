@@ -119,9 +119,8 @@
                 <div class="row align-items-center mb-3" v-show="rowDataOrder.length != 0">
                     <label class="col-sm-2 col-form-label fw-bold" >담당자</label>
                     <div class="col-sm-4">
-                        <input 
-                            id="EmpName"  class="form-control border p-2" 
-                            v-model="searchEmpName.name" @click="openModal('emp')" readonly/>
+                        <input id="EmpName"  class="form-control border p-2" v-if="searchEmpName.name" v-model="searchEmpName.name" @click="openModal('emp')" readonly/>
+                        <input type="text" v-else class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName" readonly>
                             <Modal
                                 :isShowModal="isShowModal.emp"
                                 :modalTitle="'담당자선택'"
@@ -159,6 +158,7 @@ import userDateUtils from '@/utils/useDates.js';
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
+import { mapMutations } from "vuex";
 
 export default{
     name :"orderlistSearch",
@@ -173,6 +173,7 @@ export default{
     data(){
         return{
             
+            testing: {},
 
             //검색 필터 데이터
             orderName:"", // 주문서명
@@ -262,9 +263,19 @@ export default{
             
         }
     },
+    mounted() {
+      this.test();
+    },
  
 
     methods:{
+        ...mapMutations(["addLoginInfo"]),
+        test(){
+        this.testing = this.$store.state.loginInfo;
+        console.log('ddd', this.$store.state.loginInfo);
+        this.searchEmpName = this.$store.state.loginInfo.name;
+        },
+        
         selectclient(client){
             this.selectedCom = client; 
         },
