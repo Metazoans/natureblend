@@ -18,19 +18,22 @@ const prodLv2Access = [
 const checkAuth = (to, next) => {
   if(!store.state.loginInfo.name) {
     notify({
+      title: "로그인요청",
       text: "로그인이 필요한 페이지입니다.",
       type: 'error',
     });
     next(false)
   } else if(store.state.loginInfo.job_num !== 2) {
     notify({
-      text: "생산부서 직원만 접근 가능합니다.",
+      title: "로그인요청",
+      text: "생산팀 또는 관리자만 접속 가능합니다.",
       type: 'error',
     });
     next(false)
   } else if(prodLv2Access.includes(to.name) && store.state.loginInfo.level === 1) {
     notify({
-      text: "생산부서 반장 직급 이상만 접근 가능합니다.",
+      title: "로그인요청",
+      text: "생산반장 또는 관리자만 접속 가능합니다.",
       type: 'error',
     });
     next(false)

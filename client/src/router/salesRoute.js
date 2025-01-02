@@ -16,13 +16,15 @@ import { notify } from "@kyvg/vue3-notification";
 const checkAuth = (to, next) => {
     if(!store.state.loginInfo.name) {
         notify({
+            title: "로그인요청",
             text: "로그인이 필요한 페이지입니다.",
             type: 'error',
         });
         next(false)
     } else if(store.state.loginInfo.job_num !== 1) {
         notify({
-            text: "영업부서 직원만 접근 가능합니다.",
+            title: "로그인요청",
+            text: "영업팀 또는 관리자만 접속 가능합니다.",
             type: 'error',
         });
         next(false)
