@@ -253,6 +253,7 @@ export default {
         newProdOrderNum: this.newProdOrderNum,
         useMaterialCode: data.useMaterialCode,
         useLot: data.useLot,
+        useLotSeq: Number(data.useLotSeq),
         useAmount: Number(data.useAmount)
       }
 
@@ -276,7 +277,7 @@ export default {
     },
 
     deleteMaterial(params) {
-      this.rowDataUse = this.rowDataUse.filter((item) => item.useLot !== params.data.useLot)
+      this.rowDataUse = this.rowDataUse.filter((item) => item.useLotSeq !== params.data.useLotSeq)
     },
 
     selectStock(params) {
@@ -284,6 +285,7 @@ export default {
       this.rowDataUse = [
         ...this.rowDataUse,
         {
+          useLotSeq: selectedStock.stockLotSeq,
           useLot: selectedStock.stockLot,
           useMaterialName: selectedStock.stockMaterialName,
           useMaterialCode: selectedStock.stockMaterialCode

@@ -110,8 +110,8 @@ const insertProductionOrder = `
 
 // values(2, 'M001', 'M03313Z24101', 1);
 const insertHoldingStock = `
-    insert into invalid_material(production_order_num, material_code, lot_code, material_qty)
-    values(?, ?, ?, ?);
+    insert into invalid_material(production_order_num, material_code, lot_code, lot_seq, material_qty)
+    values(?, ?, ?, ?, ?);
 `;
 
 // 공정작업헤더 등록. 공정별로

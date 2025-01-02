@@ -113,6 +113,7 @@ export default {
 
       materialList.forEach((item) => {
         let row = {
+          stockLotSeq: item.lot_seq,
           stockLot: item.lot_code,
           stockMaterialName: item.material_name,
           stockMaterialCode: item.material_code,
