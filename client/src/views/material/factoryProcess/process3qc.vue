@@ -1,11 +1,11 @@
 <template>
     <div class="d-flex flex-row mb-3">
-        <div class="P-0">
+        <div class="P-0" style="height: 110px; display: flex; justify-content: center; align-items: center;">
             <img src="http://yeonsus.com/academy/process3qc.gif" alt="포장검사" height="75" width="75"/>
         </div>
         <div class="P-0">
-            <div style="height: 170px;">
-                <table class="table align-items-center">
+            <div style="height: 150px; width: 190px;">
+                <table class="table align-items-center text-center">
                     <tr>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                             상품명
@@ -14,14 +14,14 @@
                             수량
                         </th>
                     </tr>
-                    <!-- <tr v-for="(cl, index) in material_input.slice(0, 5)" :key="index">
-                        <td class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">
-                            {{ cl.material_name }}
+                    <tr v-for="(cl, index) in process3_qc_list.slice(0, 5)" :key="index">
+                        <td class="text-uppercase text-dark fs-6 font-weight-bolder opacity-7 ps-2" style="text-align: left;">
+                            {{ cl.product_name }}
                         </td>
-                        <td class="text-uppercase text-dark text-xxs font-weight-bolder opacity-7 ps-2">
-                            {{ cl.ord_qty }}
+                        <td class="text-uppercase text-dark fs-6 font-weight-bolder opacity-7 ps-2" style="text-align: right;">
+                            {{ cl.product_qty }}
                         </td>
-                    </tr> -->
+                    </tr>
                 </table>
             </div>
         </div>
@@ -29,11 +29,11 @@
 </template>
 
 <script setup>
-    // import { defineProps } from 'vue';     //watch
+    import { defineProps } from 'vue';     //watch
 
-    // const { material_input } = defineProps({
-    //     material_input: Array,
-    // });
+    const { process3_qc_list } = defineProps({
+        process3_qc_list: Array,
+    });
 </script>
 
 <style lang="scss" scoped>
@@ -46,4 +46,5 @@
         margin: 0;
         padding: 0;
     }
+    
 </style>

@@ -338,7 +338,7 @@ export default{
             // event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
-            const paginationPanel = allPanels[0];
+            const paginationPanel = allPanels[1];
             if (paginationPanel) {
                // 컨테이너 생성
                const container = document.createElement('div');
@@ -422,9 +422,10 @@ export default{
 
     //주문서 클릭 시 해당 주문서의 미출고 주문 출력 
     async onOrderRowClicked(row) {
-        
+        console.log("row.data===",row.data);
         let order = row.data;
-        
+    
+
         let result = await axios.get(`${ajaxUrl}/shippedOrderInfo/${order.orderlist_num}`)
                                 .catch(err => console.log(err));
         this.rowDataOutputOrder = result.data;
@@ -437,6 +438,8 @@ export default{
         );
         console.log("rowDataOutputOrder:",this.rowDataOutputOrder);
     },
+
+    //반품을 원하는 상품 클릭 
     onOutputReturn(row){
         let output = row.data;
         this.outputAmount = output.output_amount;

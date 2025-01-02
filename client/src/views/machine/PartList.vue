@@ -32,6 +32,13 @@ import theme from "@/utils/agGridTheme";
 import userDateUtils from "@/utils/useDates.js";
 import {ref, shallowRef, onBeforeMount} from 'vue';
 
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const checkJob = ref(
+  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.job == '관리자' ? true : false
+);
 
 const partRow = shallowRef([]);
 const partCol = shallowRef([
@@ -121,6 +128,11 @@ const onReady = (param) => {
     addBtn.style.position = 'absolute';
     addBtn.style.left = '125px';
     addBtn.className = 'btn-success';
+
+    if(!checkJob.value) {
+      delBtn.setAttribute('disabled', true);
+      addBtn.setAttribute('disabled', true);
+    }
 
     // 삭제 이벤트
     delBtn.addEventListener('click', () => {

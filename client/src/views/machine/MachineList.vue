@@ -123,6 +123,8 @@ import theme from "@/utils/agGridTheme";
 import userDateUtils from "@/utils/useDates.js";
 import {shallowRef} from 'vue';
 
+import { mapMutations } from "vuex";
+
 export default {
   name: "machineList",
   setup() {
@@ -172,6 +174,9 @@ export default {
   
   data() {
     return {
+      // 로그인 사원 권한 체크
+      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.job == '관리자' ? true : false,
+
       isShowMachineAdd: false,
       isShowInActAdd: false,
       theme: theme,
@@ -195,6 +200,9 @@ export default {
     this.getMachineList();
   },
   methods: {
+    // 로그인 정보
+    ...mapMutations(["addLoginInfo"]),
+
     // ag-grid
     onReady() {
       // param.api.sizeColumnsToFit(); // column 크기 동일하게 자동 맞춤 => flex 직접 지정으로 변경하면서 제거
@@ -221,6 +229,10 @@ export default {
         button.style.position = 'absolute';
         button.style.left = '10px';
         button.className = 'btn-success';
+
+        if(!this.checkJob) {
+          button.setAttribute('disabled', true);
+        }
 
         // 버튼 클릭 이벤트
         button.addEventListener('click', () => {
@@ -272,11 +284,15 @@ export default {
     cellClickFnc(col) {
       switch(col.value) {
         case '작동중': // run -> stop
-          this.machineNo = col.data.machine_num;
-          this.inActAddOpen();
+          if(this.checkJob) {
+            this.machineNo = col.data.machine_num;
+            this.inActAddOpen();
+          }
           break;
         case '작동정지': // stop -> run
-          this.reStart(col.data.machine_num);
+          if(this.checkJob) {
+            this.reStart(col.data.machine_num);
+          }
           break;
         default: // 설비 상세
           this.$router.push({name: 'machineInfo', params : {mno : col.data.machine_num}});
@@ -287,7 +303,7 @@ export default {
     async reStart(machineNo) {
       let obj = {
         inact_end_time: this.getToday(),
-        inact_end_emp: 99,
+        inact_end_emp: this.$store.state.loginInfo.emp_num,
       }
 
       let result = await axios.put(`${ajaxUrl}/inActs/lastInAct/${machineNo}`, obj)

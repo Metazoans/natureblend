@@ -50,8 +50,12 @@ router.post('/login', async (req, res) => {
     console.log(empnum,password);
     let login = await loginService.loginInfo(empnum,password);
     // res.send(login);
-    console.log(login[0].name);
-    if(login[0].name){
+
+    console.log(login);
+    console.log(login);
+    console.log(login);
+    console.log(login[0]);
+    if(login[0]){
         req.session.emp_num = login[0].emp_num;
         req.session.name = login[0].name;
         req.session.birth = login[0].birth;
@@ -67,13 +71,17 @@ router.post('/login', async (req, res) => {
             if (err) {
                 console.error('세션 저장 오류:', err);
                 res.status(500).send('세션 저장 오류');
+                console.log('3333');
                 return;
             }
             // res.redirect('/home');
             res.send(login);
+            console.log('eeee');
         });
     }else{
-        res.status(401).send('아이디 또는 비밀번호가 잘못되었습니다.');
+        console.log('1111');
+        res.send('아이디 또는 비밀번호가 잘못되었습니다.');
+        // res.status(401).send('아이디 또는 비밀번호가 잘못되었습니다.');
     }
 });
 // 로그아웃 요청시 세션 삭제 후 로그인 페이지로 이동

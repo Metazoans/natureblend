@@ -56,7 +56,7 @@ WHERE b.material_state LIKE 'a1'
 const inputQCMaterial =
 //사원번호, 발주번호, 자재명, 총 수량
 `
-CALL qc_material_input_qcmlist(1, ?, ?, ?, @v_result)
+CALL qc_material_input_qcmlist(?, ?, ?, ?, @v_result)
 `;
 
 const selectedQCMAll = `

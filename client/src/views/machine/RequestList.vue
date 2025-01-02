@@ -116,6 +116,7 @@
               type="button"
               data-target="warningToast"
               @click="completeBtn"
+              :disabled="!checkJob"
             >
               완료
             </button>
@@ -126,6 +127,7 @@
               type="button"
               data-target="warningToast"
               @click="delBtn"
+              :disabled="!checkJob"
             >
               취소
             </button>
@@ -146,6 +148,13 @@ import axios from 'axios';
 import theme from "@/utils/agGridTheme";
 import userDateUtils from "@/utils/useDates.js";
 import {shallowRef, onBeforeMount, ref} from 'vue';
+
+import { useStore } from 'vuex';
+
+const store = useStore();
+const checkJob = ref(
+  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.job == '관리자' ? true : false
+);
 
 
 const requestRow = shallowRef([]);
@@ -213,6 +222,8 @@ const onReady = () => {
     button.style.position = 'absolute';
     button.style.left = '10px';
     button.className = 'btn-success';
+
+    if(!checkJob.value) button.setAttribute('disabled', true);
 
     // 버튼 클릭 이벤트
     button.addEventListener('click', () => {

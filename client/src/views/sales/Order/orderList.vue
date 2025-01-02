@@ -291,17 +291,20 @@ export default {
           this.$notify({
                   text: `${this.order.orderlist_title}에 주문이 추가 되고 수정되었습니다.`,
                   type: 'success',
-              });  
+              }); 
+              //window.location.reload();  
         }else if (this.added){
           this.$notify({
                   text: `${this.order.orderlist_title}에 주문이 추가 되었습니다.`,
                   type: 'success',
-              });  
+              }); 
+              //window.location.reload();  
         }else if (this.updated){
           this.$notify({
                   text: `${this.order.orderlist_title}이 수정되었습니다.`,
                   type: 'success',
-              });  
+              }); 
+              //window.location.reload();  
         }
           
        

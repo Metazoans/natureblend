@@ -69,18 +69,12 @@ WHERE mb.material_state = 'a1'
 // 생산 지시 목록
 const processlist =
 `
-SELECT CONCAT(product_name, ' (', CASE
-                                      WHEN capacity = 1500 THEN '1.5L'
-                                      WHEN capacity = 750 THEN '750ml'
-                                      WHEN capacity = 500 THEN '500ml'
-                                      ELSE ''
-                                  END , ')') AS product_name,
-       production_order_qty AS product_qty
-FROM process_work_header pwh
-WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
-
-  AND pwh.process_name = '음료제작공정' -- 세척공정 -- 포장공정 -- 음료제작공정
-ORDER BY pwh.work_date DESC
+SELECT 
+your_product(product_code, 'product_name') AS product_name,
+production_order_qty AS product_qty
+FROM production_order
+WHERE production_order_status = 'work_waiting'
+ORDER BY production_order_date DESC
 `;
 
 // 착즙 공정
@@ -94,7 +88,7 @@ SELECT CONCAT(product_name, ' (', CASE
                                   END , ')') AS product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
-WHERE pwh.process_status = 'processing' -- process_waiting  -- processing  -- process_complete
+WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
 
   AND pwh.process_name = '음료제작공정' -- 세척공정 -- 포장공정 -- 음료제작공정
 ORDER BY pwh.work_date DESC
@@ -111,7 +105,7 @@ SELECT CONCAT(product_name, ' (', CASE
                                   END , ')') AS product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
-WHERE pwh.process_status = 'process_complete' -- process_waiting  -- processing  -- process_complete
+WHERE pwh.process_status != 'process_waiting' -- process_waiting  -- processing  -- process_complete
 
   AND pwh.process_name = '음료제작공정' -- 세척공정 -- 포장공정 -- 음료제작공정
 ORDER BY pwh.work_date DESC
@@ -128,7 +122,7 @@ SELECT CONCAT(product_name, ' (', CASE
                                   END , ')') AS product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
-WHERE pwh.process_status != 'process_complete' -- process_waiting  -- processing  -- process_complete
+WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
 
   AND pwh.process_name = '세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
 ORDER BY pwh.work_date DESC
@@ -145,7 +139,7 @@ SELECT CONCAT(product_name, ' (', CASE
                                   END , ')') AS product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
-WHERE pwh.process_status = 'process_complete' -- process_waiting  -- processing  -- process_complete
+WHERE pwh.process_status != 'process_waiting' -- process_waiting  -- processing  -- process_complete
 
   AND pwh.process_name = '세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
 ORDER BY pwh.work_date DESC
@@ -163,10 +157,47 @@ SELECT CONCAT(product_name, ' (', CASE
                                   END , ')') AS product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
-WHERE pwh.process_status != 'process_complete' -- process_waiting  -- processing  -- process_complete
+WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
 
   AND pwh.process_name = '포장공정' -- 세척공정 -- 포장공정 -- 음료제작공정
 ORDER BY pwh.work_date DESC 
+`;
+
+// 포장 품질
+const process3qclist =
+`
+SELECT b.product_name AS product_name,
+       qcpp.total_qnt AS product_qty
+FROM qc_packaging qcpp
+LEFT JOIN process_work_body pb ON qcpp.process_num = pb.process_num
+LEFT JOIN bom b ON pb.product_code = b.product_code
+WHERE qcpp.inspec_end IS NULL
+ORDER BY qcpp.inspec_start DESC
+`;
+
+// 제품 입고 대기
+const product_input_wait =
+`
+SELECT p.product_name ,
+       q.pass_qnt AS product_qty
+FROM process_work_body w
+LEFT JOIN qc_packaging q ON q.process_num = w.process_num
+LEFT JOIN product p ON w.product_code = p.product_code
+WHERE q.qc_packing_id NOT IN
+    (SELECT qc_packing_id
+     FROM input_body)
+ORDER BY q.inspec_start DESC
+`;
+
+// 제품 출고 대기
+const produce_out_wait =
+`
+SELECT your_product(product_code, 'product_name') AS product_name,
+       SUM(order_amount) AS product_qty
+FROM orders
+WHERE order_status != 'shipped'
+GROUP BY orderlist_num,
+         product_code
 `;
 
 module.exports = {
@@ -179,5 +210,8 @@ module.exports = {
   process2list,
   process2qclist,
   process3list,
+  process3qclist,
+  product_input_wait,
+  produce_out_wait,
 
 };

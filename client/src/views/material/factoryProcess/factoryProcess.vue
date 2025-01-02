@@ -3,116 +3,117 @@
     <div>
         <h3>&nbsp;&nbsp;실시간 공정 흐름도&nbsp;&nbsp;&nbsp;&nbsp;현재시각 : [ {{ formattedDate }} ]</h3>
     </div>
-    <div class="d-flex flex-row mb-3">
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;자재검사대기</h5>
-                <materialOrder :orderOk="orderOk"/>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-bottom: 30px;">
+        <div class="d-flex flex-row m-0">
+            <div class="p-0 material_processing" >
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;자재검사대기</h5>
+                    <materialOrder :orderOk="orderOk"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            <div class="p-0 material_processing">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;자재검사중</h5>
-                <materialQcing :material_qcing="material_qcing"/>
+            <div class="p-0 material_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;자재검사중</h5>
+                    <materialQcing :material_qcing="material_qcing"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            <div class="p-0 material_processing">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;자재입고대기</h5>
-                <materialInput :material_input="material_input"/>
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;제품출고대기</h5>
-                <productOut />
-            </div>
-        </div>
-    </div>
-
-
-
-
-
-
-
-    <div class="d-flex flex-row mb-3">
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;생산지시</h5>
-                <processOrder :process_list="process_list"/>
+            <div class="p-0 material_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;자재입고대기</h5>
+                    <materialInput :material_input="material_input"/>
+                </div>
             </div>
             <div class="p-0">
-                <div style="width: 280px; height: 40px; display: flex; justify-content: center; align-items: center;">
-                    <img src="http://yeonsus.com/academy/arrow_sample_bottom.png" height="25"/>
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                </div>
+            </div>
+            <div class="p-0">
+                <div style="width: 285px;">
+                </div>
+            </div>
+            <div class="p-0">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                </div>
+            </div>
+            <div class="p-0 product_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;제품출고대기</h5>
+                    <productOut :produceOutWait="produceOutWait"/>
                 </div>
             </div>
         </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;제품입고대기</h5>
-                <productInput />
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-                <img src="http://yeonsus.com/academy/arrow_sample_left.png" alt="화살표" width="25"/>
-            </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;포장검사</h5>
-                <process3qc />
+
+
+
+
+
+
+
+        <div class="d-flex flex-row mb-0">
+            <div class="p-0" style="height: 240px;">
+                <div style="width: 285px;" class="process_processing">
+                    <h5 class="mb-0">&nbsp;&nbsp;생산지시</h5>
+                    <processOrder :process_list="process_list"/>
+                </div>
+                <div class="p-0">
+                    <div class="process_processing" style="width: 285px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                        <img src="http://yeonsus.com/academy/arrow_sample_bottom.png" height="25"/>
+                    </div>
+                </div>
             </div>
             <div class="p-0">
-                <div style="width: 280px; height: 40px; display: flex; justify-content: center; align-items: center;">
-                    <img src="http://yeonsus.com/academy/arrow_sample_top.png" height="25"/>
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                </div>
+            </div>
+            <div class="p-0">
+                <div style="width: 285px;">
+                </div>
+            </div>
+            <div class="p-0">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                </div>
+            </div>
+            <div class="p-0">
+                <div style="width: 285px;">
+                </div>
+            </div>
+            <div class="p-0">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                </div>
+            </div>
+            <div class="p-0 process_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;제품입고대기</h5>
+                    <productInput :productinputwait="productinputwait"/>
+                </div>
+            </div>
+            <div class="p-0 process_processing">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample_left.png" alt="화살표" width="25"/>
+                </div>
+            </div>
+            <div class="p-0">
+                <div style="width: 285px;" class="process_processing">
+                    <h5 class="mb-0">&nbsp;&nbsp;포장검사</h5>
+                    <process3qc :process3_qc_list="process3_qc_list"/>
+                </div>
+                <div class="p-0">
+                    <div class="process_processing" style="width: 285px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                        <img src="http://yeonsus.com/academy/arrow_sample_top.png" height="25"/>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
 
@@ -120,55 +121,56 @@
 
 
 
-    <div class="d-flex flex-row mb-3">
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;착즙공정</h5>
-                <process1 :process1_list="process1_list" />
+        <div class="d-flex flex-row mb-0">
+            <div class="p-0 process_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;착즙공정</h5>
+                    <process1 :process1_list="process1_list" />
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            <div class="p-0 process_processing">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;착즙검사</h5>
-                <process1qc :process1_qc_list="process1_qc_list"/>
+            <div class="p-0 process_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;착즙검사</h5>
+                    <process1qc :process1_qc_list="process1_qc_list"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            <div class="p-0 process_processing">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;병세척공정</h5>
-                <process2 :process2_list="process2_list"/>
+            <div class="p-0 process_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;병세척공정</h5>
+                    <process2 :process2_list="process2_list"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            <div class="p-0 process_processing">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 280px;">
-                <h5 class="mb-0">&nbsp;&nbsp;세척병검사</h5>
-                <process2qc :process2_qc_list="process2_qc_list"/>
+            <div class="p-0 process_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;세척병검사</h5>
+                    <process2qc :process2_qc_list="process2_qc_list"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 40px; height: 213px; display: flex; justify-content: center; align-items: center;">
-                <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+            <div class="p-0 process_processing">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
+                </div>
             </div>
-        </div>
-        <div class="p-0">
-            <div style="width: 250px;">
-                <h5 class="mb-0">&nbsp;&nbsp;포장공정</h5>
-                <process3 :process3_list="process3_list"/>
+            <div class="p-0 process_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;포장공정</h5>
+                    <process3 :process3_list="process3_list"/>
+                </div>
             </div>
         </div>
     </div>
@@ -316,6 +318,33 @@
         console.log('포장 목록 ',process3_list.value);
     };
 
+    // 포장 공정 품질
+    const process3_qc_list = ref([]);
+    const process3QcList = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/process3QcList`)
+                            .catch(err=>console.log(err));
+        process3_qc_list.value = result.data;
+        console.log('포장 품질',process3_qc_list.value);
+    };
+
+    // 제품 입고 대기
+    const productinputwait = ref([]);
+    const productInputWait = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/productInputWait`)
+                            .catch(err=>console.log(err));
+        productinputwait.value = result.data;
+        console.log('제품 입고 대기',productinputwait.value);
+    };
+
+    // 제품 출고 대기
+    const produceOutWait = ref([]);
+    const produceoutwait = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/produceoutwait`)
+                            .catch(err=>console.log(err));
+        produceOutWait.value = result.data;
+        console.log('제품 입고 대기',produceOutWait.value);
+    };
+
     //날짜와 매초 데이터 불러오는곳
     const formattedDate = ref('');
     let timer = null;
@@ -335,6 +364,9 @@
             process2List(); //세척 공정
             process2QcList(); //세척 공정 품질
             process3List(); //포장 공정
+            process3QcList(); //포장 공정 품질
+            productInputWait(); //제품 입고 대기
+            produceoutwait();   //제품 출고 대기
         }
     };
 
@@ -353,3 +385,23 @@
     });
 
 </script>
+<style scoped>
+.material_processing {
+    background-color: rgb(249, 237, 218);
+    border-radius: 25px;
+    height: 200px;
+}
+.process_processing {
+    background-color: rgb(220, 249, 190);
+    border-radius: 25px;
+    height: 200px;
+}
+.product_processing {
+    background-color: rgb(178, 228, 245);
+    border-radius: 25px;
+    height: 200px;
+}
+h5 {
+    padding-top: 10px;
+}
+</style>

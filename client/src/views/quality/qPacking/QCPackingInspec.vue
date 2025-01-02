@@ -9,9 +9,9 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row g-3">
+      <div class="row gx-3 p-4 rounded border shadow">
         <!-- 날짜 범위 -->
-        <div class="col-md-4">
+        <div class="col-md-4 ps-5">
           <label for="startDate" class="form-label">날짜 범위</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
@@ -43,11 +43,14 @@
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
     <h4>검사상세정보</h4>
-    <p>검사항목 클릭 => 불량항목, 수량입력(없으면 그냥 저장)=> 작성완료한 항목 체크후 '검사완료'버튼 클릭</p>
+    <div class="ps-4">
+      <p>검사 항목을 선택한 다음, 불량항목, 수량을 입력 후 저장하세요. (없을 시 그냥 저장하세요.)</p>
+    </div>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
+        :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
 
@@ -63,10 +66,19 @@
     <h4>검사처리내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20" style="height: 400px;">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
+        style="height: 400px;" :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
-    <material-button size="md" class="mt-3" v-on:click="openModal">검사완료</material-button>
+    <hr>
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <material-button class="btn btn-success" size="lg" @click="openModal">저장</material-button>
+      </div>
+      <div class="col-auto">
+        <material-button class="btn btn-warning" size="lg" @click="searchRequestAll">초기화</material-button>
+      </div>
+    </div>
   </div>
   <!-- 검사처리내역 끝 -->
 
@@ -75,27 +87,34 @@
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
     @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId, selectedRow.totalQnt)">
     <template v-slot:list>
-      <h4>불량 상세 정보</h4>
-      <p>포장검사번호: {{ selectedRow.qcProcessId }}</p>
-      <p>제품명: {{ selectedRow.pName }}</p>
-      <p>총 수량: {{ selectedRow.totalQnt }}</p>
+      <div class="modal-css">
+        <h4>불량 상세 정보</h4>
+        <p>포장검사번호: {{ selectedRow.qcProcessId }}</p>
+        <p>제품명: {{ selectedRow.pName }}</p>
+        <p>총 수량: {{ selectedRow.totalQnt }}</p>
+        <material-button size="md" class="mt-3" @click="addDefectDetailForRow(selectedRow.qcProcessId)">
+          불량 항목 추가
+        </material-button>
 
-      <!-- 불량 사유 입력 및 불량 수량 입력 -->
+        <!-- 불량 사유 입력 및 불량 수량 입력 -->
 
-      <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcProcessId]" :key="index" class="defect-item">
-        <label for="reason">불량 사유 {{ index + 1 }}:</label>
-        <select v-model="detail.reason" :id="'reason' + index">
-          <option v-for="reason in defectReasons" :key="reason.code" :value="reason.code">
-            {{ reason.name }}
-          </option>
-        </select>
-        <label for="defectQty">불량 수량 {{ index + 1 }}:</label>
-        <input type="number" v-model="detail.qty" :id="'defectQty' + index" />
-        <button class="btn btn-danger" @click="removeDefectDetailForRow(selectedRow.qcProcessId, index)">삭제</button>
+        <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcProcessId]" :key="index"
+          class="defect-item  mt-3">
+          <div class="form-group">
+            <label :for="'reason' + index">불량 사유 {{ index + 1 }}:</label>
+            <select v-model="detail.reason" :id="'reason' + index" class="form-control">
+              <option v-for="reason in defectReasons" :key="reason.code" :value="reason.code">
+                {{ reason.name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group mt-2">
+            <label :for="'defectQty' + index">불량 수량 {{ index + 1 }}:</label>
+            <input type="number" v-model="detail.qty" :id="'defectQty' + index" class="form-control" />
+          </div>
+          <button class="btn btn-danger mt-2" @click="removeDefectDetailForRow(selectedRow.qcProcessId, index)">삭제</button>
+        </div>
       </div>
-      <material-button size="md" class="mt-3" @click="addDefectDetailForRow(selectedRow.qcProcessId)">불량 항목
-        추가</material-button>
-      <!-- <button @click="saveDefectDetailsForRow(selectedRow.qcProcessId, selectedRow.totalQnt)">저장</button> -->
     </template>
   </Modal>
 
@@ -105,7 +124,9 @@
     </template>
   </Modal>
 
-
+  <div style="display: none">
+    <CustomNoRowsOverlay />
+  </div>
 
 </template>
 
@@ -125,9 +146,12 @@ import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 const { notify } = useNotification();  // 노티 내용변수입니다
 
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
+
 export default {
   name: "입고검사관리",
-  components: { MaterialButton, Modal },
+  components: { MaterialButton, Modal, CustomNoRowsOverlay },
   data() {
     return {
       searchInfo: {
@@ -142,6 +166,7 @@ export default {
       searchList: [],
 
       //ag grid 관련
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
@@ -224,15 +249,15 @@ export default {
       this.defectDetailsMap = {};
       for (let i = 0; i < this.searchList.length; i++) {
         let col = {
-          "qcProcessId": this.searchList[i].qc_packing_id, 
+          "qcProcessId": this.searchList[i].qc_packing_id,
           "processNum": this.searchList[i].process_num,                   //공정작업번호(바디)
-          "productionOrderNum" : this.searchList[i].production_order_num, //생산지시코드
-          "pName": this.searchList[i].product_name, 
-          "eName": this.searchList[i].emp_name, 
+          "productionOrderNum": this.searchList[i].production_order_num, //생산지시코드
+          "pName": this.searchList[i].product_name,
+          "eName": this.searchList[i].emp_name,
           "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, 
+          "passQnt": this.searchList[i].pass_qnt,
           "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), 
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
           "inspecStatus": this.searchList[i].inspec_status
 
         }
@@ -255,15 +280,15 @@ export default {
       this.defectDetailsMap = [];
       for (let i = 0; i < this.searchList.length; i++) {
         let col = {
-          "qcProcessId": this.searchList[i].qc_packing_id, 
+          "qcProcessId": this.searchList[i].qc_packing_id,
           "processNum": this.searchList[i].process_num,                   //공정작업번호(바디)
-          "productionOrderNum" : this.searchList[i].production_order_num, //생산지시코드
-          "pName": this.searchList[i].product_name, 
-          "eName": this.searchList[i].emp_name, 
+          "productionOrderNum": this.searchList[i].production_order_num, //생산지시코드
+          "pName": this.searchList[i].product_name,
+          "eName": this.searchList[i].emp_name,
           "totalQnt": this.searchList[i].total_qnt,
-          "passQnt": this.searchList[i].pass_qnt, 
+          "passQnt": this.searchList[i].pass_qnt,
           "rjcQnt": this.searchList[i].rjc_qnt,
-          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'), 
+          "inspecStart": this.dateFormat(this.searchList[i].inspec_start, 'yyyy-MM-dd hh:mm:ss'),
           "inspecStatus": this.searchList[i].inspec_status
 
         }
@@ -352,11 +377,11 @@ export default {
 
     //최종 처리 버튼
     openModal() {
-      if (this.rowData2.length == 0){
+      if (this.rowData2.length == 0) {
         notify({
-            title: "저장실패",
-            text: "검사처리내역이 비었습니다.",
-            type: "error", // success, warn, error 가능
+          title: "저장실패",
+          text: "검사처리내역이 비었습니다.",
+          type: "error", // success, warn, error 가능
         });
         return;
       }
@@ -448,6 +473,76 @@ export default {
 
   .search {
     margin-top: 24px;
+  }
+}
+
+//검색창 라벨
+.mb-4{
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+}
+
+//모달
+.modal-css {
+  h4 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #555;
+  }
+
+  .defect-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+  }
+
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+  input,
+  select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s;
+  }
+
+  input:focus,
+  select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+
+  button {
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  .mt-2 {
+    margin-top: 10px;
+  }
+
+  .mt-3 {
+    margin-top: 15px;
   }
 }
 </style>

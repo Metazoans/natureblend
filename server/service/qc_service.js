@@ -47,9 +47,9 @@ const requestInspectionForM = async (insertObj) => {
   let successNum = 0;
 
   for (let item of arr) {
-    let { orderCode, mName, ordQty } = item
+    let { orderCode, mName, ordQty, empNum } = item
 
-    let result = await mysql.query(sql, [orderCode, mName, ordQty]);
+    let result = await mysql.query(sql, [empNum, orderCode, mName, ordQty]);
     if (result[0][0].result == 'Success!') {
       successNum++;
     }
@@ -375,12 +375,17 @@ const loadTestDetails = async() => {
 
 
 //공정검사 - 음료검사조회(공통 - 전체, 선택 조회 모두 포함)
-const findQCPB = async (status, pName, startDate, endDate)=>{
+const findQCPB = async (status, pName, startDate, endDate, passResult)=>{
 
   let searchList = [];
 
   if (status != undefined && status != null && status != '') {
     let search = `qb.inspec_status LIKE \'%${status}%\'`;
+    searchList.push(search);
+  }
+
+  if (passResult!= undefined && passResult != null && passResult != '') {
+    let search = `qb.inspec_result LIKE \'${passResult}\'`;
     searchList.push(search);
   }
 

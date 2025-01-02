@@ -71,6 +71,13 @@
 
           <div class="row gx-3 gy-2 align-items-center">
             <div class="col-2">
+              <label for="clientNum">업체 번호</label>
+            </div>
+            <div class="col-6">
+              <input class="form-control" type="number" id="clientNum" name="clientNum" v-model="machineData.client_num"/>
+            </div>
+
+            <!-- <div class="col-2">
               <a>제작 업체</a>
             </div>
             <div class="col-3">
@@ -80,7 +87,7 @@
                 <option value="2">거래처2</option>
                 <option value="3">거래처3</option>
               </select>
-            </div>
+            </div> -->
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
@@ -103,10 +110,11 @@
 
           <div class="row gx-3 gy-2 align-items-center">
             <div class="col-2">
-              <label for="empNum">등록자</label>
+              <label for="empNum" v-if="!isUpdate">등록자</label>
+              <label for="empNum" v-else>수정자</label>
             </div>
             <div class="col-6">
-              <input class="form-control" type="number" id="empNum" name="empNum" v-model="machineData.emp_num"/>
+              <input class="form-control" type="number" id="empNum" name="empNum" v-model="machineData.emp_num" readonly/>
             </div>
           </div>
 
@@ -125,8 +133,8 @@
               class="btn bg-gradient-warning mb-0 toast-btn"
               type="button"
               data-target="warningToast"
-              @click="partNum++"
-              v-if="partNum == 0"
+              @click="partCnt++"
+              v-if="partCnt == 0 && !isUpdate"
             >
               부품 추가
             </button>
@@ -134,11 +142,14 @@
 
         </div>
 
-        <div v-for="i in partNum" :key="i">
+        <div v-for="i in partCnt" :key="i">
           <MachineParts 
             :partDataList="partDataList" 
             :rowNum="i" 
-            :lastNum="partNum" 
+            :lastNum="partCnt" 
+            :isUpdate="isUpdate"
+            :oldPartNum="oldPartNum"
+            :machineData="machineData"
             @add="addClicked" 
             @del="delClicked" 
             @chInput="partInput">
@@ -183,6 +194,8 @@ import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl, localUrl } from '@/utils/commons.js';
 import axios from 'axios';
 
+import { mapMutations } from "vuex";
+
 export default {
   name: "MachineManage",
 
@@ -204,7 +217,7 @@ export default {
         machine_name: '',
         machine_img: '',
         model_num: '',
-        machine_state: 'run',
+        machine_state: '사용',
         client_num: '',
         machine_location: '',
         uph: '',
@@ -212,7 +225,7 @@ export default {
         process_code: '',
         
         // 자동
-        emp_num: 0,
+        emp_num: this.$store.state.loginInfo.emp_num,
       },
       statusList: ["사용", "미사용"], // 작동 상태 옵션
       typeSelect: [], // 설비 분류 객체
@@ -222,14 +235,17 @@ export default {
 
 
       // 부품 데이터
-      partNum: 0,
+      partCnt: 0,
       partDataList: [],
       emptyData: {
+        partNum: 0,
         partName: '',
         yearCycle: 0,
         monthCycle: 0,
         dayCycle: 0,
       },
+
+      oldPartNum: [], // 수정시 기존 부품 정보
     }
   },
   beforeMount() {
@@ -243,7 +259,7 @@ export default {
     if(this.machineNo > 0) {
       // 수정용 설비 정보
       this.getMachineInfo(this.machineNo);
-
+  
       // 부품 정보
       this.getMachinePartInfo(this.machineNo);
     }
@@ -251,9 +267,12 @@ export default {
       this.machineData.buy_date = this.getToday();
     }
 
-
   },
   methods: {
+    // 로그인 정보
+    ...mapMutations(["addLoginInfo"]),
+
+
     // 선택지 정보 가져오기
     async getSelectItem() {
       let result = await axios.get(`${ajaxUrl}/machine/machineType`)
@@ -264,7 +283,9 @@ export default {
     // 모달 동작
     closeModal() {
       this.$emit('closeModal');
-      this.deleteVal();
+      if(!this.isUpdate) // 등록 페이지인경우 데이터 초기화
+        this.deleteVal();
+      // else // 수정 페이지인 경우
     },
     confirm() {
       console.log('confirm 동작 : ', this.machineData);
@@ -283,18 +304,19 @@ export default {
       for(let key in this.machineData){
         this.machineData[key] = '';
       }
-      this.machineData.machine_state = 'run';
-      this.machineData.emp_num = 0;
+      this.machineData.machine_state = '사용';
+      this.machineData.emp_num = this.$store.state.loginInfo.emp_num;
+      this.partCnt = 0;
     },
 
     // insert
     async machineInsert(){
-      console.log('이미지 등록 : ', this.machineData.machine_img);
+      let insertState = this.machineData.machine_state == '사용' ? 'run' : 'stop';
 
       let obj = {
         machine_name: this.machineData.machine_name,// 설비 이름
         machine_img: this.machineData.machine_img,  // 설비 이미지
-        machine_state: this.machineData.machine_state,// 사용 여부
+        machine_state: insertState,// 사용 여부
         model_num: this.machineData.model_num,      // 모델 번호
         client_num: Number(this.machineData.client_num),    // 거래처
         uph: this.machineData.uph,                  // 시간당 생산량
@@ -347,11 +369,10 @@ export default {
                               .catch(err => console.log(err));
       this.machineData = result.data;
       this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
+      this.machineData.emp_num = this.$store.state.loginInfo.emp_num;
     },
     // update
     async machineUpdate() {
-      console.log('이미지 수정 : ', this.machineData.machine_img);
-
       let obj = {
         machine_name: this.machineData.machine_name,// 설비 이름
         machine_img: this.machineData.machine_img,  // 설비 이미지
@@ -377,6 +398,17 @@ export default {
                               .catch(err => console.log(err));
       let updateRes = result.data;
 
+      // 부품 교체시 제거된 부품 삭제
+      for(let i in this.oldPartNum) {
+        console.log(this.oldPartNum[i]);
+        await this.partDelete(this.oldPartNum[i]);
+      }
+      // 부품 교체
+      for(let i in this.partDataList) {
+        console.log('부품 정보 : ', this.partDataList[i].partNum);
+        await this.partUpdate(this.partDataList[i].partNum);
+      }
+
       if(updateRes.result) {
         alert('수정 성공');
         this.$emit('confirm');
@@ -388,8 +420,8 @@ export default {
 
     // 부품 관련
     addClicked() {
-      if(this.partNum < 4) {
-          this.partNum++;
+      if(this.partCnt < 4) {
+          this.partCnt++;
       } else {
         alert('최대 부품 수입니다.');
       }
@@ -402,7 +434,7 @@ export default {
       newArray[3] = {...this.emptyData};
 
       this.partDataList = newArray;
-      this.partNum--;
+      this.partCnt--;
     },
     partInput(row, data) { // 부품 정보 입력 감지 => 자식 컴포넌트에서 입력된 값을 객체 배열에 저장
       this.partDataList[row-1] = data;
@@ -440,29 +472,52 @@ export default {
       }
     },
 
-    // 설비 수정용 부품 정보
+    // 기존 부품 번호
     async getMachinePartInfo(selectNo) {
-      // this.partNum = 0;
       let result = await axios.get(`${ajaxUrl}/machine/machinePartList/${selectNo}`)
                               .catch(err => console.log(err));
 
-      this.partNum = result.data.length;
+      let getArray = [];
       for(let i in result.data) {
         let partNo = result.data[i].part_num;
-        let partInfo = await this.getPartInfo(partNo);
+        getArray.push(partNo);
+      }
+      this.oldPartNum = [...getArray];
+      this.partCnt = result.data.length;
+    },
+    
+    // 기존 부품 삭제
+    async partDelete(pno) {
+      let deleteCheck = true;
+      for(let i in this.partDataList) {
+        if(this.partDataList[i].partNum == pno) {
+          deleteCheck = false;
+        }
+      }
+      if(deleteCheck) {
+        await axios.delete(`${ajaxUrl}/parts/partDelete/${pno}`).catch(err => console.log(err));
+      } 
+    },
 
-        this.partDataList[i].partName = partInfo.part_name;
-        this.partDataList[i].yearCycle = Math.floor(partInfo.replace_cycle / 365);
-        this.partDataList[i].monthCycle = Math.floor((partInfo.replace_cycle % 365) / 30);
-        this.partDataList[i].dayCycle = Math.floor(((partInfo.replace_cycle % 365) % 30));
+    // 부품 교체
+    async partUpdate(pno) {
+      let updateCheck = true;
+      for(let i in this.oldPartNum) {
+        if(this.oldPartNum[i] == pno) {
+          updateCheck = false;
+        }
+      }
+
+      if(updateCheck) {
+        let obj = {
+          replace_date: this.getToday(),
+          machine_num: this.machineNo,
+        }
+        
+        await axios.put(`${ajaxUrl}/parts/partUpdate/${pno}`, obj).catch(err => console.log(err));
       }
     },
-    // 부품 상세 정보
-    async getPartInfo(pno) {
-      let result = await axios.get(`${ajaxUrl}/parts/partInfo/${pno}`)
-                              .catch(err => console.log(err));
-      return result.data;
-    },
+
 
 
     // 날짜 관련
@@ -524,7 +579,8 @@ export default {
         this.fullInput = btnActive;
       },
       deep: true
-    }
+    },
+
   }
 };
 </script>

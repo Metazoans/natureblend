@@ -75,7 +75,7 @@
                         </div>
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="productName">제품명</label>
-                            <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product')" readonly>
+                            <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product',index)" readonly>
                         </div>
                         <Modal
                                 :isShowModal="isShowModal.product"
@@ -109,7 +109,7 @@
                
 
                 <div class="col-auto mt-5 text-center">
-                        <material-button type="button" class="button me-4" color="success" @click="insertOrder">저장</material-button>
+                        <material-button type="button" class="button me-4" color="success" @click="insertOrder">등록</material-button>
                         <material-button type="button" class="button" color="warning" @click="resetSearch">초기화</material-button>
                 </div>
             </div>
@@ -124,6 +124,7 @@ import ComList from "@/views/sales/Order/clientModal.vue";
 import EmpList from "@/views/sales/Order/EmpModal.vue";
 import proList from "@/views/sales/Order/ProductModal.vue"
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import userDateUtils from '@/utils/useDates.js';
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
 
@@ -150,6 +151,7 @@ export default{
             perPrice:'',
 
             materials:[],
+            indexNum: null, // 선택된 index 저장
 
             //거래처 모달 
             searchCom:"", // 저장 될 거래처 명 
@@ -187,8 +189,11 @@ export default{
         this.selectedProCode = product.product_code;
         this.selectedProName = product.product_name;
     },
-    openModal(modalType) {
+    //제품 index 가져오기 
+    openModal(modalType,index) {
         this.isShowModal[modalType] = true; 
+        this.indexNum = index; //현재 선택된 index
+        console.log(this.indexNum);
         console.log(`${modalType} modal open`);
     },
     confirm(modalType){
@@ -199,15 +204,19 @@ export default{
       } else if(modalType === 'product'){
         this.productCode = this.selectedProCode;
         this.productName = this.selectedProName;
+        
+        console.log(this.materials[this.indexNum])
+        this.materials[this.indexNum]['productCode'] = this.productCode;
+        this.materials[this.indexNum]['productName'] = this.productName;
 
         //순서대로 공백이면 차례대로 넣기 
-        for(let i=0; i<this.materials.length; i++){
-            if(this.materials[i]['productCode'] == ''){
-            this.materials[i]['productCode'] = this.productCode;
-            this.materials[i]['productName'] = this.productName;
-            break;
-            }
-        }
+        // for(let i=0; i<this.materials.length; i++){
+        //     if(this.materials[i]['productCode'] == ''){
+        //     this.materials[i]['productCode'] = this.productCode;
+        //     this.materials[i]['productName'] = this.productName;
+        //     break;
+        //     }
+        // }
 
 
         console.log(this.materials);
@@ -218,6 +227,10 @@ export default{
     },
     closeModal(modalType) {
         this.isShowModal[modalType] = false;
+    },
+
+    dateFormat(value, format) {
+          return userDateUtils.dateFormat(value, format);
     },
     addMaterial() {
         
@@ -237,7 +250,7 @@ export default{
         }    
     },
 
-    
+    // materials 추가 삭제 
     deleteMaterial(index){
         //console.log("deleteMaterial실행");
         // let index = parseInt(this.value);
@@ -282,6 +295,11 @@ export default{
         }
         if (this.materials.length === 0) {
             this.$notify({ text: '주문 품목을 추가하세요.', type: 'error' });
+            return;
+        }
+       
+        if(new Date(this.dueDate) < new Date() ){
+            this.$notify({ text: '납기일이 오늘보다 이전입니다.', type: 'error' });
             return;
         }
 

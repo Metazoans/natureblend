@@ -65,6 +65,8 @@
  import { ajaxUrl } from '@/utils/commons.js';
  // import userDateUtils from '@/utils/useDates.js';
  import theme from "@/utils/agGridTheme";
+ import { mapMutations } from "vuex";
+
  
  export default {
    data() {
@@ -126,7 +128,29 @@
        theme:theme,
      };
    },
+   ...mapMutations(["addLoginInfo"]),
+      async checkLogin(){
+          this.loginInfo = this.$store.state.loginInfo;
+          console.log('직업',this.loginInfo);
+          if(this.loginInfo.job === '관리자'){
+            console.log('성공');
+          }else{
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$router.push({ name : 'MainPage' });
+          }
+      },
    methods: {
+      ...mapMutations(["addLoginInfo"]),
+      async checkLogin(){
+          this.loginInfo = this.$store.state.loginInfo;
+          console.log('직업',this.loginInfo);
+          if(this.loginInfo.job === '관리자'){
+            console.log('성공');
+          }else{
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$router.push({ name : 'MainPage' });
+          }
+      },
       async materialList(){
          const result = await axios.get(`${ajaxUrl}/materialList`)
                               .catch(err => console.log(err));
@@ -222,7 +246,8 @@
    },
    // 화면 생성되는 시점
    mounted() {
-       this.materialList();
+      this.checkLogin();
+      this.materialList();
    },
  };
  </script>

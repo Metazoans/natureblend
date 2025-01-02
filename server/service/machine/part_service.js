@@ -47,6 +47,11 @@ const delPartInfo = async (pno) => {
   }
 }
 
+// 교체 가능한 부품 목록
+const findChangeParts = async (mType) => {
+  let list = await mariadb.query('changePartList', [mType]);
+  return list;
+}
 
 
 module.exports = {
@@ -55,5 +60,6 @@ module.exports = {
   createNewPart,
   updatePartInfo,
   delPartInfo,
+  findChangeParts,
 
 };

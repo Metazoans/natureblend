@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-if="loginPass" >
     
     <sidenav
     :custom_class="color"
@@ -19,6 +19,9 @@
     </main>
     <notifications />
 </div>
+<div id="app" v-else>
+  <LoginPage/>
+</div>
 
 </template>
 <script>
@@ -26,6 +29,7 @@ import Sidenav from "./examples/Sidenav";
 import { mapMutations, mapState } from "vuex";
 import AppHeader from './components/AppHeader.vue';
 import {Notifications} from "@kyvg/vue3-notification";
+import LoginPage from '@/views/standard/login.vue';
 
 export default {
   name: "App",
@@ -33,9 +37,10 @@ export default {
     Notifications,
     Sidenav,
     AppHeader,
+    LoginPage,
   },
   methods: {
-    ...mapMutations(["toggleConfigurator", "navbarMinimize"]),
+    ...mapMutations(["toggleConfigurator", "navbarMinimize","addLoginInfo"]),
   },
   computed: {
     ...mapState([
@@ -51,8 +56,17 @@ export default {
       "hideConfigButton",
     ]),
   },
-
+  data() {
+    return {
+      loginPass: false,
+    };
+  },
   beforeMount() {
+    
+    if(this.$store.state.loginInfo.name){
+      this.loginPass = true;
+      console.log('로그인정보',this.$store.state.loginInfo);
+    }
     this.$store.state.isTransparent = "bg-transparent";
 
     const sidenav = document.getElementsByClassName("g-sidenav-show")[0];

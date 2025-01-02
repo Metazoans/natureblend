@@ -9,6 +9,12 @@ router.get('/material/orderplan', async (req, res)=>{
   res.send(materialList);
 });
 
+// 자재리스트 조회 ( 개별 자재 주문 할때 사용)
+router.get('/material/material_list', async (req, res)=>{
+  let materialList1 = await materialService.material_list();
+  res.send(materialList1);
+});
+
  // 발주 필요 자재 조회 need_order_material (needOrderMaterial)
  //PLAN2412141
  router.get('/material/needOrderMaterial/:plan_code', async (req, res)=>{

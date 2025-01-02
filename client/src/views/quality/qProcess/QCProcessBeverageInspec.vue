@@ -9,9 +9,9 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row g-3">
+      <div class="row gx-3 p-4 rounded border shadow">
         <!-- 날짜 범위 -->
-        <div class="col-md-4">
+        <div class="col-md-4 ps-5">
           <label for="startDate" class="form-label">날짜 범위</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
@@ -43,11 +43,14 @@
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
     <h4>검사상세정보</h4>
-    <p>검사항목 클릭 => 불량항목, 수량입력(없으면 그냥 저장)=> 작성완료한 항목 체크후 '검사완료'버튼 클릭</p>
+    <div class="ps-4">
+      <p>각 검사 수치를 입력한 뒤, 저장을 눌러주세요.</p>
+    </div>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
+        :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
 
@@ -63,10 +66,18 @@
     <h4>검사처리내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20" style="height: 400px;">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
+        style="height: 400px;" :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
-    <material-button size="md" class="mt-3" v-on:click="openModal">검사완료</material-button>
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <material-button class="btn btn-success" size="lg" @click="openModal">저장</material-button>
+      </div>
+      <div class="col-auto">
+        <material-button class="btn btn-warning" size="lg" @click="searchRequestAll">초기화</material-button>
+      </div>
+    </div>
   </div>
   <!-- 검사처리내역 끝 -->
 
@@ -75,26 +86,22 @@
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
     @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId)">
     <template v-slot:list>
-      <h4>검사 상세 정보</h4>
-      <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
-      <p>제품번호: {{ selectedRow.productCode }}</p>
-      <p>음료 제품명: {{ selectedRow.pName }}</p>
-      <b>산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이의 현재 수치를 입력하세요</b>
-      <!-- <p>{{ this.defectDetailsMap }}</p> -->
-      <hr>
-      <!-- <p>{{ this.testDetails[selectedRow.productCode] }}</p> -->
+      <div class="modal-css">
+        <h4>검사 상세 정보</h4>
+        <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
+        <p>제품번호: {{ selectedRow.productCode }}</p>
+        <p>음료 제품명: {{ selectedRow.pName }}</p>
+        <b>산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이의 현재 수치를 입력하세요</b>
+        <hr />
 
-      <!-- 검사 항목 리스트 -->
-      <div v-for="(item, index) in this.defectDetailsMap[selectedRow.qcProcessId]" :key="index" class="inspection-item">
-        <label>
-          {{ item.item_name }} : [허용치 {{ item.etc_min }} ~ {{ item.etc_max }} {{ item.item_unit }}]:
-        </label>
-        <input type="number" v-model.number="item.input_value" placeholder="값을 입력하세요" />
+        <!-- 검사 항목 리스트 -->
+        <div v-for="(item, index) in defectDetailsMap[selectedRow.qcProcessId]" :key="index" class="inspection-item">
+          <label>
+            {{ item.item_name }} : [ 허용치 {{ item.etc_min }} ~ {{ item.etc_max }} {{ item.item_unit }} ]:
+          </label>
+          <input type="number" v-model.number="item.input_value" class="form-control mt-2" placeholder="값을 입력하세요" />
+        </div>
       </div>
-
-
-
-
     </template>
   </Modal>
 
@@ -104,7 +111,9 @@
     </template>
   </Modal>
 
-
+  <div style="display: none">
+    <CustomNoRowsOverlay />
+  </div>
 
 </template>
 
@@ -124,9 +133,12 @@ import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 const { notify } = useNotification();  // 노티 내용변수입니다
 
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
+
 export default {
   name: "음료검사기록",
-  components: { MaterialButton, Modal },
+  components: { MaterialButton, Modal, CustomNoRowsOverlay },
   data() {
     return {
       //검색 관련
@@ -139,10 +151,11 @@ export default {
       searchList: [],
 
       //ag grid 관련
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "공정검사번호", field: "qcProcessId", resizable: false, cellStyle: { textAlign: "center" }, flex: 1  },
+        { headerName: "공정검사번호", field: "qcProcessId", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
         { headerName: "공정작업번호", field: "processNum", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
         { headerName: "생산지시번호", field: "productionOrderNum", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
         { headerName: "제품명", field: "pName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
@@ -310,7 +323,7 @@ export default {
       if (defectDetails.some(detail => detail.input_value == null || detail.input_value === "" || detail.input_value < 0)) {
         notify({
           title: "입력실패",
-          text: "수치 값 중 비워있거나 음수인 수가 있습니다.",
+          text: "입력칸의 값이 비워있거나 음수인 수가 있습니다.",
           type: "warn", // success, warn, error 가능
         });
         return;
@@ -369,11 +382,11 @@ export default {
 
     //최종 처리 버튼
     openModal() {
-      if (this.rowData2.length == 0){
+      if (this.rowData2.length == 0) {
         notify({
-            title: "저장실패",
-            text: "검사처리내역이 비었습니다.",
-            type: "error", // success, warn, error 가능
+          title: "저장실패",
+          text: "검사처리내역이 비었습니다.",
+          type: "error", // success, warn, error 가능
         });
         return;
       }
@@ -383,7 +396,7 @@ export default {
       // console.log(this.completedDefectDetailsMap);
     },
     async confirm() {
-      console.log('저장처리!')
+      console.log('저장처리!');
       // 객체를 배열로 변환
       let completedDefectDetailsArray = [];
       for (let qcId in this.completedDefectDetailsMap) {
@@ -468,21 +481,70 @@ export default {
   }
 }
 
-.inspection-item {
-  display: flex;
-  justify-content: space-between;
-  /* 라벨과 입력란 간격 조정 */
-  margin-bottom: 10px;
-  /* 항목 간 여백 */
+//검색창 라벨
+.mb-4{
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
 }
 
-label {
-  flex: 1;
-  /* 라벨과 입력란 비율을 조정 */
-}
+//모달
+.modal-css {
+  /* 제목 스타일 */
+  h4 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+  }
 
-input {
-  width: 40%;
-  /* 입력란의 너비 조정 */
+  /* 일반 텍스트 스타일 */
+  p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #555;
+  }
+
+  /* 강조 텍스트 */
+  b {
+    display: block;
+    margin-bottom: 10px;
+    color: #000;
+    font-size: 1rem;
+  }
+
+  /* 검사 항목 스타일 */
+  .inspection-item {
+    margin-bottom: 15px;
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+  }
+
+  hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 1px solid #ccc;
+  }
 }
 </style>

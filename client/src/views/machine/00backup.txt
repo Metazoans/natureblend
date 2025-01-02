@@ -14,8 +14,8 @@
 =================================================================================================
 
 <할일>
-설비 수정에서 부품 수정 및 삭제
-유효성 체크 => 로그인 정보 디코의 협업에 사용법 있음
+유효성 체크
+
 
 
 [레이아웃]
@@ -29,6 +29,9 @@
 
 
 <작업완료>
+설비 수정에서 부품 수정 및 삭제
+로그인 사원 권환 확인
+
 
 
 
@@ -55,6 +58,28 @@ this.$notify({
 <session>
 
 == options ==
+import { mapMutations } from "vuex";
+
+  data() {
+    return {
+      // 로그인 사원 권한 체크
+      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.job == '관리자' ? true : false,
+
+  methods: {
+    // 로그인 정보
+    ...mapMutations(["addLoginInfo"]),
+
+
+== composition ==
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const checkJob = ref(
+  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.job == '관리자' ? true : false
+);
+
+
 <!-- 모달 샘플 -->
 <template>
   <div>

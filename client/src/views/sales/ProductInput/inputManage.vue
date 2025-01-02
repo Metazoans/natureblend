@@ -56,7 +56,7 @@
             <div class="d-flex">
          
                 <!-- 품질검사 조회(입고 안된 것들 )-->
-                <div class="grid-container" v-show="QtData.length != 0">
+                <div class="grid-container">
                     <ag-grid-vue
                     style ="width: 850px; height: 500px;"
                     :rowData="QtData"
@@ -74,7 +74,7 @@
                 <div style="display: none">
                     <CustomNoRowsOverlay/>
                 </div>
-                <div class= "select-container"  v-show="QtData.length != 0">
+                <div class= "select-container" >
                     <div class="d-flex flex-column justify-content-center ps-5 pt-5" style="height: 200px;">
                             <!--담당자 선택 -->
                         <div class="row align-items-center mb-3">
@@ -121,7 +121,7 @@
                     </div> 
                     <!--검색 및 초기화-->
                     <div class=" pt-5 text-center ">
-                        <material-button  color="success" class="button" @click="tempInputInfo">입력</material-button>
+                        <material-button  color="success" class="button" @click="tempInputInfo">입고</material-button>
                         <material-button color="warning" class="button" @click="resetEmpWar">초기화</material-button>
                     </div>
                 </div>
@@ -133,10 +133,10 @@
                 :rowData="tempInput"
                 :columnDefs="columntempInput"
                 :theme="theme"
-                @grid-ready="onGridReady"
+                @grid-ready="onReady1"
                 :noRowsOverlayComponent="noRowsOverlayComponent"
                 :editType="'fullRow'"
-                :row-selection="'multiple'"
+                :rowSelection="'multiple'"  
                 :pagination="true"
                 :paginationPageSize="10"
                 />
@@ -194,7 +194,8 @@ export default{
             productCode:'', //저장될 제품 코드 
 
             //검색어 검색 (그리드 안)
-            inputListsearch: "", //검색어 1 (제품)
+            inputListsearch: "", //검색어 1 
+            inputListsearch1 : "",//검색어2
           
 
             // 품질검사 조회 결과 
@@ -217,6 +218,8 @@ export default{
              //직원  모달
             searchEmpName:"", // 저장될 직원 명 
             selectedEmpName:"", //선택될 직원 명 
+            selectedEmpNum :"", //선택될 직원번호
+            searchEmpNum:"", // 저장될 직원번호
 
             //창고모달   
             warehouseCode : "", // 저장될 창고번호
@@ -274,6 +277,7 @@ export default{
         },
         selectemp(emp){
             this.selectedEmpName = emp.name;
+            this.selectedEmpNum = emp.emp_num;
         },
         selectwarehouse(warehouse){
             this.selectedWarehouseCode = warehouse.warehouse_code;
@@ -290,6 +294,7 @@ export default{
                 this.productCode = this.selectedProCode;
             } else if (modalType === 'emp') {
                 this.searchEmpName = this.selectedEmpName;
+                this.searchEmpNum = this.selectedEmpNum;
             } else if (modalType === 'warehouse'){
                 this.warehouseCode = this.selectedWarehouseCode;
                 this.warehouseName = this.selectedWarehouseName;
@@ -343,10 +348,11 @@ export default{
 
         onReady(event){
             this.gridApi = event.api;
+            this.gridColumnApi = event.columnApi;
             //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
-            const paginationPanel = allPanels[0];
+            const paginationPanel = allPanels[1];
             if (paginationPanel) {
                // 컨테이너 생성
                const container = document.createElement('div');
@@ -379,6 +385,47 @@ export default{
 
                 //페이징 영역에 컨테이너삽입
                 paginationPanel.insertBefore(container,paginationPanel.firstChild);
+            }
+        },
+        onReady1(event){
+            this.gridApi = event.api;
+            this.gridColumnApi = event.columnApi;
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //페이징 영역에 버튼 만들기 
+            const allPanels = document.querySelectorAll('.ag-paging-panel');
+            const paginationPanel1 = allPanels[2];
+            if (paginationPanel1) {
+               // 컨테이너 생성
+               const container = document.createElement('div');
+               container.style.display = 'flex';
+               container.style.alignItems = 'center';
+               container.style.gap = '5px'; // 버튼과 입력 필드 간격
+
+               
+                //입력필드생성 
+                const inputText1 = document.createElement('input');
+                inputText1.type = 'text';
+                inputText1.placeholder = '검색';
+                inputText1.style.padding = '5px';
+                inputText1.style.width = '250px';
+                inputText1.style.border = '1px solid #ccc';
+                inputText1.style.borderRadius = '4px';
+
+                //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
+                inputText1.addEventListener('input',(event)=>{
+                    const value = event.target.value;
+                    //console.log("입력된 값:", value);
+
+                    //검색로직추가기능
+                    this.inputListsearch1 = value;
+                });
+
+                //컨테이너에 버튼, 입력 필드 추가
+                
+                container.appendChild(inputText1);
+
+                //페이징 영역에 컨테이너삽입
+                paginationPanel1.insertBefore(container,paginationPanel1.firstChild);
             }
         },
         resetEmpWar(){
@@ -418,6 +465,7 @@ export default{
                 qtId : this.qtId,
                 inspectDate : this.inspectDate,
                 employeeName : this.searchEmpName,
+                employeeNum : this.searchEmpNum,
                 warehouseName : this.warehouseName,
                 warehouseCode : this.warehouseCode,
                 processNum: this.tempProcessNum,
@@ -443,12 +491,14 @@ export default{
         resetTempInput(){
             this.tempInput = []
         },
-
+        //입고추가 
         async inputInsert(){
-            const selectedRows = this.gridApi.getSelectedRows(); 
+            
+            const selectedRows = this.gridApi.getSelectedRows();
+            console.log("선택된값==",selectedRows ,"임시보관값==",this.tempInput); 
 
-            let empName = selectedRows[0].employeeName;
-            let warehouseCode = selectedRows[0].warehouseCode;
+            let empNum = selectedRows[0].employeeNum;
+            //console.log(empName,warehouseCode);
             
 
             
@@ -457,6 +507,7 @@ export default{
             let inputAmounts = [];
             let qtIds = [];
             let inspectDates = [];
+            let warehouseCodes = [];
 
             selectedRows.forEach(row => {
                 console.log("row:",row.tempProductCode , row.processNum , row.inputAmount , row.qtId);
@@ -465,6 +516,7 @@ export default{
                 inputAmounts.push(row.inputAmount);
                 qtIds.push(row.qtId);
                 inspectDates.push(row.inspectDate);
+                warehouseCodes.push(row.warehouseCode);
             });
 
             let inputInfo = {
@@ -473,10 +525,10 @@ export default{
                 input_amount : JSON.stringify(inputAmounts),
                 qc_packing_id : JSON.stringify(qtIds),
                 inspec_end : JSON.stringify(inspectDates),
-                name : empName,
-                warehouse_code : warehouseCode,
+                warehouse_code : JSON.stringify(warehouseCodes),
+                name : empNum,
             }
-            console.log(inputInfo);
+            console.log("보내는데이터:",inputInfo);
             let result =
                 await axios.post(`${ajaxUrl}/input/insert`,inputInfo)
                             .catch(err => console.log(err));

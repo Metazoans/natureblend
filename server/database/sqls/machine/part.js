@@ -14,7 +14,8 @@ WHERE machine_num IS NULL
 
 // 부품 상세 정보
 const partInfo = `
-SELECT part_name
+SELECT part_num
+       , part_name
        , replace_date
        , replace_cycle
        , part_location
@@ -44,6 +45,16 @@ DELETE FROM machine_part
 WHERE part_num = ?
 `;
 
+// 부품 교체?
+const changePartList = `
+SELECT part_num
+       , part_name
+       , machine_type
+FROM machine_part
+WHERE machine_type like ?
+AND machine_num IS NULL
+`
+
 
 
 module.exports = {
@@ -52,5 +63,6 @@ module.exports = {
   partInsert,
   partUpdate,
   partDelete,
+  changePartList,
 
 }

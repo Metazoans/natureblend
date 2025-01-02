@@ -1,11 +1,11 @@
 <template>
     <div class="d-flex flex-row mb-3">
         <!--<div class="P-0"  style="display: flex; align-items: center; justify-content: center; height: 200px;">-->
-        <div class="P-0">
+        <div class="P-0" style="height: 110px; display: flex; justify-content: center; align-items: center;">
             <img src="http://yeonsus.com/academy/materialOrder.gif" alt="자재검사대기" height="75" width="75"/>
         </div>
         <div class="P-0">
-            <div style="height: 170px; width: 190px;">
+            <div style="height: 150px; width: 190px;">
                 <table class="table align-items-center text-center">
                     <tr>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
@@ -46,5 +46,10 @@
     table tr td {
         margin: 0;
         padding: 0;
+    }
+    img {
+        border-radius: 50px;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 </style>

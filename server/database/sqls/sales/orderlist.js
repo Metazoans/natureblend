@@ -292,6 +292,7 @@ DECLARE v_result_value INT;
 
 DECLARE i INT DEFAULT 1;
 DECLARE product_code_array_length INT;
+DECLARE product_code_value TEXT;
 DECLARE product_num_value TEXT;
 DECLARE per_price_value TEXT;
 DECLARE order_code_value TEXT;
@@ -315,9 +316,11 @@ WHILE i <= product_code_array_length DO
 	SET product_num_value  = JSON_UNQUOTE(JSON_EXTRACT(v_product_num_json_array , CONCAT('$[', i - 1, ']')));
     SET per_price_value   = JSON_UNQUOTE(JSON_EXTRACT(v_per_price_json_array  , CONCAT('$[', i - 1, ']')));
     SET order_code_value = JSON_UNQUOTE(JSON_EXTRACT(v_order_code_json_array  , CONCAT('$[', i - 1, ']')));
+    SET product_code_value = JSON_UNQUOTE(JSON_EXTRACT(v_product_code_json_array  , CONCAT('$[', i - 1, ']')));
     -- 주문정보 업데이트 
     UPDATE orders
 	SET order_amount = product_num_value,
+		product_code = product_code_value,
 		per_price = per_price_value,
         total_price = product_num_value *  per_price_value
 	WHERE orderlist_num = v_orderlist_num AND order_num = order_code_value;
@@ -401,9 +404,53 @@ FROM orders o left join product p
                      ON o.order_num = op.order_num
             	left join returnlists r
     						ON op.output_num = r.output_num
-WHERE o.orderlist_num= 34
+WHERE o.orderlist_num= ?
 AND o.order_status != 'preparing'
 AND r.output_num IS NULL`;
+// AND op.output_num NO IN (SELECT output_num FROM returnlists)
+
+//미출고주문만 삭제 
+/**DROP PROCEDURE deleteOrders;
+DELIMITER //
+CREATE PROCEDURE deleteOrders
+(
+IN v_order_num_json_array TEXT
+)
+BEGIN
+DECLARE i INT DEFAULT 1;
+DECLARE v_change_num INT;
+DECLARE order_num_array_length INT;
+DECLARE order_num_value TEXT;
+
+    -- 트렌젝션 시작
+    START TRANSACTION;
+    
+-- JSON 배열 길이 계산
+SET order_num_array_length = JSON_LENGTH(v_order_num_json_array);
+
+WHILE i <= order_num_array_length DO 
+	SET order_num_value = JSON_UNQUOTE(JSON_EXTRACT(v_order_num_json_array , CONCAT('$[', i - 1, ']')));
+	-- 주문 삭제 
+	DELETE FROM orders 
+	WHERE order_num = order_num_value;
+    
+    -- 변경된 행 체크 
+    SET v_change_num = ROW_COUNT();
+		IF v_change_num = 0 THEN 
+				-- 오류 발생 시 롤백
+					rollback;
+		END IF;
+	SET i = i + 1;
+	END WHILE;
+    -- 문제없을때
+    COMMIT;
+
+END//
+DELIMITER ;
+
+CALL deleteOrders ('[82]'); */
+const deleteOrders = 
+`CALL deleteOrders (?)`;
 
 module.exports = {
     orderList,
@@ -417,5 +464,6 @@ module.exports = {
     orderListDelete,
 	orderInfo,
 	shippedOrder,
+	deleteOrders,
 
 }

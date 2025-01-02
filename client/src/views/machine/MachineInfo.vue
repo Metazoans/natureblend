@@ -16,6 +16,7 @@
               data-target="warningToast"
               @click="machineUpdate"
               style="margin: 5px;"
+              :disabled="!checkJob"
             >
               설비 수정
             </button>
@@ -27,6 +28,7 @@
               data-target="warningToast"
               @click="machineDelete"
               style="margin: 5px;"
+              :disabled="!checkJob"
             >
               설비 제거
             </button>
@@ -143,16 +145,19 @@ import { ajaxUrl } from '@/utils/commons.js';
 import userDateUtils from "@/utils/useDates.js";
 import MachineManage from "./MachineManage.vue";
 
+import { mapMutations } from "vuex";
+
 export default {
   name: "machineInfo",
-  setup() {
-  },
 
   components: {
     MachineManage,
   },
   data() {
     return {
+      // 로그인 사원 권한 체크
+      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.job == '관리자' ? true : false,
+
       machineData: {},
       machinePrdData: {},
       machinePartList: [],
@@ -166,8 +171,13 @@ export default {
     this.getMachineInfo(this.selectNo);
     this.getMachinePrdInfo(this.selectNo);
     this.getMachinePartInfo(this.selectNo);
+
+    console.log(this.$store.state.loginInfo);
   },
   methods: {
+    // 로그인 정보
+    ...mapMutations(["addLoginInfo"]),
+
     // 설비 상세 정보
     async getMachineInfo(selectNo) {
       let result = await axios.get(`${ajaxUrl}/machine/machineInfo/${selectNo}`)
@@ -187,11 +197,14 @@ export default {
     async getMachinePartInfo(selectNo) {
       let result = await axios.get(`${ajaxUrl}/machine/machinePartList/${selectNo}`)
                               .catch(err => console.log(err));
+
+      let newPartInfo = [];
       for(let i in result.data) {
         let partNo = result.data[i].part_num;
         let partInfo = await this.getPartInfo(partNo);
-        this.machinePartList.push(partInfo);
+        newPartInfo.push(partInfo);
       }
+      this.machinePartList = [...newPartInfo];
     },
     // 부품 상세 정보
     async getPartInfo(pno) {
@@ -205,10 +218,10 @@ export default {
       this.isShowModal = !this.isShowModal;
     },
     confirmModal() {
-      console.log('상세페이지 업데이트 완료');
       let selectNo = this.$route.params.mno;
       this.getMachineInfo(selectNo);
       this.getMachinePrdInfo(selectNo);
+      this.getMachinePartInfo(selectNo);
       this.closeModal();
     },
     closeModal() {
@@ -284,9 +297,6 @@ export default {
 
 .mname {
   text-align: left;
-}
-.mdata .row {
-  align-items: center;
 }
 .mdata .row .col {
   height: 60px;
