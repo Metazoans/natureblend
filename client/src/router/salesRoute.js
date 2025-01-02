@@ -10,71 +10,127 @@ import lotInventory from '@/views/sales/lotInventory.vue'
 import returnManage from '@/views/sales/ProductReturn/returnManage.vue';
 import returnList from '@/views/sales/ProductReturn/returnList.vue';
 import outputList from '@/views/sales/ProductOutput/outputList.vue';
+import store from '@/store/index.js'
+import { notify } from "@kyvg/vue3-notification";
+
+const checkAuth = (to, next) => {
+    if(!store.state.loginInfo.name) {
+        notify({
+            text: "로그인이 필요한 페이지입니다.",
+            type: 'error',
+        });
+        next(false)
+    } else if(store.state.loginInfo.job_num !== 1) {
+        notify({
+            text: "영업부서 직원만 접근 가능합니다.",
+            type: 'error',
+        });
+        next(false)
+    } else {
+        next()
+    }
+}
 
 
 const salesRoute = [
     {
         path:'',
-        redirect :{ name : 'salesList'}
+        redirect :{ name : 'salesList'},
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
     {
         path:'/orderForm/insert',
         name :'orderForm',
-        component: orderForm
+        component: orderForm,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
     {
         path:'/orderlist/search',
         name :'orderlistSearch',
-        component: orderlistSearch
+        component: orderlistSearch,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
 
     {
         path:'/orderlist/orderinfo/:no',
         name : 'orderInfo',
-        component: orderInfo
+        component: orderInfo,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
 
     {
         path:'/output/management',
         name:'outputManage',
-        component:outputManage
+        component:outputManage,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
     {
         path:'/output/outputlist',
         name:'outputList',
-        component :outputList
+        component :outputList,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
 
     {
         path:'/input/management',
         name: 'inputManage',
-        component:inputManage
+        component:inputManage,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
     {
         path : '/input/inputlist',
         name : 'inputList',
-        component:inputList
+        component:inputList,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
     {
         path : '/inventory/product',
         name : 'productInventory',
-        component:productInventory
+        component:productInventory,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
     {
         path:'/inventory/lot',
         name:'lotInventory',
-        component:lotInventory
+        component:lotInventory,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
 
     },
     {
         path:'return/product',
         name : 'returnManage',
-        component:returnManage
+        component:returnManage,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
     {
         path:'return/search',
         name:'returnList',
-        component :returnList
+        component :returnList,
+        beforeEnter: (to, from, next) => {
+            checkAuth(to, next)
+        }
     },
     
 
