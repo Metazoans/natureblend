@@ -63,7 +63,6 @@
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
     <h4>검사상세정보</h4>
-    <p>검사항목 클릭 => 불량항목, 수량입력(없으면 그냥 저장)=> 작성완료한 항목 체크후 '검사완료'버튼 클릭</p>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
