@@ -26,7 +26,7 @@
     <div>
         <Modal :isShowModal="isShowModal" :modalTitle="'자재선택'" :noBtn="'닫기'" :yesBtn="'선택'" @closeModal="closeModal" @confirm="confirm">
             <template v-slot:list>
-                <matelList v-show="isShowModal" />
+                <matelList v-show="isShowModal" @selectmaterial="confirm" />
             </template>
         </Modal>
     </div>
@@ -261,6 +261,11 @@ export default {
         confirm(data) {
             console.log('모달확인', data);
             this.closeModal();
+            const newObject = {
+                material_code: data.material_code,
+                material: data.material_name  + ' (개별주문)',
+            };
+            this.materialdate.push(newObject); // 새로운 객체 추가
         },
         onCellValueChanged(event) {
             //console.log('여기옴');
