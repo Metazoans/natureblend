@@ -133,6 +133,11 @@ const prodOrderList = `
     where po.plan_num = pp.plan_num
 `
 
+const deleteProdOrder = `
+  delete from production_order
+  where production_order_num in (?)
+`
+
 module.exports = {
     waitingPlanList,
     processFlow,
@@ -141,5 +146,6 @@ module.exports = {
     insertProductionOrder,
     insertHoldingStock,
     insertProcessWork,
-    prodOrderList
+    prodOrderList,
+    deleteProdOrder
 }

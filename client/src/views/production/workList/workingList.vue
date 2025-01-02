@@ -246,22 +246,22 @@ export default {
     async startPartialWork(partialWork) {
       if(!this.searchEmp.emp_num) {
         this.$notify({
-          text: "사원을 선택해주세요.",
-          type: 'fail',
+          text: "작업자를 선택해주세요.",
+          type: 'error',
         });
         return
       }
       if(!this.searchMachine.machine_num ) {
         this.$notify({
           text: "설비를 선택해주세요.",
-          type: 'fail',
+          type: 'error',
         });
         return
       }
       if(!partialWork.new_process_todo_qty) {
         this.$notify({
           text: "작업량을 입력해주세요.",
-          type: 'fail',
+          type: 'error',
         });
         return
       }

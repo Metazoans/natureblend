@@ -174,12 +174,14 @@ export default {
         this.searchPlan = this.selectedPlan
         this.$emit('getSearchPlan', this.searchPlan)
 
-        this.searchProduct = this.searchPlan.product_name + ' '
-        if(this.searchPlan.capacity > 1000) {
-          this.searchProduct += (this.searchPlan.capacity / 1000) + 'L'
-        } else {
-          this.searchProduct += this.searchPlan.capacity + 'ML'
-        }
+        this.searchProduct = this.searchPlan.product_name
+
+        // this.searchProduct = this.searchPlan.product_name + ' '
+        // if(this.searchPlan.capacity > 1000) {
+        //   this.searchProduct += (this.searchPlan.capacity / 1000) + 'L'
+        // } else {
+        //   this.searchProduct += this.searchPlan.capacity + 'ML'
+        // }
 
         this.getProcessFlow(this.searchPlan.product_code)
         await this.getBom(this.searchPlan.product_code)
