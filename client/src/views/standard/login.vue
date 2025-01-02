@@ -117,9 +117,20 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: white;
   }
-  
+  .login-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('@/assets/img/illustrations/login.webp');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5; /* 투명도 설정 */
+    z-index: -1; /* 배경을 뒤로 보냄 */
+  }
   .login-form {
     background-color: white;
     padding: 20px;
