@@ -175,6 +175,7 @@ export default {
     async getProdOrderList() {
       let result = await axios.get(`${ajaxUrl}/production/order`)
           .catch(err => console.log(err));
+      this.rowData = []
 
       if(result.data.length === 0) {
         return
