@@ -86,14 +86,14 @@ export default {
       rowDataNeed: [],
       columnDefsNeed: [
         { headerName: "자재명", field: 'needMaterialName'},
-        { headerName: "용량", field: 'needAmount', cellStyle: { textAlign: 'right' } },
+        { headerName: "용량(g 또는 ml)", field: 'needAmount', cellStyle: { textAlign: 'right' } },
       ],
 
       rowDataStock: [],
       columnDefsStock: [
         { headerName: "자재Lot번호", field: 'stockLot', cellStyle: { textAlign: 'center' }},
         { headerName: "자재명", field: 'stockMaterialName' },
-        { headerName: "용량", field: 'stockAmount', cellStyle: { textAlign: 'right' } },
+        { headerName: "용량(g 또는 ml)", field: 'stockAmount', cellStyle: { textAlign: 'right' } },
         { headerName: "유통기한", field: 'expiryDate', cellStyle: { textAlign: 'center' } },
         { headerName: "자재코드", field: 'stockMaterialCode', hide: true },
         {
@@ -124,7 +124,7 @@ export default {
         { headerName: "자재명", field: 'useMaterialName' },
         { headerName: "자재코드", field: 'useMaterialCode', hide: true },
         {
-          headerName: "용량",
+          headerName: "용량(g 또는 ml)",
           field: 'useAmount',
           editable: true,
           cellStyle: { textAlign: 'right' },

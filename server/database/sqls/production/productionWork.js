@@ -13,6 +13,7 @@ const workingOrders = `
     from production_order po inner join product p
         on po.product_code = p.product_code
     where po.production_order_status in ('work_waiting', 'work_in_process')
+    order by production_order_num desc
 `
 
 const workForToday = `
