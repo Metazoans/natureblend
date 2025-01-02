@@ -235,7 +235,7 @@ export default {
                 button3.textContent = '개별주문';
                 button3.style.marginRight = '10px';
                 button3.style.cursor = 'pointer';
-                button3.style.backgroundColor = '#4caf50';
+                button3.style.backgroundColor = '#0077ff';
                 button3.style.color = 'white';
                 button3.style.border = 'none';
                 button3.style.padding = '5px 10px';
