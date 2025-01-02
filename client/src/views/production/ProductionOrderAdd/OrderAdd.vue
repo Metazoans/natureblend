@@ -167,6 +167,13 @@ export default {
 
     updateInputData(orderInfo) {
       this.orderInfo = orderInfo
+
+      this.rowDataNeed = this.rowDataNeed.map((data) => {
+        return {
+          ...data,
+          needAmount: data.needAmount * this.orderInfo.prodOrderQty
+        }
+      })
     },
 
     getProcessFlow(processFlow) {

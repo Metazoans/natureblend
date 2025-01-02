@@ -86,7 +86,7 @@ export default {
         planNum: 0,
         productCode: '',
         workDate: '',
-        prodOrderQty: 0,
+        prodOrderQty: 1,
         empNum: 0
       },
 
@@ -218,7 +218,8 @@ export default {
         this.$emit('updateInputData', this.orderInfo)
       },
       deep: true
-    }
+    },
+
   }
 }
 </script>
