@@ -157,6 +157,17 @@ export default {
   },
 
   methods: {
+    focusOnCell() {
+      this.gridApi.ensureIndexVisible(0)
+      this.gridApi.ensureColumnVisible('useAmount')
+
+      // 셀 포커스 및 편집 모드 시작
+      this.gridApi.startEditingCell({
+        rowIndex: 0,
+        colKey: 'useAmount',
+      })
+    },
+
     getSearchPlan(searchPlan) {
       this.searchPlan = searchPlan
     },
@@ -288,7 +299,27 @@ export default {
     },
 
     selectStock(params) {
+      setTimeout(() => {
+        this.focusOnCell()
+      }, 10)
+
       let selectedStock = params.data
+
+      let isStop = false
+      this.rowDataUse.forEach((data) => {
+        if((data.useLotSeq === selectedStock.stockLotSeq) && !isStop) {
+          this.$notify({
+            text: "이미 선택한 자재입니다.",
+            type: 'error',
+          })
+          isStop = true
+        }
+      })
+
+      if(isStop) {
+        return
+      }
+
       this.rowDataUse = [
         ...this.rowDataUse,
         {
