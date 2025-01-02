@@ -9,9 +9,9 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row g-3">
+      <div class="row gx-3 p-4 rounded border shadow">
         <!-- 날짜 범위 -->
-        <div class="col-md-4">
+        <div class="col-md-4 ps-5">
           <label for="startDate" class="form-label">날짜 범위(검사시작일)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
@@ -47,19 +47,18 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" style="height: 700px;">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" style="height: 700px;"
+        :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
   </div>
   <!-- 검사결과 끝 -->
 
   <hr>
-
-
-
+  <div style="display: none">
+       <CustomNoRowsOverlay/>
+  </div>
   
-
-
 </template>
 
 <script>
@@ -74,9 +73,11 @@ import theme from "@/utils/agGridTheme";
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 const { notify } = useNotification();  // 노티 내용변수입니다
 
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
 export default {
-  name: "입고검사",
-  components: { MaterialButton,  },
+  name: "입고검사불량내역",
+  components: { MaterialButton, CustomNoRowsOverlay },
   data() {
     return {
       searchInfo: {
@@ -89,6 +90,8 @@ export default {
       searchList: [],
 
       //ag grid 관련
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
+
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
@@ -202,6 +205,14 @@ export default {
 
   .search {
     margin-top: 24px;
+  }
+}
+//검색창 라벨
+.mb-4{
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
   }
 }
 </style>

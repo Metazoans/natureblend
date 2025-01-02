@@ -9,20 +9,29 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row g-3">
-        <!-- 재고 상태 -->
-        <div class="col-md-2">
-          <label for="qcStat" class="form-label">재고 상태</label>
+      <div class="row gx-3 p-4 rounded border shadow">
+        <!-- 검사 상태 -->
+        <div class="col-md-2 ps-5">
+          <label for="qcStat" class="form-label">검사 상태</label>
           <select class="form-select text-center border cursor-pointer" v-model="searchInfo.qcState"
-            aria-label="재고 상태 선택">
+            aria-label="검사 상태 선택">
             <option value="qcs1">전체</option>
             <option value="qcs2">검사완료</option>
             <option value="qcs3">검사미완료</option>
           </select>
         </div>
+        <div v-if="searchInfo.qcState === 'qcs2'" class="col-md-1">
+          <label for="isPass" class="form-label">합격 여부</label>
+          <select class="form-select text-center border cursor-pointer" v-model="searchInfo.isPassed"
+            aria-label="검사 상태 선택">
+            <option value="all">전체</option>
+            <option value="passed">합격</option>
+            <option value="failed">불합격</option>
+          </select>
+        </div>
 
         <!-- 날짜 범위 -->
-        <div class="col-md-4">
+        <div class="col-md-3">
           <label for="startDate" class="form-label">날짜 범위</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
@@ -33,7 +42,7 @@
         </div>
 
         <!-- 제품명 -->
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="pName" class="form-label">제품명</label>
           <input type="search" id="pName" class="form-control border p-2 cursor-pointer" placeholder="제품명"
             v-model="searchInfo.pName" />
@@ -58,7 +67,8 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20" style="height: 700px;">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
+        style="height: 700px;" :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
 
@@ -69,35 +79,49 @@
 
 
 
-  
+
 
   <!-- 불량 상세 모달 -->
 
-  <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
-    @confirm="closeModal">
+  <Modal :isShowModal="showModalRJC" @closeModal="closeModal">
     <template v-slot:list>
-      <h4>검사 상세 정보</h4>
-      <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
-      <p>제품번호: {{ selectedRow.productCode }}</p>
-      <p>음료 제품명: {{ selectedRow.pName }}</p>
-      <b>검사 항목 : 산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이</b>
-      <!-- <p>{{ this.defectDetailsMap }}</p> -->
-      <hr>
-      <!-- <p>{{ this.testDetails[selectedRow.productCode] }}</p> -->
+      <div class="modal-css">
+        <h4>검사 상세 정보</h4>
+        <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
+        <p>제품번호: {{ selectedRow.productCode }}</p>
+        <p>음료 제품명: {{ selectedRow.pName }}</p>
+        <b>검사 항목 : 산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이</b>
+        <hr />
 
-      <!-- 검사 항목 리스트 -->
-      <div v-for="(item, index) in this.defectDetailsMap[selectedRow.qcProcessId]" :key="index" class="inspection-item">
-        <label>
-          {{ item.item_name }} : [허용치 {{ item.etc_min }} ~ {{ item.etc_max }} {{ item.item_unit }}]:
-        </label>
-        <input type="number" v-model.number="item.input_value" placeholder="값을 입력하세요" readonly/>
+        <!-- 검사 항목 리스트 -->
+        <div v-for="(item, index) in defectDetailsMap[selectedRow.qcProcessId]" :key="index" class="inspection-item">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <span class="item-name">
+                {{ item.item_name }}
+              </span>
+              <span class="item-range">
+                [ 허용치 {{ item.etc_min }} ~ {{ item.etc_max }} {{ item.item_unit }} ]
+              </span>
+            </div>
+            <div v-if="item.is_passed === 'yes'">
+              <div class="item-value-passed">
+                {{ item.input_value }} {{ item.item_unit }}
+              </div>
+            </div>
+            <div v-else-if="item.is_passed === 'no'">
+              <div class="item-value-failed">
+                {{ item.input_value }} {{ item.item_unit }}
+              </div>
+            </div>
+            
+            
+          </div>
+        </div>
       </div>
-
-
-
-
     </template>
   </Modal>
+
 
   <Modal :isShowModal="showModalDone" @closeModal="closeModal" @confirm="confirm">
     <template v-slot:list>
@@ -105,7 +129,9 @@
     </template>
   </Modal>
 
-
+  <div style="display: none">
+    <CustomNoRowsOverlay />
+  </div>
 
 </template>
 
@@ -120,14 +146,17 @@ import userDateUtils from '@/utils/useDates.js';
 
 import theme from "@/utils/agGridTheme";
 
-import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
+import Modal from "@/views/natureBlendComponents/modal/ModalQcInfo.vue";
 
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 const { notify } = useNotification();  // 노티 내용변수입니다
 
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
+
 export default {
   name: "음료검사관리",
-  components: { MaterialButton, Modal },
+  components: { MaterialButton, Modal, CustomNoRowsOverlay },
   data() {
     return {
       //검색 관련
@@ -137,10 +166,12 @@ export default {
         startDate: this.dateFormat(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
         endDate: this.dateFormat(new Date(), 'yyyy-MM-dd'),
         qcState: 'qcs1',
+        isPassed: 'all',
       },
       searchList: [],
 
       //ag grid 관련
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
@@ -152,7 +183,7 @@ export default {
         { headerName: "합격 여부", field: "inspecResult", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
         { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
-        { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1},
+        { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
 
       ],
 
@@ -170,7 +201,7 @@ export default {
 
       defectDetailsMap: {}, //검사번호별로 저장된 검사내용 { qcProcessId: [ { ... }, ... ] }
 
-      
+
 
 
       completedDefectDetailsMap: {},
@@ -181,6 +212,13 @@ export default {
     }
 
   },
+  watch: {
+    // qcState가 변경될 때 isPassed를 'all'로 설정
+    'searchInfo.qcState': function () {
+      this.searchInfo.isPassed = 'all';
+    },
+  },
+
   methods: {
     // 날짜를 YYYY-MM-DD 형식으로 변환
     dateFormat(value, format) {
@@ -206,10 +244,10 @@ export default {
           "pName": item.product_name,
           "eName": item.emp_name,
           "inspecResult": item.inspec_result === null
-          ? '미정' : item.inspec_result,
+            ? '미정' : item.inspec_result,
           "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": item.inspec_end === null 
-          ? "" : this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecEnd": item.inspec_end === null
+            ? "" : this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
           "inspecStatus": item.inspec_status,
         });
 
@@ -248,12 +286,16 @@ export default {
       const result = {
         pName: name.length != 0 ? name : "",
         startDate: this.searchInfo.startDate,
-        endDate: this.searchInfo.endDate
+        endDate: this.searchInfo.endDate,
+        isPassed: this.searchInfo.isPassed,
+
       };
       let searchResult = await axios.post(`${ajaxUrl}/${searchSelect}`, result)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
-      //console.log(searchResult.data);
+      // console.log(searchSelect);
+      // console.log(result);
+      // console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
@@ -308,12 +350,10 @@ export default {
       // productCode에 해당하는 검사 항목을 testDetails에서 가져오기
       const testItems = this.testDetails[productCode] || [];
 
-      // console.log(this.completedTestDetails);
-      // console.log(testItems);
       // 검사 항목들에 대해 defectDetailsMap에 항목 추가
       testItems.forEach(item => {
         let matchingTestDetail = this.completedTestDetails.find(detail =>
-             detail.qc_berverage_id === qcProcessId &&
+          detail.qc_berverage_id === qcProcessId &&
           detail.bev_test_item_id === item.item_id &&
           detail.bev_test_details_id === item.details_id
         );
@@ -327,13 +367,15 @@ export default {
           item_unit: item.item_unit,
           etc_min: item.etc_min,
           etc_max: item.etc_max,
-          input_value: matchingTestDetail ? matchingTestDetail.actual_value : 0, 
+          input_value: matchingTestDetail ? matchingTestDetail.actual_value : 0,
+          is_passed: matchingTestDetail ? matchingTestDetail.is_passed : ''
+
           // input_value: 0, 
         });
       });
     },
 
-    
+
 
     //음료검사항목및수치 불러오기
     async callTestDetail() {
@@ -348,19 +390,9 @@ export default {
         .catch(err => console.log(err));
       // console.log(list.data[0]);
       this.completedTestDetails = list.data;
-      console.log(this.completedTestDetails);
+      //console.log(this.completedTestDetails);
 
-      // if (list && list.data) {
-      //   // 배열을 Map으로 변환
-      //   const map = list.data.reduce((acc, item) => {
-      //     acc[item.qc_berverage_id] = item;
-      //     return acc;
-      //   }, {});
 
-      //   console.log(map);
-      // } else {
-      //   console.log("No data received");
-      // }
 
     }
 
@@ -391,6 +423,73 @@ export default {
 
   .search {
     margin-top: 24px;
+  }
+}
+
+//검색창 라벨
+.mb-4{
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+}
+
+//모달
+.modal-css {
+  h4 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+  }
+
+  b {
+    font-size: 1rem;
+    color: #000;
+    margin-bottom: 15px;
+    display: block;
+  }
+
+  .inspection-item {
+    
+    .item-name {
+      font-weight: bold;
+      color: #333;
+      margin-right: 10px;
+    }
+
+    .item-range {
+      font-size: 0.9rem;
+      color: #777;
+      margin-right: 10px;
+    }
+
+    .item-value-passed {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .item-value-failed {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #f44335;
+    }
+
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eaeaea;
+
+    &:last-child {
+      border-bottom: none;
+    }
   }
 }
 </style>
