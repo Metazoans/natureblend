@@ -144,6 +144,20 @@ const getShippedOrder = async(no)=>{
   let list = await mysql.query('shippedOrder',[no]);
   return list;
 }
+
+//주문삭제 
+const deleteOrderInfo = async(deleteOrder)=>{
+  let datas = Object.values(deleteOrder);
+  console.log("서비스데이터==",datas);
+  let result = await mysql.query('deleteOrders',datas);
+  let sendData = {};
+  if(result.changeRows !== 0){
+    sendData.result = true;
+  }else{
+    sendData.result = false;
+  }
+  return sendData;
+}
 module.exports = {
     getClientList,
     getOrderList,
@@ -155,4 +169,5 @@ module.exports = {
     updateOrderInfo,
     delOrderlist,
     getShippedOrder,
+    deleteOrderInfo,
 }

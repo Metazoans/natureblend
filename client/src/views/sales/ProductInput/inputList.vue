@@ -445,6 +445,7 @@ export default{
                         text: `해당 입고건의 수정이 완료되었습니다. `,
                         type: 'success',
                     });
+                    window.location.reload(); 
                     
                 }else{
                     this.$notify({
@@ -477,12 +478,13 @@ export default{
              // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
             if(result.data.result === true){
                         this.$notify({
-                        text: `해당 입고건의 수정이 완료되었습니다. `,
+                        text: `해당 입고건의 삭제가 완료되었습니다. `,
                         type: 'success',
                     });
+                    window.location.reload(); 
                 }else{
                     this.$notify({
-                        text: `해당 입고건의 수정을 실패 했습니다. `,
+                        text: `해당 입고건의 삭제를 실패 했습니다. `,
                         type: 'error',
                     });
                 }                  

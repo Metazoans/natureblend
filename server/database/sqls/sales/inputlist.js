@@ -18,23 +18,24 @@ FROM process_work_body w  LEFT JOIN qc_packaging q
                           ON q.process_num = w.process_num
                           LEFT JOIN product p
                           ON w.product_code = p.product_code
-WHERE q.qc_packing_id NOT IN (SELECT qc_packing_id FROM input_body) `;
+WHERE q.qc_packing_id NOT IN (SELECT qc_packing_id FROM input_body)
+AND q.inspec_status = '검사완료' `;
 
 //제품 입고 
 /*DELIMITER //
 CREATE PROCEDURE inputProduct
 (
-IN v_product_code_json_array TEXT,qc_packaging
+IN v_product_code_json_array TEXT,
 IN v_process_num_json_array TEXT,
 IN v_input_amount_json_array TEXT,
 IN v_qc_packing_id_json_array TEXT,
 IN v_inspect_end_json_array TEXT,
+IN v_warehouse_code_json_array TEXT,
 
-IN v_emp_name VARCHAR(30),
-IN v_warehouse_code VARCHAR(30)
+IN v_emp_num int
 )
 BEGIN
-DECLARE v_emp_num INT;
+-- DECLARE v_emp_num INT; 
 DECLARE v_expiration_date_array TEXT;
 
 DECLARE v_change_num INT;
@@ -49,24 +50,25 @@ DECLARE product_code_value TEXT;
 DECLARE process_num_value TEXT;
 DECLARE input_amount_value TEXT;
 DECLARE inspect_end_value TEXT;
+DECLARE warehouse_code_value TEXT;
 
 DECLARE expiration_date_value TEXT;
 
     -- 트렌젝션 시작
     START TRANSACTION;
 -- 사원번호 (사원이름)
-SELECT emp_num
-INTO v_emp_num
-FROM employee
-WHERE name = v_emp_name
-LIMIT 1;
+-- SELECT emp_num
+-- INTO v_emp_num
+-- FROM employee
+-- WHERE name = v_emp_name
+-- LIMIT 1;
 
 -- 입고 헤더 추가 input_header
 INSERT INTO input_header (emp_num)
 VALUES (v_emp_num);
 
 -- 입고헤더 등록 후 변화한 값 
-SET v_change_num = FOUND_ROWS();
+SET v_change_num = ROW_COUNT();
 
 SELECT v_change_num;
 
@@ -85,6 +87,7 @@ SELECT v_change_num;
 			SET input_amount_value = JSON_UNQUOTE(JSON_EXTRACT(v_input_amount_json_array, CONCAT('$[', i - 1, ']')));
 			SET qc_packing_id_value = JSON_UNQUOTE(JSON_EXTRACT(v_qc_packing_id_json_array, CONCAT('$[', i - 1, ']')));
 			SET inspect_end_value = JSON_UNQUOTE(JSON_EXTRACT(v_inspect_end_json_array, CONCAT('$[', i - 1, ']')));
+            SET warehouse_code_value = JSON_UNQUOTE(JSON_EXTRACT(v_warehouse_code_json_array, CONCAT('$[', i - 1, ']')));
 
 		-- 각 product 의 expiration_date 구하기 
 		SELECT expiration_date
@@ -103,14 +106,14 @@ SELECT v_change_num;
                         ,expire_date
                         ,inputlist_num)
 		VALUES (product_code_value
-				,CONCAT(product_code_value,DATE_FORMAT(inspect_end_value,'%d'),DATE_FORMAT(inspect_end_value,'%m'),DATE_FORMAT(inspect_end_value,'%y'),process_num_value)
+				,CONCAT(product_code_value,DATE_FORMAT(inspect_end_value,'%d%m%y'),process_num_value)
                 ,input_amount_value
-                ,v_warehouse_code
+                , warehouse_code_value
                 , qc_packing_id_value
                 ,ADDDATE(inspect_end_value,expiration_date_value)
                 ,v_last_num );
                 
-				SET v_result_value = FOUND_ROWS();
+				SET v_result_value = ROW_COUNT();
 					IF v_result_value != 1 THEN 
 						-- 오류 발생 시 롤백
 						rollback;
@@ -120,7 +123,7 @@ SELECT v_change_num;
 		-- 문제없을때
 		COMMIT;
 		ELSE
-		-- 주문서 등록 실패 시 롤백
+		-- 입고 등록 실패 시 롤백
 			ROLLBACK;
    END IF;
 END//
@@ -132,7 +135,7 @@ CALL inputProduct(
     '["QCM2412210001", "QCM2412210004", "QCM2412210006"]', -- v_qc_packing_id_json_array
     '["2024-12-24", "2024-12-20", "2024-12-23"]', -- v_inspect_end_json_array
     '김사원',                    -- v_emp_name (사원이름)
-    'W005'                        -- v_warehouse_code (창고코드)
+    '["W005","W005","W005"]'                        -- v_warehouse_code (창고코드)
 );*/ 
 const insertProduct = 
 `CALL inputProduct(?, ?, ?, ?, ?, ?, ? )`;
@@ -155,7 +158,8 @@ FROM input_body ib  JOIN product p
                    ON ib.inputlist_num = ih.inputlist_num
                    JOIN employee e
                    ON ih.emp_num = e.emp_num
-WHERE ib.input_flag = 0 `;
+WHERE ib.input_flag = 0
+AND ib.dispose_flag = 0 `;
 
 //수정을 원하는 입고 건이 출고가 되었는지 유무 체크
 /**SELECT COUNT(*)

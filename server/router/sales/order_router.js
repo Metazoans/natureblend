@@ -72,5 +72,12 @@ router.get('/shippedOrderInfo/:no', async(req,res)=>{
   res.send(info);
 })
 
+//주문삭제 
+router.put('/order/delete',async(req,res)=>{
+  let deleteOrder = req.body;
+  console.log("라우터==",deleteOrder);
+  let result = await orderService.deleteOrderInfo(deleteOrder);
+  res.send(result);
+})
 
 module.exports = router;
