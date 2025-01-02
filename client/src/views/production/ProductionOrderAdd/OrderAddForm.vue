@@ -56,7 +56,7 @@
         :modalTitle="modalTitle"
         :noBtn="'닫기'"
         :yesBtn="'선택'"
-        :width="modalType === 'plan' ? 1000 : 500"
+        :width="modalType === 'plan' ? 1100 : 500"
         @closeModal="closeModal"
         @confirm="confirm"
     >
@@ -86,7 +86,7 @@ export default {
         planNum: 0,
         productCode: '',
         workDate: '',
-        prodOrderQty: 0,
+        prodOrderQty: 1,
         empNum: 0
       },
 
@@ -113,6 +113,7 @@ export default {
 
       materialList.forEach((item) => {
         let row = {
+          stockLotSeq: item.lot_seq,
           stockLot: item.lot_code,
           stockMaterialName: item.material_name,
           stockMaterialCode: item.material_code,
@@ -173,12 +174,14 @@ export default {
         this.searchPlan = this.selectedPlan
         this.$emit('getSearchPlan', this.searchPlan)
 
-        this.searchProduct = this.searchPlan.product_name + ' '
-        if(this.searchPlan.capacity > 1000) {
-          this.searchProduct += (this.searchPlan.capacity / 1000) + 'L'
-        } else {
-          this.searchProduct += this.searchPlan.capacity + 'ML'
-        }
+        this.searchProduct = this.searchPlan.product_name
+
+        // this.searchProduct = this.searchPlan.product_name + ' '
+        // if(this.searchPlan.capacity > 1000) {
+        //   this.searchProduct += (this.searchPlan.capacity / 1000) + 'L'
+        // } else {
+        //   this.searchProduct += this.searchPlan.capacity + 'ML'
+        // }
 
         this.getProcessFlow(this.searchPlan.product_code)
         await this.getBom(this.searchPlan.product_code)
@@ -217,7 +220,8 @@ export default {
         this.$emit('updateInputData', this.orderInfo)
       },
       deep: true
-    }
+    },
+
   }
 }
 </script>

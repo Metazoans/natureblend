@@ -86,14 +86,14 @@ export default {
       rowDataNeed: [],
       columnDefsNeed: [
         { headerName: "자재명", field: 'needMaterialName'},
-        { headerName: "용량", field: 'needAmount', cellStyle: { textAlign: 'right' } },
+        { headerName: "용량(g 또는 ml)", field: 'needAmount', cellStyle: { textAlign: 'right' } },
       ],
 
       rowDataStock: [],
       columnDefsStock: [
         { headerName: "자재Lot번호", field: 'stockLot', cellStyle: { textAlign: 'center' }},
         { headerName: "자재명", field: 'stockMaterialName' },
-        { headerName: "용량", field: 'stockAmount', cellStyle: { textAlign: 'right' } },
+        { headerName: "용량(g 또는 ml)", field: 'stockAmount', cellStyle: { textAlign: 'right' } },
         { headerName: "유통기한", field: 'expiryDate', cellStyle: { textAlign: 'center' } },
         { headerName: "자재코드", field: 'stockMaterialCode', hide: true },
         {
@@ -124,7 +124,7 @@ export default {
         { headerName: "자재명", field: 'useMaterialName' },
         { headerName: "자재코드", field: 'useMaterialCode', hide: true },
         {
-          headerName: "용량",
+          headerName: "용량(g 또는 ml)",
           field: 'useAmount',
           editable: true,
           cellStyle: { textAlign: 'right' },
@@ -157,6 +157,17 @@ export default {
   },
 
   methods: {
+    focusOnCell() {
+      this.gridApi.ensureIndexVisible(0)
+      this.gridApi.ensureColumnVisible('useAmount')
+
+      // 셀 포커스 및 편집 모드 시작
+      this.gridApi.startEditingCell({
+        rowIndex: 0,
+        colKey: 'useAmount',
+      })
+    },
+
     getSearchPlan(searchPlan) {
       this.searchPlan = searchPlan
     },
@@ -167,6 +178,13 @@ export default {
 
     updateInputData(orderInfo) {
       this.orderInfo = orderInfo
+
+      this.rowDataNeed = this.rowDataNeed.map((data) => {
+        return {
+          ...data,
+          needAmount: data.needAmount * this.orderInfo.prodOrderQty
+        }
+      })
     },
 
     getProcessFlow(processFlow) {
@@ -253,6 +271,7 @@ export default {
         newProdOrderNum: this.newProdOrderNum,
         useMaterialCode: data.useMaterialCode,
         useLot: data.useLot,
+        useLotSeq: Number(data.useLotSeq),
         useAmount: Number(data.useAmount)
       }
 
@@ -276,14 +295,35 @@ export default {
     },
 
     deleteMaterial(params) {
-      this.rowDataUse = this.rowDataUse.filter((item) => item.useLot !== params.data.useLot)
+      this.rowDataUse = this.rowDataUse.filter((item) => item.useLotSeq !== params.data.useLotSeq)
     },
 
     selectStock(params) {
+      setTimeout(() => {
+        this.focusOnCell()
+      }, 10)
+
       let selectedStock = params.data
+
+      let isStop = false
+      this.rowDataUse.forEach((data) => {
+        if((data.useLotSeq === selectedStock.stockLotSeq) && !isStop) {
+          this.$notify({
+            text: "이미 선택한 자재입니다.",
+            type: 'error',
+          })
+          isStop = true
+        }
+      })
+
+      if(isStop) {
+        return
+      }
+
       this.rowDataUse = [
         ...this.rowDataUse,
         {
+          useLotSeq: selectedStock.stockLotSeq,
           useLot: selectedStock.stockLot,
           useMaterialName: selectedStock.stockMaterialName,
           useMaterialCode: selectedStock.stockMaterialCode

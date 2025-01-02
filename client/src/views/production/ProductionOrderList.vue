@@ -33,6 +33,15 @@ export default {
       listSearch: '',
       rowData: [],
       columnDefs: [
+        { headerName: "",
+          headerCheckboxSelection: true,
+          field: "check",
+          resizable: false,
+          editable: true,
+          sortable: false,
+          checkboxSelection: true,
+          width: 50
+        },
         { headerName: "생산지시번호", field: 'production_order_num', cellStyle: { textAlign: 'right' }},
         { headerName: "생산지시명", field: 'production_order_name' },
         { headerName: "생산계획명", field: 'plan_name' },
@@ -66,6 +75,7 @@ export default {
 
   methods: {
     onReady(param){
+      this.gridApi = param.api
       param.api.sizeColumnsToFit();
 
       const paginationPanel = document.querySelector('.ag-paging-panel');
@@ -82,15 +92,80 @@ export default {
         inputText1.style.border = '1px solid #ccc';
         inputText1.style.borderRadius = '4px';
         inputText1.style.position = 'absolute';
-        inputText1.style.left = '20px';
+        inputText1.style.left = '80px';
 
         inputText1.addEventListener('input', (event) => {
           this.listSearch = event.target.value;
         });
 
+        const button = document.createElement('button');
+        button.textContent = '삭제';
+        button.style.marginRight = '10px';
+        button.style.cursor = 'pointer';
+        button.style.backgroundColor = '#f44335';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.padding = '5px 10px';
+        button.style.borderRadius = '4px';
+        button.style.position = 'absolute';
+        button.style.left = '10px';
+        // 버튼 클릭 이벤트
+        button.addEventListener('click', () => {
+          this.deleteProdOrder()
+        });
+
         container1.appendChild(inputText1);
+        container1.appendChild(button);
         paginationPanel.insertBefore(container1, paginationPanel.firstChild);
       }
+    },
+
+    async deleteProdOrder() {
+      const selectedRows = this.gridApi.getSelectedRows()
+
+      if(selectedRows.length === 0) {
+        this.$notify({
+          text: "삭제할 생산지시를 선택해주세요.",
+          type: 'error',
+        });
+        return
+      }
+
+      let prodOrderNums = []
+      let isStop = false
+
+      selectedRows.forEach((row) => {
+        if(row.production_order_status !== '대기중' && !isStop) {
+          this.$notify({
+            text: "대기중인 생산지시만 삭제 가능합니다.",
+            type: 'error',
+          });
+          isStop = true
+        } else {
+          prodOrderNums.push(row.production_order_num)
+        }
+      })
+
+      if(isStop) {
+        return
+      }
+
+      let result = await axios.post(`${ajaxUrl}/production/order/delete`, prodOrderNums)
+          .catch(err => console.log(err));
+
+      if(result.data.message === 'success') {
+        this.$notify({
+          text: "삭제되었습니다.",
+          type: 'success',
+        });
+        await this.getProdOrderList()
+      } else {
+        this.$notify({
+          text: "삭제 실패하였습니다.",
+          type: 'error',
+        });
+      }
+
     },
 
     dateFormat(value, format) {
@@ -112,13 +187,13 @@ export default {
 
       result.data.forEach((data, idx) => {
         this.rowData[idx] = {
-          [keys[0]]: data[keys[0]],
           [keys[1]]: data[keys[1]],
           [keys[2]]: data[keys[2]],
-          [keys[3]]: this.dateFormat(data[keys[3]], 'yyyy-MM-dd'),
-          [keys[4]]: data[keys[4]],
+          [keys[3]]: data[keys[3]],
+          [keys[4]]: this.dateFormat(data[keys[4]], 'yyyy-MM-dd'),
           [keys[5]]: data[keys[5]],
-          [keys[6]]: this.prodOrderStatus[data[keys[6]]],
+          [keys[6]]: data[keys[6]],
+          [keys[7]]: this.prodOrderStatus[data[keys[7]]],
         }
       })
     }

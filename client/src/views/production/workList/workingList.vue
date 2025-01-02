@@ -27,7 +27,7 @@
           <div class="process-name">
             <p class="fw-bold field">공정명</p>
             <p v-if="Object.keys(selectedRow).length" class="fw-bold data">{{ selectedRow.process_name }}</p>
-            <p v-else class="fw-bold data">위에서 작업을 선택해주세요</p>
+            <p v-else class="fw-bold data text-danger">위에서 작업을 선택해주세요</p>
           </div>
 <!--          <div class="mb-3 status">-->
 <!--            <label class="col-form-label fw-bold">작업진행</label>-->
@@ -222,7 +222,7 @@ export default {
         'partial_processing': '진행중',
         'partial_process_complete': '완료'
       },
-      partialWorkFinalStatus: '-', //process_waiting, processing, process_complete
+      partialWorkFinalStatus: 'process_waiting', //process_waiting, processing, process_complete
       selectedRow: {},
       selectedEmp: {},
       searchEmp: {},
@@ -246,22 +246,22 @@ export default {
     async startPartialWork(partialWork) {
       if(!this.searchEmp.emp_num) {
         this.$notify({
-          text: "사원을 선택해주세요.",
-          type: 'fail',
+          text: "작업자를 선택해주세요.",
+          type: 'error',
         });
         return
       }
       if(!this.searchMachine.machine_num ) {
         this.$notify({
           text: "설비를 선택해주세요.",
-          type: 'fail',
+          type: 'error',
         });
         return
       }
       if(!partialWork.new_process_todo_qty) {
         this.$notify({
           text: "작업량을 입력해주세요.",
-          type: 'fail',
+          type: 'error',
         });
         return
       }
@@ -604,7 +604,9 @@ export default {
   },
 
   watch: {
-    async partialWorkFinalStatus() {
+    async partialWorkFinalStatus(newVal, oldVal) {
+      console.log(newVal)
+      console.log(oldVal)
       let statusInfo = {
         processStatus: this.partialWorkFinalStatus === '-' ? null : this.partialWorkFinalStatus,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
