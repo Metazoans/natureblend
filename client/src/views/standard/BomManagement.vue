@@ -184,8 +184,14 @@
             button.style.textAlign = 'center';
             button.style.lineHeight = '30px';
             button.addEventListener('click', () => {
-              console.log("레코드 확인 : ", JSON.stringify(params.data));
-              this.dele(params.data.bom_num);
+              const isConfirmed = window.confirm('선택한 제품을 삭제하시겠습니까?');
+              if(isConfirmed){
+                console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
+                this.dele(params.data.bom_num);
+                this.getBomList(); // 삭제 후 목록 새로고침
+              }else{
+                console.log('삭제가 취소되었습니다.');
+              }
             });
             return button;
           }
@@ -402,22 +408,50 @@
             
 
           },
-          async insertBomlist({ bom_num, material_code, material, material_con }){
-          this.newList = { bom_num, material_code, material, material_con };
-              console.log(this.newList);
+          async insertBom() { 
+            const isConfirmed = window.confirm('BOM 등록을 진행하시겠습니까?');
+              if (!isConfirmed) {
+                // 사용자가 취소를 누르면 등록을 취소하고 함수를 종료
+                this.$notify({
+                  title: '등록 취소',
+                  text: 'BOM 등록이 취소되었습니다.',
+                  type: 'info'
+                });
+                return; // 등록을 취소
+              }
 
-            console.log('insert 데이터');
-            let result = await axios.post(`${ajaxUrl}/bominsert/${bom_num}`, this.newList);
-            console.log(result.data);
-          },
-          async insertBom() { // 등록
-            this.newList = { product_code: this.searchProductcode ,
-                             product_name: this.searchProduct, 
-                             capacity : this.searchCapacity };
-              console.log('등록될 제품',this.newList);
-              let result = await axios.post(`${ajaxUrl}/bomregist`,this.newList);
+            // 제품명 중복 체크
+            const existingBom = this.bomList.find(bom => bom.product_name === this.searchProduct);
+            if (existingBom) {
+              this.$notify({
+                title: '중복된 제품명',
+                text: '이미 등록된 제품명이 있습니다.',
+                type: 'error'
+              });
+              return; // 중복이 있을 경우 등록을 중단
+            }
+
+            // BOM 등록 진행
+            this.newList = { 
+              product_code: this.searchProductcode, 
+              product_name: this.searchProduct, 
+              capacity: this.searchCapacity 
+            };
+            this.$notify({
+              title: '등록 성공',
+              text: '등록에 성공하였습니다.',
+              type: 'success'
+            });
+            console.log('등록될 제품', this.newList);
+
+            try {
+              const result = await axios.post(`${ajaxUrl}/bomregist`, this.newList);
               console.log(result.data);   
-              window.location.reload();
+              this.getBomList(); // 등록 후 목록 새로고침
+              // window.location.reload(); // 등록 후 새로고침
+            } catch (error) {
+              console.error('등록 실패:', error);
+            }
           },
           view(productname,capa,bomnum,materialcode,productcode) {
             console.log('데이터',materialcode);
