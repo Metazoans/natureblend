@@ -5,7 +5,9 @@
         <li v-for="(item, index) in navItems" :key="index" @click="handleClick(item)" :class="{ active: item.active }">
           {{ item.text }}
         </li>
-        <li>
+      </ul>
+      <ul class="button-container">
+        <li class="button-contain">
           <buttonTemplet/>
         </li>
       </ul>
@@ -194,5 +196,12 @@
         font-size: 20px;
       }
     }
+  }
+  .button-container {
+    list-style-type: none;
+    margin: 0;
+  }
+  .button-contain{
+    width: 62px;
   }
   </style>

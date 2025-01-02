@@ -9,11 +9,6 @@
         <div class="modal-body">
           <slot name="list">slot</slot>
           <div class="mb-1">
-            <label for="searchInput" class="form-label">검색어</label>
-            <div class="d-flex">
-              <input type="text" class="form-control" id="searchInput" placeholder="검색할 물품">
-              <button type="button" class="btn btn-success ms-2" onclick="search()">검색</button>
-            </div>
             <!-- 제품 코드 조회 리스트 -->
             <div class="grid-container" >
               <ag-grid-vue 

@@ -59,6 +59,8 @@ import { ajaxUrl } from '@/utils/commons.js';
 // import userDateUtils from '@/utils/useDates.js';
 import theme from "@/utils/agGridTheme";
 import axios from "axios";
+import { mapMutations } from "vuex";
+
  
  export default {
    data() {
@@ -121,6 +123,17 @@ import axios from "axios";
      };
    },
    methods: {
+    ...mapMutations(["addLoginInfo"]),
+      async checkLogin(){
+          this.loginInfo = this.$store.state.loginInfo;
+          console.log('직업',this.loginInfo);
+          if(this.loginInfo.job === '관리자'){
+            console.log('성공');
+          }else{
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$router.push({ name : 'MainPage' });
+          }
+      },
     async productSelect() {
         const result = await axios.get(`${ajaxUrl}/bomproduct`)
                                 .catch(err => console.log(err));
@@ -210,6 +223,7 @@ import axios from "axios";
    },
    // 화면 생성되는 시점
    mounted() {
+    this.checkLogin();
     this.productSelect();
     // bomproduct 쿼리 주소
     // 전체조회 쿼리 실행
