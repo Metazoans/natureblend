@@ -456,7 +456,7 @@
 }
 
 .grid-container {
-  margin-top: 215px;
+  margin-top: 211px;
 }
 
 .grid-bom {

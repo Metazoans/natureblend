@@ -209,9 +209,9 @@
                        job: this.job, 
                        job_num: this.jobNum, 
                        position: this.position, 
-                       level: this.level, 
+                       level: this.level || null, 
                        employment_date: this.employmentDate, 
-                       resignation_date: this.resignationDate };
+                       resignation_date: this.resignationDate || null };
       this.employeeInsert(this.newList);
       this.employeeList();
     },
