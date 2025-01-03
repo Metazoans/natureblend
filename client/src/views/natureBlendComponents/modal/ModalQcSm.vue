@@ -1,6 +1,6 @@
 <template>
   <div class="modal fade" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
       <div class="modal-content">
         <div class="modal-header">
           <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">확인</h1> -->
