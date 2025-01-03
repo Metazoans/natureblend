@@ -339,7 +339,7 @@ export default {
     resetSearch() {
       this.pickedStatus = "";
       this.pickedType = [];
-      this.selectSearchType = "";
+      this.selectSearchType = "전체검색";
       this.searchData = "";
       this.filters = [];
       this.getMachineList();

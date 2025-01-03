@@ -7,7 +7,7 @@
       <div class="col-8">
         <!-- 정비 요청 내역 그리드 -->
         <div class="grid-container" >
-          <h2>정비 요청 내역</h2>
+          <h3>정비 요청 내역</h3>
           <ag-grid-vue
             :rowData="requestRow"
             :columnDefs="requestCol"

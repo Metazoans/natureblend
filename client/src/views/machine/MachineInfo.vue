@@ -117,7 +117,7 @@
           <div class="col" v-else>
             <div>
               하루 평균 생산량 : 
-              {{ machineData.upd }}
+              {{ machineData.upd + this.unit }}
             </div>
           </div>
           <div class="col" v-if="machinePrdData.success_sum != null">
@@ -284,7 +284,7 @@ export default {
       if(data.machine_type == '음료제작기기') {
         this.unit = ' L';
       } else {
-        this.unit = ' 병';
+        this.unit = ' 개';
       }
 
       // 거래처, 사원은 공정기준 등록 완성후 메소드 작성

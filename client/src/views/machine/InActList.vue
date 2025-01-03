@@ -23,9 +23,6 @@
       <div class="col-auto">
         <div class="row align-items-center">
           <div class="col-auto">
-            <label class="col-form-label fw-bold">설비 분류</label>
-          </div>
-          <div class="col-auto">
             <div class="row" style="margin-top: 6px;">
               <div class="col-auto" v-for="type in machineType" :key="type">
                 <label class="me-3">{{ type }}</label>

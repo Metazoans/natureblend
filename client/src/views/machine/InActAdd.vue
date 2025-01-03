@@ -2,7 +2,7 @@
 <template>
   <ModalMachine @click.self="closeModal">
     <template v-slot:header>
-      <h2>비동기 내역 등록</h2>
+      <h3>비동기 내역 등록</h3>
     </template>
     <template v-slot:body>
       

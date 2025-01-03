@@ -2,7 +2,7 @@
   <!-- 모달로 구성 -->
   <ModalMachine @click.self="closeModal">
     <template v-slot:header>
-      <h2>정비 요청 등록</h2>
+      <h3>정비 요청 등록</h3>
     </template>
     <template v-slot:body>
       <div class="requestBody" v-bind="requestData">

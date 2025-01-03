@@ -1,8 +1,8 @@
 <template>
   <ModalMachine @click.self="closeModal" :modalSize="modalSize">
     <template v-slot:header>
-      <h2 v-if="isUpdate">설비 수정</h2>
-      <h2 v-else>설비 등록</h2>
+      <h3 v-if="isUpdate">설비 수정</h3>
+      <h3 v-else>설비 등록</h3>
     </template>
     
     <template v-slot:body>
@@ -356,7 +356,6 @@ export default {
 
       // 등록 성공 체크
       if(addRes.machine_num > 0){
-        // 등록메시지 수정 예정
         this.$notify({
           text: "설비 등록 성공",
           type: 'success',
@@ -422,10 +421,16 @@ export default {
       }
 
       if(updateRes.result) {
-        alert('수정 성공');
+        this.$notify({
+          text: "설비 수정 성공",
+          type: 'success',
+        });
         this.$emit('confirm');
       } else {
-        alert('수정 실패');
+        this.$notify({
+          text: "설비 수정 성공",
+          type: 'error',
+        });
         this.$emit('confirm');
       }
     },
