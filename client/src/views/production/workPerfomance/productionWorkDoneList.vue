@@ -80,16 +80,16 @@ export default {
       rowData: [],
       columnDefs: [
         { headerName: "No.", field: 'no', cellStyle: { textAlign: 'right' }},
-        { headerName: "생산지시번호", field: 'production_order_num', cellStyle: { textAlign: 'right' } },
+        { headerName: "생산지시번호", field: 'production_order_num', cellStyle: { textAlign: 'right' }, width: 250},
         { headerName: "공정명", field: 'process_name' },
         { headerName: "제품명", field: 'product_name' },
         { headerName: "설비명", field: 'machine_name' },
         { headerName: "작업자", field: 'emp_name' },
-        { headerName: "생산량(개)", field: 'production_qty', cellStyle: { textAlign: 'right' } },
-        { headerName: "불량량(개)", field: 'fail_qty', cellStyle: { textAlign: 'right' } },
+        { headerName: "생산량(개)", field: 'production_qty', cellStyle: { textAlign: 'right' }},
+        { headerName: "불량량(개)", field: 'fail_qty', cellStyle: { textAlign: 'right' }},
         { headerName: "합격량(개)", field: 'success_qty', cellStyle: { textAlign: 'right' } },
-        { headerName: "작업시작일", field: 'partial_process_start_time', cellStyle: { textAlign: 'center' } },
-        { headerName: "작업완료일", field: 'partial_process_end_time', cellStyle: { textAlign: 'center' } },
+        { headerName: "작업시작시간", field: 'partial_process_start_time', cellStyle: { textAlign: 'center' }, width: 320 },
+        { headerName: "작업완료시간", field: 'partial_process_end_time', cellStyle: { textAlign: 'center' }, width: 320 },
       ],
       selectedProdOrder: {},
       searchProdOrder: {},
@@ -230,8 +230,8 @@ export default {
           [keys[6]]: data[keys[7]] + data[keys[8]],
           [keys[7]]: data[keys[7]],
           [keys[8]]: data[keys[8]],
-          [keys[9]]: this.dateFormat(data[keys[9]], 'yyyy-MM-dd'),
-          [keys[10]]: this.dateFormat(data[keys[10]], 'yyyy-MM-dd'),
+          [keys[9]]: this.dateFormat(data[keys[9]], 'yyyy-MM-dd hh:mm:ss'),
+          [keys[10]]: this.dateFormat(data[keys[10]], 'yyyy-MM-dd hh:mm:ss'),
         }
       })
     }
