@@ -7,8 +7,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <slot name="list">slot</slot>
-            <div class="mb-1">>
+            <slot name="list"></slot>
+            <div class="mb-1">
               <!-- 제품명 조회  -->
               <div class="grid-container" >
                 <strong>◎제품코드:{{ productCode }} ◎제품명:{{ productName }}</strong>
@@ -28,8 +28,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="processAdd">공정추가</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
+            <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="processAdd">공정추가</button>
           </div>
         </div>
       </div>
@@ -385,7 +385,7 @@
     max-width: 65.5%;
   }
   .modal-body{
-    background-color: gray;
+    background-color: white;
   }
   .modal-body .form-control {
       width: 100px;

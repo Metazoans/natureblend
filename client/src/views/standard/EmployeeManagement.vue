@@ -32,10 +32,12 @@
                           aria-label="부서 선택"
                         >
                           <option value="">부서 선택</option>
-                          <option value="인사">인사</option>
                           <option value="영업">영업</option>
-                          <option value="품질">품질</option>
                           <option value="생산">생산</option>
+                          <option value="자재">자재</option>
+                          <option value="품질">품질</option>
+                          <option value="설비">설비</option>
+                          <option value="인사">인사</option>
                         </select>
                       </div>
                         <!-- 직급 -->
@@ -63,7 +65,7 @@
                         <!-- 부서번호 -->
                         <div class="mb-3">
                             <label class="col-form-label fw-bold" for="jobNum">부서번호</label>
-                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px; text-align: right;" id="jobNum='101'" v-model="jobNum" readonly >
+                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="jobNum='101'" v-model="jobNum" readonly >
                         </div>
                         <!-- 등급 -->
                         <div class="mb-3">
@@ -232,10 +234,12 @@
     console.log('hjkhjkhkj',this.job);
       // 부서에 맞는 부서번호를 설정
       const departmentJobNumbers = {
-        "인사": "101",
-        "영업": "102",
-        "품질": "103",
-        "생산": "104",
+        "영업": "1",
+        "생산": "2",
+        "자재": "3",
+        "품질": "4",
+        "설비": "5",
+        "인사": "6",
       };
       this.jobNum = departmentJobNumbers[this.job] || ''; // 부서번호 설정
     },
@@ -279,7 +283,7 @@
             if (result.data === '성공') {
                   this.$notify({ title:'등록성공', text: '사원이 등록되었습니다.', type: 'success' });
                   this.employeeList();
-            } else {
+            }else {
               this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
             }
         console.log(result.data);
@@ -290,6 +294,7 @@
         this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
         return;
       }
+      
       if(this.tel.length !== 13){
         this.$notify({ title:'연락처 확인', text: '연락처를 확인해주세요', type: 'error' });
         return;
@@ -324,9 +329,6 @@ input.form-control {
   padding-left: 20px;
   padding-right: 20px;
 }
-#empNum{
-text-align: right;
-}
 #birth{
 text-align: center;
 }
@@ -338,12 +340,6 @@ text-align: center;
 }
 #resignationDate{
   text-align: center;
-}
-#jobNum{
-  text-align: right;
-}
-#level{
-  text-align: right;
 }
  .main-container{
      background-color:  #e9ecef;
@@ -364,4 +360,10 @@ text-align: center;
        background-color: $white;
        border: solid 1px  ;
  }
+ /* input 포커스 상태에서도 배경색 유지 */
+input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
  </style>

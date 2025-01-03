@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex">
       <div class="form-container">
-          <h1> BOM 관리 </h1>
+          <h3> BOM 관리 </h3>
           <div class="search pe-md-3 d-flex align-items-center ms-md-auto">
               <div class="d-flex align-items-center">
                   <span>BOM번호</span>
@@ -268,7 +268,9 @@
         this.searchProductcode = product.product_code;  // 선택한 제품코드를 인풋 박스에 설정
         this.searchProduct = product.product_name;
         this.searchCapacity = product.capacity;
+        this.searchBomnum = '';
         this.closeModal();
+        this.bomBox = [];
         },
         setSelectMaterial(material) {
           console.log(material);
@@ -384,20 +386,6 @@
         
         
         async updateBomlist({ bom_seq, bom_num, material_code, material, material_con }){
-        /*
-        console.log(bomarray);
-        console.log(bomarray.bom_seq);
-        if (!Array.isArray(bomarray)) {
-              console.error('Invalid data: bomarray is not an array', bomarray);
-              return; 
-        };
-      
-        this.newList = bomarray.map(({ bom_num, material_code, material, material_con }) => ({
-              bom_num,
-              material_code,
-              material,
-              material_con
-          })); */
         
           this.newList = { bom_num, material_code, material, material_con };
               console.log(this.newList);
@@ -475,12 +463,20 @@
             this.bomBox.push({ bom_num:this.searchBomnum, material_code: '', material: '', material_con: 0 });
             this.bomBox = [...this.bomBox];
           },
+          async insertBomlist({ bom_num, material_code, material, material_con }){
+          this.newList = { bom_num, material_code, material, material_con };
+              console.log(this.newList);
+              console.log('insert 데이터');
+            let result = await axios.post(`${ajaxUrl}/bominsert/${bom_num}`, this.newList);
+            console.log(result.data);
+          },
           goToDetail(bomNum) {
             this.$router.push({ name : 'bomInfo', params : { bomno : bomNum }});
           },
-          updateBom() {
+          async updateBom() {
             if(this.searchProductcode === ''){
               this.$notify({ title:'빈칸확인', text: '제품을 선택해주세요', type: 'error' });
+              return;
             }
             for(let i =0; i<this.bomBox2.length; i++){
               console.log(i);
@@ -521,7 +517,7 @@
                   this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
                   console.log('insert 해야하는 데이터');
                   console.log(this.bomBox[i]);
-                  // this.insertBomlist(this.bomBox[i]);
+                  this.insertBomlist(this.bomBox[i]);
                 }
               }
             }

@@ -72,6 +72,7 @@
        style="height: 513px;"
        rowSelection="multiple"
        @cellClicked="onCellClicked"
+
     > 
     </ag-grid-vue>
  </div>
@@ -79,7 +80,7 @@
       :showModal="showDeleteModal"
       @deleteConfirmed="onDeleteConfirmed"
       @deleteCancelled="onDeleteCancelled"
-      z-index="9999"
+      style="z-index : '9999';"
  />
  </template>
  
