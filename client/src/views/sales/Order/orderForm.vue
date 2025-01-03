@@ -34,7 +34,8 @@
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="EmpName">담당자</label>
                             <div class="input-group">
-                            <input type="text" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name" readonly>
+                            <input type="text" v-if="searchEmpName.name" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name" readonly>
+                            <input type="text" v-else class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName" readonly>
                             </div>
                             <Modal
                                 :isShowModal="isShowModal.emp"
@@ -127,6 +128,8 @@ import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import userDateUtils from '@/utils/useDates.js';
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
+import { mapMutations } from "vuex";
+
 
 
 export default{
@@ -140,6 +143,8 @@ export default{
     },
     data(){
         return{
+            testing: {},
+
             orderlistNum :'',
             orderName : '',
             dueDate:'',
@@ -176,8 +181,19 @@ export default{
     computed:{
 
     },
+    mounted() {
+      this.test();
+    },
 
     methods:{
+    
+    ...mapMutations(["addLoginInfo"]),
+    test(){
+      this.testing = this.$store.state.loginInfo;
+      console.log('ddd', this.$store.state.loginInfo);
+      this.searchEmpName = this.$store.state.loginInfo.name;
+    },
+
     selectclient(client){
         this.selectedCom = client; 
     },
