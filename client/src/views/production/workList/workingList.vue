@@ -99,13 +99,13 @@
                   <p class="mb-2 text-center w-48 d-flex flex-column">
                     <strong>불량량</strong>
                     <span v-if="partialWork.fail_qty !== null" class="m-lg-2">{{ partialWork.fail_qty }}</span>
-                    <input v-else v-model="partialWork.new_fail_qty" type="number" class="form-control border p-2 cursor-pointer text-start" />
+                    <input v-else v-model="partialWork.new_fail_qty" :disabled="partialWork.partial_process_status === 'partial_process_waiting'" type="number" class="form-control border p-2 cursor-pointer text-start" />
                   </p>
 
                   <p class="mb-2 text-center w-48 ml-4 d-flex flex-column">
                     <strong>합격량</strong>
                     <span v-if="partialWork.success_qty !== null" class="m-lg-2">{{ partialWork.success_qty }}</span>
-                    <input v-else v-model="partialWork.new_success_qty" type="number" class="form-control border p-2 cursor-pointer text-start" />
+                    <input v-else v-model="partialWork.new_success_qty" :disabled="partialWork.partial_process_status === 'partial_process_waiting'" type="number" class="form-control border p-2 cursor-pointer text-start" />
                   </p>
 
                   <div class="text-center mb-2 w-100">
@@ -783,6 +783,9 @@ export default {
       }
       .card-body {
         display: ruby;
+        input[disabled] {
+          background-color: #e9ecef;
+        }
         .w-48 {
           width: 48%;
         }

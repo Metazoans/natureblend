@@ -21,6 +21,7 @@
               :columnDefs="columnDefsNeed"
               :theme="theme"
               @grid-ready="onGridReady"
+              :paginationPageSizeSelector="[10, 20, 50, 100]"
           />
         </div>
 
@@ -33,6 +34,7 @@
               @grid-ready="onGridReady"
               :pagination="true"
               :paginationPageSize="10"
+              :paginationPageSizeSelector="[10, 20, 50, 100]"
           />
         </div>
       </div>
@@ -48,6 +50,7 @@
               @cell-editing-stopped="onCellEditingStopped"
               :pagination="true"
               :paginationPageSize="10"
+              :paginationPageSizeSelector="[10, 20, 50, 100]"
           />
         </div>
       </div>

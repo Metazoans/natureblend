@@ -56,6 +56,7 @@
           :quickFilterText="listSearch"
           @cell-editing-stopped="onCellEditingStopped"
           @cellDoubleClicked="onCellDoubleClicked"
+          :paginationPageSizeSelector="[10, 20, 50, 100]"
       >
       </ag-grid-vue>
     </div>
