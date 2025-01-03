@@ -3,15 +3,15 @@
     <input type="text" v-model="inputListsearch" class="text-center styled-input" placeholder="자재명 입력하세요"/>
     <div class="grid-container">
         <ag-grid-vue
-        :rowData="rowData"
-        :columnDefs="columnClientlist"
-        :theme="theme"
-        @grid-ready="onReady"
-        :quickFilterText="inputListsearch"
-        :noRowsOverlayComponent="noRowsOverlayComponent"
-        @rowClicked="selectClient"
-        rowSelection="single"
-    />
+            :rowData="rowData"
+            :columnDefs="columnMateriallist"
+            :theme="theme"
+            @grid-ready="onReady"
+            :quickFilterText="inputListsearch"
+            :noRowsOverlayComponent="noRowsOverlayComponent"
+            @rowClicked="selectMaterial"
+            rowSelection="single"
+        />
     </div>
     <div style="display: none">
         <CustomNoRowsOverlay/>
@@ -23,14 +23,14 @@ import { ajaxUrl } from '@/utils/commons.js';
 import theme from "@/utils/agGridTheme";
 
 export default{
-    name : "ClientList",
+    name : "MaterialList",
 
     data(){
         return{
             rowData:[], //거래처명 목록 저장
             theme : theme,
             selectedCom : "", // 거래처명 선택한것 
-            columnClientlist : [
+            columnMateriallist : [
                 {headerName : "자재코드", field:"material_code",resizable: true, sortable: true, flex: 2, cellStyle: { textAlign: "center" }},
                 {headerName : "자재명", field:"material_name",resizable: true, sortable: true, flex: 3, cellStyle: { textAlign: "left" }},
                 {headerName : "안전재고", field:"safety_inventory",resizable: true, sortable: true, flex: 2, cellStyle: { textAlign: "right" }},
@@ -41,10 +41,10 @@ export default{
         }
     },
     created(){
-        this.getClientList()
+        this.getMaterialList()
     },
     methods: {
-        async getClientList(){
+        async getMaterialList(){
             let result = await axios.get(`${ajaxUrl}/material/material_list`) //서버호출
                                     .catch(err=> console.log(err));
             //this.rowData = result.data; //거래처목록 저장
@@ -66,9 +66,10 @@ export default{
 
         },
 
-        selectClient(event){
-            const client = event.data;
-            this.$emit('selectclient',client);
+        selectMaterial(event){
+            const Material = event.data;
+            //console.log(Material);
+            this.$emit('selectmaterial',Material);
         },
         onReady(event){
             this.gridApi = event.api;

@@ -62,7 +62,7 @@ const store = useStore();
 const loginfo = ref({});
 const loginInfo = () => {
    loginfo.value = store.state.loginInfo;
-   if(loginfo.value.job === '자재' || loginfo.value.job === '관리자'){
+   if(loginfo.value.job === '자재' || loginfo.value.position === '관리자'){
       console.log(loginfo.value.job);
    }else{
       notify({
