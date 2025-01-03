@@ -93,9 +93,9 @@ export default{
                 { headerName : "주문번호", field:'order_num',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
                 { headerName : "제품코드", field:'product_code',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 3},
                 { headerName : "제품명", field:'product_name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 4},
-                { headerName : "주문수량", field:'order_amount', editable: true, sortable: true ,cellStyle: { textAlign: "right" },flex: 2},
-                { headerName : "개당가격", field:'per_price' ,editable: true, sortable: true ,cellStyle: { textAlign: "right" },flex: 2},
-                { headerName : "총가격", field:'total_price',resizable: true, sortable: true ,cellStyle: { textAlign: "right" },flex: 2},
+                { headerName : "주문수량", field:'order_amount', editable: true, sortable: true ,cellStyle: { textAlign: "right" ,'border-right-color': '#000000','border-left-color': '#000000','border-top-color': '#000000','border-bottom-color': '#000000'},flex: 2 },
+                { headerName : "개당가격", field:'per_price' ,editable: true, sortable: true ,cellStyle: { textAlign: "right" ,'border-right-color': '#000000','border-left-color': '#000000','border-top-color': '#000000','border-bottom-color': '#000000'},flex: 2 },
+                { headerName : "총가격", field:'total_price',resizable: true, sortable: true ,cellStyle: { textAlign: "right"},flex: 2},
                 { headerName : "주문상태", field:'order_status',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
                 {
                     headerName : "삭제",
@@ -584,6 +584,7 @@ export default{
   background-color: #ffeeba;
   font-weight: bold;
 }
+
 
 /* 일반 input 태그 스타일 */
 input {

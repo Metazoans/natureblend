@@ -1,7 +1,7 @@
 <template>
 <div class="container-fluid py-4">
     <!--검색 폼 -->
-        <h2>제품LOT재고조회</h2>
+        <h3>제품<span style="font-family:'Arial';">LOT</span>재고조회</h3>
         <div class= "main-container ">
             <div class="ps-4">
                      <!--LOT재고 상태 체크 박스-->

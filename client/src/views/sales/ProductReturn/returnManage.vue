@@ -1,8 +1,8 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-    <h2>제품반품 등록</h2>
-    <h4>주문서 조회</h4>
+    <h3>제품반품 등록</h3>
+    <h4 class="pt-2">주문서 조회</h4>
         <div class= "main-container">
             <div class= "pt-5 pb-5">
                     <!--거래처명 검색-->

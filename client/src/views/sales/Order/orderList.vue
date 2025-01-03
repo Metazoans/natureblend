@@ -59,7 +59,7 @@ export default {
       theme : theme,
       rowData : [],
       columnDefs : [
-        { headerName : "주문서코드", field:'orderlist_num',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
+        { headerName : "주문서번호", field:'orderlist_num',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
         { headerName : "주문서명", field:'orderlist_title',editable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 4},
         { headerName : "거래처명",field:'com_name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
         { headerName : "담당자",field:'name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
@@ -97,7 +97,7 @@ export default {
             //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
-            const paginationPanel = allPanels[0];
+            const paginationPanel = allPanels[1];
             if (paginationPanel) {
               // 컨테이너 생성
               const container = document.createElement('div');

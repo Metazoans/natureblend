@@ -1,8 +1,8 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-        <h2>제품입고등록</h2>
-        <h4>완제품 품질 검사 조회</h4>
+        <h3>제품입고등록</h3>
+        <h4 class="pt-2">완제품 품질 검사 조회</h4>
         <div class= "main-container ps-4">
             <div class= "pt-5 pb-5">
                     <!--제품명 검색-->

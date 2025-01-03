@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-    <h2>제품출고조회</h2>
+    <h3>제품출고조회</h3>
     <div class= "main-container ps-4">
         <div class= "pt-5 pb-5">
                 <!--거래처명 검색-->

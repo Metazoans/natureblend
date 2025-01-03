@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid py-4">
         <!--검색 폼 -->
-        <h2>주문서 조회</h2>
+        <h3>주문서 조회</h3>
             <div class= "main-container ps-4">
                 <div class="pt-2 pb-3">
                         <!--주문서 상태 체크 박스-->
@@ -189,5 +189,21 @@ export default{
 
 input {
       background-color: $white;
+}
+
+
+</style>
+<style scoped>
+input.form-check-input:checked {
+    background-color: green !important;
+    border-color: green !important;
+}
+input.form-check-input {
+    background-color: white !important;
+    border-color: white !important;
+    border-radius: 100%;
+}
+.form-check-label {
+    font-weight: bold;
 }
 </style>
