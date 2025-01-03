@@ -107,13 +107,13 @@ import ModalMachine from "@/views/natureBlendComponents/modal/ModalMachine.vue";
 import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
-import { ref, onBeforeMount, onUpdated , watch } from "vue";
+import { ref, onBeforeMount, onUpdated } from "vue";
 import { useStore } from 'vuex';
 
 
 const store = useStore();
 const checkJob = ref(
-  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.job == '관리자' ? true : false
+  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.position == '관리자' ? true : false
 );
 
 // props
@@ -241,20 +241,20 @@ function deleteVal() {
 
 
 // 입력 확인
-watch (
-  partInfo.value,
-  (newVal) => {
-    let btnActive = true;
-    for(let key in newVal) {
-      if(newVal[key] == '') {
-        // btnActive = false;
-        break;
-      }
-    }
-    fullInput.value = btnActive;
-  },
-  { deep: true }
-)
+// watch (
+//   partInfo.value,
+//   (newVal) => {
+//     let btnActive = true;
+//     for(let key in newVal) {
+//       if(newVal[key] == '') {
+//         // btnActive = false;
+//         break;
+//       }
+//     }
+//     fullInput.value = btnActive;
+//   },
+//   { deep: true }
+// )
 </script>
 
 

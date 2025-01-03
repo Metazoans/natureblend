@@ -7,7 +7,7 @@
         :columnDefs="machineCol"
         :theme="theme"
        	@grid-ready="onReady"
-        style="height: 300px;"
+        style="height: 303px;"
         @cellClicked="cellClickFnc"
       ></ag-grid-vue>
     </div>
@@ -62,7 +62,7 @@
         :columnDefs="inActCol"
         :theme="theme"
         @grid-ready="inActOnReady"
-        style="height: 300px;"
+        style="height: 303px;"
         :pagination="true"
         :paginationPageSize="5"
         :quickFilterText="inActSearchData"
@@ -158,7 +158,7 @@ export default {
   data() {
     return {
       // 로그인 사원 권한 체크
-      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.job == '관리자' ? true : false,
+      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.position == '관리자' ? true : false,
 
       isShowModal: false,
       theme: theme,

@@ -88,6 +88,7 @@ const searchMachineList = async (machine_state, process_code, selectSearchType, 
         searchList.push(search);
       } else {
         let search = `process_name LIKE \'%${searchData}%\' OR 
+                      model_num LIKE \'%${searchData}%\' OR 
                       machine_name LIKE \'%${searchData}%\'`;
         searchList.push(search);
       }

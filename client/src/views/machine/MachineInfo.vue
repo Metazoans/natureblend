@@ -1,6 +1,6 @@
 <!-- 설비 상세 페이지 machine/machineInfo -->
 <template>
-  <div class="container py-4">
+  <div class="container-fluid py-4">
     <!-- 설비 이름(설비 위치) / 설비 수정 버튼 / 설비 제거 버튼 -->
     <div class="row align-items-center" style="justify-content: space-between;">
       <div class="col-auto mname">
@@ -47,7 +47,7 @@
     />
       
     <!-- 이미지 / 설비 정보 항목-->
-    <div class="row">
+    <div class="row align-items-center machineInfo">
       <!-- 설비 이미지 -->
       <div class="col-3 mimg">
         <img v-if="machineData.machine_img" :src="`http://localhost:3000${machineData.machine_img}`" />
@@ -57,54 +57,80 @@
       <div class="col-9 mdata">
         <div class="row">
           <div class="col">
-            모델 번호 : 
-            {{ machineData.model_num }}
+            <div>
+              모델 번호 : 
+              {{ machineData.model_num }}
+            </div>
           </div>
           <div class="col">
-            설비 분류 : 
-            {{ machineData.machine_type }}
+            <div>
+              설비 분류 : 
+              {{ machineData.machine_type }}
+            </div>
           </div>
-          <div class="col">
-            작동 상태 : 
-            {{ machineData.machine_state }}
+          <div class="col" v-if="machineData.machine_state == '사용'">
+            <div>
+              작동 상태 : 작동중
+            </div>
+          </div>
+          <div class="col" v-else>
+            <div>
+              작동 상태 : 작동정지
+            </div>
           </div>
         </div>
         
         <div class="row">
           <div class="col">
-            제작 업체 : 
-            {{ machineData.client_num }}
+            <div>
+              제작 업체 : 
+              {{ machineData.client_num }}
+            </div>
           </div>
           <div class="col">
-            등록자 : 
-            {{ machineData.emp_num }}
+            <div>
+              등록자 : 
+              {{ machineData.emp_num }}
+            </div>
           </div>
           <div class="col">
-            구매 일자 : 
-            {{ machineData.buy_date }}
+            <div>
+              구매 일자 : 
+              {{ machineData.buy_date }}
+            </div>
           </div>
         </div>
         
         <div class="row">
           <div class="col">
-            UPH : 
-            {{ machineData.uph }}
+            <div>
+              UPH : 
+              {{ machineData.uph + this.unit }}
+            </div>
           </div>
           <div class="col" v-if="machinePrdData.success_sum != null">
-            생산량 : 
-            {{ (machinePrdData.success_sum / machinePrdData.hour_sum) * 24 }}
+            <div>
+              하루 평균 생산량 : 
+              {{ ((machinePrdData.success_sum / machinePrdData.hour_sum) * 24).toFixed(3) + this.unit }}
+            </div>
           </div>
           <div class="col" v-else>
-            생산량 : 
-            {{ machineData.upd }}
+            <div>
+              하루 평균 생산량 : 
+              {{ machineData.upd }}
+            </div>
           </div>
           <div class="col" v-if="machinePrdData.success_sum != null">
-            불량률 : 
-            {{ (machinePrdData.fail_sum / (machinePrdData.success_sum + machinePrdData.fail_sum)) * 100 }}%
+            <div>
+              불량률 : 
+              {{ ((machinePrdData.fail_sum / (Number(machinePrdData.success_sum) + Number(machinePrdData.fail_sum))) * 100).toFixed(3) }}%
+            </div>
           </div>
           <div class="col" v-else>
-            불량률 : 
-            {{ 0 }}%
+            <div>
+              불량률 : 
+              {{ 0 }}%
+            </div>
           </div>
         </div>
       </div>
@@ -112,25 +138,25 @@
 
 
     <!-- 부품 정보 -->
-    <div class="row">
-      <div class="col pinfo" v-if="machinePartList.length >= 1">
+    <div class="row pinfo">
+      <div class="col" v-if="machinePartList.length >= 1">
         <div>부품명 : {{ machinePartList[0].part_name }}</div>
         <div>설치 일자 : {{ dateFormat(machinePartList[0].replace_date, 'yyyy-MM-dd') }}</div>
         <div>다음 교체일 : {{ replaceDate(machinePartList[0].replace_date, machinePartList[0].replace_cycle) }}</div>
       </div>
-      <div class="col pinfo" v-if="machinePartList.length >= 2">
+      <div class="col" v-if="machinePartList.length >= 2">
         <div>부품명 : {{ machinePartList[1].part_name }}</div>
         <div>설치 일자 : {{ dateFormat(machinePartList[1].replace_date, 'yyyy-MM-dd') }}</div>
         <div>다음 교체일 : {{ replaceDate(machinePartList[1].replace_date, machinePartList[1].replace_cycle) }}</div>
       </div>
     </div>
-    <div class="row">
-      <div class="col pinfo" v-if="machinePartList.length >= 3">
+    <div class="row pinfo">
+      <div class="col" v-if="machinePartList.length >= 3">
         <div>부품명 : {{ machinePartList[2].part_name }}</div>
         <div>설치 일자 : {{ dateFormat(machinePartList[2].replace_date, 'yyyy-MM-dd') }}</div>
         <div>다음 교체일 : {{ replaceDate(machinePartList[2].replace_date, machinePartList[2].replace_cycle) }}</div>
       </div>
-      <div class="col pinfo" v-if="machinePartList.length >= 4">
+      <div class="col" v-if="machinePartList.length >= 4">
         <div>부품명 : {{ machinePartList[3].part_name }}</div>
         <div>설치 일자 : {{ dateFormat(machinePartList[3].replace_date, 'yyyy-MM-dd') }}</div>
         <div>다음 교체일 : {{ replaceDate(machinePartList[3].replace_date, machinePartList[3].replace_cycle) }}</div>
@@ -156,7 +182,7 @@ export default {
   data() {
     return {
       // 로그인 사원 권한 체크
-      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.job == '관리자' ? true : false,
+      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.position == '관리자' ? true : false,
 
       machineData: {},
       machinePrdData: {},
@@ -164,6 +190,8 @@ export default {
       machineNo: 0,
       isShowModal: false,
       selectNo: null,
+
+      unit: '',
     }
   },
   beforeMount() {
@@ -186,6 +214,7 @@ export default {
       this.machineData = result.data;
       this.allFormat(this.machineData);
       this.machineNo = this.machineData.machine_num;
+      this.machineData.machine_state = this.machineData.machine_state == 'run' ? '사용' : '미사용';
     },
     // 설비 생산 정보
     async getMachinePrdInfo(selectNo) {
@@ -252,21 +281,10 @@ export default {
       // 날짜, 생산량, 거래처, 사원명 검색
       data.buy_date = this.dateFormat(data.buy_date, 'yyyy-MM-dd');
 
-      switch(data.machine_type){
-        case '세척기기':
-          data.uph = data.uph + ' 병';
-          data.upd = data.upd + ' 병';
-          break;
-        case '음료제작기기':
-          data.uph = data.uph + ' L';
-          data.upd = data.upd + ' L';
-          break;
-        case '포장기기':
-          data.uph = data.uph + ' 병';
-          data.upd = data.upd + ' 병';
-          break;
-        default:
-          console.log('설비 인식 실패');
+      if(data.machine_type == '음료제작기기') {
+        this.unit = ' L';
+      } else {
+        this.unit = ' 병';
       }
 
       // 거래처, 사원은 공정기준 등록 완성후 메소드 작성
@@ -288,44 +306,48 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.container {
-  height: 800px;
+.mimg {
+  padding: 12px;
+  background-color: $gray-200;
+  border-radius: 5px;
+  text-align: center;
+  height: 100%;
 }
-.container > .row {
-  padding: 5px 0;
+img {
+  width: 100%;
+  height: 100%;
 }
 
-.mname {
-  text-align: left;
+.machineInfo {
+  height: 300px;
+  margin: 20px 0;
+  align-items: center;
+}
+.mdata {
+  height: 100%;
+}
+.mdata .row {
+  height: 33.8%;
 }
 .mdata .row .col {
-  height: 60px;
-  // margin: 5px;
   background-color: $gray-200;
-  margin: 5px;
+  margin: 0 5px 5px 5px;
+  padding: 10px;
+  border-radius: 5px;
 
   display: flex;
   align-items: center;
-}
-.mimg {
-  background-color: $gray-200;
-  margin: 5px;
-  width: 23%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-img {
-  width: 95%;
-  height: auto;
 }
 
 .pinfo {
+  height: 100px;
+  align-items: center;
+}
+.pinfo .col {
   background-color: $gray-200;
   margin: 5px;
   padding: 10px;
   border-radius: 5px;
 }
+
 </style>
