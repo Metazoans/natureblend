@@ -249,7 +249,7 @@ export default {
         productionOrderName: this.orderInfo.prodOrderName,
         productionOrder_qty: this.orderInfo.prodOrderQty,
         productCode: this.searchPlan.product_code,
-        productName: this.searchPlan.product_code,
+        productName: this.searchPlan.product_name,
         capacity: this.searchPlan.capacity,
         processCode: process.process_code,
         processName: process.process_name,
