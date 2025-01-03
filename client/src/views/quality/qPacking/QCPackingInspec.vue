@@ -35,10 +35,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-30 " v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4"  color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>

@@ -36,10 +36,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-30 " v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4"  color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
 
       </div>
@@ -113,14 +111,14 @@
     </template>
   </Modal>
 
-  <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
+  <ModalSm :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
     <template v-slot:title>
       <h1 class="modal-title fs-5" id="exampleModalLabel">신청 확인</h1>
     </template>
     <template v-slot:list>
       <b>신청내역대로 저장하시겠습니까?</b>
     </template>
-  </Modal>
+  </ModalSm>
 
   <div style="display: none">
     <CustomNoRowsOverlay />
@@ -140,6 +138,7 @@ import MaterialButton from "@/components/MaterialButton.vue";
 
 import theme from "@/utils/agGridTheme";
 import Modal from "@/views/natureBlendComponents/modal/ModalQc.vue";
+import ModalSm from "@/views/natureBlendComponents/modal/ModalQcSm.vue";
 
 import { AgGridVue } from "ag-grid-vue3";
 
@@ -151,7 +150,7 @@ import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vu
 
 export default {
   name: "입고검사신청",
-  components: { MaterialButton, Modal, AgGridVue, CustomNoRowsOverlay },
+  components: { MaterialButton, Modal, ModalSm, AgGridVue, CustomNoRowsOverlay },
 
   data() {
     return {
@@ -374,7 +373,7 @@ export default {
       // console.log(this.rowData2);
 
       let rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
-      // console.log(rawData);
+      //console.log(rawData);
       // console.log(`${rawData[0].mName}`);
 
 

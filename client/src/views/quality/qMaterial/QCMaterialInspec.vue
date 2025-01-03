@@ -35,10 +35,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-30 " v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4"  color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -92,12 +90,12 @@
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
     @confirm="saveDefectDetailsForRow(selectedRow.qcMaterialId, selectedRow.totalQnt)">
     <template v-slot:title>
-      <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedRow.qcMaterialId }}</h1>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">검사 상세 정보</h1>
     </template>
     <template v-slot:list>
       <div class="modal-css">
-        <h5>검사 상세 정보</h5>
-        <!-- <p>입고검사번호: {{ selectedRow.qcMaterialId }}</p> -->
+        <!-- <h5>검사 상세 정보</h5> -->
+        <h4>입고검사번호: {{ selectedRow.qcMaterialId }}</h4>
         <h3>자재명: {{ selectedRow.mName }}</h3>
         <h4>총 수량:  {{ selectedRow.totalQnt }} (g, 개)</h4>
         <material-button size="md" class="mt-3 btn btn-primary"

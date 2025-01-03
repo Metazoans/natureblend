@@ -55,10 +55,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-30 " v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4"  color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -109,7 +107,7 @@
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
               <span class="item-name">
-                {{ item.item_name }}
+                {{ processedItemNames[index] }}
               </span>
               <span class="item-range">
                 [ 허용치 {{ item.etc_min }} ~ {{ item.etc_max }} {{ item.item_unit }} ]
@@ -217,6 +215,28 @@ export default {
     }
 
   },
+  //검사항목 한글로 출력
+  computed: {
+    processedItemNames() {
+      return this.defectDetailsMap[this.selectedRow.qcProcessId].map(item => {
+        switch (item.item_name) {
+          case "pH":
+            return `산도(${item.item_name})`;
+          case "CFU":
+            return `총세균수(${item.item_name})`;
+          case "Brix":
+            return `당도(${item.item_name})`;
+          case "PesticideResidues":
+            return `잔류농약(${item.item_name})`;
+          case "YeastAndMold":
+            return `효모/곰팡이(${item.item_name})`;
+          default:
+            return item.item_name; // 기본적으로 원본 이름 유지
+        }
+      });
+    },
+  },
+
   watch: {
     // qcState가 변경될 때 isPassed를 'all'로 설정
     'searchInfo.qcState': function () {
@@ -317,7 +337,7 @@ export default {
       let searchResult = await axios.post(`${ajaxUrl}/recordQCPBAll`)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
-      //console.log(searchResult.data);
+      console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
@@ -411,6 +431,7 @@ export default {
 
 
 };
+
 </script>
 
 
@@ -444,7 +465,7 @@ export default {
   background-color: #e9ecef; /* 원하는 배경색 */
 
 
-  input {
+  input, .form-select {
     background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
