@@ -73,7 +73,7 @@
               this.movePage('orderForm');
               break;
             case '자재':
-              this.movePage('materialList2');
+              this.movePage('materialLotqty');
               break;
             case '생산':
               this.movePage('productionPlanAdd');

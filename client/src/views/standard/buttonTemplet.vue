@@ -52,7 +52,8 @@
               // if(!this.$store.state.loginInfo.name){
               //     this.$router.push({name : 'login'});
               // }
-              window.location.reload();
+              this.$router.push({name : 'MainPage'});
+              //window.location.reload();
         }
         // try {
         //   const result = await axios.post(`${ajaxUrl}/logout`);
