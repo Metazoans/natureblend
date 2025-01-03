@@ -27,18 +27,15 @@
                     <img src="http://yeonsus.com/academy/arrow_sample.png" alt="화살표" width="25"/>
                 </div>
             </div>
-            <div class="p-0 material_processing">
-                <div style="width: 285px;">
+            <div class="p-0" style="height: 240px;">
+                <div style="width: 285px;" class="material_processing">
                     <h5 class="mb-0">&nbsp;&nbsp;자재입고대기</h5>
                     <materialInput :material_input="material_input"/>
                 </div>
-            </div>
-            <div class="p-0">
-                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
-                </div>
-            </div>
-            <div class="p-0">
-                <div style="width: 285px;">
+                <div class="p-0">
+                    <div class="material_processing" style="width: 285px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                        <img src="http://yeonsus.com/academy/arrow_sample_bottom.png" height="25"/>
+                    </div>
                 </div>
             </div>
             <div class="p-0">
@@ -49,6 +46,17 @@
                 <div style="width: 285px;">
                     <h5 class="mb-0">&nbsp;&nbsp;제품출고대기</h5>
                     <productOut :produceOutWait="produceOutWait"/>
+                </div>
+            </div>
+            <div class="p-0 product_processing">
+                <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
+                    <img src="http://yeonsus.com/academy/arrow_sample_left.png" alt="화살표" width="25"/>
+                </div>
+            </div>
+            <div class="p-0 product_processing">
+                <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;제품 재고 현황</h5>
+                    <productqtyqty :productQty="productQty" />
                 </div>
             </div>
         </div>
@@ -83,8 +91,10 @@
                 <div style="width: 40px; height: 200px; display: flex; justify-content: center; align-items: center;">
                 </div>
             </div>
-            <div class="p-0">
+            <div class="p-0 material_processing">
                 <div style="width: 285px;">
+                    <h5 class="mb-0">&nbsp;&nbsp;자재 재고 현황</h5>
+                    <materialqtyqty :materialqty="materialqty"/>
                 </div>
             </div>
             <div class="p-0">
@@ -196,7 +206,8 @@
     import process2qc from '@/views/material/factoryProcess/process2qc.vue';
     import process3 from '@/views/material/factoryProcess/process3.vue';
     import process3qc from '@/views/material/factoryProcess/process3qc.vue';
-    //process1qc.vue
+    import productqtyqty from '@/views/material/factoryProcess/productqtyqty.vue';
+    import materialqtyqty from '@/views/material/factoryProcess/materialqtyqty.vue';
 
 
     //자재발주서 생성(검수대기항목들)
@@ -345,6 +356,29 @@
         console.log('제품 입고 대기',produceOutWait.value);
     };
 
+    // 제품 재고
+    const productQty = ref([]);
+    const productqtying = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/productqtying`)
+                            .catch(err=>console.log(err));
+        productQty.value = result.data;
+        console.log('제품 재고',productQty.value);
+    };
+
+    // 자재 재고
+    const materialqty = ref([]);
+    const materialQtying = async function(){
+        let result = await axios.get(`${ajaxUrl}/material/materialQtying`)
+                            .catch(err=>console.log(err));
+        //materialqty.value = result.data;
+        console.log('자재 재고',materialqty.value);
+        materialqty.value = result.data.map((col) => ({
+            ...col,
+            stok_qty: col.material_name.includes('병') ? Number(col.stok_qty).toLocaleString() + " 개" : (Number(col.stok_qty) * 0.001).toLocaleString() + " kg",
+            })
+        );
+    };
+
     //날짜와 매초 데이터 불러오는곳
     const formattedDate = ref('');
     let timer = null;
@@ -367,6 +401,8 @@
             process3QcList(); //포장 공정 품질
             productInputWait(); //제품 입고 대기
             produceoutwait();   //제품 출고 대기
+            productqtying();    //제품 재고
+            materialQtying();   //자재 재고
         }
     };
 

@@ -337,7 +337,7 @@ const allInput = (data = null) => {
       warehouse1: '',
       pass_qnt: val.pass_qnt,
       rjc_qnt: val.rjc_qnt,
-      warehouse2: '',
+      warehouse2: 'W003',
     })
   );
 

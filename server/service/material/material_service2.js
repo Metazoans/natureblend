@@ -122,6 +122,18 @@ const produce_out_wait = async ()=>{
   return list;
 }
 
+// 제품 재고
+const product_qtying = async ()=>{
+  let list = await mysql.query('product_qtying');
+  return list;
+}
+
+// 자재 재고
+const material_qtying = async ()=>{
+  let list = await mysql.query('material_qtying');
+  return list;
+}
+
 module.exports = {
     configLoding,
     findQCMRecord2,
@@ -135,5 +147,7 @@ module.exports = {
     process3qclist,
     product_input_wait,
     produce_out_wait,
+    product_qtying,
+    material_qtying,
 
 };

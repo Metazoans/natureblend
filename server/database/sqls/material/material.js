@@ -1,19 +1,32 @@
 //생산계획 리스트
 const material_order_head =
 `
-SELECT opr.order_plan_num,
-       opr.plan_num,
-       opr.product_code,
-       pp.plan_create_date,
-       opr.plan_qty,
-       pro.product_name
-FROM production_plan pp
-JOIN order_plan_relation opr ON pp.plan_num = opr.plan_num
-JOIN orders orde ON opr.order_num = orde.order_num
-JOIN product pro ON opr.product_code = pro.product_code
-WHERE pp.plan_status = 'plan_waiting'
-  AND orde.order_status != 'shipped'
+SELECT o.order_plan_num,
+       p.plan_num,
+       o.product_code,
+       p.plan_create_date,
+       o.plan_qty,
+       your_product(o.product_code, 'product_name') AS product_name
+FROM production_plan p
+JOIN order_plan_relation o
+WHERE p.plan_num = o.plan_num
+  AND p.plan_status = 'plan_waiting'
+  AND your_product(o.product_code, 'product_name') IS NOT NULL
 `;
+// `
+// SELECT opr.order_plan_num,
+//        opr.plan_num,
+//        opr.product_code,
+//        pp.plan_create_date,
+//        opr.plan_qty,
+//        pro.product_name
+// FROM production_plan pp
+// JOIN order_plan_relation opr ON pp.plan_num = opr.plan_num
+// JOIN orders orde ON opr.order_num = orde.order_num
+// JOIN product pro ON opr.product_code = pro.product_code
+// WHERE pp.plan_status = 'plan_waiting'
+//   AND orde.order_status != 'shipped'
+// `;
 
 // 자재리스트 조회 ( 개별 자재 주문 할때 사용)
 const material_list =
@@ -147,26 +160,26 @@ WHERE
 const material_lot_num =
 `
 SELECT CASE
-           WHEN SUBSTRING(lot_code, 5, 5) != CONCAT(DATE_FORMAT(NOW(), '%d'), CASE
+           WHEN SUBSTRING(lot_code, 5, 5) = CONCAT(DATE_FORMAT(NOW(), '%d'), CASE
                                                                                   WHEN DATE_FORMAT(NOW(), '%m') = 10 THEN 'X'
                                                                                   WHEN DATE_FORMAT(NOW(), '%m') = 11 THEN 'Y'
                                                                                   WHEN DATE_FORMAT(NOW(), '%m') = 12 THEN 'Z'
-                                                                                  ELSE DATE_FORMAT(NOW(), '%m')
+                                                                                  ELSE SUBSTRING(DATE_FORMAT(NOW(), '%m'), 2)
                                                                               END, DATE_FORMAT(NOW(), '%y')) THEN CONCAT(DATE_FORMAT(NOW(), '%d'), CASE
                                                                                                                                                        WHEN DATE_FORMAT(NOW(), '%m') = 10 THEN 'X'
                                                                                                                                                        WHEN DATE_FORMAT(NOW(), '%m') = 11 THEN 'Y'
                                                                                                                                                        WHEN DATE_FORMAT(NOW(), '%m') = 12 THEN 'Z'
-                                                                                                                                                       ELSE DATE_FORMAT(NOW(), '%m')
+                                                                                                                                                       ELSE SUBSTRING(DATE_FORMAT(NOW(), '%m'), 2)
                                                                                                                                                    END, DATE_FORMAT(NOW(), '%y'), LPAD((RIGHT(lot_code, 3)+ 1), 3, '0'))
            ELSE CONCAT(DATE_FORMAT(NOW(), '%d'), CASE
                                                      WHEN DATE_FORMAT(NOW(), '%m') = 10 THEN 'X'
                                                      WHEN DATE_FORMAT(NOW(), '%m') = 11 THEN 'Y'
                                                      WHEN DATE_FORMAT(NOW(), '%m') = 12 THEN 'Z'
-                                                     ELSE DATE_FORMAT(NOW(), '%m')
+                                                     ELSE SUBSTRING(DATE_FORMAT(NOW(), '%m'), 2)
                                                  END, DATE_FORMAT(NOW(), '%y'), '001')
        END AS LOTNUM
 FROM material_lot_qty1
-ORDER BY lot_seq
+ORDER BY lot_seq DESC
 LIMIT 1
 `;
 

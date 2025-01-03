@@ -81,4 +81,16 @@ router.get('/material/produceoutwait', async (req, res)=>{
     res.send(materialInputQcListinfo);
 });
 
+// 제품 재고
+router.get('/material/productqtying', async (req, res)=>{
+    let materialInputQcListinfo = await materialService2.product_qtying();
+    res.send(materialInputQcListinfo);
+});
+
+// 자재 재고
+router.get('/material/materialQtying', async (req, res)=>{
+    let materialInputQcListinfo = await materialService2.material_qtying();
+    res.send(materialInputQcListinfo);
+});
+
 module.exports = router;

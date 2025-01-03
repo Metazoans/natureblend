@@ -50,26 +50,35 @@
                                               {{ nlist.pass_qnt }}
                                             </td>
                                             <td class="text-uppercase text-xxs font-weight-bolder ps-2">
-                                              <select v-model="nlist.warehouse1" class="form-select text-center">
+                                              <!-- 값이없으면 스타일없고, 값이있으면 그값이 폐기인지 찾고 그에맞게 처리 ?. 체이닝 연산자 이용해서 결과 이후엔 언디파인으로 거짓처리 -->
+                                              <select v-model="nlist.warehouse1" class="form-select text-center"
+                                                :style="{
+                                                  color: nlist.warehouse1 === '' ? '' : 
+                                                        whList.find(wh => wh.warehouse_code === nlist.warehouse1)?.warehouse_name.includes('폐기') ? '#f44335' : '#4caf50',
+                                                  fontWeight: nlist.warehouse1 === '' ? '' : 
+                                                            whList.find(wh => wh.warehouse_code === nlist.warehouse1)?.warehouse_name.includes('폐기') ? 'normal' : 'bold',
+                                                }"
+                                              >
                                                 <option disabled value="">창고선택</option>
-                                                <option
-                                                  v-for="wh in whList"
-                                                  :key="wh.warehouse_code"
-                                                  :value="wh.warehouse_code"
+                                                <option v-for="wh in whList" :key="wh.warehouse_code" :value="wh.warehouse_code"
                                                   :style="{ 
                                                     color: wh.warehouse_name.includes('폐기') ? '#f44335' : '#4caf50',
-                                                    fontWeight: wh.warehouse_name.includes('폐기') ? 'normal' : 'bold'
-                                                  }"
-                                                >
+                                                    fontWeight: wh.warehouse_name.includes('폐기') ? 'normal' : 'bold',
+                                                  }">
                                                   {{ wh.warehouse_name }}
                                                 </option>
-                                              </select>
+                                            </select>
                                             </td>
                                             <td class="align-middle text-bold" style="color: #f44335;">
                                               {{ nlist.rjc_qnt }}
                                             </td>
                                             <td class="text-uppercase text-xxs font-weight-bolder ps-2">
-                                              <select v-model="nlist.warehouse2" class="form-select text-center">
+                                              <select v-model="nlist.warehouse2" class="form-select text-center"
+                                              :style="{
+                                                color: nlist.warehouse2 && whList.find(wh => wh.warehouse_code === nlist.warehouse2)?.warehouse_name.includes('폐기') ? '#f44335' : '#4caf50',
+                                                fontWeight: nlist.warehouse2 && whList.find(wh => wh.warehouse_code === nlist.warehouse2)?.warehouse_name.includes('폐기') ? 'bold' : 'normal',
+                                              }">
+                                              <!-- ?. 옵셔널 체이닝연산자 : 참인값 찾으면 이후껀 다 언디파인으로 출력 -->
                                                 <option disabled value="">창고선택</option>
                                                 <option
                                                   v-for="wh in whList"
@@ -119,7 +128,6 @@
         nuwList: Array,
         whList: Array,
     });
-
 
     const emit = defineEmits(['closeModal', 'confirm']);
 
