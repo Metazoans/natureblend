@@ -36,6 +36,7 @@
                 <!-- 입고된 주문건 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
+                    style ="height: 450px;"
                     :rowData="productNum"
                     :columnDefs="columnProductNum"
                     :theme="theme"
@@ -62,6 +63,7 @@
                 <div class="grid-container">
                     <h4>제품별 LOT 조회</h4>
                     <ag-grid-vue
+                    style ="height: 450px;"
                     :rowData="LotNum"
                     :columnDefs="columnLotNum"
                     :theme="theme"
@@ -252,7 +254,7 @@ export default{
                 //입력필드생성 
                 const inputText1 = document.createElement('input');
                 inputText1.type = 'text';
-                inputText1.placeholder = '검색1';
+                inputText1.placeholder = '검색';
                 inputText1.style.padding = '5px';
                 inputText1.style.width = '250px';
                 inputText1.style.border = '1px solid #ccc';

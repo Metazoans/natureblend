@@ -2,7 +2,7 @@
     <div class="container-fluid py-4">
     <!--검색 폼 -->
     <h2>제품반품조회</h2>
-    <div class= "main-container">
+    <div class= "main-container ps-4">
         <div class= "pt-5 pb-5">
                 <!--거래처명 검색-->
                 <div class="row align-items-center mb-3">
@@ -53,6 +53,7 @@
     <!-- <div class="grid-container" v-show="rowData.length != 0"> -->
     <div class="grid-container">
         <ag-grid-vue
+        style ="height: 450px;"
         :rowData="rowData"
         :columnDefs="columnOrderlist"
         :theme="theme"
@@ -60,10 +61,10 @@
         :quickFilterText="inputListsearch"
         :noRowsOverlayComponent="noRowsOverlayComponent"
         @rowClicked="onOrderRowClicked"
-        @cellClicked="onClickedRr" 
+        @cellClicked="onCellClicked" 
         rowSelection="multiple"
         :pagination="true"
-        :paginationPageSize="10"
+        :paginationPageSize="20"
     />
     </div>
     <div style="display: none">
@@ -111,6 +112,9 @@ export default{
     data(){
         return{
             
+            originalValue: null,  // 셀의 원래 값 저장
+            originalReturnReason : null,
+            originalReturnCode : null,
 
             //검색 필터 데이터
             startDate:"", //주문날짜 시작 날짜
@@ -172,6 +176,64 @@ export default{
  
 
     methods:{
+    // 셀 클릭 시 편집 시작 전에 원래 값 저장
+    onCellClicked(col) {
+        if (col.colDef.editable) {
+            if (!this.originalValues) {
+                this.originalValues = {};
+            }
+            this.originalValues[col.node.id] = this.originalValues[col.node.id] || {};
+            this.originalValues[col.node.id][col.column.colId] = col.value; // 특정 셀의 원래 값 저장
+            console.log("원래값==",this.originalValues[col.node.id][col.column.colId]);
+            console.log("파람==",col);
+        }
+        // 'product_name' 필드 클릭 시 모달 열기
+        if (col.colDef.field === 'return_reason') {
+                this.openModal('returns');
+            }
+    },
+    // 셀 값이 수정된 후 이를 롤백할 수 있게 함
+    rollbackCellChange(col) {
+        let nodeId = col.node.id;
+        let colId = col.column.colId;
+        if (this.originalValues && this.originalValues[nodeId] && this.originalValues[nodeId][colId] !== undefined) {
+            let originalValue = this.originalValues[nodeId][colId];
+            col.node.setDataValue(col.column,originalValue); // 원래 값으로 롤백
+        }
+    },
+    // 초기화버튼
+    rollbackEdit() {
+        if (this.originalValues) {
+            this.gridApi.forEachNode((node) => {
+                // 각 셀마다 저장된 원래 값을 롤백
+                Object.keys(this.originalValues[node.id] || {}).forEach(colId => {
+                const originalValue = this.originalValues[node.id][colId];
+                node.setDataValue(colId, originalValue); // 해당 컬럼의 원래 값으로 롤백
+                });
+            });
+        
+            
+        }
+        if (this.selectedCol) {
+        // 초기값으로 롤백
+        this.selectedCol.data.return_reason = this.originalReturnReason;
+        this.selectedCol.data.return_code = this.originalReturnCode;
+
+        // ag-Grid에 적용하기
+        this.gridApi.applyTransaction({
+            update: [this.selectedCol.data] // 수정된 행만 업데이트
+        });
+
+        console.log("초기값으로 롤백 완료:", this.originalReturnReason, this.originalReturnCode);
+        }
+        // 체크박스 해제
+        this.gridApi.deselectAll();
+        this.originalValue = null; // 롤백 후 원래 값 초기화
+        this.originalReturnReason = null;
+        this.originalReturnCode = null;
+      
+    },
+
         selectclient(client){
             this.selectedCom = client; 
         },
@@ -190,7 +252,11 @@ export default{
                 const selectedNodes = this.gridApi.getSelectedNodes();
                 if (selectedNodes.length > 0) {
                     this.selectedCol = selectedNodes[0];  // 첫 번째 선택된 셀을 가져옵니다.
-                    console.log("선택된 셀:", this.selectedCol);
+                    //console.log("선택된 셀:", this.selectedCol);
+                    //반품이유, 코드 초기값 저장 
+                    this.originalReturnReason = this.selectedCol.data.return_reason;
+                    this.originalReturnCode = this.selectedCol.data.return_code;
+                    console.log( this.originalReturnReason,this.originalReturnCode)
                 } else {
                     console.log("선택된 셀이 없습니다.");
                 }
@@ -203,7 +269,7 @@ export default{
             }else if (modalType === 'returns') {
                 this.searchReturnCode = this.selectedReturnCode;
                 this.searchReturnReason = this.selectedReturnReason;
-
+                
                 this.selectedCol.data.return_reason = this.searchReturnReason;
                 this.selectedCol.data.return_code = this.searchReturnCode;
 
@@ -211,6 +277,8 @@ export default{
                 this.gridApi.applyTransaction({
                     update: [this.selectedCol.data] // 수정된 행만 업데이트
                 });
+            
+                
 
             }
             this.closeModal(modalType); // 모달 닫기
@@ -276,7 +344,7 @@ export default{
 
                // 버튼 생성
                const button1 = document.createElement('button');
-               button1.textContent = '수정';
+               button1.textContent = '반품수정';
                button1.style.cursor = 'pointer';
                button1.style.backgroundColor = '#008000';
                button1.style.color = 'white';
@@ -285,7 +353,7 @@ export default{
                button1.style.borderRadius = '4px';
 
                const button2 = document.createElement('button');
-               button2.textContent = '삭제';
+               button2.textContent = '반품삭제';
                button2.style.cursor = 'pointer';
                button2.style.backgroundColor = '#ff0000';
                button2.style.color = 'white';
@@ -314,7 +382,7 @@ export default{
                 });
                 button3.addEventListener('click',()=>{
                     //초기화버튼
-                    this.resetReturnInfo(); 
+                    this.rollbackEdit(); 
                 })
 
                 //입력필드생성 
@@ -346,11 +414,11 @@ export default{
             }
 
         },
-        onClickedRr(col){
-            if (col.colDef.field === 'return_reason') {
-                this.openModal('returns');
-            }
-        },
+        // onClickedRr(col){
+        //     if (col.colDef.field === 'return_reason') {
+        //         this.openModal('returns');
+        //     }
+        // },
         //반품수정
         async updateReturn(){
             const selectedRows = this.gridApi.getSelectedRows();
@@ -427,11 +495,7 @@ export default{
                     });
                 }
         },
-        //초기화
-        resetReturnInfo(){
-            this.gridApi.deselectAll();
-        },
-
+      
         
     
     },//method

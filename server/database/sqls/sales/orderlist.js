@@ -69,13 +69,13 @@ ORDER BY product_code`;
 CREATE PROCEDURE orderlistInput(
 IN v_orderlist_title VARCHAR(50),
 IN v_due_date DATETIME,
-IN v_emp_name VARCHAR(30),
 IN v_com_name VARCHAR(30),
 
 
 IN v_product_code_json_array TEXT,
 IN v_product_num_json_array TEXT,
-IN v_per_price_json_array TEXT
+IN v_per_price_json_array TEXT,
+IN v_emp_name VARCHAR(30)
 )
 
 BEGIN
@@ -169,7 +169,7 @@ WHILE i <= product_code_array_length DO
 END IF;
 END//
 DELIMITER; */
-// CALL orderlistInput('테스트 주문서','2024-12-31','김사원','대한유통','["P001", "P002"]','[10, 20]','[1000, 2000]');
+// CALL orderlistInput('테스트 주문서','2024-12-31','대한유통','["P001", "P002"]','[10, 20]','[1000, 2000]','김사원');
 
 const orderListInsert = 
 `CALL orderlistInput(?, ?, ?, ?, ?, ?, ?);`;

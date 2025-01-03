@@ -405,12 +405,19 @@ FROM
                                     SELECT 
                                         ib_inner.input_num,
                                         CASE 
+                                        WHEN NVL(SUM(ib_inner.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) <= 0 THEN '소진'
                                         WHEN ib_inner.dispose_flag = 1 THEN '폐기'
                                         WHEN ib_inner.input_flag = 1 THEN '취소'
                                         ELSE '보관'
                                         END AS product_status
                                     FROM 
                                         input_body ib_inner
+                                    LEFT JOIN output_aggregated o
+                                        ON ib_inner.input_num = o.input_num
+                                    GROUP BY 
+                                        ib_inner.input_num,
+                                        ib_inner.dispose_flag,
+                                        ib_inner.input_flag
                                 ) STATUS
                   ON ib.input_num = status.input_num `;
 //service에서 조건에 맞게 쿼리 가져오기
@@ -464,13 +471,20 @@ FROM
                   LEFT JOIN  (
                                     SELECT 
                                         ib_inner.input_num,
-                                        CASE 
+                                        CASE
+                                        WHEN NVL(SUM(ib_inner.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) <= 0 THEN '소진'
                                         WHEN ib_inner.dispose_flag = 1 THEN '폐기'
                                         WHEN ib_inner.input_flag = 1 THEN '취소'
                                         ELSE '보관'
                                         END AS product_status
                                     FROM 
                                         input_body ib_inner
+                                     LEFT JOIN output_aggregated o
+                                        ON ib_inner.input_num = o.input_num
+                                    GROUP BY 
+                                        ib_inner.input_num,
+                                        ib_inner.dispose_flag,
+                                        ib_inner.input_flag
                                 ) STATUS
                   ON ib.input_num = status.input_num
 WHERE p.product_code = ?
