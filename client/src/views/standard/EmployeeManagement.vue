@@ -278,10 +278,16 @@
         }
     },
     async employeeInsert(newList){
+      const empNumber = await axios.get(`${ajaxUrl}/employeeList`);
+      const existingEmployee = empNumber.data.find(employee => employee.emp_num === newList.emp_num);
         const result = await axios.post(`${ajaxUrl}/employeeInsert`, newList)
                                   .catch(err => console.log(err));
             if (result.data === '성공') {
-                  this.$notify({ title:'등록성공', text: '사원이 등록되었습니다.', type: 'success' });
+                  if(existingEmployee){
+                    this.$notify({ title:'수정성공', text: '사원이 수정되었습니다.', type: 'success' });
+                  }else{
+                    this.$notify({ title:'등록성공', text: '사원이 등록되었습니다.', type: 'success' });
+                  }
                   this.employeeList();
             }else {
               this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
@@ -348,6 +354,9 @@ text-align: center;
      margin-top: 0px;
      margin-bottom: 0px;
      border-radius: 10px;
+ }
+ .grid-container{
+    margin-top: 9px;
  }
  .content{
     margin-left: 20px;

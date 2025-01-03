@@ -115,9 +115,6 @@ import { mapMutations } from "vuex";
                 console.log('값 저장')
                 this.closeModal()
             },
-            setSelectProcessflow(){
-
-            },
             // async flowList() {
             //     console.log('제품코드 확인',this.productCode);
             //     let result = await axios.get(`${ajaxUrl}/flowList/${this.productCode}`)

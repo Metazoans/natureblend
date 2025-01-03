@@ -317,6 +317,15 @@
       },
 
       async flowInsert(process){
+        const isExist = this.rowData.some(row => row.process_code === process.process_code);
+          if (isExist) {
+            this.$notify({ 
+              title: '등록 실패', 
+              text: '해당 공정은 이미 등록되어 있습니다.', 
+              type: 'error' 
+            });
+            return;
+          }
         this.newList = { product_code: this.productCode,
                          process_code: process.process_code,
                          process_name: process.process_name };

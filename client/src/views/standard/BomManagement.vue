@@ -37,8 +37,22 @@
                   <input v-model="item.material_con" :id="'unit-' + index" type="text" class="form-control"/>
               </div>
           </div> -->
-
-          <div class="grid-bom" >
+        <!-- 조회 그리드 -->
+        <div class="grid-container" >
+           <ag-grid-vue 
+             style ="width: 479px; height: 513px;"
+             :rowData="bomList"
+             :columnDefs="columnDefs"
+             :theme="theme"
+             :pagination="true"
+             :paginationPageSize="10"
+             :paginationPageSizeSelector="[10, 20, 50, 100]"
+             @grid-ready="onReady2"
+         >
+          </ag-grid-vue>
+         </div>
+        </div>
+         <div class="grid-bom" >
            <ag-grid-vue 
              style ="width: 652px; height: 530px;"
              :rowData="bomBox"
@@ -47,13 +61,13 @@
              :pagination="true"
              :paginationPageSize="10"
              @grid-ready="onReady"
+             :paginationPageSizeSelector="[10, 20, 50, 100]"
              @cellEditingStopped="onCellEditingStopped"
              @rowSelection="rowSelection"
              rowSelection="multiple"
              @cellClicked="onCellClicked"
          >
           </ag-grid-vue>
-         </div>
           <button type="button" @click="updateBom" class="btn btn-success">
               수정 완료
           </button>
@@ -66,19 +80,6 @@
           <button type="button" @click="deleteBomList" class="btn btn-danger">
             선택한 자재 삭제
           </button>
-        </div>
-        <!-- 조회 그리드 -->
-        <div class="grid-container" >
-           <ag-grid-vue 
-             style ="width: 479px; height: 513px;"
-             :rowData="bomList"
-             :columnDefs="columnDefs"
-             :theme="theme"
-             :pagination="true"
-             :paginationPageSize="10"
-             @grid-ready="onReady2"
-         >
-          </ag-grid-vue>
          </div>
   </div>
   <div>
@@ -386,7 +387,10 @@
         
         
         async updateBomlist({ bom_seq, bom_num, material_code, material, material_con }){
-        
+          if(this.bomBox.length === 0){
+            this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+            return;
+          }
           this.newList = { bom_num, material_code, material, material_con };
               console.log(this.newList);
 
@@ -464,6 +468,7 @@
             this.bomBox = [...this.bomBox];
           },
           async insertBomlist({ bom_num, material_code, material, material_con }){
+            
           this.newList = { bom_num, material_code, material, material_con };
               console.log(this.newList);
               console.log('insert 데이터');
@@ -502,6 +507,9 @@
                       this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
                     }
                     console.log('같지않음');
+                    if(this.bomBox[i] === ''){
+                      this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+                    }
                     this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
                     // console.log(this.bomBox[i]);
                     this.updateBomlist(this.bomBox[i]);
@@ -513,10 +521,10 @@
 
                 }else if(this.searchProductcode === ''){
                     this.$notify({ title:'빈칸확인', text: '제품을 선택해주세요', type: 'error' });
+                }else if(this.bomBox[i].material_code === ''||this.bomBox[i].material === ''||this.bomBox[i].material_con === ''){
+                    this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
                 }else{
-                  this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
-                  console.log('insert 해야하는 데이터');
-                  console.log(this.bomBox[i]);
+                  this.$notify({ title:'수정성공', text: '수정이 완료되었습니다.', type: 'success' });
                   this.insertBomlist(this.bomBox[i]);
                 }
               }
@@ -538,19 +546,17 @@
   justify-content: space-between;
 }
 
-.grid-container {
-  margin-top: 211px;
-}
-
 .grid-bom {
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-top: 205px;
+  margin-right: 100px;
 }
 
 .form-container {
   width: 45%;
 }
-
+.grid-container {
+  margin-left: 70px;
+}
 .table-container {
   width: 50%;
 }
