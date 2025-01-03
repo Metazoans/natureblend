@@ -117,6 +117,11 @@
         </div>
     </div>
 </div>
+<deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="onDeleteConfirmed"
+      @deleteCancelled="onDeleteCancelled"
+ />
  </template>
  <script>
  import axios from 'axios';
@@ -124,8 +129,11 @@
  // import userDateUtils from '@/utils/useDates.js';
  import theme from "@/utils/agGridTheme";
  import { mapMutations } from "vuex";
- 
+ import deleteModal from './deleteModal.vue';
  export default {
+    components: {
+        deleteModal, // 모달 컴포넌트 등록
+    },
    data() {
      return {
         empNum: '',   // 사원번호
@@ -138,6 +146,8 @@
         level: '', // 등급
         employmentDate: '', // 입사일
         resignationDate: '', // 퇴사일
+        showDeleteModal: false, // 삭제 모달 표시 여부
+        selectedEmployee: null,
        columnDefs: [
          { headerName: "사원번호", field: "emp_num", width: 220 ,cellStyle: { textAlign: 'right' }},
          { headerName: "이름", field: "name" },
@@ -168,18 +178,8 @@
              button2.addEventListener('click', () => {
                console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
                console.log("삭제할 사원번호 : ", params.data.emp_num , "이름 : ", params.data.name);
-               if (confirm("정말 삭제하시겠습니까?")) {
-                 axios.delete(`${ajaxUrl}/employeeDelete/${params.data.emp_num}`)
-                   .then(res => {
-                     if (res.data === '성공') {
-                       alert('삭제되었습니다.');
-                       this.employeeList();
-                     } else {
-                       alert('삭제 실패');
-                     }
-                   })
-                   .catch(err => console.log(err));
-               }
+               this.selectedEmployee = params.data;
+               this.showDeleteModal = true;
              });
              return button2;
            }
@@ -191,6 +191,29 @@
      };
    },
    methods: {
+    onDeleteCancelled() {
+      this.showDeleteModal = false;
+    },
+    async onDeleteConfirmed() {
+      if (this.selectedEmployee) {
+        try{
+          axios.delete(`${ajaxUrl}/employeeDelete/${this.selectedEmployee.emp_num}`)
+            .then(res => {
+              if (res.data === '성공') {
+               this.$notify({ title:'사원삭제', text: '사원이 삭제되었습니다.', type: 'success' });
+                this.employeeList();
+              } else {
+               this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+              }
+            })
+
+        }catch(error) {
+          console.log(error);
+          this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+        }
+        this.showDeleteModal = false;
+    }
+  },
     refresh(){
             this.employeeList();
             this.upin = '';
@@ -253,6 +276,12 @@
     async employeeInsert(newList){
         const result = await axios.post(`${ajaxUrl}/employeeInsert`, newList)
                                   .catch(err => console.log(err));
+            if (result.data === '성공') {
+                  this.$notify({ title:'등록성공', text: '사원이 등록되었습니다.', type: 'success' });
+                  this.employeeList();
+            } else {
+              this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
+            }
         console.log(result.data);
         this.employeeList();
     },

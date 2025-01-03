@@ -95,6 +95,11 @@
            </div>
        </div>
    </div>
+   <deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="onDeleteConfirmed"
+      @deleteCancelled="onDeleteCancelled"
+   />
     </template>
     <script>
     import axios from 'axios';
@@ -102,8 +107,12 @@
     // import userDateUtils from '@/utils/useDates.js';
     import theme from "@/utils/agGridTheme";
     import { mapMutations } from "vuex";
+    import deleteModal from './deleteModal.vue';
     
     export default {
+      components: {
+      deleteModal, // 모달 컴포넌트 등록
+     },
       data() {
         return {
             clientNum: '', // 거래처번호
@@ -115,6 +124,8 @@
             address: '', // 주소
             bossTel: '', // 대표연락처
             empTel: '', // 담당자연락처
+            showDeleteModal: false, // 삭제 모달 표시 여부
+            selectedCustomer: null,
           columnDefs: [
             { headerName:"업체명" , field:"com_name"},
             { headerName:"주소" , field:"address"},
@@ -123,6 +134,7 @@
               headerName: "거래처삭제",
               field: "삭제",
               upin : '',
+              cellStyle: { textAlign: 'center' },
               editable: false,
               cellRenderer: (params) => {
                 const button2 = document.createElement('button');
@@ -141,18 +153,8 @@
                 button2.addEventListener('click', () => {
                   console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
                   console.log("삭제할 거래처번호 : ", params.data.client_num , "업체명 : ", params.data.com_name);
-                  if (confirm("정말 삭제하시겠습니까?")) {
-                    axios.delete(`${ajaxUrl}/customerDelete/${params.data.client_num}`)
-                      .then(res => {
-                        if (res.data === '성공') {
-                          alert('삭제되었습니다.');
-                          this.customerList();
-                        } else {
-                          alert('삭제 실패');
-                        }
-                      })
-                      .catch(err => console.log(err));
-                  }
+                  this.selectedCustomer = params.data;
+                  this.showDeleteModal = true; // 모달 띄우기
                 });
                 return button2;
               }
@@ -164,8 +166,30 @@
         };
       },
       methods: {
+        onDeleteCancelled() {
+          this.showDeleteModal = false;
+        },
+        async onDeleteConfirmed(){
+          if (this.selectedCustomer) {
+            try{
+              axios.delete(`${ajaxUrl}/customerDelete/${this.selectedCustomer.client_num}`)
+                .then(res => {
+                  if (res.data === '성공') {
+                    this.$notify({ title:'거래처삭제', text: '거래처가 삭제되었습니다.', type: 'success' });
+                    this.customerList();
+                  } else {
+                    this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+                  }
+                })
+            }catch(error){
+              console.log(error);
+              this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+            }
+            this.showDeleteModal = false;
+          }
+        },
         ...mapMutations(["addLoginInfo"]),
-      async checkLogin(){
+        async checkLogin(){
           this.loginInfo = this.$store.state.loginInfo;
           console.log('직업',this.loginInfo);
           if(this.loginInfo.job === '관리자'){
@@ -254,7 +278,7 @@
           console.log(this.empTel);
           if(number === 1){
             if(this.comName === '' || this.boss === '' || this.empName === '' || this.trade === '' || this.comNum === '' || this.address === '' || this.bossTel === '' || this.empTel === ''){
-                alert('빈칸에 내용을 입력해주세요');
+              this.$notify({ title:'빈칸확인',text: '빈칸을 입력해주세요', type: 'error' });
                 return;
             }else{
                 console.log('등록');

@@ -21,7 +21,7 @@
 
           <!-- 저장 버튼 -->
           <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+             <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
           </div>
        </form>
     </div>
@@ -60,7 +60,7 @@
          {
            headerName: "반품코드삭제",
            field: "삭제",
-           upin:'',
+           cellStyle: { textAlign: 'center' },
            editable: false,
            cellRenderer: (params) => {
              const button2 = document.createElement('button');
@@ -82,10 +82,10 @@
                     axios.delete(`${ajaxUrl}/returnDelete/${params.data.return_code}`)
                     .then(res => {
                         if(res.data === '성공'){
-                            alert('삭제되었습니다.');
+                           this.$notify({ title:'코드삭제', text: '코드가 삭제되었습니다.', type: 'success' });
                             this.returnList();
                         }else{
-                            alert('삭제 실패');
+                           this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
                         }
                     })
                     .catch(err => console.log(err));
@@ -134,7 +134,7 @@
         const result = await axios.post(`${ajaxUrl}/returnInsert`, newList)
                                   .catch(err => console.log(err));
         if (result.data === '성공') {
-            alert('등록되었습니다.');
+         this.$notify({ title:'등록성공', text: '코드가 등록되었습니다.', type: 'success' });
             this.returnList();
         } else {
             alert('등록 실패');
@@ -142,6 +142,10 @@
      },
      input_update() {
        console.log('등록 또는 수정 기능여기서 추가');
+       if(this.returnCode === '' || this.returnReason === ''){
+         this.$notify({ title:'빈값', text: '빈칸을 입력해주세요.', type: 'error' });
+           return;
+       }
        this.newList = {
         return_code : this.returnCode,
         return_reason : this.returnReason
