@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid working-list py-4">
-    <h1>실행작업 목록</h1>
+    <h1>작업 목록</h1>
     <div class="container-fluid">
       <div class="search-container mt-4 mb-2">
         <div class="input-group w-auto h-25">
@@ -25,25 +25,11 @@
       <div class="main-container">
         <div class="con-top container-fluid justify-content-center">
           <div class="row justify-content-center">
-            <div class="process-name col-sm-6 col-md-4 col-lg-6">
+            <div class="process-name col-sm-6 col-md-4 col-lg-3">
               <p class="fw-bold field">공정명</p>
               <p v-if="Object.keys(selectedRow).length" class="fw-bold data">{{ selectedRow.process_name }}</p>
               <p v-else class="fw-bold data text-danger">위에서 작업을 선택해주세요</p>
             </div>
-            <!--          <div class="mb-3 status">-->
-            <!--            <label class="col-form-label fw-bold">작업진행</label>-->
-            <!--            <div>-->
-            <!--              <label v-for="status in partialProcessStatusList" :key="status" class="me-3 cursor-pointer">-->
-            <!--                {{ status }}-->
-            <!--                <input-->
-            <!--                    type="radio"-->
-            <!--                    name="status"-->
-            <!--                    :value="status"-->
-            <!--                    v-model="selectedStatus"-->
-            <!--                />-->
-            <!--              </label>-->
-            <!--            </div>-->
-            <!--          </div>-->
             <div class="process-name col-sm-6 col-md-4 col-lg-3">
               <p class="fw-bold field">공정 생산량</p>
               <p class="fw-bold data">{{ partialWorkFinalQty }}개</p>
@@ -60,139 +46,84 @@
               <p class="fw-bold field">공정완료시간</p>
               <p class="fw-bold data">{{ partialWorkLastEndTime }}</p>
             </div>
+            <div class="process-name d-flex align-self-center col-sm-6 col-md-4 col-lg-3">
+              <div class="form-check d-flex">
+                <input class="form-check-input me-1" type="radio" name="status" id="all" value="all" checked v-model="radio">
+                <label class="form-check-label mt-1" for="all">전체</label>
+              </div>
+              <div class="form-check d-flex">
+                <input class="form-check-input me-1" type="radio" name="status" id="in-progress" value="in-progress" v-model="radio">
+                <label class="form-check-label mt-1" for="in-progress">진행중</label>
+              </div>
+              <div class="form-check d-flex">
+                <input class="form-check-input me-1" type="radio" name="status" id="completed" value="completed" v-model="radio">
+                <label class="form-check-label mt-1" for="completed">완료</label>
+              </div>
+            </div>
             <i v-show="partialWorkFinalStatus !== 'process_complete'" class="col-sm-6 col-md-4 col-lg-3 fa fa-plus-circle fa-2x cursor-pointer" @click="addPartialWork"></i>
           </div>
-
-
         </div>
-<!--        <div class="table-responsive p-0">-->
-<!--          <table-->
-<!--              class="table align-items-center justify-content-center mb-0"-->
-<!--          >-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--              <th v-for="col in cols" :key="col"-->
-<!--                  class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 text-center"-->
-<!--              >-->
-<!--                {{ col }}-->
-<!--              </th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody v-show="!partialWorkList.length" class="no-data">-->
-<!--              <tr>-->
-<!--                <td :colspan="cols.length"><i class="fa fa-plus-circle"></i>를 클릭하여 분할 작업을 등록해주세요</td>-->
-<!--              </tr>-->
-<!--            </tbody>-->
-<!--            <tbody>-->
-<!--            <tr v-for="(partialWork) in partialWorkList" :key="partialWork.process_num">-->
-<!--              <td>-->
-<!--                <h6 class="mb-0 text-sm text-end">{{ partialWork.process_num }}</h6>-->
-<!--              </td>-->
-<!--              <td>-->
-<!--                <h6 v-if="partialWork.emp_num !== null" class="mb-0 text-sm text-center">{{ partialWork.emp_name }}</h6>-->
-<!--                <input v-else readonly @click="openModal('emp')" :value="searchEmp.name" class="form-control border p-2 cursor-pointer" />-->
-<!--              </td>-->
-<!--              <td>-->
-<!--                <h6 v-if="partialWork.machine_num !== null" class="mb-0 text-sm text-center">{{ partialWork.machine_name }}</h6>-->
-<!--                <input v-else readonly @click="openModal('machine')" :value="searchMachine.machine_name" class="form-control border p-2 cursor-pointer" />-->
-<!--              </td>-->
-<!--              <td>-->
-<!--                <h6 v-if="partialWork.process_todo_qty !== null" class="mb-0 text-sm text-end">{{ partialWork.process_todo_qty }}</h6>-->
-<!--                <input v-else v-model="partialWork.new_process_todo_qty" type="number" class="form-control border p-2 cursor-pointer text-end" />-->
-<!--              </td>-->
-<!--              <td>-->
-<!--                <h6 v-if="partialWork.fail_qty !== null" class="mb-0 text-sm text-end">{{ partialWork.fail_qty }}</h6>-->
-<!--                <input v-else v-model="partialWork.new_fail_qty" type="number" class="form-control border p-2 cursor-pointer text-end" />-->
-<!--              </td>-->
-<!--              <td>-->
-<!--                <h6 v-if="partialWork.success_qty !== null" class="mb-0 text-sm text-end">{{ partialWork.success_qty }}</h6>-->
-<!--                <input v-else v-model="partialWork.new_success_qty" type="number" class="form-control border p-2 cursor-pointer text-end" />-->
-<!--              </td>-->
-<!--              <td class="text-center">-->
-<!--                <button @click="startPartialWork(partialWork)" class="start" :disabled="partialWork.partial_process_start_time">시작</button>-->
-<!--              </td>-->
-<!--              <td>-->
-<!--                <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_start_time ? dateFormat(partialWork.partial_process_start_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>-->
-<!--              </td>-->
-<!--              <td class="text-center">-->
-<!--                <button @click="endPartialWork(partialWork)" class="end" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>-->
-<!--              </td>-->
-<!--              <td>-->
-<!--                <h6 class="mb-0 text-sm text-center">{{ partialWork.partial_process_end_time ? dateFormat(partialWork.partial_process_end_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}</h6>-->
-<!--              </td>-->
-<!--&lt;!&ndash;              <td>&ndash;&gt;-->
-<!--&lt;!&ndash;                <button @click="requestRepair(partialWork)" :disabled="partialWork.partial_process_end_time">요청</button>&ndash;&gt;-->
-<!--&lt;!&ndash;              </td>&ndash;&gt;-->
-<!--              <td class="text-center">-->
-<!--                <h6-->
-<!--                    class="mb-0 text-sm text-center status"-->
-<!--                    :class="{-->
-<!--                      red: partialWork.partial_process_status === 'partial_process_waiting',-->
-<!--                      gray: partialWork.partial_process_status === 'partial_processing',-->
-<!--                      green: partialWork.partial_process_status === 'partial_process_complete'-->
-<!--                    }"-->
-<!--                >-->
-<!--                  {{ partialWorkStatus[partialWork.partial_process_status] }}-->
-<!--                </h6>-->
-<!--              </td>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--          </table>-->
-<!--        </div>-->
-
         <div class="container-fluid">
           <div class="row">
-            <div v-for="(partialWork) in partialWorkList" :key="partialWork.process_num" class="col-12 col-md-6 col-lg-4 mb-4">
+            <div
+                v-for="(partialWork) in partialWorkList"
+                :key="partialWork.process_num"
+                class="col-12 col-md-6 col-lg-4 mb-4 card-con"
+                :class="{
+                  hide: (radio === 'in-progress' && partialWork.partial_process_status !== 'partial_processing') ||
+                        (radio === 'completed' && partialWork.partial_process_status !== 'partial_process_complete')
+                }"
+            >
               <div class="card border shadow-sm p-3">
                 <div class="card-body">
-                  <h5 class="card-title text-center font-weight-bold">분할작업번호 {{ partialWork.process_num }}</h5>
+                  <h5 class="card-title text-center font-weight-bold w-100">분할작업번호 {{ partialWork.process_num }}</h5>
 
-                  <p class="mb-2 text-center">
+                  <p class="mb-2 text-center w-100 d-flex flex-column">
                     <strong>작업자</strong>
-                    <span v-if="partialWork.emp_num !== null">{{ partialWork.emp_name }}</span>
+                    <span v-if="partialWork.emp_num !== null" class="m-lg-2">{{ partialWork.emp_name }}</span>
                     <input v-else readonly @click="openModal('emp')" :value="searchEmp.name" class="form-control border p-2 cursor-pointer" />
                   </p>
 
-                  <p class="mb-2 text-center">
+                  <p class="mb-2 text-center w-48 d-flex flex-column">
                     <strong>설비명</strong>
-                    <span v-if="partialWork.machine_num !== null">{{ partialWork.machine_name }}</span>
+                    <span v-if="partialWork.machine_num !== null" class="m-lg-2">{{ partialWork.machine_name }}</span>
                     <input v-else readonly @click="openModal('machine')" :value="searchMachine.machine_name" class="form-control border p-2 cursor-pointer" />
                   </p>
 
-                  <p class="mb-2 text-center">
+                  <p class="mb-2 text-center w-48 ml-4 d-flex flex-column">
                     <strong>작업량</strong>
-                    <span v-if="partialWork.process_todo_qty !== null">{{ partialWork.process_todo_qty }}</span>
+                    <span v-if="partialWork.process_todo_qty !== null" class="m-lg-2">{{ partialWork.process_todo_qty }}</span>
                     <input v-else v-model="partialWork.new_process_todo_qty" type="number" class="form-control border p-2 cursor-pointer text-start" />
                   </p>
 
-                  <p class="mb-2 text-center">
+                  <p class="mb-2 text-center w-48 d-flex flex-column">
                     <strong>불량량</strong>
-                    <span v-if="partialWork.fail_qty !== null">{{ partialWork.fail_qty }}</span>
+                    <span v-if="partialWork.fail_qty !== null" class="m-lg-2">{{ partialWork.fail_qty }}</span>
                     <input v-else v-model="partialWork.new_fail_qty" type="number" class="form-control border p-2 cursor-pointer text-start" />
                   </p>
 
-                  <p class="mb-2 text-center">
+                  <p class="mb-2 text-center w-48 ml-4 d-flex flex-column">
                     <strong>합격량</strong>
-                    <span v-if="partialWork.success_qty !== null">{{ partialWork.success_qty }}</span>
+                    <span v-if="partialWork.success_qty !== null" class="m-lg-2">{{ partialWork.success_qty }}</span>
                     <input v-else v-model="partialWork.new_success_qty" type="number" class="form-control border p-2 cursor-pointer text-start" />
                   </p>
 
-                  <div class="text-center mb-2">
-                    <button @click="startPartialWork(partialWork)" class="btn start" :disabled="partialWork.partial_process_start_time">시작</button>
-                    <button @click="endPartialWork(partialWork)" class="btn end" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>
+                  <div class="text-center mb-2 w-100">
+                    <button @click="startPartialWork(partialWork)" class="btn start text-md" :disabled="partialWork.partial_process_start_time">시작</button>
+                    <button @click="endPartialWork(partialWork)" class="btn end text-md" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>
                   </div>
 
-                  <p class="text-center mb-2">
+                  <p class="text-center mb-2 w-100">
                     <strong>작업시작시간:</strong>
                     {{ partialWork.partial_process_start_time ? dateFormat(partialWork.partial_process_start_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}
                   </p>
 
-                  <p class="text-center mb-2">
+                  <p class="text-center mb-2 w-100">
                     <strong>작업완료시간:</strong>
                     {{ partialWork.partial_process_end_time ? dateFormat(partialWork.partial_process_end_time, 'yyyy-MM-dd hh:mm:ss') : '-' }}
                   </p>
 
-                  <p class="text-center mb-0">
+                  <p class="text-center mb-0 w-100">
                     <strong>진행상태:</strong>
                     <span class="badge m-lg-2"
                           :class="{
@@ -208,10 +139,6 @@
             </div>
           </div>
         </div>
-
-
-
-
       </div>
     </div>
     <Modal
@@ -263,11 +190,11 @@ export default {
 
   data() {
     return {
+      radio: 'all',
       modalType: 'prodOrder',
       partialWorkList: [],
       selectedStatus: '전체',
       partialProcessStatusList: ['전체', '진행중', '완료'],
-      // cols: ['분할작업번호', '작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '진행상태'],
       isShowModal: false,
       modalTitle: '생산지시 목록',
       selectedWorkingOrder: {},
@@ -622,10 +549,6 @@ export default {
       })
     },
 
-    // requestRepair(partialWork) {
-    //   console.log(partialWork)
-    // },
-
     async getWorkList() {
       this.rowData = []
       let result =
@@ -681,9 +604,7 @@ export default {
   },
 
   watch: {
-    async partialWorkFinalStatus(newVal, oldVal) {
-      console.log(newVal)
-      console.log(oldVal)
+    async partialWorkFinalStatus() {
       let statusInfo = {
         processStatus: this.partialWorkFinalStatus === '-' ? null : this.partialWorkFinalStatus,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
@@ -798,7 +719,9 @@ export default {
       }
 
     }
-
+    .hide {
+      display: none;
+    }
     .main-container {
       justify-content: space-between;
       width: 100%;
@@ -824,6 +747,13 @@ export default {
               padding: 0 8px;
               line-height: 40px;
             }
+          }
+          .form-check-input:checked {
+            background-color: orange;
+            border-color: orange;
+          }
+          .form-check-label {
+            font-weight: bold;
           }
           .status {
             > label {
@@ -852,6 +782,13 @@ export default {
 
       }
       .card-body {
+        display: ruby;
+        .w-48 {
+          width: 48%;
+        }
+        .ml-4 {
+          margin-left: 4%;
+        }
         .start {
           border: 2px solid #4caf50;
           color: #4caf50;
@@ -867,58 +804,6 @@ export default {
           border: 2px solid $gray-400;
           color: $gray-400;
         }
-
-
-        //background-color: $gray-100;
-        //margin-bottom: 40px;
-        //border-radius: 8px;
-        //.no-data {
-        //  i {
-        //    color: $green;
-        //  }
-        //  td {
-        //    text-align: center;
-        //    height: 80px;
-        //    font-weight: 600;
-        //  }
-        //}
-        //h6.status {
-        //  border-radius: 4px;
-        //  padding: 4px 6px;
-        //  width: fit-content;
-        //  line-height: 20px;
-        //  font-weight: 900;
-        //  color: $white;
-        //  margin: auto;
-        //}
-        //.green {
-        //  background: $green;
-        //}
-        //.red {
-        //  background: $red1;
-        //}
-        //.gray {
-        //  background: $gray-600;
-        //}
-        //tr button {
-        //  background: #fff;
-        //  border-radius: 4px;
-        //  line-height: 25px;
-        //  font-weight: 700;
-        //  &.start {
-        //    border: 2px solid #4caf50;
-        //    color: #4caf50;
-        //
-        //  }
-        //  &.end {
-        //    border: 2px solid #f44335;
-        //    color: #f44335;
-        //  }
-        //  &:disabled {
-        //    border: 2px solid $gray-400;
-        //    color: $gray-400;
-        //  }
-        //}
         .form-control {
           background-color: #fff;
         }

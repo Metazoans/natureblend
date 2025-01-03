@@ -16,6 +16,24 @@ const workingOrders = `
     order by production_order_num desc
 `
 
+const completedOrders = `
+    select 
+        production_order_num, 
+        production_order_name, 
+        plan_num, 
+        po.product_code, 
+        p.product_name,
+        work_date, 
+        production_order_qty, 
+        production_order_date, 
+        emp_num, 
+        po.production_order_status
+    from production_order po inner join product p
+        on po.product_code = p.product_code
+    where po.production_order_status in ('work_complete')
+    order by production_order_num desc
+`
+
 const workForToday = `
     select machine_type, process_code, process_end_time, process_name, process_start_time, process_status, process_work_header_num, product_code, product_name, production_order_name, production_order_num, production_order_qty, DATE_FORMAT(work_date, '%Y-%m-%d') AS work_date
     from process_work_header
@@ -187,6 +205,7 @@ const completePartialWork = `
         ph.process_work_header_num,
         production_order_num,
         process_name,
+        process_code,
         your_machine(pb.machine_num, 'machine_name') as machine_name,
         your_employee(pb.emp_num, 'name') as emp_name,
         pb.process_complete_qty,
@@ -199,11 +218,28 @@ const completePartialWork = `
     from process_work_header ph
              join process_work_body pb
                   on ph.process_work_header_num = pb.process_work_header_num
-    where pb.partial_process_status = 'partial_process_complete';
+    where pb.partial_process_status = 'partial_process_complete'
+`
+
+const processList = `
+    select process_code, process_name from process
+`
+
+const completeWorkProduct = `
+    select ph.product_name,
+           ph.capacity,
+           ph.product_code
+    from process_work_header ph
+             join process_work_body pb
+                  on ph.process_work_header_num = pb.process_work_header_num
+    where pb.partial_process_status = 'partial_process_complete'
+    group by product_name, capacity
+    order by production_order_num desc
 `
 
 module.exports = {
     workingOrders,
+    completedOrders,
     workForToday,
     workByOrderNum,
     insertPartialWork,
@@ -222,5 +258,7 @@ module.exports = {
     updateProdOrderStatus,
     updateMaterial,
     updatePlanStatus,
-    completePartialWork
+    completePartialWork,
+    processList,
+    completeWorkProduct
 }

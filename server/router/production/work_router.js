@@ -7,6 +7,11 @@ router.get('/activeorders', async (req, res)=>{
     res.send(workingOrders);
 });
 
+router.get('/completedorders', async (req, res)=>{
+    let completedOrders = await workService.findCompletedOrders();
+    res.send(completedOrders);
+});
+
 router.get('/today', async (req, res)=>{
     let workForToday = await workService.findWorkForToday();
     res.send(workForToday);
@@ -113,8 +118,19 @@ router.put('/plan/status', async (req, res)=>{
 });
 
 router.get('/done', async (req, res)=>{
-    let completePartialWork = await workService.getCompletePartialWork();
+    const query = req.query
+    let completePartialWork = await workService.getCompletePartialWork(query);
     res.send(completePartialWork);
+});
+
+router.get('/process', async (req, res)=>{
+    let processList = await workService.getProcessList();
+    res.send(processList);
+});
+
+router.get('/complete/product', async (req, res)=>{
+    let workCompletedProduct = await workService.getWorkCompletedProduct();
+    res.send(workCompletedProduct);
 });
 
 module.exports = router
