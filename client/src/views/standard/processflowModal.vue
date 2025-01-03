@@ -96,6 +96,10 @@
                 button1.style.textAlign = 'center';
                 button1.style.lineHeight = '30px';
                 button1.addEventListener('click', () => {
+                  if(params.data.process_sequence === 1){
+                    this.$notify({ title:'첫번째 공정', text: '첫번째 공정입니다.', type: 'error' });
+                    return;
+                  }
                   const rowData = params.node.data; // 클릭된 행 데이터
                   this.updateProcessSequence(rowData, 'UP'); // 공정순서 감소
                 });
@@ -122,6 +126,10 @@
                 button2.style.textAlign = 'center';
                 button2.style.lineHeight = '30px';
                 button2.addEventListener('click', () => {
+                  if(params.data.process_sequence === this.rowData.length){
+                    this.$notify({ title:'마지막 공정', text: '마지막 공정입니다.', type: 'error' });
+                    return;
+                  }
                   const rowData = params.node.data; // 클릭된 행 데이터
                   this.updateProcessSequence(rowData, 'DOWN'); // 공정순서 증가
                 });
@@ -156,11 +164,11 @@
                     axios.delete(`${ajaxUrl}/flowDelete/${params.data.process_chart_num}`)
                          .then(res => {
                           if(res.data === '성공'){
-                            this.$notify({ title:'공정삭제', text: '공정이 삭제되었습니다.', type: 'success' });
+                            this.$notify({ title:'삭제성공', text: '공정이 삭제되었습니다.', type: 'success' });
                             this.updateProcessSequencesAfterDelete(deletedProcessSeq);
                             this.flowList();
                           }else{
-                            alert('삭제 실패');
+                            this.$notify({ title:'삭제실패', text: '삭제실패', type: 'error' });
                           }
                       })
                       .catch(err => console.log(err));
@@ -320,7 +328,7 @@
               this.$notify({ title:'등록성공', text: '공정이 등록되었습니다.', type: 'success' });
                 this.flowList();
             }else{
-              this.$notify({ title:'등록실패', text: '등록 실패하였습니다.', type: 'error' });
+              this.$notify({ title:'등록실패', text: '등록실패', type: 'error' });
             }
       },
 

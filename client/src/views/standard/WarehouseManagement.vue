@@ -1,4 +1,4 @@
-<!--자재 관리 메뉴-->
+<!--창고 관리 메뉴-->
 <template>
     <div>
        <h3>&nbsp;&nbsp;창고 관리</h3>
@@ -7,56 +7,59 @@
  <div class="main-container">
     <div class="content" style="height: auto;  margin: 20px; padding-bottom: 30px;">
        <form class="row gx-3 gy-2 align-items-center">
-          <!-- 창고코드 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="warehouseCode">창고코드</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseCode" v-model="warehouseCode" >
-          </div>
- 
-          <!-- 창고명 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="warehouseName">창고명</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseName" v-model="warehouseName" >
-          </div>
- 
-          <!-- 보관가능여부 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="storage">보관가능여부</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="storage" v-model="storage" >
-          </div>
- 
-          <!-- 창고위치 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="warehouseLocation">창고위치</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseLocation" v-model="warehouseLocation" >
-          </div>
- 
-          <!-- 담당자 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="empName">담당자</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="empName" v-model="empName" >
-          </div>
-
-          <!-- 연락처 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="empTel">연락처</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="empTel" v-model="empTel" >
-          </div>
-          
-
-          <!-- 창고면적 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="warehouseArea">창고면적</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseArea" v-model="warehouseArea" >
-          </div>
- 
-          <!-- 저장 버튼 -->
-          <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+         <div class="d-flex">
+            <div class="p-2 flex-fill">
+               <!-- 창고코드 -->
+               <div class="col-sm-8">
+                  <label class="col-form-label fw-bold" for="warehouseCode">창고코드</label>
+                  <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseCode" v-model="warehouseCode" >
+               </div>
+               <!-- 담당자 -->
+               <div class="col-sm-8">
+                  <label class="col-form-label fw-bold" for="empName">담당자</label>
+                  <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="empName" v-model="empName" >
+               </div>
+            </div>
+            <div class="p-2 flex-fill">
+               <!-- 창고명 -->
+               <div class="col-sm-8">
+                  <label class="col-form-label fw-bold" for="warehouseName">창고명</label>
+                  <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseName" v-model="warehouseName" >
+               </div>
+               <!-- 연락처 -->
+               <div class="col-sm-8">
+                  <label class="col-form-label fw-bold" for="empTel">연락처</label>
+                  <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="empTel" v-model="empTel" >
+               </div>
+            </div>
+            <div class="p-2 flex-fill">
+               <!-- 보관가능여부 -->
+               <div class="col-sm-8">
+                  <label class="col-form-label fw-bold" for="storage">보관가능여부</label>
+                  <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="storage" v-model="storage" >
+               </div>
+               <!-- 창고면적 -->
+               <div class="col-sm-8">
+                  <label class="col-form-label fw-bold" for="warehouseArea">창고면적</label>
+                  <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseArea" v-model="warehouseArea" >
+               </div>
+            </div>
+            <div class="p-2 flex-fill">
+               <!-- 창고위치 -->
+               <div class="col-sm-8">
+                  <label class="col-form-label fw-bold" for="warehouseLocation">창고위치</label>
+                  <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseLocation" v-model="warehouseLocation" >
+               </div>
+               <!-- 저장 버튼 -->
+               <div class="col-sm-5">
+                  <button style="position:relative; left: 144px; top:45px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+               </div>
+            </div>
           </div>
        </form>
     </div>
  </div>
+ 
  <!-- 검색 메뉴 레이아웃 끝 -->
  <div class="grid-container" style="padding-top: 10px;">
     <ag-grid-vue
@@ -72,15 +75,26 @@
     > 
     </ag-grid-vue>
  </div>
+ <deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="onDeleteConfirmed"
+      @deleteCancelled="onDeleteCancelled"
+      z-index="9999"
+ />
  </template>
+ 
  <script>
  import axios from 'axios';
  import { ajaxUrl } from '@/utils/commons.js';
  // import userDateUtils from '@/utils/useDates.js';
  import theme from "@/utils/agGridTheme";
  import { mapMutations } from "vuex";
+ import deleteModal from './deleteModal.vue';
  
  export default {
+   components: {
+      deleteModal, // 모달 컴포넌트 등록
+   },
    data() {
      return {
         warehouseCode:'',
@@ -90,18 +104,21 @@
         empName:'',
         empTel:'',
         warehouseArea:'',
+        showDeleteModal: false, // 삭제 모달 표시 여부
+        selectedWarehouse: null, // 선택된 창고 데이터
        columnDefs: [
          { headerName: "창고코드", field: "warehouse_code", width: 220 },
          { headerName: "창고명", field: "warehouse_name" },
          { headerName: "보관가능여부", field: "storage" },
          { headerName: "창고위치", field: "warehouse_location" },
          { headerName: "담당자", field: "emp_name" },
-         { headerName: "연락처", field: "emp_tel" },
-         { headerName: "창고면적", field: "warehouse_area" },
+         { headerName: "연락처", field: "emp_tel" ,cellStyle: { textAlign: 'center' } },
+         { headerName: "창고면적", field: "warehouse_area" ,cellStyle: { textAlign: 'right' }},
          {
            headerName: "창고삭제",
            field: "삭제",
            upin : '',
+           cellStyle: { textAlign: 'center' },
            editable: false,
            cellRenderer: (params) => {
              const button2 = document.createElement('button');
@@ -120,20 +137,8 @@
              button2.addEventListener('click', () => {
                console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
                console.log("삭제할 창고코드 : ", params.data.warehouse_code);
-               if(confirm("정말 삭제하시겠습니까?")){
-                    axios.delete(`${ajaxUrl}/warehouseDelete/${params.data.warehouse_code}`)
-                    .then(res => {
-                        if(res.data === '성공'){
-                            alert('삭제되었습니다.');
-                            this.warehouseList();
-                        }else{
-                            alert('삭제 실패');
-                        }
-                    })
-                    .catch(err => console.log(err));
-               }
-               // 로트번호 조회해서 모달여는거
-               // lotinfo(params.data);
+               this.selectedWarehouse = params.data; // 삭제할 창고 선택
+               this.showDeleteModal = true; // 모달 띄우기
              });
              return button2;
            }
@@ -145,6 +150,26 @@
      };
    },
    methods: {
+      onDeleteCancelled() {
+         this.showDeleteModal = false; // 모달 닫기
+      },
+      async onDeleteConfirmed() {
+      if (this.selectedWarehouse) {
+        try {
+          const res = await axios.delete(`${ajaxUrl}/warehouseDelete/${this.selectedWarehouse.warehouse_code}`);
+          if (res.data === '성공') {
+            this.$notify({ title: '창고삭제', text: '창고가 삭제되었습니다.', type: 'success' });
+            this.warehouseList(); // 삭제 후 목록 새로고침
+          } else {
+            this.$notify({ title: '삭제실패', text: '삭제 실패.', type: 'error' });
+          }
+        } catch (error) {
+          console.log(error);
+          this.$notify({ title: '삭제실패', text: '삭제 중 오류 발생', type: 'error' });
+        }
+      }
+      this.showDeleteModal = false; // 모달 닫기
+    },
       ...mapMutations(["addLoginInfo"]),
       async checkLogin(){
           this.loginInfo = this.$store.state.loginInfo;
@@ -156,6 +181,7 @@
               this.$router.push({ name : 'MainPage' });
           }
       },
+
     async warehouseList(){ // 조회하기
         const result = await axios.get(`${ajaxUrl}/warehouseList`)
                                         .catch(err => console.log(err));
@@ -180,11 +206,21 @@
     async warehouseInsert(newList){
            const result = await axios.post(`${ajaxUrl}/warehouseInsert`, newList)
                                        .catch(err => console.log(err));
+            if (result.data === '성공') {
+               this.$notify({ title:'등록성공', text: '창고가 등록되었습니다.', type: 'success' });
+                  this.warehouseList();
+            } else {
+               this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
+            }
            console.log(result.data);
            this.warehouseList();
     },
      input_update() {
        console.log('등록 또는 수정 기능여기서 추가');
+       if(this.warehouseCode === '' || this.warehouseName === '' || this.storage === '' || this.warehouseLocation === '' || this.empName === '' || this.empTel === '' || this.warehouseArea === ''){
+         this.$notify({ title:'빈값', text: '빈칸을 입력해주세요.', type: 'error' });
+           return;
+       }
        this.newList = { warehouse_code : this.warehouseCode,
                         warehouse_name : this.warehouseName,
                         storage : this.storage,

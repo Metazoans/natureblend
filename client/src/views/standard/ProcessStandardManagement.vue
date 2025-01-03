@@ -27,7 +27,7 @@
  
           <!-- 저장 버튼 -->
           <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+             <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
           </div>
        </form>
     </div>
@@ -69,6 +69,7 @@
          {
            headerName: "공정정보삭제",
            field: "삭제",
+           cellStyle: { textAlign: 'center' },
            upin : '',
            editable: false,
            cellRenderer: (params) => {
@@ -92,10 +93,10 @@
                     axios.delete(`${ajaxUrl}/processDelete/${params.data.process_code}`)
                     .then(res => {
                         if(res.data === '성공'){
-                            alert('삭제되었습니다.');
+                            this.$notify({ title:'공정삭제', text: '공정이 삭제되었습니다.', type: 'success' });
                             this.processList();
                         }else{
-                            alert('삭제 실패');
+                            this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
                         }
                     })
                     .catch(err => console.log(err));
@@ -150,7 +151,7 @@
         console.log(this.machineType);
         if(number === 1){
             if(this.processCode === '' || this.processName === '' || this.machineType === ''){
-                alert('빈칸에 내용을 입력해주세요');
+                this.$notify({ title:'빈값', text: '빈칸을 입력해주세요.', type: 'error' });
                 return;
             }else{
                 console.log('등록');
@@ -158,7 +159,7 @@
                 // 중복체크
                 for(let i = 0; i < this.rowData.length; i++){
                     if(this.rowData[i].process_code === this.processCode){
-                        alert('이미 존재하는 공정코드입니다.');
+                        this.$notify({ title:'중복', text: '중복된 공정입니다.', type: 'error' });
                         dataresult = 'no';
                         return;
                     }
@@ -188,23 +189,23 @@
         const result = await axios.post(`${ajaxUrl}/processInsert`, newList)
                                     .catch(err => console.log(err));
             if(result.data === '성공'){
-                alert('등록되었습니다.');
+                this.$notify({ title:'등록성공', text: '공정이 등록되었습니다.', type: 'success' });
                 this.processList();
             }else{
-                alert('등록 실패');
+                this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
             }
      },
         async processUpdate(newList){
             const result = await axios.post(`${ajaxUrl}/processUpdate/${this.processCode}`, newList)
                 if(result.data === '성공'){
-                    alert('수정되었습니다.');
+                    this.$notify({ title:'수정성공', text: '공정이 수정되었습니다.', type: 'success' });
                     this.processList();
                     this.upin = '';
                     this.processCode = '';
                     this.processName = '';
                     this.machineType = '';
                 }else{
-                    alert('수정 실패');
+                    this.$notify({ title:'수정실패', text: '수정실패.', type: 'error' });
                 }
         },
    },

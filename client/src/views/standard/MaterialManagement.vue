@@ -79,12 +79,13 @@
        columnDefs: [
          { headerName: "자재코드", field: "material_code", width: 220 },
          { headerName: "자재이름", field: "material_name" },
-         { headerName: "안전재고(g, 개)", field: "safety_inventory" },
-         { headerName: "유통기한(일)", field: "expiration_date" },
-         { headerName: "등록일", field: "regi_date" },
+         { headerName: "안전재고(g, 개)", field: "safety_inventory" ,cellStyle: { textAlign: 'right' }},
+         { headerName: "유통기한(일)", field: "expiration_date" ,cellStyle: { textAlign: 'right' }},
+         { headerName: "등록일", field: "regi_date",cellStyle: { textAlign: 'center' } },
          {
            headerName: "자재삭제",
            field: "material_delete",
+           cellStyle: { textAlign: 'center' },
            upin : '',
            editable: false,
            cellRenderer: (params) => {

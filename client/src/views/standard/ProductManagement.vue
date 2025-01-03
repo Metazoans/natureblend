@@ -72,12 +72,13 @@ import { mapMutations } from "vuex";
        columnDefs: [
          { headerName: "제품코드", field: "product_code", width: 220 },
          { headerName: "제품명", field: "product_name" },
-         { headerName: "유통기한(일)", field: "expiration_date" },
-         { headerName: "제품용량(mL)", field: "capacity" },
+         { headerName: "유통기한(일)", field: "expiration_date" ,cellStyle: { textAlign: 'right' }},
+         { headerName: "제품용량(mL)", field: "capacity" ,cellStyle: { textAlign: 'right' }},
          {
            headerName: "제품삭제",
            field: "product_delete",
            upin : '',
+           cellStyle: { textAlign: 'center' },
            editable: false,
            cellRenderer: (params) => {
              const button2 = document.createElement('button');
