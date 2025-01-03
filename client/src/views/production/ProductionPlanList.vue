@@ -189,7 +189,7 @@ export default {
 
   methods: {
     onCellDoubleClicked(params) {
-      if(params.colDef.field === 'product_name') {
+      if(params.colDef.field === 'product_name' && params.data.plan_status === '대기중') {
         this.setPlanInfo(params.data)
         this.openModal(true)
       }
