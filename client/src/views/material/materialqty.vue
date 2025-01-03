@@ -80,13 +80,15 @@
       <!-- 저장 버튼 -->
       <div class="col-auto mt-1 text-center">
          <button type="button" class="btn me-5" style="background-color: #4caf50; color: white;" @click="seachPoList">조회</button>
-         <button type="button" class="btn" style="background-color: #fb8c00; color: white;" @click="reSet">초기화</button>
+         <button type="button" class="btn me-5" style="background-color: #fb8c00; color: white;" @click="reSet">초기화</button>
+         <button type="button" class="btn" style="background-color: #0077ff; color: white;" @click="onExportClick">엑셀다운</button>
       </div>
    </div>
  </div>
  <!-- 검색 메뉴 레이아웃 끝 -->
  <div class="grid-container" style="padding-top: 10px;">
    <ag-grid-vue
+      ref="gridRef"
       :rowData="rowData"
       :columnDefs="columnDefs"
       :theme="theme"
@@ -176,6 +178,18 @@ const loginInfo = () => {
   
  };
  
+ // AG Grid Vue 컴포넌트 참조
+const gridRef = ref(null);
+// CSV 내보내기 메서드
+const onExportClick = () => {
+  if (gridRef.value) {
+    const gridApi = gridRef.value.api; // AG Grid API
+    gridApi.exportDataAsCsv({
+      fileName: "자재_재고_리스트.csv",
+    });
+  }
+};
+
  // 조회
  const seachPoList = () => {
    console.log(qty_state.value);

@@ -280,7 +280,9 @@ SELECT mlq.lot_seq,
        CASE
            WHEN mlq.material_nomal = 'b1' THEN '정상'
            ELSE '불량'
-       END AS material_nomal
+       END AS material_nomal,
+       md.material_dis_content,
+       your_employee(md.emp_num, 'name') AS dis_name
 FROM material_lot_qty1 mlq
 JOIN material mat ON mlq.material_code = mat.material_code
 LEFT JOIN material_input mi ON mlq.input_num = mi.input_num
@@ -288,9 +290,45 @@ LEFT JOIN client cli ON mi.client_num = cli.client_num
 LEFT JOIN employee emp ON mi.emp_num = emp.emp_num
 LEFT JOIN warehouse ware ON mlq.warehouse_code = ware.warehouse_code
 LEFT JOIN in_material im ON mlq.lot_code = im.lot_code
-AND mlq.material_nomal = 'b1'
-AND mlq.material_lot_state = 'c1'
+LEFT JOIN material_discard md ON mlq.lot_seq = md.lot_seq
 `;
+// `
+// WITH in_material AS
+//   (SELECT lot_code,
+//           sum(material_qty) AS material_qty
+//    FROM invalid_material
+//    WHERE is_out = '0'
+//    GROUP BY lot_code)
+// SELECT mlq.lot_seq,
+//        mlq.lot_code,
+//        mat.material_name,
+//        COALESCE(cli.com_name, 'NO_CLIENT') AS com_name,
+//        mlq.in_qty,
+//        COALESCE(emp.name, 'NO_EMP') AS name,
+//        mlq.stok_qty,
+//        COALESCE(im.material_qty, 0) AS hold_qty,
+//        mlq.out_qty,
+//        COALESCE(mi.inset_lot_date, '9999-12-31 23:59:59') AS inset_lot_date,
+//        mlq.limit_date,
+//        COALESCE(ware.warehouse_name, 'NO_WARE') AS warehouse_name,
+//        CASE
+//            WHEN mlq.material_lot_state = 'c1' THEN '정상'
+//            ELSE '폐기'
+//        END AS material_lot_state,
+//        CASE
+//            WHEN mlq.material_nomal = 'b1' THEN '정상'
+//            ELSE '불량'
+//        END AS material_nomal
+// FROM material_lot_qty1 mlq
+// JOIN material mat ON mlq.material_code = mat.material_code
+// LEFT JOIN material_input mi ON mlq.input_num = mi.input_num
+// LEFT JOIN client cli ON mi.client_num = cli.client_num
+// LEFT JOIN employee emp ON mi.emp_num = emp.emp_num
+// LEFT JOIN warehouse ware ON mlq.warehouse_code = ware.warehouse_code
+// LEFT JOIN in_material im ON mlq.lot_code = im.lot_code
+// AND mlq.material_nomal = 'b1'
+// AND mlq.material_lot_state = 'c1'
+// `;
 
 //자재 발주서 바디에 자재발주코드 기반으로 자재리스트 전부 가져오기
 const material_order_body_list =
