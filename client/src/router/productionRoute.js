@@ -5,7 +5,7 @@ import productionPlanAdd from "@/views/production/productionPlanAdd/PlanAdd.vue"
 import productionOrderList from "@/views/production/ProductionOrderList.vue";
 import productionOrderAdd from "@/views/production/ProductionOrderAdd/OrderAdd.vue";
 import workingList from "@/views/production/workList/workingList.vue";
-import productionWorkDoneList from "@/views/production/productionWorkDoneList.vue";
+import productionWorkDoneList from "@/views/production/workPerfomance/productionWorkDoneList.vue";
 
 import store from '@/store/index.js'
 import { notify } from "@kyvg/vue3-notification";

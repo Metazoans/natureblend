@@ -4,6 +4,10 @@ const findWorkingOrders = async ()=>{
     return await mysql.query('workingOrders');
 }
 
+const findCompletedOrders = async ()=>{
+    return await mysql.query('completedOrders');
+}
+
 const findWorkForToday = async ()=>{
     return await mysql.query('workForToday');
 }
@@ -120,12 +124,36 @@ const updatePlanStatus = async (planStatusInfo)=>{
     return await mysql.query('updatePlanStatus', Object.values(planStatusInfo))
 }
 
-const getCompletePartialWork = async ()=>{
-    return await mysql.query('completePartialWork')
+const getCompletePartialWork = async (urlQuery)=>{
+    let dbQuery = ''
+
+    if(Object.keys(urlQuery).length !== 0) {
+        if(urlQuery.prodOrderNum) {
+            dbQuery += ` and production_order_num = ${urlQuery.prodOrderNum}`
+        }
+        if(urlQuery.processCode) {
+            dbQuery += ` and process_code = '${urlQuery.processCode}'`
+        }
+        if(urlQuery.productCode) {
+            dbQuery += ` and ph.product_code = '${urlQuery.productCode}'`
+        }
+    }
+
+    dbQuery += ' order by production_order_num desc'
+    return await mysql.query('completePartialWork', dbQuery)
+}
+
+const getProcessList = async ()=>{
+    return await mysql.query('processList')
+}
+
+const getWorkCompletedProduct = async ()=>{
+    return await mysql.query('completeWorkProduct')
 }
 
 module.exports = {
     findWorkingOrders,
+    findCompletedOrders,
     findWorkForToday,
     findWorkByOrderNum,
     addPartialWork,
@@ -144,5 +172,7 @@ module.exports = {
     updateProdOrderStatus,
     updateMaterial,
     updatePlanStatus,
-    getCompletePartialWork
+    getCompletePartialWork,
+    getProcessList,
+    getWorkCompletedProduct
 }

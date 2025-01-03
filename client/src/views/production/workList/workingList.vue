@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid working-list py-4">
-    <h1>실행작업 목록</h1>
+    <h1>작업 목록</h1>
     <div class="container-fluid">
       <div class="search-container mt-4 mb-2">
         <div class="input-group w-auto h-25">
@@ -195,7 +195,6 @@ export default {
       partialWorkList: [],
       selectedStatus: '전체',
       partialProcessStatusList: ['전체', '진행중', '완료'],
-      // cols: ['분할작업번호', '작업자', '설비명', '작업량', '불량량', '합격량', '시작', '작업시작시간', '종료', '작업완료시간', '진행상태'],
       isShowModal: false,
       modalTitle: '생산지시 목록',
       selectedWorkingOrder: {},
@@ -606,8 +605,6 @@ export default {
 
   watch: {
     async partialWorkFinalStatus(newVal, oldVal) {
-      console.log(newVal)
-      console.log(oldVal)
       let statusInfo = {
         processStatus: this.partialWorkFinalStatus === '-' ? null : this.partialWorkFinalStatus,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
