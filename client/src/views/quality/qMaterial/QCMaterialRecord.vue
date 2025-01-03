@@ -9,7 +9,7 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row gx-3 p-4 rounded border shadow">
+      <div class="row gx-3 p-4 rounded border shadow search-background">
         <!-- 검사 상태 -->
         <div class="col-md-2 ps-5">
           <label for="qcStat" class="form-label">검사 상태</label>
@@ -22,11 +22,16 @@
         </div>
 
         <!-- 날짜 범위 -->
-        <div class="col-md-4">
-          <label for="startDate" class="form-label">날짜 범위(검사시작일)</label>
+        <div class="col-md-2">
+          <label for="startDate" class="form-label">검사일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.startDate" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="endDate" class="form-label">검사일(까지)</label>
+          <div class="d-flex gap-2">
             <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.endDate" />
           </div>
@@ -44,7 +49,7 @@
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -111,9 +116,9 @@ export default {
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.1 },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1.2 },
         { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
-        { headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "합격량", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "총 수량(g, 개)", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "합격량(g, 개)", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.1 },
+        { headerName: "불합격량(g, 개)", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.1 },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
         { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
         { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
@@ -172,7 +177,7 @@ export default {
       }
 
       const name = this.searchInfo.mName.replace(/\s+/g, "");
-      console.log(this.searchInfo.qcState);
+      // console.log(this.searchInfo.qcState);
       const result = {
         mName: name.length != 0 ? name : "",
         startDate: this.searchInfo.startDate,
@@ -183,7 +188,7 @@ export default {
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
 
-      console.log(this.searchList);
+      // console.log(this.searchList);
 
       // ag grid에 결과값 넣기
       this.rowData1 = []
@@ -231,6 +236,25 @@ export default {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
+  }
+}
+//검색창 배경색
+.search-background{
+  background-color: #e9ecefff; /* 원하는 배경색 */
+
+
+  input {
+    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
   }
 }
 </style>
