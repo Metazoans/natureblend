@@ -3,7 +3,8 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">확인</h1>
+          <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">확인</h1> -->
+          <slot name="title">title</slot>
         </div>
         <div class="modal-body">
           <slot name="list">slot</slot>

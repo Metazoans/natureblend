@@ -9,13 +9,18 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row gx-3 p-4 rounded border shadow">
+      <div class="row gx-3 p-4 rounded border shadow search-background">
         <!-- 날짜 범위 -->
-        <div class="col-md-4 ps-5">
-          <label for="startDate" class="form-label">날짜 범위</label>
+        <div class="col-md-2 ps-5">
+          <label for="startDate" class="form-label">등록일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.startDate" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="endDate" class="form-label">등록일(까지)</label>
+          <div class="d-flex gap-2">
             <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.endDate" />
           </div>
@@ -33,7 +38,7 @@
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -85,12 +90,15 @@
 
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
     @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId)">
+    <template v-slot:title>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedRow.qcProcessId }}</h1>
+    </template>
     <template v-slot:list>
       <div class="modal-css">
-        <h4>검사 상세 정보</h4>
-        <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
-        <p>제품번호: {{ selectedRow.productCode }}</p>
-        <p>음료 제품명: {{ selectedRow.pName }}</p>
+        <h5>검사 상세 정보</h5>
+        <!-- <p>공정검사번호: {{ selectedRow.qcProcessId }}</p> -->
+        <h4>제품번호: {{ selectedRow.productCode }}</h4>
+        <h3>음료 제품명: {{ selectedRow.pName }}</h3>
         <b>산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이의 현재 수치를 입력하세요</b>
         <hr />
 
@@ -106,6 +114,9 @@
   </Modal>
 
   <Modal :isShowModal="showModalDone" @closeModal="closeModal" @confirm="confirm">
+    <template v-slot:title>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">검사 완료 확인</h1>
+    </template>
     <template v-slot:list>
       <p>해당 검사내역대로 저장하시겠습니까?</p>
     </template>
@@ -347,7 +358,7 @@ export default {
       this.completedDefectDetailsMap[qcProcessId] = defectDetails.filter(detail => detail.is_passed !== undefined);
 
       // completedDefectDetailsMap을 저장하거나 활용
-      console.log('검사 완료된 항목들 (qcProcessId를 키로 하는 맵):', this.completedDefectDetailsMap);
+      // console.log('검사 완료된 항목들 (qcProcessId를 키로 하는 맵):', this.completedDefectDetailsMap);
 
 
 
@@ -427,7 +438,7 @@ export default {
 
       let result = await axios.post(`${ajaxUrl}/completeQCPB`, qcData)
         .catch(err => console.log(err));
-      console.log(result);
+      // console.log(result);
       notify({
         title: "검사완료",
         text: `완료된 검사:${result.data.updatedRows}, 기록된 검사 내역:${result.data.defectNum}`,
@@ -490,6 +501,27 @@ export default {
   }
 }
 
+//검색창 배경색
+.search-background{
+  background-color: #e9ecef; /* 원하는 배경색 */
+
+
+  input {
+    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+}
+
+
 //모달
 .modal-css {
   /* 제목 스타일 */
@@ -502,7 +534,7 @@ export default {
   /* 일반 텍스트 스타일 */
   p {
     margin: 5px 0;
-    font-size: 1rem;
+    font-size: 1.25rem;
     color: #555;
   }
 
@@ -520,6 +552,7 @@ export default {
 
     label {
       font-weight: bold;
+      font-size: 2rem;
       margin-bottom: 5px;
       display: block;
       color: #333;

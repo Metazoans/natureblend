@@ -9,13 +9,18 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row gx-3 p-4 rounded border shadow">
+      <div class="row gx-3 p-4 rounded border shadow search-background">
         <!-- 날짜 범위 -->
-        <div class="col-md-4 ps-5">
-          <label for="startDate" class="form-label">날짜 범위(검사시작일)</label>
+        <div class="col-md-2 ps-5">
+          <label for="startDate" class="form-label">검사일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.startDate" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="endDate" class="form-label">검사일(까지)</label>
+          <div class="d-flex gap-2">
             <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.endDate" />
           </div>
@@ -33,7 +38,7 @@
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -100,7 +105,7 @@ export default {
         { headerName: "입고검사번호", field: "qcMaterialId", resizable: false, cellStyle: { textAlign: "center" }, flex: 4  },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3  },
         { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3  },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 3 },
+        { headerName: "불합격량(g, 개)", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 3.5 },
         { headerName: "불량코드", field: "faultyCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 4  },
         { headerName: "불량명", field: "faultyReason", resizable: false, cellStyle: { textAlign: "left" }, flex: 3  },
         { headerName: "검사시작시각", field: "inspecStart", resizable: true, cellStyle: { textAlign: "center" }, flex: 4  },
@@ -213,6 +218,25 @@ export default {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
+  }
+}
+//검색창 배경색
+.search-background{
+  background-color: #e9ecef; /* 원하는 배경색 */
+
+
+  input {
+    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
   }
 }
 </style>

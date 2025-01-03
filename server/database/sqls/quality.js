@@ -12,11 +12,11 @@ SELECT h.order_code,
        b.material_code,
        m.material_name
 FROM material_order_head h
-INNER JOIN material_order_body b
+LEFT JOIN material_order_body b
     ON h.order_code = b.order_code
-JOIN material m
+LEFT JOIN material m
     ON b.material_code = m.material_code
-JOIN employee e
+LEFT JOIN employee e
     ON h.emp_num = e.emp_num
 WHERE b.material_state LIKE 'a1'
   AND NOT EXISTS (
@@ -38,11 +38,11 @@ SELECT h.order_code,
        b.material_code,
        m.material_name
 FROM material_order_head h
-INNER JOIN material_order_body b
+LEFT JOIN material_order_body b
     ON h.order_code = b.order_code
-JOIN material m
+LEFT JOIN material m
     ON b.material_code = m.material_code
-JOIN employee e
+LEFT JOIN employee e
     ON h.emp_num = e.emp_num
 WHERE b.material_state LIKE 'a1'
   AND NOT EXISTS (
@@ -282,7 +282,7 @@ SELECT 	bi.item_name,
 		    bd.etc_min,
         bd.etc_max,
         bd.product_code   
-FROM    bev_test_details bd JOIN bev_test_item bi on bd.bev_test_item_id = bi.bev_test_item_id
+FROM    bev_test_details bd LEFT JOIN bev_test_item bi on bd.bev_test_item_id = bi.bev_test_item_id
 ORDER BY bd.bev_test_details_id
 `;
 
@@ -402,12 +402,12 @@ SELECT qpr.packing_rjc_id,
        f.faulty_reason,
        qp.inspec_start,
        qp.inspec_end	
-FROM qc_packaging_rjc qpr JOIN faulty_code f ON qpr.faulty_code = f.faulty_code
-						              JOIN qc_packaging qp ON qpr.qc_packing_id = qp.qc_packing_id
-                          JOIN employee e ON qp.emp_num = e.emp_num
-                          JOIN process_work_body pb ON qp.process_num = pb.process_num
-                          JOIN process_work_header ph ON pb.process_work_header_num = ph.process_work_header_num
-                          JOIN bom b ON pb.product_code = b.product_code
+FROM qc_packaging_rjc qpr LEFT JOIN faulty_code f ON qpr.faulty_code = f.faulty_code
+						              LEFT JOIN qc_packaging qp ON qpr.qc_packing_id = qp.qc_packing_id
+                          LEFT JOIN employee e ON qp.emp_num = e.emp_num
+                          LEFT JOIN process_work_body pb ON qp.process_num = pb.process_num
+                          LEFT JOIN process_work_header ph ON pb.process_work_header_num = ph.process_work_header_num
+                          LEFT JOIN bom b ON pb.product_code = b.product_code
 `;
 //ORDER BY qpr.packing_rjc_id DESC
 
