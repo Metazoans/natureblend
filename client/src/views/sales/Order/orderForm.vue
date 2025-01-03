@@ -331,12 +331,17 @@ export default{
         let orderInfo = {
             orderName : this.orderName,
             dueDate : this.dueDate,
-            searchEmpName: this.searchEmpName.name,
             searchCom: this.searchCom.com_name,
             productCode: JSON.stringify(productCodes),
             productNum : JSON.stringify(productNums),
             perPrice : JSON.stringify(perPrices),
         }
+         // 조건에 따라 `name` 속성을 동적으로 추가
+         if (!this.searchEmpName.name) {
+                orderInfo.searchEmpName = this.searchEmpName;
+            } else {
+                orderInfo.searchEmpName = this.searchEmpName.name;
+            }
 
         //console.log(orderInfo);
 

@@ -128,7 +128,7 @@ const deleteInputInfo = async(deleteInfo)=>{
 }
 
 
-//제품번호로 재고 조회
+//제품번호로 재고 조회 (제품)
 const getInventoryProduct = async(productCode)=>{
   let searchList = [];
   if(productCode != undefined && Object.keys(productCode).length > 0 ){
@@ -167,6 +167,10 @@ const getInventoryLot = async(productStatus,startDate,endDate)=>{
   let search = `status.product_status IN (`;  
   for (let key in productStatus) {        
       search += (key == '0' ? ' ' : ', ') + `\'${productStatus[key]}\'`;   
+  }
+   // "소진" 상태 추가
+   if (productStatus["소진"] === "소진") {
+    search += `, '소진'`;
   }
   search += ' )';
   searchList.push(search);

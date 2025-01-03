@@ -2,7 +2,7 @@
     <div class="container-fluid py-4">
     <!--검색 폼 -->
         <h2>제품입고조회</h2>
-        <div class= "main-container">
+        <div class= "main-container ps-4">
             <div class= "pt-5 pb-5">
                     <!--제품명 검색-->
                     <div class="row align-items-center mb-3">
@@ -56,14 +56,14 @@
                 <!-- 입고된 주문건 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
-                     style ="height: 450px;"
+                    style ="height: 450px;"
                     :rowData="inputData"
                     :columnDefs="columnInputData"
                     :theme="theme"
                     @grid-ready="onReady"
                     :quickFilterText="inputListsearch"
                     :noRowsOverlayComponent="noRowsOverlayComponent"
-                    @cellClicked="onClickedWh" 
+                    @cellClicked="onCellClicked" 
                     rowSelection="multiple"
                     :pagination="true"
                     :paginationPageSize="20"
@@ -129,6 +129,9 @@ export default{
 
             //검색어 검색 (그리드 안)
             inputListsearch: "", //검색어
+
+            //초기값
+            originWarehouseName : null,
 
           
 
@@ -202,6 +205,9 @@ export default{
                 if (selectedNodes.length > 0) {
                     this.selectedCol = selectedNodes[0];  // 첫 번째 선택된 셀을 가져옵니다.
                     console.log("선택된 셀:", this.selectedCol);
+                    //초기값 저장 
+                    this.originWarehouseName  = this.selectedCol.data.warehouse_name;
+                    console.log(this.originWarehouseName)
                 } else {
                     console.log("선택된 셀이 없습니다.");
                 }
@@ -255,7 +261,7 @@ export default{
 
                // 버튼 생성
                const button1 = document.createElement('button');
-               button1.textContent = '수정';
+               button1.textContent = '입고수정';
                button1.style.cursor = 'pointer';
                button1.style.backgroundColor = '#008000';
                button1.style.color = 'white';
@@ -264,7 +270,7 @@ export default{
                button1.style.borderRadius = '4px';
 
                const button2 = document.createElement('button');
-               button2.textContent = '삭제';
+               button2.textContent = '입고삭제';
                button2.style.cursor = 'pointer';
                button2.style.backgroundColor = '#ff0000';
                button2.style.color = 'white';
@@ -366,18 +372,51 @@ export default{
 
 
         },
-        
-        onClickedWh(col){
+        onCellClicked(col) {
             if (col.colDef.field === 'warehouse_name') {
                 console.log("작동");
                 // warehouse_name의 셀을 클릭시에만 모달 작동 
                 this.openModal('warehouse');
            
-            }else{
-                console.log("나머지");
             }
-
         },
+        // onClickedWh(col){
+        //     if (col.colDef.field === 'warehouse_name') {
+        //         console.log("작동");
+        //         // warehouse_name의 셀을 클릭시에만 모달 작동 
+        //         this.openModal('warehouse');
+           
+        //     }else{
+        //         console.log("나머지");
+        //     }
+
+        // },
+        // 셀 값이 수정된 후 이를 롤백할 수 있게 함
+        rollbackCellChange(col) {
+            let nodeId = col.node.id;
+            let colId = col.column.colId;
+            if (this.originalValues && this.originalValues[nodeId] && this.originalValues[nodeId][colId] !== undefined) {
+                let originalValue = this.originalValues[nodeId][colId];
+                col.node.setDataValue(col.column,originalValue); // 원래 값으로 롤백
+            }
+        },
+        //초기화
+        resetUpdateInfo(){
+            if (this.selectedCol) {
+            // 초기값으로 롤백
+            this.selectedCol.data.warehouse_name = this.originWarehouseName;
+
+        // ag-Grid에 적용하기
+            this.gridApi.applyTransaction({
+                update: [this.selectedCol.data] // 수정된 행만 업데이트
+            });
+
+            console.log("초기값으로 롤백 완료:", this.originWarehouseName);
+            }
+            this.gridApi.deselectAll();
+            this.originWarehouseName = null;
+        },
+
         async updateInput(){
             const selectedRows = this.gridApi.getSelectedRows(); 
             let productLots = []
@@ -489,11 +528,7 @@ export default{
                     });
                 }                  
         },
-
-        resetUpdateInfo(){
-            this.gridApi.deselectAll();
-        },
-
+     
 
     },// method  
 };

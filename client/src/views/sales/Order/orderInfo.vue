@@ -9,10 +9,10 @@
       @grid-ready="onReady1"
       :noRowsOverlayComponent="noRowsOverlayComponent"
       rowSelection="multiple"
-      @cellClicked="onClickedWh" 
+      @cellClicked="onCellClicked" 
       @rowClicked="onRowClicked"
       :pagination="true"
-      :paginationPageSize="20"
+      :paginationPageSize="10"
   />
   
   </div>
@@ -35,7 +35,7 @@
 
   <!--검색 및 초기화-->
     <div class="mb-3 pt-2 text-center">
-        <material-button  color="success" class="button me-5" @click="updateOrder">수정</material-button>
+        <material-button  color="success" class="button me-5" @click="updateOrder">주문서수정</material-button>
         <material-button  color="danger" class="button" @click="deleteOrder">주문서삭제</material-button>
     </div>
 </template>
@@ -68,6 +68,8 @@ export default{
     data(){
         return{
             Scol : 0,
+            originalValue: null,  // 셀의 원래 값 저장
+
             // orderNum : this.order.orderlist_num,
            //주문조회
            statusOrderMap: {         // DB 상태값과 화면 상태명 매핑
@@ -159,6 +161,49 @@ export default{
    
 
     methods:{
+        // 셀 클릭 시 편집 시작 전에 원래 값 저장
+    onCellClicked(params) {
+        if (params.colDef.editable) {
+            if (!this.originalValues) {
+                this.originalValues = {};
+            }
+            this.originalValues[params.node.id] = this.originalValues[params.node.id] || {};
+            this.originalValues[params.node.id][params.column.colId] = params.value; // 특정 셀의 원래 값 저장
+            console.log("원래값==",this.originalValue)
+        }
+        // 'product_name' 필드 클릭 시 모달 열기
+        if (params.colDef.field === 'product_name') {
+            this.Scol = params.node.rowIndex;  // 행 인덱스 저장
+            console.log(this.Scol);
+            this.openModal();  // 모달 열기
+        }
+    },
+    // 셀 값이 수정된 후 이를 롤백할 수 있게 함
+    rollbackCellChange(params) {
+        let nodeId = params.node.id;
+        let colId = params.column.colId;
+        if (this.originalValues && this.originalValues[nodeId] && this.originalValues[nodeId][colId] !== undefined) {
+            let originalValue = this.originalValues[nodeId][colId];
+            params.node.setDataValue(params.column,originalValue); // 원래 값으로 롤백
+            this.originalValue = null;  // 원래 값 초기화
+        }
+    },
+
+    rollbackEdit() {
+        if (this.originalValues) {
+            this.gridApi.forEachNode((node) => {
+                // 각 셀마다 저장된 원래 값을 롤백
+                Object.keys(this.originalValues[node.id] || {}).forEach(colId => {
+                const originalValue = this.originalValues[node.id][colId];
+                node.setDataValue(colId, originalValue); // 해당 컬럼의 원래 값으로 롤백
+                });
+            });
+             // 체크박스 해제
+            this.gridApi.deselectAll();
+            this.originalValue = null; // 롤백 후 원래 값 초기화
+        }
+      
+    },
         onReady1(event){
             this.gridApi = event.api;
             //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
@@ -214,14 +259,14 @@ export default{
                 //버튼클릭이벤트
                 button3.addEventListener('click',()=>{
                 //초기화
-                this.resetData();
+                this.rollbackEdit();
                  });
 
                
                 //입력필드생성 
                 const inputText1 = document.createElement('input');
                 inputText1.type = 'text';
-                inputText1.placeholder = '검색1';
+                inputText1.placeholder = '검색';
                 inputText1.style.padding = '5px';
                 inputText1.style.width = '250px';
                 inputText1.style.border = '1px solid #ccc';
@@ -352,15 +397,15 @@ export default{
         this.isShowModal = false;
     },
 
-    onClickedWh(col){
+    // onClickedWh(col){
 
-       this.Scol = col.node.rowIndex
-       console.log(this.Scol);
+    //    this.Scol = col.node.rowIndex
+    //    console.log(this.Scol);
 
-        if(col.colDef.field === 'product_name'){
-            this.openModal();
-        }
-    },
+    //     if(col.colDef.field === 'product_name'){
+    //         this.openModal();
+    //     }
+    // },
 
     // 주문추가 삭제 함수
     renderButton(params){
@@ -457,39 +502,7 @@ export default{
                     type: 'error',
                 });
         }
-        // if(this.orderInfo[0]['orderlist_status'] === 'update'){
-        //     for(let i=0; i<this.orderInfo.length; i++){
-        //         if(this.orderInfo[i]['order_status'] === 'preparing'){
-        //             let result = await axios.delete(`${ajaxUrl}/orderlist/delete/${orderlistNum}`)
-        //                                 .catch(err => console.log(err));
-        //             console.log(result);
-        //             if(result.data.result === 'success'){
-        //                 this.$notify({
-        //                     text: `${this.orderInfo[0]['orderlist_title']}이 삭제되었습니다.` ,
-        //                     type: 'success',
-        //                 });  
-        //                 this.$router.push({name :'orderlistSearch'});
-        //                 break;
-        //             }else if (result.data.result === 'fail'){
-        //                 this.$notify({
-        //                     text: '삭제 오류 발생',
-        //                     type: 'error',
-        //                 });
-        //                 break;
-        //             }
-        //          }
-        //          this.$notify({
-        //                 text: '현재 출고 진행 중인 건이 있습니다.',
-        //                 type: 'error',
-        //             });
-        //             break;
-        //     }
-        // }else if (this.orderInfo[0]['orderlist_status'] === 'continue' || this.orderInfo[0]['orderlist_status'] === 'done'){
-        //     this.$notify({
-        //             text: '현재 출고 진행 중인 건이 있습니다.',
-        //             type: 'error',
-        //         });
-        // }
+     
        
       }, 
       //주문삭제 
@@ -543,10 +556,8 @@ export default{
         }
 
       },
-      resetData(){
-        // 체크박스 해제
-        this.gridApi.deselectAll();
-      },
+      
+ 
         
     }//end method
 }

@@ -3,7 +3,7 @@
     <!--검색 폼 -->
     <h2>제품출고 등록</h2>
     <h4>주문서 조회</h4>
-    <div class= "main-container">
+    <div class= "main-container ps-4">
         <div class= "pt-5 pb-5">
                 <!--거래처명 검색-->
                 <div class="row align-items-center mb-3">
@@ -435,9 +435,14 @@ export default{
                 output_amount : JSON.stringify(outputNums),
                 order_num : orderNum,
                 com_name : clientName,
-                name : this.searchEmpName.name,
-
             }
+            // 조건에 따라 `name` 속성을 동적으로 추가
+            if (!this.searchEmpName.name) {
+                outputInfo.name = this.searchEmpName;
+            } else {
+                outputInfo.name = this.searchEmpName.name;
+            }
+
             console.log(outputInfo);
             let result =
                 await axios.post(`${ajaxUrl}/output/insert`, outputInfo)
@@ -551,4 +556,6 @@ input:read-only:focus {
   border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
   outline: none; /* 포커스 아웃라인 제거 */
 }
+
+
 </style>

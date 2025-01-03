@@ -2,7 +2,7 @@
     <div class="container-fluid py-4">
     <!--검색 폼 -->
     <h2>제품출고조회</h2>
-    <div class= "main-container">
+    <div class= "main-container ps-4">
         <div class= "pt-5 pb-5">
                 <!--거래처명 검색-->
                 <div class="row align-items-center mb-3">
@@ -91,7 +91,7 @@
         @rowClicked="onOrderRowClicked"
         rowSelection="multiple"
         :pagination="true"
-        :paginationPageSize="10"
+        :paginationPageSize="20"
     />
     </div>
     <div style="display: none">

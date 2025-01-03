@@ -2,7 +2,7 @@
     <div class="container-fluid py-4">
         <!--검색 폼 -->
         <h2>주문서 조회</h2>
-            <div class= "main-container">
+            <div class= "main-container ps-4">
                 <div class="pt-2 pb-3">
                         <!--주문서 상태 체크 박스-->
                         <div class="mb-3">
