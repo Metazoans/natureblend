@@ -43,7 +43,7 @@
     <!-- <div class="grid-container" v-show="rowData.length != 0"> -->
     <div class="grid-container">
         <ag-grid-vue
-        style ="width:1360px;"
+        
         :rowData="rowData"
         :columnDefs="columnOrderlist"
         :theme="theme"
@@ -164,6 +164,7 @@ import userDateUtils from '@/utils/useDates.js';
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
+import { mapMutations } from "vuex";
 
 export default{
     name :"orderlistSearch",
@@ -179,6 +180,7 @@ export default{
     data(){
         return{
             
+            testing: {},
 
             //검색 필터 데이터
             //거래처 모달 
@@ -257,9 +259,19 @@ export default{
             
         }
     },
+    mounted() {
+      this.test();
+    },
  
 
     methods:{
+        ...mapMutations(["addLoginInfo"]),
+        test(){
+        this.testing = this.$store.state.loginInfo;
+        console.log('ddd', this.$store.state.loginInfo);
+        this.searchEmpName = this.$store.state.loginInfo.name;
+        this.searchEmpNum = this.$store.state.loginInfo.emp_num;
+        },
         selectclient(client){
             this.selectedCom = client; 
         },
@@ -396,7 +408,7 @@ export default{
             //입력필드생성 
             const inputText1 = document.createElement('input');
             inputText1.type = 'text';
-            inputText1.placeholder = '검색1';
+            inputText1.placeholder = '검색';
             inputText1.style.padding = '5px';
             inputText1.style.width = '250px';
             inputText1.style.border = '1px solid #ccc';

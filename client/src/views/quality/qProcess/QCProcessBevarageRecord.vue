@@ -9,9 +9,9 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row gx-3 p-4 rounded border shadow">
+      <div class="row gx-3 p-4 rounded border shadow search-background">
         <!-- 검사 상태 -->
-        <div class="col-md-2 ps-5">
+        <div class="col-md-1">
           <label for="qcStat" class="form-label">검사 상태</label>
           <select class="form-select text-center border cursor-pointer" v-model="searchInfo.qcState"
             aria-label="검사 상태 선택">
@@ -31,11 +31,16 @@
         </div>
 
         <!-- 날짜 범위 -->
-        <div class="col-md-3">
-          <label for="startDate" class="form-label">날짜 범위</label>
+        <div class="col-md-2">
+          <label for="startDate" class="form-label">검사일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.startDate" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="endDate" class="form-label">검사일(까지)</label>
+          <div class="d-flex gap-2">
             <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.endDate" />
           </div>
@@ -53,7 +58,7 @@
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -63,7 +68,9 @@
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
     <h4>검사상세정보</h4>
-    <p>검사항목 클릭 => 불량항목, 수량입력(없으면 그냥 저장)=> 작성완료한 항목 체크후 '검사완료'버튼 클릭</p>
+    <div class="ps-4">
+      <p>조회할 검사 건을 선택하시면 자세한 검사 내용을 확인할 수 있습니다.</p>
+    </div>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
@@ -84,12 +91,16 @@
   <!-- 불량 상세 모달 -->
 
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal">
+    <template v-slot:title>
+      <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">음료검사 정보</h1> -->
+      <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedRow.qcProcessId }}</h1>
+    </template>
     <template v-slot:list>
       <div class="modal-css">
-        <h4>검사 상세 정보</h4>
-        <p>공정(음료)번호: {{ selectedRow.qcProcessId }}</p>
-        <p>제품번호: {{ selectedRow.productCode }}</p>
-        <p>음료 제품명: {{ selectedRow.pName }}</p>
+        <h5>검사 상세 정보</h5>
+        <!-- <p>공정검사번호: {{ selectedRow.qcProcessId }}</p> -->
+        <h4>제품번호: {{ selectedRow.productCode }}</h4>
+        <h3>음료 제품명: {{ selectedRow.pName }}</h3>
         <b>검사 항목 : 산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이</b>
         <hr />
 
@@ -123,11 +134,6 @@
   </Modal>
 
 
-  <Modal :isShowModal="showModalDone" @closeModal="closeModal" @confirm="confirm">
-    <template v-slot:list>
-      <p>신청내역대로 저장하시겠습니까?</p>
-    </template>
-  </Modal>
 
   <div style="display: none">
     <CustomNoRowsOverlay />
@@ -206,7 +212,6 @@ export default {
 
       completedDefectDetailsMap: {},
       completedTestDetails: [],
-      showModalDone: false,
 
 
     }
@@ -325,7 +330,7 @@ export default {
 
     //신청 건의 합격량, 불합격량(불량항목, 각각의 수량) 처리
     onCellClicked(event) {
-      console.log('클릭됨');
+      // console.log('클릭됨');
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = event.data;
       this.showModalRJC = true;
@@ -334,7 +339,6 @@ export default {
       this.showModalRJC = false;
       this.selectedRow = {};
 
-      this.showModalDone = false;
     },
 
 
@@ -434,6 +438,27 @@ export default {
     color: #333;
   }
 }
+
+//검색창 배경색
+.search-background{
+  background-color: #e9ecef; /* 원하는 배경색 */
+
+
+  input {
+    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+}
+
 
 //모달
 .modal-css {

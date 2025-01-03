@@ -39,10 +39,9 @@
         </div>
         
         <div class="row gx-3 align-items-center" style="margin: 10px 0;">
-          <label class="col-auto col-form-label fw-bold">이름 검색</label>
           <!-- 검색 옵션 -->
-          <div class="col-2">
-            <select v-model="selectSearchType" class="form-select" style="background-color: white;">
+          <div class="col-auto">
+            <select v-model="selectSearchType" class="form-select search">
               <option v-for="option in searchType" :key="option" :value="option">
                 {{ option }}
               </option>
@@ -55,7 +54,7 @@
               type="text"
               v-model="searchData"
               placeholder="검색 내용을 입력하세요"
-              class="form-control"
+              class="form-control search"
             />
           </div>
         </div>
@@ -96,7 +95,8 @@
         :columnDefs="columnDefs"
         :theme="theme"
        	@grid-ready="onReady"
-        style="height: 450px;"
+        :rowHeight="50"
+        style="height: 493px;"
         :pagination="true"
         :paginationPageSize="8"
         @cellClicked="cellClickFnc"
@@ -175,7 +175,7 @@ export default {
   data() {
     return {
       // 로그인 사원 권한 체크
-      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.job == '관리자' ? true : false,
+      checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.position == '관리자' ? true : false,
 
       isShowMachineAdd: false,
       isShowInActAdd: false,
@@ -188,8 +188,8 @@ export default {
       pickedStatus: "", // 작동상태 선택
       machineType: ["세척기기", "음료제작기기", "포장기기"], // 설비 분류 옵션
       pickedType: [], // 설비 분류 선택
-      searchType: ["이름검색", "공정이름", "설비이름"], // 검색 옵션
-      selectSearchType: "이름검색", // 선택된 검색 옵션
+      searchType: ["전체검색", "공정이름", "모델번호", "설비이름"], // 검색 옵션
+      selectSearchType: "전체검색", // 선택된 검색 옵션
       searchData: "", // 검색 내용
 
       filters: [],
@@ -369,11 +369,14 @@ export default {
           break;
       }
       switch(this.filters.selectSearchType) {
-        case "이름검색":
+        case "전체검색":
           this.filters.selectSearchType = "all";
           break;
         case "공정이름":
           this.filters.selectSearchType = "process_name";
+          break;
+        case "모델번호":
+          this.filters.selectSearchType = "model_num";
           break;
         case "설비이름":
           this.filters.selectSearchType = "machine_name";
@@ -419,10 +422,52 @@ export default {
   margin: 10px 20px;
   padding: 20px 0;
 }
+// input {
+//   background-color: #ffffff; /* 배경색 흰색 */
+//   border: solid 1px; /* 테두리 색상 */
+//   color: #495057; /* 텍스트 색상 */
+// }
+
+select {
+  background-color: white;
+  padding-left: 20px;
+  padding-right: 35px;
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border: 1px solid #ced4da;
+}
+select:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
+
+
+
+/* 일반 input 태그 스타일 */
 input {
   background-color: #ffffff; /* 배경색 흰색 */
   border: solid 1px #ced4da; /* 테두리 색상 */
   color: #495057; /* 텍스트 색상 */
+}
+/* readonly 상태의 input 태그 스타일 */
+input:read-only {
+  background-color: #ffffff; /* 배경색 흰색 고정 */
+  color: #495057; /* 텍스트 색상 유지 */
+  cursor: not-allowed; /* 읽기 전용 표시를 위한 커서 */
+}
+
+/* input 포커스 상태에서도 배경색 유지 */
+input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
+
+/* readonly input 요소가 포커스되어도 스타일 유지 */
+input:read-only:focus {
+  background-color: #ffffff; /* 배경색 흰색 고정 */
+  border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
+  outline: none; /* 포커스 아웃라인 제거 */
 }
 
 </style>

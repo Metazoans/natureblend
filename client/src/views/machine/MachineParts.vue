@@ -163,4 +163,16 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+button {
+  background-color: $gray-200;
+  padding: 2px 5px;
+  margin: 0 3px;
+  border-radius: 7px;
+  font-weight: 700;
+  font-family: inherit;
+  min-width: 30px;
+  height: auto;
+}
+
 </style>

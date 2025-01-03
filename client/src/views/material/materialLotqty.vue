@@ -86,13 +86,15 @@
       <!-- 저장 버튼 -->
       <div class="col-auto mt-1 text-center">
          <button type="button" class="btn me-5" style="background-color: #4caf50; color: white;" @click="seachPoList">조회</button>
-         <button type="button" class="btn" style="background-color: #fb8c00; color: white;" @click="reSet">초기화</button>
+         <button type="button" class="btn me-5" style="background-color: #fb8c00; color: white;" @click="reSet">초기화</button>
+         <button type="button" class="btn" style="background-color: #0077ff; color: white;" @click="onExportClick">엑셀다운</button>
       </div>
    </div>
  </div>
  <!-- 검색 메뉴 레이아웃 끝 -->
  <div class="grid-container" style="padding-top: 10px;">
    <ag-grid-vue
+      ref="gridRef"
       :rowData="rowData"
       :columnDefs="columnDefs"
       :theme="theme"
@@ -102,6 +104,8 @@
       style="height: 513px;"
       rowSelection="multiple"
       :noRowsOverlayComponent="CustomNoRowsOverlay"
+      :tooltipShowDelay="500"
+      :tooltipHideDelay="3000"
    >
    </ag-grid-vue>
  </div>
@@ -223,7 +227,7 @@ const loginInfo = () => {
  
   //그리드 api 컬럼명 들어가는 거
  const columnDefs = ref([
-   { headerName: "No.", field: "lot_seq", width:90, cellStyle: { textAlign: "center" } },
+   { headerName: "No.", field: "lot_seq", width:90, cellStyle: { textAlign: "center" }, tooltipField: "lot_seq", },
    { headerName: "자재 LOT번호", field: "lot_code", width:160, cellStyle: { textAlign: "center" } },
    { headerName: "자재명", field: "material_name", cellStyle: { textAlign: "left" } },
    { headerName: "업체명", field: "com_name", cellStyle: { textAlign: "left" } },
@@ -236,7 +240,9 @@ const loginInfo = () => {
    { headerName: "입고일", field: "inset_lot_date", width:130, cellStyle: { textAlign: "center" } },
    { headerName: "유통기한", field: "limit_date", width:130, cellStyle: { textAlign: "center" } },
    { headerName: "창고위치", field: "warehouse_name", width:120, cellStyle: { textAlign: "left" } },
-   { headerName: "폐기", field: "material_lot_state", width:80, cellStyle: { textAlign: "center" } },
+   { headerName: "폐기", field: "material_lot_state", width:80, cellStyle: { textAlign: "center" },
+      tooltipValueGetter: params => params.data.material_dis_content ? `담당 : ${params.data.dis_name} / 사유 : ${params.data.material_dis_content}`: "",  
+   },
    {  
       headerName: "비고", 
       field: "폐기처리", 
@@ -341,6 +347,18 @@ const loginInfo = () => {
    }
  };
 
+// AG Grid Vue 컴포넌트 참조
+const gridRef = ref(null);
+// CSV 내보내기 메서드
+const onExportClick = () => {
+  if (gridRef.value) {
+    const gridApi = gridRef.value.api; // AG Grid API
+    gridApi.exportDataAsCsv({
+      fileName: "자재_LOT_재고_리스트.csv",
+    });
+  }
+};
+
  // 엔터키 누르면 하는거
  const enterkey = (event) => {
     event.preventDefault();
@@ -399,4 +417,3 @@ const loginInfo = () => {
       border: solid 1px  ;
  }
  </style>
- 

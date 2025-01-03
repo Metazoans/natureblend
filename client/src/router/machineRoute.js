@@ -47,17 +47,17 @@ const machineRoute = [
     path: 'list',
     name: 'machineList',
     component: MachineList,
-    beforeEnter: (to, from, next) => {
-      checkAuth(to, next)
-    }
+    // beforeEnter: (to, from, next) => {
+    //   checkAuth(to, next)
+    // }
   },
   {
     path: 'machineInfo/:mno',
     name: 'machineInfo',
     component: MachineInfo,
-    beforeEnter: (to, from, next) => {
-      checkAuth(to, next)
-    }
+    // beforeEnter: (to, from, next) => {
+    //   checkAuth(to, next)
+    // }
   },
 
   // 부품 페이지
@@ -85,9 +85,9 @@ const machineRoute = [
     path: 'requestList',
     name: 'requestList',
     component: RequestList,
-    beforeEnter: (to, from, next) => {
-      checkAuth(to, next)
-    }
+    // beforeEnter: (to, from, next) => {
+    //   checkAuth(to, next)
+    // }
   },
   {
     path: 'requestEnd',

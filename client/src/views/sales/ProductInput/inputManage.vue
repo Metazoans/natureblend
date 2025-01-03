@@ -3,7 +3,7 @@
     <!--검색 폼 -->
         <h2>제품입고등록</h2>
         <h4>완제품 품질 검사 조회</h4>
-        <div class= "main-container">
+        <div class= "main-container ps-4">
             <div class= "pt-5 pb-5">
                     <!--제품명 검색-->
                     <div class="row align-items-center mb-3">
@@ -80,9 +80,7 @@
                         <div class="row align-items-center mb-3">
                             <label class="col-sm-3 col-form-label fw-bold" >담당자</label>
                             <div class="col-sm-9 d-flex">
-                                <input 
-                                    id="EmpName"  class="form-control border p-2" 
-                                    v-model="searchEmpName" @click="openModal('emp')" readonly/>
+                                <input id="EmpName"  class="form-control border p-2" v-model="searchEmpName" @click="openModal('emp')" readonly/>
                                     <Modal
                                         :isShowModal="isShowModal.emp"
                                         :modalTitle="'담당자선택'"
@@ -134,6 +132,7 @@
                 :columnDefs="columntempInput"
                 :theme="theme"
                 @grid-ready="onReady1"
+                :quickFilterText="inputListsearch1"
                 :noRowsOverlayComponent="noRowsOverlayComponent"
                 :editType="'fullRow'"
                 :rowSelection="'multiple'"  
@@ -168,6 +167,7 @@ import userDateUtils from '@/utils/useDates.js';
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
+import { mapMutations } from "vuex";
 
 export default{
     name :"inputManage",
@@ -182,7 +182,7 @@ export default{
     },
     data(){
         return{
-            
+            testing: {},
 
             //검색 필터 데이터
             startDate:"", //통과날짜 시작 날짜
@@ -266,10 +266,20 @@ export default{
 
         }
     },
+    mounted() {
+      this.test();
+    },
    
  
 
     methods:{
+        ...mapMutations(["addLoginInfo"]),
+        test(){
+        this.testing = this.$store.state.loginInfo;
+        console.log('ddd', this.$store.state.loginInfo);
+        this.searchEmpName = this.$store.state.loginInfo.name;
+        this.searchEmpNum = this.$store.state.loginInfo.emp_num;
+        },
         selectproduct(product){
             //console.log(product); 
             this.selectedProCode = product.product_code;
@@ -393,13 +403,27 @@ export default{
             //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
-            const paginationPanel1 = allPanels[2];
+            const paginationPanel1 = allPanels[4];
             if (paginationPanel1) {
                // 컨테이너 생성
                const container = document.createElement('div');
                container.style.display = 'flex';
                container.style.alignItems = 'center';
                container.style.gap = '5px'; // 버튼과 입력 필드 간격
+                // 버튼 생성
+                const button = document.createElement('button');
+               button.textContent = '입고삭제';
+               button.style.cursor = 'pointer';
+               button.style.backgroundColor = '#f44335';
+               button.style.color = 'white';
+               button.style.border = 'none';
+               button.style.padding = '5px 10px';
+               button.style.borderRadius = '4px';
+                //버튼클릭이벤트
+                button.addEventListener('click',()=>{
+                //입고삭제
+                this.deleteInputs();
+                 });
 
                
                 //입력필드생성 
@@ -421,7 +445,7 @@ export default{
                 });
 
                 //컨테이너에 버튼, 입력 필드 추가
-                
+                container.appendChild(button);
                 container.appendChild(inputText1);
 
                 //페이징 영역에 컨테이너삽입
@@ -491,11 +515,37 @@ export default{
         resetTempInput(){
             this.tempInput = []
         },
+        //tempInput의 입고 저장 삭제 
+        deleteInputs(){
+            const selectedRows = this.gridApi.getSelectedRows();
+            console.log(selectedRows);
+            // 선택된 항목들의 qtId와 tempProductCode를 기준으로 tempInput에서 삭제
+            this.tempInput = this.tempInput.filter(item => {
+                // 선택된 항목 중에서 qtId와 tempProductCode가 일치하지 않으면 유지
+                return !selectedRows.some(row => 
+                    row.qtId === item.qtId && row.tempProductCode === item.tempProductCode
+                );
+            });
+
+            console.log("입고 데이터 삭제 후 tempInput 상태:", this.tempInput);
+        },
         //입고추가 
         async inputInsert(){
             
             const selectedRows = this.gridApi.getSelectedRows();
-            console.log("선택된값==",selectedRows ,"임시보관값==",this.tempInput); 
+            console.log("선택된값==",selectedRows ,"임시보관값==",this.tempInput);
+             // 선택된 행들의 담당자 번호 추출
+            let employeeNums = selectedRows.map(row => row.employeeNum);
+            let uniqueEmployeeNums = new Set(employeeNums); // 고유한 값만 남김 
+
+             // 담당자가 여러 명인지 확인
+            if (uniqueEmployeeNums.size > 1) {
+                this.$notify({
+                    text: "선택된 입고에 담당자가 여러 명 있습니다. 한 명만 선택하세요.",
+                    type: 'warning',
+                });
+                return; // 함수 종료
+            }
 
             let empNum = selectedRows[0].employeeNum;
             //console.log(empName,warehouseCode);
@@ -547,6 +597,7 @@ export default{
                 }
 
         },
+        
         
         
 

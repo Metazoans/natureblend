@@ -24,7 +24,7 @@
       <!-- 입력페이지 -->
       <div class="col-4 requestInfo">
         <!-- 수정 / 완료 탭 버튼 -->
-        <div class="row my-3 align-items-center">
+        <div class="row my-3 align-items-center tapDiv">
           <div class="col tap" style="border-right: 2px solid black;"><a class="tapBtn" @click="updateTap">요청 수정</a></div>
           <div class="col tap"><a class="tapBtn" @click="completeTap">작업 완료</a></div>
         </div>
@@ -116,7 +116,6 @@
               type="button"
               data-target="warningToast"
               @click="completeBtn"
-              :disabled="!checkJob"
             >
               완료
             </button>
@@ -127,7 +126,6 @@
               type="button"
               data-target="warningToast"
               @click="delBtn"
-              :disabled="!checkJob"
             >
               취소
             </button>
@@ -150,10 +148,11 @@ import userDateUtils from "@/utils/useDates.js";
 import {shallowRef, onBeforeMount, ref} from 'vue';
 
 import { useStore } from 'vuex';
+import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 
 const store = useStore();
 const checkJob = ref(
-  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.job == '관리자' ? true : false
+  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.position == '관리자' ? true : false
 );
 
 
@@ -223,8 +222,6 @@ const onReady = () => {
     button.style.left = '10px';
     button.className = 'btn-success';
 
-    if(!checkJob.value) button.setAttribute('disabled', true);
-
     // 버튼 클릭 이벤트
     button.addEventListener('click', () => {
       inputType.value = 'add';
@@ -264,11 +261,14 @@ const getmaintenanceInfo = async () => {
 
 // 수정 / 완료 탭
 const updateTap = () => {
-  inputType.value = 'update';
-
+  if(checkJob.value) {
+    inputType.value = 'update';
+  }
 }
 const completeTap = () => {
-  inputType.value = 'complete';
+  if(checkJob.value) {
+    inputType.value = 'complete';
+  }
 }
 
 // 작성 완료 버튼
@@ -285,6 +285,8 @@ const completeBtn = () => {
   delInfo();
 }
 
+const { notify } = useNotification();  // 노티 내용변수입니다
+
 // 정비 요청 등록
 const requestInsert = async () => {
   let obj = {
@@ -300,13 +302,14 @@ const requestInsert = async () => {
   let result = await axios.post(`${ajaxUrl}/maintenances/request`, obj)
                           .catch(err => console.log(err));
   let addRes = result.data;
+
   if(addRes.maintenance_num > 0){
-    this.$notify({
+    notify({
       text: "정비 요청 등록 성공",
       type: 'success',
     });
   } else {
-    this.$notify({
+    notify({
       text: "정비 요청 등록 실패",
       type: 'error',
     });
@@ -332,13 +335,13 @@ const requestUpdate = async () => {
   let updateRes = result.data;
 
   if(updateRes.result) {
-    this.$notify({
+    notify({
       text: "정비 요청 수정 성공",
       type: 'success',
     });
     getRequests();
   } else {
-    this.$notify({
+    notify({
       text: "정비 요청 수정 실패",
       type: 'error',
     });
@@ -362,13 +365,33 @@ const getToday = () => {
 onBeforeMount(()=>{
   getRequests();
 });
+
+// 입력확인
+// const fullInput = ref(false);
+// watch (
+//   maintenanceInfo.value,
+//   (newVal) => {
+//     let btnActive = true;
+//     for(let key in newVal) {
+//       if(newVal[key] == '' && key != 'maintenance_detail') {
+//         btnActive = false;
+//         break;
+//       }
+//     }
+//     fullInput.value = btnActive;
+//   },
+//   { deep: true }
+// )
 </script>
+
+
 
 
 <style scoped lang="scss">
 .requestInfo {
   background-color:  #e9ecef;
   border-radius: 10px;
+  padding: 0;
 }
 
 input {
@@ -382,8 +405,16 @@ input {
   border-style: solid;
   border-color: black;
 }
+.inputDiv > .row {
+  margin: 0 10px;
+}
 
 
+
+.tapDiv {
+  margin: 0 !important;
+  height: 40px;
+}
 .tap {
   text-align: center;
   padding: 0;

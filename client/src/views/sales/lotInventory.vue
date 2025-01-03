@@ -105,7 +105,7 @@ export default{
            
             // lot별 재고 갯수 조회 
              //주문서상태 체크 박스 관련 데이터
-            statusList:["보관","폐기","취소"], //상태 리스트
+            statusList:["보관","폐기","취소","소진"], //상태 리스트
             pickedStatus:[], //체크박스 선택 값 저장
 
             LotNum :[],
@@ -188,7 +188,7 @@ export default{
                 //입력필드생성 
                 const inputText1 = document.createElement('input');
                 inputText1.type = 'text';
-                inputText1.placeholder = '검색1';
+                inputText1.placeholder = '검색';
                 inputText1.style.padding = '5px';
                 inputText1.style.width = '250px';
                 inputText1.style.border = '1px solid #ccc';

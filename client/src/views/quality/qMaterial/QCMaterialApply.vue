@@ -9,14 +9,19 @@
         <!-- <button class="btn btn-success" size="sm" v-on:click="searchRequestAll">전체 조회</button> -->
       </div>
 
-      <div class="row gx-3 p-4 rounded border shadow">
+      <div class="row gx-3 p-4 rounded border shadow search-background">
         <!-- 날짜 범위 -->
         <!-- ps-5 추가하기 -->
-        <div class="col-md-4 ps-5">
-          <label for="startDate" class="form-label">날짜 범위</label>
+        <div class="col-md-2 ps-5">
+          <label for="startDate" class="form-label">등록일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.startDate" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="endDate" class="form-label">등록일(까지)</label>
+          <div class="d-flex gap-2">
             <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.endDate" />
           </div>
@@ -34,7 +39,7 @@
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
 
       </div>
@@ -47,7 +52,7 @@
     <h4>검색 결과</h4>
     <!-- ps-4 추가하기 -->
     <div class="ps-4">
-      <p>신청 내역에 추가할 건을 선택해주세요.</p>
+      <p>자재 검사 신청 내역에 추가할 입고 예정 자재를 선택해 주세요.</p>
     </div>
     <!-- ps-4 추가하기 -->
     <div class="col-2 ps-4">
@@ -67,7 +72,10 @@
   <hr>
   <!-- 신청내역 시작 -->
   <div class="container-fluid py-4">
-    <h4>신청내역</h4>
+    <h4>검사신청 내역</h4>
+    <div class="ps-4">
+      <p>자재 검사 신청 내역에 있는 수량이 실제 수량과 다르다면 수정할 수 있습니다.</p>
+    </div>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef"
         @grid-ready="onGridReady" :pagination="true" @cell-clicked="onCellClicked" :paginationPageSize="20"
@@ -93,8 +101,11 @@
 
   <Modal :isShowModal="isShowModalUpdate" @closeModal="closeModal"
     @confirm="updateQnt(selectedRow.orderCode, editedQuantity)">
+    <template v-slot:title>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">발주 수량 확인</h1>
+    </template>
     <template v-slot:list>
-      <p>발주수량을 확인하시고 다르다면 수정해주세요.</p>
+      <p>발주 수량을 확인하시고 다르다면 수정해 주세요.</p>
       <div class="form-group">
         <label for="quantityInput">실제 수량(g, 개)</label>
         <input v-model="editedQuantity" type="number" id="quantityInput" class="form-control" />
@@ -103,8 +114,11 @@
   </Modal>
 
   <Modal :isShowModal="isShowModal" @closeModal="closeModal" @confirm="confirm">
+    <template v-slot:title>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">신청 확인</h1>
+    </template>
     <template v-slot:list>
-      <p>신청내역대로 저장하시겠습니까?</p>
+      <b>신청내역대로 저장하시겠습니까?</b>
     </template>
   </Modal>
 
@@ -323,8 +337,8 @@ export default {
     },
     //초기화
     resetAll() {
-      const rawData = toRaw(this.rowData2);
-      console.log('Raw rowData2:', rawData);
+      // // const rawData = toRaw(this.rowData2);
+      // // console.log('Raw rowData2:', rawData);
       // this.rowData2.forEach((item, index) => {
       //   console.log(`Index ${index}:`, item);
       //   console.log(`  자재발주코드: ${item.orderCode}`);
@@ -359,14 +373,14 @@ export default {
       // console.log('rowData2');
       // console.log(this.rowData2);
 
-      const rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
+      let rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
       // console.log(rawData);
       // console.log(`${rawData[0].mName}`);
 
 
       let insertResult = await axios.post(`${ajaxUrl}/insertQCM`, rawData)
         .catch(err => console.log(err));
-      console.log(`${insertResult.data.successNum}개 입력됨`);
+      // console.log(`${insertResult.data.successNum}개 입력됨`);
       notify({
         title: "신청완료",
         text: `${insertResult.data.successNum}건이 신청되었습니다`,
@@ -374,8 +388,6 @@ export default {
       });
       this.searchOrderAll() // 저장된 항목 초기화
       this.rowData2 = []; // 저장된 항목 초기화
-
-
 
       this.closeModal();
 
@@ -408,12 +420,6 @@ export default {
       }
       const targetIndex = this.rowData2.findIndex(row => row.orderCode === orderCD);
       if (targetIndex !== -1) {
-        // this.rowData2 = this.rowData2.map((row, index) => {
-        //   if (index === targetIndex) {
-        //     return { ...row, ordQty:qty, };
-        //   }
-        //   return row;
-        // });
         this.rowData2[targetIndex] = {
           ...this.rowData2[targetIndex],
           ordQty: qty, // 수량만 업데이트
@@ -422,7 +428,7 @@ export default {
       }
       this.rowData2 = [...this.rowData2,];
       this.closeModal();
-      console.log(this.rowData2);
+      //console.log(this.rowData2);
     },
     //모달 닫기
     closeModal() {
@@ -458,6 +464,27 @@ export default {
     color: #333;
   }
 }
+//검색창 배경색
+.search-background{
+  // background-color: #def2ff; /* 원하는 배경색 */
+  background-color: #e9ecef; /* 원하는 배경색 */
+
+
+
+  input {
+    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+}
 
 //모달 창 내용
 .form-group {
@@ -466,7 +493,6 @@ export default {
   /* 세로 정렬 */
   margin-bottom: 15px;
   /* 그룹 간 여백 */
-
   label {
     font-weight: bold;
     margin-bottom: 5px;

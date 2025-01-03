@@ -41,14 +41,15 @@ SELECT SUM(success_qty) AS success_sum,
        SUM(fail_qty) AS fail_sum,
        SUM(TIMESTAMPDIFF(HOUR, partial_process_start_time, partial_process_end_time)) AS hour_sum
 FROM process_work_body
-WHERE machine_num = 2
-  AND success_qty IS NOT NULL;
+WHERE machine_num = ?
+  AND success_qty IS NOT NULL
 `;
 // 설비 부품 정보
 const machinePartList = `
 SELECT part_num
 FROM machine_part
 WHERE machine_num = ?
+ORDER BY replace_date
 `;
 
 

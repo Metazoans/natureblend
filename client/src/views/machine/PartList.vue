@@ -37,7 +37,7 @@ import { useStore } from 'vuex';
 const store = useStore();
 
 const checkJob = ref(
-  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.job == '관리자' ? true : false
+  store.state.loginInfo.job == '설비' ? true : store.state.loginInfo.position == '관리자' ? true : false
 );
 
 const partRow = shallowRef([]);

@@ -9,13 +9,18 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row gx-3 p-4 rounded border shadow">
+      <div class="row gx-3 p-4 rounded border shadow search-background">
         <!-- 날짜 범위 -->
-        <div class="col-md-4 ps-5">
-          <label for="startDate" class="form-label">날짜 범위</label>
+        <div class="col-md-2 ps-5">
+          <label for="startDate" class="form-label">등록일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.startDate" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="endDate" class="form-label">등록일(까지)</label>
+          <div class="d-flex gap-2">
             <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.endDate" />
           </div>
@@ -33,7 +38,7 @@
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -44,7 +49,7 @@
   <div class="container-fluid py-4">
     <h4>검사상세정보</h4>
     <div class="ps-4">
-      <p>검사 항목을 선택한 다음, 불량항목, 수량을 입력 후 저장하세요. (없을 시 그냥 저장하세요.)</p>
+      <p>검사할 자재를 선택하고 이상이 있을 시 불량 사유와 불량 수량을 입력하세요.</p>
     </div>
 
     <div class="grid-container">
@@ -86,18 +91,23 @@
 
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
     @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId, selectedRow.totalQnt)">
+    <template v-slot:title>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedRow.qcProcessId }}</h1>
+    </template>
     <template v-slot:list>
       <div class="modal-css">
-        <h4>불량 상세 정보</h4>
-        <p>포장검사번호: {{ selectedRow.qcProcessId }}</p>
-        <p>제품명: {{ selectedRow.pName }}</p>
-        <p>총 수량: {{ selectedRow.totalQnt }}</p>
+        <h5>불량 상세 정보</h5>
+        <!-- <p>포장검사번호: {{ selectedRow.qcProcessId }}</p> -->
+        <h3>제품명: {{ selectedRow.mName }}</h3>
+        <h4>총 수량: {{ selectedRow.totalQnt }}</h4>
         <material-button size="md" class="mt-3" @click="addDefectDetailForRow(selectedRow.qcProcessId)">
           불량 항목 추가
         </material-button>
-
+        <h5 class="pt-5">불량 내역</h5>
         <!-- 불량 사유 입력 및 불량 수량 입력 -->
-
+        <div class="pt-2" v-if="defectDetailsMap[selectedRow.qcProcessId] == null">
+          <b>불량 내역이 없습니다.</b>
+        </div>
         <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcProcessId]" :key="index"
           class="defect-item  mt-3">
           <div class="form-group">
@@ -119,6 +129,9 @@
   </Modal>
 
   <Modal :isShowModal="showModalDone" @closeModal="closeModal" @confirm="confirm">
+    <template v-slot:title>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">검사 완료 확인</h1>
+    </template>
     <template v-slot:list>
       <p>해당 검사내역대로 저장하시겠습니까?</p>
     </template>
@@ -259,7 +272,7 @@ export default {
       let searchResult = await axios.post(`${ajaxUrl}/requestQCPC`, result)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
-      console.log(searchResult.data);
+      // console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
@@ -275,7 +288,7 @@ export default {
       let searchResult = await axios.post(`${ajaxUrl}/requestQCPC`)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
-      console.log(searchResult.data);
+      // console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
@@ -340,7 +353,7 @@ export default {
       }
 
       const pass = total - rjcQntSum;
-      console.log(`저장 완료: ${qcProcessId}, 합격량: ${pass}, 불량 총합: ${rjcQntSum}`);
+      // console.log(`저장 완료: ${qcProcessId}, 합격량: ${pass}, 불량 총합: ${rjcQntSum}`);
       // 업데이트 로직
       const rowIndex = this.rowData1.findIndex(row => row.qcProcessId === this.selectedRow.qcProcessId);
       if (rowIndex !== -1) {
@@ -408,7 +421,7 @@ export default {
       };
       let result = await axios.post(`${ajaxUrl}/completeQCPC`, qcData)
         .catch(err => console.log(err));
-      console.log(result);
+      // console.log(result);
       notify({
         title: "검사완료",
         text: `완료된 검사:${result.data.updatedRows}, 기록된 불량 내역:${result.data.defectNum}`,
@@ -472,6 +485,27 @@ export default {
     color: #333;
   }
 }
+
+//검색창 배경색
+.search-background{
+  background-color: #e9ecef; /* 원하는 배경색 */
+
+
+  input {
+    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+}
+
 
 //모달
 .modal-css {

@@ -36,6 +36,7 @@
                   name="status"
                   :value="status"
                   v-model="machineData.machine_state"
+                  :disabled="isUpdate"
                 />
               </label>
             </div>
@@ -71,10 +72,10 @@
 
           <div class="row gx-3 gy-2 align-items-center">
             <div class="col-2">
-              <label for="clientNum">업체 번호</label>
+              <label for="clientNum">업체 이름</label>
             </div>
             <div class="col-6">
-              <input class="form-control" type="number" id="clientNum" name="clientNum" v-model="machineData.client_num"/>
+              <input class="form-control" type="text" id="clientNum" name="clientNum" v-model="machineData.client_num"/>
             </div>
 
             <!-- <div class="col-2">
@@ -95,7 +96,16 @@
               <label for="uph">UPH</label>
             </div>
             <div class="col-6">
-              <input class="form-control" type="number" id="uph" name="uph" v-model="machineData.uph"/>
+              <div class="row align-items-center">
+                <div class="col-11">
+                  <input class="form-control uhpInput" type="number" id="uph" name="uph" v-model="machineData.uph">
+                </div>
+                <div class="col-1 uphUnit"
+                     v-if="this.machineData.process_code == 'p1' ||
+                     this.machineData.process_code == 'p3'"
+                >병</div>
+                <div class="col-1 uphUnit" v-if="this.machineData.process_code == 'p2'">L</div>
+              </div>
             </div>
           </div>
 
@@ -288,7 +298,6 @@ export default {
       // else // 수정 페이지인 경우
     },
     confirm() {
-      console.log('confirm 동작 : ', this.machineData);
       this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
 
 
@@ -370,13 +379,18 @@ export default {
       this.machineData = result.data;
       this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
       this.machineData.emp_num = this.$store.state.loginInfo.emp_num;
+      this.machineData.machine_state = this.machineData.machine_state == 'run' ? '사용' : '미사용';
+
+      console.log('getinfo img : ', this.machineData.machine_img);
     },
     // update
     async machineUpdate() {
+      let insertState = this.machineData.machine_state == '사용' ? 'run' : 'stop';
+
       let obj = {
         machine_name: this.machineData.machine_name,// 설비 이름
         machine_img: this.machineData.machine_img,  // 설비 이미지
-        machine_state: this.machineData.machine_state,// 사용 여부
+        machine_state: insertState,// 사용 여부
         model_num: this.machineData.model_num,      // 모델 번호
         client_num: Number(this.machineData.client_num),    // 거래처
         uph: this.machineData.uph,                  // 시간당 생산량
@@ -400,12 +414,10 @@ export default {
 
       // 부품 교체시 제거된 부품 삭제
       for(let i in this.oldPartNum) {
-        console.log(this.oldPartNum[i]);
         await this.partDelete(this.oldPartNum[i]);
       }
       // 부품 교체
       for(let i in this.partDataList) {
-        console.log('부품 정보 : ', this.partDataList[i].partNum);
         await this.partUpdate(this.partDataList[i].partNum);
       }
 
@@ -556,24 +568,9 @@ export default {
       handler(newVal) {
         let btnActive = true;
         for(let key in newVal) {
-          if(newVal[key] == '') {
+          if(newVal[key] == '' && key != 'machine_img') {
             btnActive = false;
             break;
-          }
-        }
-        this.fullInput = btnActive;
-      },
-      deep: true
-    },
-    partDataList: {
-      handler(newVal) {
-        let btnActive = true;
-        for(let i in newVal) {
-          for(let key in newVal[i]) {
-            if(newVal[key] == '') {
-              btnActive = false;
-              break;
-            }
           }
         }
         this.fullInput = btnActive;
@@ -600,12 +597,47 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+
 /* 일반 input 태그 스타일 */
 input {
   background-color: #ffffff; /* 배경색 흰색 */
   border: solid 1px #ced4da; /* 테두리 색상 */
   color: #495057; /* 텍스트 색상 */
 }
+/* readonly 상태의 input 태그 스타일 */
+input:read-only {
+  background-color: #ffffff; /* 배경색 흰색 고정 */
+  color: #495057; /* 텍스트 색상 유지 */
+  cursor: not-allowed; /* 읽기 전용 표시를 위한 커서 */
+}
+
+/* input 포커스 상태에서도 배경색 유지 */
+input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
+
+/* readonly input 요소가 포커스되어도 스타일 유지 */
+input:read-only:focus {
+  background-color: #ffffff; /* 배경색 흰색 고정 */
+  border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
+  outline: none; /* 포커스 아웃라인 제거 */
+}
+
+select {
+  background-color: white;
+  padding-left: 20px;
+  padding-right: 35px;
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border: 1px solid #ced4da;
+}
+select:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
+
 
 button {
   width: 100px !important;
@@ -613,6 +645,12 @@ button {
 
 .machineBody {
   padding-left: 29px;
+}
+
+.uphUnit {
+  padding: 0;
+  font-size: 20px;
+
 }
 
 </style>

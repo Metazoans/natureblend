@@ -9,13 +9,18 @@
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
-      <div class="row gx-3 p-4 rounded border shadow">
+      <div class="row gx-3 p-4 rounded border shadow search-background">
         <!-- 날짜 범위 -->
-        <div class="col-md-4 ps-5">
-          <label for="startDate" class="form-label">날짜 범위</label>
+        <div class="col-md-2 ps-5">
+          <label for="startDate" class="form-label">등록일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.startDate" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="endDate" class="form-label">등록일(까지)</label>
+          <div class="d-flex gap-2">
             <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
               v-model="searchInfo.endDate" />
           </div>
@@ -33,7 +38,7 @@
           <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -43,7 +48,7 @@
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
     <h4>입고상세정보</h4>
-    <p class="ps-4">검사 항목을 선택한 다음, 불량항목, 수량을 입력 후 저장하세요. (없을 시 그냥 저장하세요.)</p>
+    <p class="ps-4">검사할 자재을 선택하고 이상이 있을 시 불량 사유와 불량 수량을 입력하세요.</p>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
@@ -86,18 +91,24 @@
 
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
     @confirm="saveDefectDetailsForRow(selectedRow.qcMaterialId, selectedRow.totalQnt)">
-
+    <template v-slot:title>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedRow.qcMaterialId }}</h1>
+    </template>
     <template v-slot:list>
       <div class="modal-css">
-        <h4>불량 상세 정보</h4>
-        <p>입고검사번호: {{ selectedRow.qcMaterialId }}</p>
-        <p>자재명: {{ selectedRow.mName }}</p>
-        <p>총 수량: {{ selectedRow.totalQnt }}</p>
+        <h5>검사 상세 정보</h5>
+        <!-- <p>입고검사번호: {{ selectedRow.qcMaterialId }}</p> -->
+        <h3>자재명: {{ selectedRow.mName }}</h3>
+        <h4>총 수량:  {{ selectedRow.totalQnt }} (g, 개)</h4>
         <material-button size="md" class="mt-3 btn btn-primary"
           @click="addDefectDetailForRow(selectedRow.qcMaterialId)">
           불량 항목 추가
         </material-button>
+        <h5 class="pt-5">불량 내역</h5>
         <!-- 불량 사유 입력 및 불량 수량 입력 -->
+        <div class="pt-2" v-if="defectDetailsMap[selectedRow.qcMaterialId] == null">
+          <b>불량 내역이 없습니다.</b>
+        </div>
         <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcMaterialId]" :key="index"
           class="defect-item mt-3">
           <div class="form-group">
@@ -122,8 +133,11 @@
 
 
   <Modal :isShowModal="showModalDone" @closeModal="closeModal" @confirm="confirm">
+    <template v-slot:title>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">검사 완료 확인</h1>
+    </template>
     <template v-slot:list>
-      <p>해당 검사내역대로 저장하시겠습니까?</p>
+      <b>해당 검사내역대로 저장하시겠습니까?</b>
     </template>
   </Modal>
 
@@ -179,9 +193,9 @@ export default {
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.1 },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1.2 },
         { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
-        { headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "합격량", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "총 수량(g, 개)", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "합격량(g, 개)", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        { headerName: "불합격량(g, 개)", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
         { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
 
@@ -290,7 +304,7 @@ export default {
 
     //신청 건의 합격량, 불합격량(불량항목, 각각의 수량) 처리
     onCellClicked(event) {
-      console.log('클릭됨');
+      // console.log('클릭됨');
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = event.data;
       this.showModalRJC = true;
@@ -342,7 +356,7 @@ export default {
       }
 
       const pass = total - rjcQntSum;
-      console.log(`저장 완료: ${qcMaterialId}, 합격량: ${pass}, 불량 총합: ${rjcQntSum}`);
+      // console.log(`저장 완료: ${qcMaterialId}, 합격량: ${pass}, 불량 총합: ${rjcQntSum}`);
       // 업데이트 로직
       const rowIndex = this.rowData1.findIndex(row => row.qcMaterialId === this.selectedRow.qcMaterialId);
       if (rowIndex !== -1) {
@@ -381,7 +395,7 @@ export default {
       // console.log(this.defectDetailsMap);
     },
     async confirm() {
-      console.log('저장처리!')
+      // console.log('저장처리!');
       // console.log(this.rowData2);
       // console.log(this.defectDetailsMap);
       // 객체를 배열로 변환
@@ -411,7 +425,7 @@ export default {
       };
       let result = await axios.post(`${ajaxUrl}/completeQCM`, qcData)
         .catch(err => console.log(err));
-      console.log(result);
+      // console.log(result);
       notify({
         title: "검사완료",
         text: `완료된 검사:${result.data.updatedRows}, 기록된 불량 내역:${result.data.defectNum}`,
@@ -475,7 +489,25 @@ export default {
     color: #333;
   }
 }
+//검색창 배경색
+.search-background{
+  background-color: #e9ecef; /* 원하는 배경색 */
 
+
+  input {
+    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+}
 // 모달
 .modal-css {
   h4 {

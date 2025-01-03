@@ -21,7 +21,7 @@
 
           <!-- 저장 버튼 -->
           <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-warning me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+             <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
           </div>
        </form>
     </div>
@@ -60,6 +60,7 @@
          {
            headerName: "불량코드삭제",
            field: "삭제",
+           cellStyle: { textAlign: 'center' },
            upin:'',
            editable: false,
            cellRenderer: (params) => {
@@ -82,10 +83,10 @@
                     axios.delete(`${ajaxUrl}/faultyDelete/${params.data.faulty_code}`)
                     .then(res => {
                         if(res.data === '성공'){
-                            alert('삭제되었습니다.');
+                           this.$notify({ title:'코드삭제', text: '코드가 삭제되었습니다.', type: 'success' });
                             this.faultyList();
                         }else{
-                            alert('삭제 실패');
+                           this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
                         }
                     })
                     .catch(err => console.log(err));
@@ -138,11 +139,16 @@
      },
      input_update() {
        console.log('등록 또는 수정 기능여기서 추가');
+       if(this.faultyCode === '' || this.faultyReason === ''){
+         this.$notify({ title:'빈값', text: '빈칸을 입력해주세요.', type: 'error' });
+           return;
+       }
        this.newList = {
         faulty_code : this.faultyCode,
         faulty_reason : this.faultyReason
        };
        this.faultyInsert(this.newList);
+       this.$notify({ title:'등록성공', text: '코드가 등록되었습니다.', type: 'success' });
        this.faultyList();
      },
    },

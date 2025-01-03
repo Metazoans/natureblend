@@ -65,7 +65,7 @@ export default {
         async productorder(){
             this.loginInfo = this.$store.state.loginInfo;
             console.log('직업',this.loginInfo);
-            if(this.loginInfo.job === '자재' || this.loginInfo.job === '관리자'){
+            if(this.loginInfo.job === '자재' || this.loginInfo.position === '관리자'){
                 let result = await axios.get(`${ajaxUrl}/material/orderplan`)
                                 .catch(err => console.log(err));
                 this.productorderlist = result.data;
