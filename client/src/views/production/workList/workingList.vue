@@ -604,7 +604,7 @@ export default {
   },
 
   watch: {
-    async partialWorkFinalStatus(newVal, oldVal) {
+    async partialWorkFinalStatus() {
       let statusInfo = {
         processStatus: this.partialWorkFinalStatus === '-' ? null : this.partialWorkFinalStatus,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
