@@ -25,7 +25,8 @@ const standardRoute = [
     component: Login
   },
   {
-    path: '',
+    path: '/',
+    name: 'BadcodeManagement',
     redirect : { name : 'BadcodeManagement'}
   },
   {

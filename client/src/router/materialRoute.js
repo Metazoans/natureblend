@@ -40,7 +40,8 @@ import Main from '@/views/material/mainpage/main.vue';
 
 const materialRoute = [
   {
-    path: '',
+    path: '/',
+    name: 'materialList2',
     redirect : { name : 'materialList2'}
   },
   {

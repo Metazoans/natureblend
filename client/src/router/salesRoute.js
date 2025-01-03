@@ -36,7 +36,8 @@ const checkAuth = (to, next) => {
 
 const salesRoute = [
     {
-        path:'',
+        path:'/',
+        name: 'salesList',
         redirect :{ name : 'salesList'},
         beforeEnter: (to, from, next) => {
             checkAuth(to, next)
