@@ -13,7 +13,7 @@
               <!-- 자재 코드 조회 리스트 -->
               <div class="grid-container" >
                 <ag-grid-vue 
-                  style ="width: 100%; "
+                  style ="width: 100%;  "
                   :rowData="rowData"
                   :columnDefs="columnDefs"
                   :theme="theme"

@@ -264,13 +264,13 @@
         },
         setSelectProduct(product) {
         // 모달에서 선택한 데이터가 부모로 전달되면 이를 입력상자에 반영
-        console.log(product);
-        this.searchProductcode = product.product_code;  // 선택한 제품코드를 인풋 박스에 설정
-        this.searchProduct = product.product_name;
-        this.searchCapacity = product.capacity;
-        this.searchBomnum = '';
-        this.closeModal();
-        this.bomBox = [];
+          console.log(product);
+          this.searchProductcode = product.product_code;  // 선택한 제품코드를 인풋 박스에 설정
+          this.searchProduct = product.product_name;
+          this.searchCapacity = product.capacity;
+          this.searchBomnum = '';
+          this.closeModal();
+          this.bomBox = [];
         },
         setSelectMaterial(material) {
           console.log(material);
