@@ -14,7 +14,7 @@
                       <!-- 사원번호 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="empNum">사원번호</label>
-                         <input type="text" class="form-control" style="background-color: white; " id="empNum" v-model="empNum" >
+                         <input type="text" placeholder="ex)20250000" class="form-control" style="background-color: white; " id="empNum" v-model="empNum" >
                       </div>
                       <!-- 생년월일 -->
                       <div class="mb-3">
@@ -43,7 +43,20 @@
                         <!-- 직급 -->
                       <div class="mb-3">
                         <label class="col-form-label fw-bold" for="position">직급</label>
-                        <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="position" v-model="position" >
+                        <select
+                          class="form-select"
+                          v-model="position"
+                          style="background-color: white; text-align: center; border: solid 1px;"
+                          aria-label="부서 선택"
+                        >
+                          <option value="">직급 선택</option>
+                          <option value="사원">사원</option>
+                          <option value="반장">반장</option>
+                          <option value="관리자">관리자</option>
+                          <option value="사장">사장</option>
+                          <option value="이사">이사</option>
+                          <option value="대리">대리</option>
+                        </select>
                       </div>
                       <!-- 입사일 -->
                       <div class="mb-3">
@@ -65,13 +78,14 @@
                         <!-- 부서번호 -->
                         <div class="mb-3">
                             <label class="col-form-label fw-bold" for="jobNum">부서번호</label>
-                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="jobNum='101'" v-model="jobNum" readonly >
+                            <input type="text" placeholder="부서 선택시 자동입력" class="form-control" style="background-color: white; padding-left: 20px;" id="jobNum='101'" v-model="jobNum" readonly >
                         </div>
                         <!-- 등급 -->
                         <div class="mb-3">
                            <label class="col-form-label fw-bold" for="level">등급</label>
                                 <div id="level" style="padding-left: 0px;">
                                 <select class="form-select" v-model="level" style="width: 184px; border: solid 1px; background-color: white; text-align: center;" aria-label="관리 등급 선택">
+                                        <option value="">1</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>

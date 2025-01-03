@@ -9,7 +9,7 @@
               </div>
               <div class="d-flex align-items-center">
                   <span>제품코드</span>
-                  <input v-model="searchProductcode"  id="search-productcode" type="text" class="form-control" @click = "openModal('productCodeModal')" />
+                  <input v-model="searchProductcode" placeholder="클릭해서 제품코드 선택" id="search-productcode" type="text" class="form-control" @click = "openModal('productCodeModal')" />
               </div>
           </div>
           <div class="search pe-md-3 d-flex align-items-center ms-md-auto">
