@@ -199,7 +199,8 @@ const completePartialWork = `
     from process_work_header ph
              join process_work_body pb
                   on ph.process_work_header_num = pb.process_work_header_num
-    where pb.partial_process_status = 'partial_process_complete';
+    where pb.partial_process_status = 'partial_process_complete'
+    order by production_order_num desc
 `
 
 module.exports = {

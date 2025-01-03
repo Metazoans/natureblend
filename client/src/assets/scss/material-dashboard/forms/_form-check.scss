@@ -49,8 +49,9 @@
       width: $form-check-radio-after-width;
       height: $form-check-radio-after-width;
       border-radius: 50%;
-      background-image: escape-svg($form-check-radio-checked-bg-image),
-        var(--#{$variable-prefix}gradient);
+      //background-image: escape-svg($form-check-radio-checked-bg-image),
+      //  var(--#{$variable-prefix}gradient);
+      border-color: #fb8c00;
       opacity: 0;
       left: 0;
       right: 0;
