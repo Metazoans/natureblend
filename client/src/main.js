@@ -18,5 +18,5 @@ app.config.globalProperties.$departments = departments;
 app.use(store);
 app.use(router);
 app.use(MaterialDashboard);
-app.use(Notifications)
+app.use(Notifications);
 app.mount("#app");

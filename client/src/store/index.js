@@ -71,13 +71,13 @@ export default createStore({
     selectHeaderMenu(state, headerMenu) {
       state.headerMenu = headerMenu;
     },
+    //로그인하면 테이터 바꾸는거
     addLoginInfo(state, loginObj) {
       state.loginInfo = {
         ...state.loginInfo, // 기존 데이터 유지
         ...loginObj,        // 새로운 데이터 추가 또는 업데이트
       };
     },
-
     // 상태 초기화
     resetState(state) {
       state.headerMenu = '';

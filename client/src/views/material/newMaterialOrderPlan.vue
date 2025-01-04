@@ -1,4 +1,7 @@
-<!-- 자재 발주 관리 메뉴 리메이크 의 미지시생산계획 리스트 컴포넌트 -->
+<!-- 
+    메뉴 : 자재>자재발주>자재 발주 관리 [미지시 생산계획 확인 [그리드] ]
+    자재 발주 관리 메뉴 리메이크 의 미지시생산계획 리스트 컴포넌트
+-->
 <template>
     <div>
       <h4 style="margin-bottom: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;미지시 생산계획 확인</h4>
@@ -10,6 +13,7 @@
             :theme="theme"
             :pagination="true"
             :paginationPageSize="5"
+            :paginationPageSizeSelector="[5, 10, 20, 40]"
             @grid-ready="onReady"
             style="height: 303px;"
             rowSelection="multiple"
@@ -83,6 +87,7 @@ export default {
                 this.plandate = newList.map((item) => ({
                     ...item, // 기존 item 복사
                     plan_create_date: this.dateFormat(item.plan_create_date, 'yyyy-MM-dd'),
+                    plan_qty: item.plan_qty+' 개',
                 }));
             },
             // 넌 최초 1회 어떤일이 있어도 작동해야해
@@ -160,15 +165,15 @@ export default {
                 // 1차
             this.needMaterialList = this.needMaterialList.map((col) => ({
                 ...col,
-                stok_qty: col.material.includes('병') ? Number(col.stok_qty).toLocaleString() : Math.ceil(col.stok_qty * 0.001).toLocaleString(),
-                safety_inventory: col.material.includes('병') ? Number(col.safety_inventory).toLocaleString() : Math.ceil(col.safety_inventory * 0.001).toLocaleString(),
-                plan_qty: col.material.includes('병') ? Number(col.plan_qty).toLocaleString() : Math.ceil(col.plan_qty * 0.001).toLocaleString(),
-                ordering_qty: col.material.includes('병') ? Number(col.ordering_qty).toLocaleString() : Math.ceil(col.ordering_qty * 0.001).toLocaleString(),
-                //need_qty: col.material.includes('병') ? (Number(col.need_qty)+Number(col.safety_inventory)).toLocaleString() : (Math.ceil(col.need_qty * 0.001)+Math.ceil(col.safety_inventory * 0.001)).toLocaleString(),
+                stok_qty: col.material.includes('병') ? Number(col.stok_qty).toLocaleString()+' 개' : (col.stok_qty * 0.001).toLocaleString()+' kg',
+                safety_inventory: col.material.includes('병') ? Number(col.safety_inventory).toLocaleString()+' 개' : (col.safety_inventory * 0.001).toLocaleString()+' kg',
+                plan_qty: col.material.includes('병') ? Number(col.plan_qty).toLocaleString()+' 개' : (col.plan_qty * 0.001).toLocaleString()+' kg',
+                ordering_qty: col.material.includes('병') ? Number(col.ordering_qty).toLocaleString()+' 개' : (col.ordering_qty * 0.001).toLocaleString()+' kg',
+                //need_qty: col.material.includes('병') ? (Number(col.need_qty)+Number(col.safety_inventory)).toLocaleString() : ((col.need_qty * 0.001)+(col.safety_inventory * 0.001)).toLocaleString(),
                 need_qty: col.material.includes('병') ? 
                 (Number(col.safety_inventory) + Number(col.plan_qty) - Number(col.stok_qty) - Number(col.ordering_qty))
                 :
-                (Math.ceil(col.safety_inventory * 0.001) +  Math.ceil(col.plan_qty * 0.001) -  Math.ceil(col.stok_qty * 0.001) - Math.ceil(col.ordering_qty * 0.001))
+                ((col.safety_inventory * 0.001) +  (col.plan_qty * 0.001) -  (col.stok_qty * 0.001) - (col.ordering_qty * 0.001))
                 ,
             }));
 
@@ -179,14 +184,20 @@ export default {
                 need_qty: (col.need_qty > 0 ? col.need_qty.toLocaleString() : '0'),
             }));
 
+            // 3차 가공 ㅜㅜ 내가 알고리즘이 딸려서 ㅠㅠ
+            this.needMaterialList = this.needMaterialList.map((col) => ({
+                ...col,
+                need_qty: col.material.includes('병') ? col.need_qty+' 개' : col.need_qty+' kg',
+            }));
+
             console.log('결과 : ',this.needMaterialList);
 
                 //리스트 만들기 끝났으면 그걸로 엄마한테 줌 (2)
                 this.$emit('planAndBomList', this.needMaterialList);
                 this.needMaterialList = [];
-                this.$notify({ title:'주문생성', text: '자재리스트 생성 완료.', type: 'success' });
+                this.$notify({ text: '자재발주 리스트 생성 완료 했습니다.', type: 'success' });   // title:'주문생성', 
             } else {
-                this.$notify({ title:'주문생성', text: '선택된 행이 없습니다.', type: 'error' });
+                this.$notify({ text: '선택된 계획이 없습니다.', type: 'error' }); // title:'주문생성', 
             }
             this.showprogress = false;
             this.number2 = 0;

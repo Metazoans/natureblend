@@ -89,12 +89,7 @@ ORDER BY po.production_order_date DESC
 // 착즙 공정
 const process1list =
 `
-SELECT CONCAT(product_name, ' (', CASE
-                                      WHEN capacity = 1500 THEN '1.5L'
-                                      WHEN capacity = 750 THEN '750ml'
-                                      WHEN capacity = 500 THEN '500ml'
-                                      ELSE ''
-                                  END , ')') AS product_name,
+SELECT product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
 WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
@@ -239,7 +234,18 @@ LEFT JOIN input_body i
 ON p.product_code = i.product_code
 LEFT JOIN output_aggregated oa
 ON i.input_num = oa.input_num 
-
+WHERE ( NVL(
+        (SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+                ELSE 0 
+            END) 
+         - 
+         SUM(CASE 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
+                ELSE 0 
+            END)
+        ), 0) ) != 0
+GROUP BY p.product_code, p.product_name
 ORDER BY product_qty DESC
 `;
 // GROUP BY p.product_code, p.product_name
