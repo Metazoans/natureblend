@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h1 class="mb-3">입고검사-검사기록조회</h1>
+    <h3 class="mb-3">입고검사-검사기록조회</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h3 class="me-3">검색조건</h3>
+        <h4 class="me-3">검색조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -46,10 +46,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -63,8 +61,8 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" style="height: 700px;"
-        :noRowsOverlayComponent="noRowsOverlayComponent">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSizeSelector="[10, 20, 50, 100]"
+        :paginationPageSize="10" style="height: 700px;" :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
   </div>
@@ -72,7 +70,7 @@
 
   <hr>
   <div style="display: none">
-       <CustomNoRowsOverlay/>
+    <CustomNoRowsOverlay />
   </div>
 
 </template>
@@ -94,7 +92,7 @@ import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vu
 
 export default {
   name: "입고검사",
-  components: { MaterialButton, CustomNoRowsOverlay},
+  components: { MaterialButton, CustomNoRowsOverlay },
   data() {
     return {
       searchInfo: {
@@ -116,9 +114,54 @@ export default {
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.1 },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1.2 },
         { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
-        { headerName: "총 수량(g, 개)", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "합격량(g, 개)", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.1 },
-        { headerName: "불합격량(g, 개)", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.1 },
+        {
+          headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
+          cellRenderer: params => {
+            if (params.value!= null) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
+        {
+          headerName: "합격량", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.1,
+          cellRenderer: params => {
+            if (params.value!= null) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
+        {
+          headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.1,
+          cellRenderer: params => {
+            if (params.value != null) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
         { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
         { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
@@ -151,16 +194,16 @@ export default {
       const processedData = [];
       for (let item of searchList) {
         processedData.push({
-          "qcMaterialId": item.qc_material_id, 
+          "qcMaterialId": item.qc_material_id,
           "orderCode": item.order_code,
-          "mName": item.material_name, 
-          "eName": item.name, 
+          "mName": item.material_name,
+          "eName": item.name,
           "totalQnt": item.total_qnt,
-          "passQnt": item.pass_qnt, 
+          "passQnt": item.pass_qnt,
           "rjcQnt": item.rjc_qnt,
-          "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'), 
-          "inspecEnd": item.inspec_end === "" 
-          ? "" : this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
+          "inspecEnd": item.inspec_end === ""
+            ? "" : this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
           "inspecStatus": item.inspec_status
         });
       }
@@ -169,9 +212,8 @@ export default {
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
-            title: "검색실패",
-            text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
-            type: "error", // success, warn, error 가능
+          text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
+          type: "error", // success, warn, error 가능
         })}`;
         return;
       }
@@ -182,7 +224,7 @@ export default {
         mName: name.length != 0 ? name : "",
         startDate: this.searchInfo.startDate,
         endDate: this.searchInfo.endDate,
-        qcState : this.searchInfo.qcState,
+        qcState: this.searchInfo.qcState,
       };
       let searchResult = await axios.post(`${ajaxUrl}/recordQCM`, result)
         .catch(err => console.log(err));
@@ -201,8 +243,9 @@ export default {
       this.searchList = searchResult.data;
 
       // ag grid에 결과값 넣기
-      this.rowData1 = []
+      this.rowData1 = [];
       this.rowData1 = this.processSearchResults(this.searchList);
+      console.log(this.rowData1);
     },
   },
   created() {
@@ -231,20 +274,24 @@ export default {
 }
 
 //검색창 라벨
-.mb-4{
+.mb-4 {
   label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
   }
 }
+
 //검색창 배경색
-.search-background{
-  background-color: #e9ecefff; /* 원하는 배경색 */
+.search-background {
+  background-color: #e9ecefff;
+  /* 원하는 배경색 */
 
 
-  input {
-    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+  input,
+  .form-select {
+    background-color: #ffffff;
+    /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;

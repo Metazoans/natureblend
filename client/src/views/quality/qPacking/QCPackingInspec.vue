@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h1 class="mb-3">포장검사관리</h1>
+    <h3 class="mb-3">포장검사관리</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h3 class="me-3">검색조건</h3>
+        <h4 class="me-3">검색조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -35,10 +35,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -54,7 +52,8 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true"
+        :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10"
         :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
@@ -71,8 +70,9 @@
     <h4>검사처리내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
-        style="height: 400px;" :noRowsOverlayComponent="noRowsOverlayComponent">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true"
+        :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10" style="height: 400px;"
+        :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
     <hr>
@@ -92,17 +92,32 @@
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
     @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId, selectedRow.totalQnt)">
     <template v-slot:title>
-      <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedRow.qcProcessId }}</h1>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">검사 상세 정보</h1>
     </template>
     <template v-slot:list>
       <div class="modal-css">
-        <h5>불량 상세 정보</h5>
-        <!-- <p>포장검사번호: {{ selectedRow.qcProcessId }}</p> -->
-        <h3>제품명: {{ selectedRow.pName }}</h3>
-        <h4>총 수량: {{ selectedRow.totalQnt }}</h4>
-        <material-button size="md" class="mt-3" @click="addDefectDetailForRow(selectedRow.qcProcessId)">
-          불량 항목 추가
-        </material-button>
+        <table class="table table-sm w-100" style="border: 3px solid #dee2e6;">
+          <tbody>
+            <tr>
+              <th scope="row" style="width: 30%; text-align: left; border: 1px solid #dee2e6;">공정검사번호</th>
+              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.qcProcessId }}</td>
+            </tr>
+            <tr>
+              <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">제품명</th>
+              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.pName }}</td>
+            </tr>
+            <tr>
+              <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">총 수량</th>
+              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.totalQnt }} 개</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-end mt-3">
+          <material-button size="md" class="mt-3 btn btn-warning"
+            @click="addDefectDetailForRow(selectedRow.qcProcessId)">
+            불량 항목 추가
+          </material-button>
+        </div>
         <h5 class="pt-5">불량 내역</h5>
         <!-- 불량 사유 입력 및 불량 수량 입력 -->
         <div class="pt-2" v-if="defectDetailsMap[selectedRow.qcProcessId] == null">
@@ -113,16 +128,20 @@
           <div class="form-group">
             <label :for="'reason' + index">불량 사유 {{ index + 1 }}:</label>
             <select v-model="detail.reason" :id="'reason' + index" class="form-control">
+              <option value="" hidden disabled selected>(선택)</option>
               <option v-for="reason in defectReasons" :key="reason.code" :value="reason.code">
                 {{ reason.name }}
               </option>
             </select>
           </div>
           <div class="form-group mt-2">
-            <label :for="'defectQty' + index">불량 수량 {{ index + 1 }}:</label>
+            <label :for="'defectQty' + index">불량 수량(개):</label>
             <input type="number" v-model="detail.qty" :id="'defectQty' + index" class="form-control" />
           </div>
-          <button class="btn btn-danger mt-2" @click="removeDefectDetailForRow(selectedRow.qcProcessId, index)">삭제</button>
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-danger mt-2"
+              @click="removeDefectDetailForRow(selectedRow.qcProcessId, index)">삭제</button>
+          </div>
         </div>
       </div>
     </template>
@@ -188,9 +207,39 @@ export default {
         { headerName: "생산지시번호", field: "productionOrderNum", resizable: false, cellStyle: { textAlign: "center" }, flex: 1 },
         { headerName: "제품명", field: "pName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
         { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
-        { headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "합격량", field: "passQnt", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 1 },
+        {
+          headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
+          cellRenderer: params => {
+            if (params.value != null) {
+              const formatted_t_qty = Number(params.value).toLocaleString() + ' 개';
+              return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
+        {
+          headerName: "합격량", field: "passQnt", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 1,
+          cellRenderer: params => {
+            if (params.value != null) {
+              const formatted_t_qty = Number(params.value).toLocaleString() + ' 개';
+              return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
+        {
+          headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 1,
+          cellRenderer: params => {
+            if (params.value != null) {
+              const formatted_t_qty = Number(params.value).toLocaleString() + ' 개';
+              return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.5 },
         { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
 
@@ -239,7 +288,6 @@ export default {
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
-          title: "검색실패",
           text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
           type: "error", // success, warn, error 가능
         })}`;
@@ -345,10 +393,23 @@ export default {
     },
     saveDefectDetailsForRow(qcProcessId, total) {
       const defectDetails = this.defectDetailsMap[qcProcessId] || [];
-      if (defectDetails.some(detail => !detail.reason || detail.qty <= 0)) {
+      if (defectDetails.some(detail => !detail.reason)) {
         notify({
-          title: "입력실패",
-          text: "모든 불량 항목에 대해 불량 사유와 수량을 입력하세요.",
+          text: "불량 사유가 입력되지 않은 항목이 있습니다.",
+          type: "warn", // success, warn, error 가능
+        });
+        return;
+      }
+      else if (defectDetails.some(detail => detail.qty <= 0)) {
+        notify({
+          text: "수량이 입력되지 않았거나 0 이하를 입력한 항목이 있습니다.",
+          type: "warn", // success, warn, error 가능
+        });
+        return;
+      }
+      else if(defectDetails.some(detail =>  !Number.isInteger(detail.qty)) ) {
+        notify({
+          text: "해당 자재의 수량은 소수로 입력할 수 없습니다.",
           type: "warn", // success, warn, error 가능
         });
         return;
@@ -357,7 +418,6 @@ export default {
       const rjcQntSum = defectDetails.reduce((sum, detail) => sum + detail.qty, 0);
       if (rjcQntSum > total) {
         notify({
-          title: "입력실패",
           text: "불량 총합량이 총합량보다 클 수 없습니다.",
           type: "warn", // success, warn, error 가능
         });
@@ -392,8 +452,7 @@ export default {
     openModal() {
       if (this.rowData2.length == 0) {
         notify({
-          title: "저장실패",
-          text: "검사처리내역이 비었습니다.",
+          text: "저장할 검사처리내역이 없습니다.",
           type: "error", // success, warn, error 가능
         });
         return;
@@ -435,8 +494,7 @@ export default {
         .catch(err => console.log(err));
       //console.log(result);
       notify({
-        title: "검사완료",
-        text: `완료된 검사:${result.data.updatedRows}, 기록된 불량 내역:${result.data.defectNum}`,
+        text: `완료된 검사: ${result.data.updatedRows}건, 기록된 불량 내역: ${result.data.defectNum}건`,
         type: "success", // success, warn, error 가능
       });
 
@@ -490,7 +548,7 @@ export default {
 }
 
 //검색창 라벨
-.mb-4{
+.mb-4 {
   label {
     font-weight: bold;
     margin-bottom: 5px;
@@ -499,12 +557,14 @@ export default {
 }
 
 //검색창 배경색
-.search-background{
-  background-color: #e9ecef; /* 원하는 배경색 */
+.search-background {
+  background-color: #e9ecef;
+  /* 원하는 배경색 */
 
 
   input {
-    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    background-color: #ffffff;
+    /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;
@@ -522,16 +582,20 @@ export default {
 
 //모달
 .modal-css {
-  h4 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #333;
+
+  .table th,
+  .table td {
+    font-size: 1.1rem;
+    padding: 10px;
+    // color: #495057; /* 텍스트 색상 */
+
   }
 
-  p {
-    margin: 5px 0;
-    font-size: 1rem;
-    color: #555;
+  .table th {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #343a40;
+    /* 헤더 텍스트 색상 */
   }
 
   .defect-item {

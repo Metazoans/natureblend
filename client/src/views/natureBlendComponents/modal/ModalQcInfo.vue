@@ -10,7 +10,7 @@
           <slot name="list">slot</slot>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="closeModal">닫기</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
         </div>
       </div>
     </div>
