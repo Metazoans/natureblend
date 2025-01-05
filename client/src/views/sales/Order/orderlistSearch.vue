@@ -11,6 +11,7 @@
                                 <label class="me-3" v-for="status in statusList" :key="status">
                                     {{ status }}
                                 <input 
+                                    class="form-check-input"
                                     :value="status"
                                     type="checkbox"
                                     v-model="pickedStatus"
@@ -194,7 +195,7 @@ input {
 
 </style>
 <style scoped>
-input.form-check-input:checked {
+/* input.form-check-input:checked {
     background-color: green !important;
     border-color: green !important;
 }
@@ -202,8 +203,6 @@ input.form-check-input {
     background-color: white !important;
     border-color: white !important;
     border-radius: 100%;
-}
-.form-check-label {
-    font-weight: bold;
-}
+} */
+
 </style>

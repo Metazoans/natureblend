@@ -11,6 +11,7 @@
                                 <label class="me-3" v-for="status in statusList" :key="status">
                                     {{ status }}
                                 <input 
+                                    class="form-check-input"
                                     :value="status"
                                     type="checkbox"
                                     v-model="pickedStatus"
@@ -60,7 +61,8 @@
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     rowSelection="multiple"
                     :pagination="true"
-                    :paginationPageSize="20"
+                    :paginationPageSize="10"
+                    :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -113,7 +115,18 @@ export default{
             { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true ,flex: 3, cellStyle: { textAlign: "center" }},
             { headerName: "제품코드", field: "product_code", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" }},
             { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true,flex: 3, cellStyle: { textAlign: "left" } },
-            { headerName: "제품수량 ", field: "product_quantity", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "right" }},
+            { headerName: "제품수량 "
+            , field: "product_quantity"
+            , resizable: true
+            , sortable: true 
+            ,flex: 2
+            , cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+             }},
             { headerName: "창고위치 ", field: "warehouse_name", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "left" }},
             { headerName: "제조일자 ", field: "manufacturing_date", resizable: true, sortable: true,flex: 2, cellStyle: { textAlign: "center" } },
             { headerName: "유통기한 ", field: "expire_date", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" }},

@@ -13,6 +13,7 @@
       @rowClicked="onRowClicked"
       :pagination="true"
       :paginationPageSize="10"
+      :paginationPageSizeSelector="[10, 20, 50, 100]"
   />
   
   </div>
@@ -93,9 +94,94 @@ export default{
                 { headerName : "주문번호", field:'order_num',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
                 { headerName : "제품코드", field:'product_code',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 3},
                 { headerName : "제품명", field:'product_name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 4},
-                { headerName : "주문수량", field:'order_amount', editable: true, sortable: true ,cellStyle: { textAlign: "right" ,'border-right-color': '#000000','border-left-color': '#000000','border-top-color': '#000000','border-bottom-color': '#000000'},flex: 2 },
-                { headerName : "개당가격", field:'per_price' ,editable: true, sortable: true ,cellStyle: { textAlign: "right" ,'border-right-color': '#000000','border-left-color': '#000000','border-top-color': '#000000','border-bottom-color': '#000000'},flex: 2 },
-                { headerName : "총가격", field:'total_price',resizable: true, sortable: true ,cellStyle: { textAlign: "right"},flex: 2},
+                { headerName : "주문수량"
+                , field:'order_amount'
+                , editable: true
+                , sortable: true 
+                ,cellStyle: { 
+                    textAlign: "right",
+                    backgroundColor: "#fff", // 연한 배경색
+                    //border: "0.5px dashed #fb8c00", // 점선 테두리
+                    cursor: "text", // 텍스트 커서
+                }
+                ,flex: 2 
+                ,cellRenderer: params => {
+                    const orderStatus = params.data.order_status; // 주문상태 확인
+                    if (orderStatus === '미출고') {
+                        if (params.value) {
+                            const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                            return `
+                                <span style="display: flex; align-items: center; justify-content: flex-start;">
+                                    <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
+                                        width=15 height=15 
+                                        style="margin-right: 5px;" 
+                                        title="더블클릭하여 수정 가능합니다" />
+                                    <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
+                                </span>
+                            `;
+                        } else {
+                            return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                        }
+                    } else {
+                        if (params.value) {
+                            const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                            return `<span style="text-align: right;">${formattedValue}</span>`;
+                        } else {
+                            return `<span></span>`;
+                        }
+                    }
+                }},
+                { headerName : "개당가격"
+                , field:'per_price' 
+                ,editable: true
+                , sortable: true 
+                ,cellStyle: { 
+                    textAlign: "right",
+                    backgroundColor: "#fff", // 연한 배경색
+                    //border: "0.5px dashed #fb8c00", // 점선 테두리
+                    cursor: "text", // 텍스트 커서
+                }
+                ,flex: 2 
+                ,cellRenderer: params => {
+                    const orderStatus = params.data.order_status; // 주문상태 확인
+                    if (orderStatus === '미출고') {
+                        if (params.value) {
+                            const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                            return `
+                                <span style="display: flex; align-items: center; justify-content: flex-start;">
+                                    <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
+                                        width=15 height=15 
+                                        style="margin-right: 5px;" 
+                                        title="더블클릭하여 수정 가능합니다" />
+                                    <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
+                                </span>
+                            `;
+                        } else {
+                            return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                        }
+                    } else {
+                        if (params.value) {
+                            const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                            return `<span style="text-align: right;">${formattedValue}</span>`;
+                        } else {
+                            return `<span></span>`;
+                        }
+                    }
+                }},
+                { headerName : "총가격"
+                ,field:'total_price'
+                ,resizable: true
+                , sortable: true 
+                ,cellStyle: { 
+                    textAlign: "right",
+                    }
+                ,flex: 2
+                ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+                }},
                 { headerName : "주문상태", field:'order_status',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
                 {
                     headerName : "삭제",

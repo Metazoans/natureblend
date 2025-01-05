@@ -11,6 +11,7 @@
       @rowClicked="onRowClicked"
       :pagination="true"
       :paginationPageSize="10"
+      :paginationPageSizeSelector="[10, 20, 50, 100]"
   />
   
   </div>

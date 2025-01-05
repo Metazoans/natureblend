@@ -64,7 +64,8 @@
         @cellClicked="onCellClicked" 
         rowSelection="multiple"
         :pagination="true"
-        :paginationPageSize="20"
+        :paginationPageSize="10"
+        :paginationPageSizeSelector="[10, 20, 50, 100]"
     />
     </div>
     <div style="display: none">
@@ -154,11 +155,76 @@ export default{
             { headerName : "제품LOT번호",field:'product_lot',resizable: true, sortable: true,flex: 3,cellStyle: { textAlign: "center" }},
             { headerName : "제품코드",field:'product_code',resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "center" }},
             { headerName : "제품명",field:'product_name',resizable: true, sortable: true,flex: 3,cellStyle: { textAlign: "right" }},
-            { headerName : "출고량",field:'output_amount',resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "right" }},
-            { headerName : "반품량",field:'return_num',editable:true,resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "right" }},
+            { headerName : "출고량"
+            ,field:'output_amount'
+            ,resizable: true
+            , sortable: true
+            ,flex: 2
+            ,cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
+            { headerName : "반품량"
+            ,field:'return_num'
+            ,editable:true
+            ,resizable: true
+            , sortable: true
+            ,flex: 2
+            ,cellStyle: { textAlign: "right",
+                         backgroundColor: "#fff", // 연한 배경색
+                        //border: "0.5px dashed #fb8c00", // 점선 테두리
+                        cursor: "text", // 텍스트 커서
+             }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `
+                                    <span style="display: flex; align-items: center; justify-content: flex-start;">
+                                        <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
+                                            width=15 height=15 
+                                            style="margin-right: 5px;" 
+                                            title="더블클릭하여 수정 가능합니다" />
+                                        <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
+                                    </span>
+                                `;
+                    }else{
+                         // 값이 없을 경우 수정 가능 아이콘 추가
+                        return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                    }
+            }},
             { headerName : "담당자",field:'name',resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "left" }},
             { headerName : "반품날짜",field:'return_date',resizable: true, sortable: true,flex: 3,cellStyle: { textAlign: "center" }},
-            { headerName : "반품사유",field:'return_reason',resizable: true, sortable: true,flex: 4,cellStyle: { textAlign: "left" }},
+            { headerName : "반품사유"
+            ,field:'return_reason'
+            ,resizable: true
+            , sortable: true
+            ,flex: 4
+            ,cellStyle: {
+                         textAlign: "left",
+                         backgroundColor: "#fff", // 연한 배경색
+                        //border: "0.5px dashed #fb8c00", // 점선 테두리
+                        cursor: "text", // 텍스트 커서
+            }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `
+                                    <span style="display: flex; align-items: center; justify-content: flex-start;">
+                                        <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
+                                            width=15 height=15 
+                                            style="margin-right: 5px;" 
+                                            title="더블클릭하여 수정 가능합니다" />
+                                        <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
+                                    </span>
+                                `;
+                    }else{
+                         // 값이 없을 경우 수정 가능 아이콘 추가
+                        return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                    }
+            }},
             ],
           
 

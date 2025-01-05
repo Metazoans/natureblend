@@ -155,7 +155,15 @@ export default{
             productNum:'',
             perPrice:'',
 
-            materials:[],
+            materials:[
+            {
+                orderCode: '', // 초기값
+                productCode: '', // 초기값
+                productName: '', // 초기값
+                productNum: '', // 초기값
+                perPrice: '' // 초기값
+            }
+            ],
             indexNum: null, // 선택된 index 저장
 
             //거래처 모달 
