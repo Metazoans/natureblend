@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h1 class="mb-3">입고검사-불량내역조회</h1>
+    <h3 class="mb-3">입고검사-불량내역조회</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h3 class="me-3">검색조건</h3>
+        <h4 class="me-3">검색조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -35,8 +35,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-30 " v-on:click="searchOrder">검색</material-button>
-          <material-button size="md" class="m-4"  color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -50,8 +50,8 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20" style="height: 700px;"
-        :noRowsOverlayComponent="noRowsOverlayComponent">
+        @grid-ready="onGridReady" :pagination="true" :paginationPageSizeSelector="[10, 20, 50, 100]"
+        :paginationPageSize="10" style="height: 700px;" :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
   </div>
@@ -59,9 +59,9 @@
 
   <hr>
   <div style="display: none">
-       <CustomNoRowsOverlay/>
+    <CustomNoRowsOverlay />
   </div>
-  
+
 </template>
 
 <script>
@@ -98,19 +98,34 @@ export default {
       theme: theme,
       rowData1: [], //검색 결과(db를 통해 얻은 결과에서 골라서 부분 선택적으로 추가)
       columnDefs: [ //검색 결과 열
-        { headerName: "불량품번호", field:"qcMaterialRjcId", resizable:false, cellStyle: { textAlign: "center" }, flex: 4 },
-        { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 4  },
-        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false, cellStyle: { textAlign: "center" }, flex: 4  },
-        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3  },
-        { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3  },
-        { headerName: "불합격량(g, 개)", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 3.5 },
-        { headerName: "불량코드", field: "faultyCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 4  },
-        { headerName: "불량명", field: "faultyReason", resizable: false, cellStyle: { textAlign: "left" }, flex: 3  },
-        { headerName: "검사시작시각", field: "inspecStart", resizable: true, cellStyle: { textAlign: "center" }, flex: 4  },
-        { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "center" }, flex: 4  },
+        { headerName: "불량품번호", field: "qcMaterialRjcId", resizable: false, cellStyle: { textAlign: "center" }, flex: 4 },
+        { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 4 },
+        { headerName: "입고검사번호", field: "qcMaterialId", resizable: false, cellStyle: { textAlign: "center" }, flex: 4 },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3 },
+        { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3 },
+        {
+          headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 3.5,
+          cellRenderer: params => {
+            if (params.value) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
+        { headerName: "불량코드", field: "faultyCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 4 },
+        { headerName: "불량명", field: "faultyReason", resizable: false, cellStyle: { textAlign: "left" }, flex: 3 },
+        { headerName: "검사시작시각", field: "inspecStart", resizable: true, cellStyle: { textAlign: "center" }, flex: 4 },
+        { headerName: "검사완료시각", field: "inspecEnd", resizable: false, cellStyle: { textAlign: "center" }, flex: 4 },
 
       ],
-      
+
       defaultColDef: {
         headerClass: "header-center"
       },
@@ -123,7 +138,7 @@ export default {
     onGridReady(params) {
       this.gridApi = params.api;
       //this.gridApi.sizeColumnsToFit();
-      
+
     },
     // 날짜를 YYYY-MM-DD 형식으로 변환
     dateFormat(value, format) {
@@ -137,14 +152,14 @@ export default {
       const processedData = [];
       for (let item of searchList) {
         processedData.push({
-          "qcMaterialRjcId":item.qc_material_rjc_id,
+          "qcMaterialRjcId": item.qc_material_rjc_id,
           "orderCode": item.order_code,
           "qcMaterialId": item.qc_material_id,
-          "mName": item.material_name, 
-          "eName":item.name, 
-          "rjcQnt" : item.rjc_quantity,
+          "mName": item.material_name,
+          "eName": item.name,
+          "rjcQnt": item.rjc_quantity,
           "faultyCode": item.faulty_code,
-          "faultyReason":item.faulty_reason,
+          "faultyReason": item.faulty_reason,
           "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
           "inspecEnd": this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
         });
@@ -154,9 +169,8 @@ export default {
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
-            title: "검색실패",
-            text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
-            type: "error", // success, warn, error 가능
+          text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
+          type: "error", // success, warn, error 가능
         })}`;
         return;
       }
@@ -186,10 +200,10 @@ export default {
       this.rowData1 = this.processSearchResults(this.searchList);
     },
   },
-  created(){
+  created() {
     this.searchRequestAll();
   }
-  
+
 
 };
 </script>
@@ -210,21 +224,25 @@ export default {
     margin-top: 24px;
   }
 }
+
 //검색창 라벨
-.mb-4{
+.mb-4 {
   label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
   }
 }
+
 //검색창 배경색
-.search-background{
-  background-color: #e9ecef; /* 원하는 배경색 */
+.search-background {
+  background-color: #e9ecef;
+  /* 원하는 배경색 */
 
 
   input {
-    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    background-color: #ffffff;
+    /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;

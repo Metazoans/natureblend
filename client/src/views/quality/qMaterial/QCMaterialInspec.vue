@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h1 class="mb-3">입고검사-검사관리</h1>
+    <h3 class="mb-3">입고검사-검사관리</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h3 class="me-3">검색조건</h3>
+        <h4 class="me-3">검색조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -35,8 +35,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-30 " v-on:click="searchOrder">검색</material-button>
-          <material-button size="md" class="m-4"  color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -50,7 +50,8 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true"
+        :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10"
         :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
@@ -67,12 +68,12 @@
     <h4>검사처리내역</h4>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
-        style="height: 400px;" :noRowsOverlayComponent="noRowsOverlayComponent">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true"
+        :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10" style="height: 400px;"
+        :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
     <hr>
-    <!-- <material-button size="md" class="mt-3" v-on:click="openModal">검사완료</material-button> -->
     <div class="row justify-content-center">
       <div class="col-auto">
         <material-button class="btn btn-success" size="lg" @click="openModal">저장</material-button>
@@ -94,14 +95,27 @@
     </template>
     <template v-slot:list>
       <div class="modal-css">
-        <!-- <h5>검사 상세 정보</h5> -->
-        <h4>입고검사번호: {{ selectedRow.qcMaterialId }}</h4>
-        <h3>자재명: {{ selectedRow.mName }}</h3>
-        <h4>총 수량:  {{ selectedRow.totalQnt }} (g, 개)</h4>
-        <material-button size="md" class="mt-3 btn btn-primary"
-          @click="addDefectDetailForRow(selectedRow.qcMaterialId)">
-          불량 항목 추가
-        </material-button>
+        <table class="table table-sm w-100" style="border: 3px solid #dee2e6;">
+          <tbody>
+            <tr>
+              <th scope="row" style="width: 30%; text-align: left; border: 1px solid #dee2e6;">입고검사번호</th>
+              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.qcMaterialId }}</td>
+            </tr>
+            <tr>
+              <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">자재명</th>
+              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.mName }}</td>
+            </tr>
+            <tr>
+              <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">총 수량</th>
+              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.totalQnt * 0.001 }} {{ this.materialType }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-end mt-3">
+          <material-button size="md" class="btn btn-warning" @click="addDefectDetailForRow(selectedRow.qcMaterialId)">
+            불량 항목 추가
+          </material-button>
+        </div>
         <h5 class="pt-5">불량 내역</h5>
         <!-- 불량 사유 입력 및 불량 수량 입력 -->
         <div class="pt-2" v-if="defectDetailsMap[selectedRow.qcMaterialId] == null">
@@ -110,20 +124,23 @@
         <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcMaterialId]" :key="index"
           class="defect-item mt-3">
           <div class="form-group">
-            <label :for="'reason' + index">불량 사유 {{ index + 1 }}:</label>
-            <select v-model="detail.reason" :id="'reason' + index" class="form-control">
+            <label :for="'reason' + index">불량 사유 {{ index + 1 }}</label>
+            <select v-model="detail.reason" :id="'reason' + index" class="form-control" placeholder="불량 사유">
+              <option value="" hidden disabled selected>(선택)</option>
               <option v-for="reason in defectReasons" :key="reason.code" :value="reason.code">
                 {{ reason.name }}
               </option>
             </select>
           </div>
           <div class="form-group mt-2">
-            <label :for="'defectQty' + index">불량 수량 {{ index + 1 }}:</label>
+            <label :for="'defectQty' + index">불량 수량({{ this.materialType }})</label>
             <input type="number" v-model="detail.qty" :id="'defectQty' + index" class="form-control" />
           </div>
-          <button class="btn btn-danger mt-2" @click="removeDefectDetailForRow(selectedRow.qcMaterialId, index)">
-            삭제
-          </button>
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-danger mt-2" @click="removeDefectDetailForRow(selectedRow.qcMaterialId, index)">
+              삭제
+            </button>
+          </div>
         </div>
       </div>
     </template>
@@ -191,9 +208,54 @@ export default {
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 1.1 },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1.2 },
         { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
-        { headerName: "총 수량(g, 개)", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "합격량(g, 개)", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
-        { headerName: "불합격량(g, 개)", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1 },
+        {
+          headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
+          cellRenderer: params => {
+            if (params.value != null) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
+        {
+          headerName: "합격량", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
+          cellRenderer: params => {
+            if (params.value != null) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
+        {
+          headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
+          cellRenderer: params => {
+            if (params.value != null) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
         { headerName: "검사시작시각", field: "inspecStart", resizable: false, cellStyle: { textAlign: "right" }, flex: 1.8 },
         { headerName: "검사상태", field: "inspecStatus", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
 
@@ -260,7 +322,6 @@ export default {
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
-          title: "검색실패",
           text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
           type: "error", // success, warn, error 가능
         })}`;
@@ -305,6 +366,12 @@ export default {
       // console.log('클릭됨');
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = event.data;
+      if (this.selectedRow.mName.includes('병')) {
+        this.materialType = '개';
+      } else {
+        this.materialType = 'kg';
+
+      }
       this.showModalRJC = true;
     },
     closeModal() {
@@ -334,19 +401,31 @@ export default {
     },
     saveDefectDetailsForRow(qcMaterialId, total) {
       const defectDetails = this.defectDetailsMap[qcMaterialId] || [];
-      if (defectDetails.some(detail => !detail.reason || detail.qty <= 0)) {
+      if (defectDetails.some(detail => !detail.reason)) {
         notify({
-          title: "입력실패",
-          text: "모든 불량 항목에 대해 불량 사유와 수량을 입력하세요.",
+          text: "불량 사유가 입력되지 않은 항목이 있습니다.",
+          type: "warn", // success, warn, error 가능
+        });
+        return;
+      }
+      else if (defectDetails.some(detail => detail.qty <= 0)) {
+        notify({
+          text: "수량이 입력되지 않았거나 0 이하를 입력한 항목이 있습니다.",
+          type: "warn", // success, warn, error 가능
+        });
+        return;
+      }
+      else if(this.materialType === '개'&& defectDetails.some(detail =>  !Number.isInteger(detail.qty)) ) {
+        notify({
+          text: "해당 자재의 수량은 소수로 입력할 수 없습니다.",
           type: "warn", // success, warn, error 가능
         });
         return;
       }
 
-      const rjcQntSum = defectDetails.reduce((sum, detail) => sum + detail.qty, 0);
+      const rjcQntSum = defectDetails.reduce((sum, detail) => sum + (detail.qty * 1000), 0);
       if (rjcQntSum > total) {
         notify({
-          title: "입력실패",
           text: "불량 총합량이 총합량보다 클 수 없습니다.",
           type: "warn", // success, warn, error 가능
         });
@@ -373,7 +452,7 @@ export default {
       // console.log('불량상세테이블');
       // console.log(this.defectDetailsMap);
       // console.log('테스트(검사완료 처리할 검사 건수들)')
-      this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료')
+      this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료');
       // console.log(this.rowData2);
     },
 
@@ -382,8 +461,7 @@ export default {
     openModal() {
       if (this.rowData2.length == 0) {
         notify({
-          title: "저장 실패",
-          text: "검사처리내역이 비었습니다.",
+          text: "저장할 검사처리내역이 없습니다.",
           type: "error", // success, warn, error 가능
         });
         return;
@@ -404,7 +482,7 @@ export default {
             defectDetailsArray.push({
               qcMaterialId: qcId,
               faultyCode: detail.reason,
-              qty: detail.qty,
+              qty: detail.qty * 1000,
             });
           });
         }
@@ -425,8 +503,7 @@ export default {
         .catch(err => console.log(err));
       // console.log(result);
       notify({
-        title: "검사완료",
-        text: `완료된 검사:${result.data.updatedRows}, 기록된 불량 내역:${result.data.defectNum}`,
+        text: `완료된 검사: ${result.data.updatedRows} 건, 기록된 불량 내역: ${result.data.defectNum}건`,
         // text: `기록된 불량 내역:${result.data.defectNum}`,
         type: "success", // success, warn, error 가능
       });
@@ -479,21 +556,25 @@ export default {
     margin-top: 24px;
   }
 }
+
 //검색창 라벨
-.mb-4{
+.mb-4 {
   label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
   }
 }
+
 //검색창 배경색
-.search-background{
-  background-color: #e9ecef; /* 원하는 배경색 */
+.search-background {
+  background-color: #e9ecef;
+  /* 원하는 배경색 */
 
 
   input {
-    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    background-color: #ffffff;
+    /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;
@@ -506,23 +587,30 @@ export default {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
   }
 }
+
 // 모달
 .modal-css {
-  h4 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #333;
+
+  .table th,
+  .table td {
+    font-size: 1.1rem;
+    padding: 10px;
+    // color: #495057; /* 텍스트 색상 */
+
   }
 
-  p {
-    margin: 5px 0;
-    font-size: 1rem;
-    color: #555;
+  .table th {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #343a40;
+    /* 헤더 텍스트 색상 */
   }
+
+
 
   .defect-item {
     padding: 15px;
-    border: 1px solid #ddd;
+    border: 3px solid #ddd;
     border-radius: 5px;
     margin-bottom: 15px;
     background-color: #f9f9f9;

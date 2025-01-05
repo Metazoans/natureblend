@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h1 class="mb-3">공정검사-음료검사기록조회</h1>
+    <h3 class="mb-3">공정검사-음료검사기록조회</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h3 class="me-3">검색조건</h3>
+        <h4 class="me-3">검색조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -55,7 +55,7 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-30 " v-on:click="searchOrder">검색</material-button>
+          <material-button size="md"  v-on:click="searchOrder">검색</material-button>
           <material-button size="md" class="m-4"  color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
@@ -72,7 +72,7 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSize="20"
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10"
         style="height: 700px;" :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
@@ -91,15 +91,31 @@
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal">
     <template v-slot:title>
       <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">음료검사 정보</h1> -->
-      <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedRow.qcProcessId }}</h1>
+      <h1 class="modal-title fs-5" id="exampleModalLabel">검사 상세 정보</h1>
     </template>
     <template v-slot:list>
       <div class="modal-css">
-        <h5>검사 상세 정보</h5>
-        <!-- <p>공정검사번호: {{ selectedRow.qcProcessId }}</p> -->
-        <h4>제품번호: {{ selectedRow.productCode }}</h4>
-        <h3>음료 제품명: {{ selectedRow.pName }}</h3>
-        <b>검사 항목 : 산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이</b>
+        <table class="table table-sm w-100" style="border: 3px solid #dee2e6;">
+          <tbody>
+            <tr>
+              <th scope="row" style="width: 30%; text-align: left; border: 1px solid #dee2e6;">공정검사번호</th>
+              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.qcProcessId }}</td>
+            </tr>
+            <tr>
+              <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">음료 제품명</th>
+              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.pName }}</td>
+            </tr>
+            <tr v-if="selectedRow.inspecResult === '합격'">
+              <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">검사 결과</th>
+              <td style="font-weight: bold; text-align: right; border: 1px solid #dee2e6; color: #007bff">{{ selectedRow.inspecResult }}</td>
+            </tr>
+            <tr v-if="selectedRow.inspecResult === '불합격'">
+              <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">검사 결과</th>
+              <td style="font-weight: bold; text-align: right; border: 1px solid #dee2e6; color: #f44335">{{ selectedRow.inspecResult }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- <b>검사 항목 : 산도, 총세균수, 당도, 잔류 농약, 효모/곰팡이</b> -->
         <hr />
 
         <!-- 검사 항목 리스트 -->
@@ -287,7 +303,6 @@ export default {
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
-          title: "검색실패",
           text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
           type: "error", // success, warn, error 가능
         })}`;
@@ -483,29 +498,33 @@ export default {
 
 //모달
 .modal-css {
-  h4 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #333;
+  .table th,
+  .table td {
+    font-size: 1.1rem;
+    padding: 10px;
+    // color: #495057; /* 텍스트 색상 */
+
   }
 
-  p {
-    font-size: 1rem;
-    color: #555;
-    margin: 5px 0;
+  .table th {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #343a40;
+    /* 헤더 텍스트 색상 */
   }
 
-  b {
-    font-size: 1rem;
-    color: #000;
-    margin-bottom: 15px;
-    display: block;
-  }
+  // b {
+  //   font-size: 1rem;
+  //   color: #000;
+  //   margin-bottom: 15px;
+  //   display: block;
+  // }
 
   .inspection-item {
     
     .item-name {
       font-weight: bold;
+      font-size: 1.3rem;
       color: #333;
       margin-right: 10px;
     }
