@@ -2,7 +2,7 @@
 <template>
   <ModalMachine @click.self="closeModal">
     <template v-slot:header>
-      <h3>비동기 내역 등록</h3>
+      <h1 class="modal-title fs-5">비동기 내역 등록</h1>
     </template>
     <template v-slot:body>
       
@@ -83,24 +83,23 @@
       </div>
     </template>
     <template v-slot:footer>
-      
       <button
-          class="btn btn-success w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="confirm"
-          v-bind:disabled="!fullInput"
-        >
-          등록
-        </button>
-        <button
-          class="btn btn-danger w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="closeModal"
-        >
-          취소
-        </button>
+        class="btn btn-secondary w-100 mb-0 toast-btn"
+        type="button"
+        data-target="warningToast"
+        @click="closeModal"
+      >
+        닫기
+      </button>
+      <button
+        class="btn btn-success w-100 mb-0 toast-btn"
+        type="button"
+        data-target="warningToast"
+        @click="confirm"
+        v-bind:disabled="!fullInput"
+      >
+        등록
+      </button>
     </template>
   </ModalMachine>
 
@@ -213,13 +212,13 @@ export default {
       let addRes = result.data;
       if(addRes.inact_num > 0){
         this.$notify({
-          text: "비가동 내역 등록 성공",
+          text: "비가동 내용 등록이 성공했습니다.",
           type: 'success',
         });
         this.inActUpdate();
       } else {
         this.$notify({
-          text: "비가동 내역 등록 실패",
+          text: "비가동 내용 등록이 실패했습니다.",
           type: 'error',
         });
         this.$emit('confirm', this.isInsert);

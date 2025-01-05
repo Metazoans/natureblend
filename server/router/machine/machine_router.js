@@ -83,5 +83,10 @@ router.put('/search', async (req, res) => {
   res.send(result);
 });
 
+// 거래처
+router.get('/clientList',async(req,res)=>{
+  let clientList = await machineService.getClientList();
+  res.send(clientList);
+})
 
 module.exports = router;

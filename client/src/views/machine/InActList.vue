@@ -9,7 +9,11 @@
        	@grid-ready="onReady"
         style="height: 303px;"
         @cellClicked="cellClickFnc"
+        :noRowsOverlayComponent="noRowsOverlayComponent"
       ></ag-grid-vue>
+    </div>
+    <div style="display: none">
+        <CustomNoRowsOverlay/>
     </div>
 
     <div style="margin: 40px 0;"></div>
@@ -63,7 +67,13 @@
         :pagination="true"
         :paginationPageSize="5"
         :quickFilterText="inActSearchData"
+        :noRowsOverlayComponent="noRowsOverlayComponent"
+        :tooltipShowDelay="500"
+        :tooltipHideDelay="3000"
       ></ag-grid-vue>
+    </div>
+    <div style="display: none">
+        <CustomNoRowsOverlay/>
     </div>
 
   </div>
@@ -78,6 +88,9 @@ import theme from "@/utils/agGridTheme";
 import userDateUtils from "@/utils/useDates.js";
 
 import { mapMutations } from "vuex";
+
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
 
 export default {
   name: "inActList",
@@ -108,9 +121,15 @@ export default {
       { headerName: '모델번호', field: 'model_num', flex: 3 },
       { headerName: '설비분류', field: 'machine_type', flex: 4 },
       { headerName: '설비이름', field: 'machine_name', flex: 4 },
-      { headerName: '사유', field: 'inact_type', cellStyle: { textAlign: "center" }, flex: 2 },
-      { headerName: '시작일시', field: 'inact_start_time', cellStyle: { textAlign: "center" }, flex: 4 },
-      { headerName: '종료일시', field: 'inact_end_time', cellStyle: { textAlign: "center" }, flex: 4 },
+      { headerName: '사유', field: 'inact_type', cellStyle: { textAlign: "center" }, flex: 2,
+        tooltipValueGetter: params => params.data.inact_info ? `${params.data.inact_info}`: ""
+      },
+      { headerName: '시작일시', field: 'inact_start_time', cellStyle: { textAlign: "center" }, flex: 4,
+        tooltipField: 'start_name'
+      },
+      { headerName: '종료일시', field: 'inact_end_time', cellStyle: { textAlign: "center" }, flex: 4,
+        tooltipField: 'end_name'
+      },
     ]);
 
     const dateFormat = (value, format) => {
@@ -151,7 +170,9 @@ export default {
       dateFormat,
     }
   },
-
+  components: {
+    CustomNoRowsOverlay,
+  },
   data() {
     return {
       // 로그인 사원 권한 체크
@@ -169,6 +190,8 @@ export default {
       endDate: "", //주문날짜 끝 날짜
 
       filters: [],
+
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
     };
   },
   beforeMount() {

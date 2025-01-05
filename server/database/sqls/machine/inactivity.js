@@ -25,6 +25,8 @@ SELECT inact_num,
        inact_start_time,
        inact_end_time,
        inact_start_emp,
+       se.name AS start_name,
+       ee.name AS end_name,
        inact_end_emp,
        machine_name,
        model_num,
@@ -33,6 +35,10 @@ FROM inactivity i JOIN machine m
                     ON (i.machine_num = m.machine_num)
                   JOIN process p
                     ON (m.process_code = p.process_code)
+                  JOIN employee se
+                    ON (i.inact_start_emp = se.emp_num)
+                  JOIN employee ee
+                    ON (i.inact_end_emp = ee.emp_num)
 ORDER BY inact_start_time DESC
 `;
 

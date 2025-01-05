@@ -109,6 +109,11 @@ const searchMachineList = async (machine_state, process_code, selectSearchType, 
   return result;
 }
 
+const getClientList = async ()=>{
+  let list = await mariadb.query('clientList');
+  return list;
+}
+
 module.exports = {
   findAllMachines,
   createNewMachine,
@@ -119,5 +124,5 @@ module.exports = {
   updateMachineInfo,
   searchMachineList,
   delMachineInfo,
-
+  getClientList,
 };
