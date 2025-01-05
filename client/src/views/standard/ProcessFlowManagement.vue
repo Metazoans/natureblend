@@ -104,7 +104,7 @@ import { mapMutations } from "vuex";
                 if(this.loginInfo.job === '관리자'){
                     console.log('성공');
                 }else{
-                    this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+                    this.$notify({ title:'로그인요청', text: '관리자만 접속 가능합니다.', type: 'error' });
                     this.$router.push({ name : 'MainPage' });
                 }
             },

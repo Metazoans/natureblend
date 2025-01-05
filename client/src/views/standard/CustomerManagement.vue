@@ -141,7 +141,7 @@
                 button2.innerText = '삭제';
                 button2.style.marginRight = '10px';
                 button2.style.cursor = 'pointer';
-                button2.style.backgroundColor = '#f7b84d';
+                button2.style.backgroundColor = '#f44335';
                 button2.style.width = '60px';
                 button2.style.height = '30px';
                 button2.style.color = 'white';

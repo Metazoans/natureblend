@@ -182,7 +182,7 @@
              button2.innerText = '삭제';
              button2.style.marginRight = '10px';
              button2.style.cursor = 'pointer';
-             button2.style.backgroundColor = '#f7b84d';
+             button2.style.backgroundColor = '#f44335';
              button2.style.width = '60px';
              button2.style.height = '30px';
              button2.style.color = 'white';
@@ -219,13 +219,13 @@
                this.$notify({ title:'사원삭제', text: '사원이 삭제되었습니다.', type: 'success' });
                 this.employeeList();
               } else {
-               this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+               this.$notify({ title:'삭제실패', text: '삭제실패하였습니다.', type: 'error' });
               }
             })
 
         }catch(error) {
           console.log(error);
-          this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+          this.$notify({ title:'삭제실패', text: '삭제실패하였습니다.', type: 'error' });
         }
         this.showDeleteModal = false;
     }
@@ -269,7 +269,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능합니다.', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -304,7 +304,7 @@
                   }
                   this.employeeList();
             }else {
-              this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
+              this.$notify({ title:'등록실패', text: '등록실패하였습니다.', type: 'error' });
             }
         console.log(result.data);
         this.employeeList();

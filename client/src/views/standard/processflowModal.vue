@@ -146,7 +146,7 @@
                 button3.innerText = '삭제';
                 button3.style.marginRight = '10px';
                 button3.style.cursor = 'pointer';
-                button3.style.backgroundColor = '#f7b84d';
+                button3.style.backgroundColor = '#f44335';
                 button3.style.width = '60px';
                 button3.style.height = '30px';
                 button3.style.color = 'white';
@@ -168,7 +168,7 @@
                             this.updateProcessSequencesAfterDelete(deletedProcessSeq);
                             this.flowList();
                           }else{
-                            this.$notify({ title:'삭제실패', text: '삭제실패', type: 'error' });
+                            this.$notify({ title:'삭제실패', text: '삭제실패하였습니다', type: 'error' });
                           }
                       })
                       .catch(err => console.log(err));
@@ -337,7 +337,7 @@
               this.$notify({ title:'등록성공', text: '공정이 등록되었습니다.', type: 'success' });
                 this.flowList();
             }else{
-              this.$notify({ title:'등록실패', text: '등록실패', type: 'error' });
+              this.$notify({ title:'등록실패', text: '등록 실패하였습니다.', type: 'error' });
             }
       },
 

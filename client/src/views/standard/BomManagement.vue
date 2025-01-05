@@ -175,7 +175,7 @@
             button.innerText = '삭제';
             button.style.marginRight = '10px';
             button.style.cursor = 'pointer';
-            button.style.backgroundColor = '#f7b84d';
+            button.style.backgroundColor = '#f44335';
             button.style.width = '60px';
             button.style.height = '30px';
             button.style.color = 'white';
@@ -227,7 +227,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능합니다.', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
