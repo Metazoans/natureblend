@@ -7,8 +7,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <slot name="list">slot</slot>
-            <div class="mb-1">>
+            <slot name="list"></slot>
+            <div class="mb-1">
               <!-- 제품명 조회  -->
               <div class="grid-container" >
                 <strong>◎제품코드:{{ productCode }} ◎제품명:{{ productName }}</strong>
@@ -28,8 +28,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="processAdd">공정추가</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
+            <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @click="processAdd">공정추가</button>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@
                 button3.innerText = '삭제';
                 button3.style.marginRight = '10px';
                 button3.style.cursor = 'pointer';
-                button3.style.backgroundColor = '#f7b84d';
+                button3.style.backgroundColor = '#f44335';
                 button3.style.width = '60px';
                 button3.style.height = '30px';
                 button3.style.color = 'white';
@@ -168,7 +168,7 @@
                             this.updateProcessSequencesAfterDelete(deletedProcessSeq);
                             this.flowList();
                           }else{
-                            this.$notify({ title:'삭제실패', text: '삭제실패', type: 'error' });
+                            this.$notify({ title:'삭제실패', text: '삭제실패하였습니다', type: 'error' });
                           }
                       })
                       .catch(err => console.log(err));
@@ -317,6 +317,15 @@
       },
 
       async flowInsert(process){
+        const isExist = this.rowData.some(row => row.process_code === process.process_code);
+          if (isExist) {
+            this.$notify({ 
+              title: '등록 실패', 
+              text: '해당 공정은 이미 등록되어 있습니다.', 
+              type: 'error' 
+            });
+            return;
+          }
         this.newList = { product_code: this.productCode,
                          process_code: process.process_code,
                          process_name: process.process_name };
@@ -328,7 +337,7 @@
               this.$notify({ title:'등록성공', text: '공정이 등록되었습니다.', type: 'success' });
                 this.flowList();
             }else{
-              this.$notify({ title:'등록실패', text: '등록실패', type: 'error' });
+              this.$notify({ title:'등록실패', text: '등록 실패하였습니다.', type: 'error' });
             }
       },
 
@@ -385,7 +394,7 @@
     max-width: 65.5%;
   }
   .modal-body{
-    background-color: gray;
+    background-color: white;
   }
   .modal-body .form-control {
       width: 100px;

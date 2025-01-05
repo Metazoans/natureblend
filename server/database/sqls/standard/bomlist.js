@@ -162,7 +162,8 @@ const employeeList =
         DATE_FORMAT(employment_date, '%Y-%m-%d') AS employment_date,
         DATE_FORMAT(resignation_date, '%Y-%m-%d') AS resignation_date,
         level
- FROM employee`;
+ FROM employee
+ order by emp_num desc`;
 // 사원 삭제
 const employeeDelete =
 `DELETE FROM employee

@@ -14,7 +14,7 @@
                       <!-- 사원번호 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="empNum">사원번호</label>
-                         <input type="text" class="form-control" style="background-color: white; " id="empNum" v-model="empNum" >
+                         <input type="text" placeholder="ex)20250000" class="form-control" style="background-color: white; " id="empNum" v-model="empNum" >
                       </div>
                       <!-- 생년월일 -->
                       <div class="mb-3">
@@ -32,16 +32,31 @@
                           aria-label="부서 선택"
                         >
                           <option value="">부서 선택</option>
-                          <option value="인사">인사</option>
                           <option value="영업">영업</option>
-                          <option value="품질">품질</option>
                           <option value="생산">생산</option>
+                          <option value="자재">자재</option>
+                          <option value="품질">품질</option>
+                          <option value="설비">설비</option>
+                          <option value="인사">인사</option>
                         </select>
                       </div>
                         <!-- 직급 -->
                       <div class="mb-3">
                         <label class="col-form-label fw-bold" for="position">직급</label>
-                        <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="position" v-model="position" >
+                        <select
+                          class="form-select"
+                          v-model="position"
+                          style="background-color: white; text-align: center; border: solid 1px;"
+                          aria-label="부서 선택"
+                        >
+                          <option value="">직급 선택</option>
+                          <option value="사원">사원</option>
+                          <option value="반장">반장</option>
+                          <option value="관리자">관리자</option>
+                          <option value="사장">사장</option>
+                          <option value="이사">이사</option>
+                          <option value="대리">대리</option>
+                        </select>
                       </div>
                       <!-- 입사일 -->
                       <div class="mb-3">
@@ -63,13 +78,14 @@
                         <!-- 부서번호 -->
                         <div class="mb-3">
                             <label class="col-form-label fw-bold" for="jobNum">부서번호</label>
-                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px; text-align: right;" id="jobNum='101'" v-model="jobNum" readonly >
+                            <input type="text" placeholder="부서 선택시 자동입력" class="form-control" style="background-color: white; padding-left: 20px;" id="jobNum='101'" v-model="jobNum" readonly >
                         </div>
                         <!-- 등급 -->
                         <div class="mb-3">
                            <label class="col-form-label fw-bold" for="level">등급</label>
                                 <div id="level" style="padding-left: 0px;">
                                 <select class="form-select" v-model="level" style="width: 184px; border: solid 1px; background-color: white; text-align: center;" aria-label="관리 등급 선택">
+                                        <option value="">1</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -166,7 +182,7 @@
              button2.innerText = '삭제';
              button2.style.marginRight = '10px';
              button2.style.cursor = 'pointer';
-             button2.style.backgroundColor = '#f7b84d';
+             button2.style.backgroundColor = '#f44335';
              button2.style.width = '60px';
              button2.style.height = '30px';
              button2.style.color = 'white';
@@ -203,13 +219,13 @@
                this.$notify({ title:'사원삭제', text: '사원이 삭제되었습니다.', type: 'success' });
                 this.employeeList();
               } else {
-               this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+               this.$notify({ title:'삭제실패', text: '삭제실패하였습니다.', type: 'error' });
               }
             })
 
         }catch(error) {
           console.log(error);
-          this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+          this.$notify({ title:'삭제실패', text: '삭제실패하였습니다.', type: 'error' });
         }
         this.showDeleteModal = false;
     }
@@ -232,10 +248,12 @@
     console.log('hjkhjkhkj',this.job);
       // 부서에 맞는 부서번호를 설정
       const departmentJobNumbers = {
-        "인사": "101",
-        "영업": "102",
-        "품질": "103",
-        "생산": "104",
+        "영업": "1",
+        "생산": "2",
+        "자재": "3",
+        "품질": "4",
+        "설비": "5",
+        "인사": "6",
       };
       this.jobNum = departmentJobNumbers[this.job] || ''; // 부서번호 설정
     },
@@ -251,7 +269,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능합니다.', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -274,13 +292,19 @@
         }
     },
     async employeeInsert(newList){
+      const empNumber = await axios.get(`${ajaxUrl}/employeeList`);
+      const existingEmployee = empNumber.data.find(employee => employee.emp_num === newList.emp_num);
         const result = await axios.post(`${ajaxUrl}/employeeInsert`, newList)
                                   .catch(err => console.log(err));
             if (result.data === '성공') {
-                  this.$notify({ title:'등록성공', text: '사원이 등록되었습니다.', type: 'success' });
+                  if(existingEmployee){
+                    this.$notify({ title:'수정성공', text: '사원이 수정되었습니다.', type: 'success' });
+                  }else{
+                    this.$notify({ title:'등록성공', text: '사원이 등록되었습니다.', type: 'success' });
+                  }
                   this.employeeList();
-            } else {
-              this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
+            }else {
+              this.$notify({ title:'등록실패', text: '등록실패하였습니다.', type: 'error' });
             }
         console.log(result.data);
         this.employeeList();
@@ -290,6 +314,7 @@
         this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
         return;
       }
+      
       if(this.tel.length !== 13){
         this.$notify({ title:'연락처 확인', text: '연락처를 확인해주세요', type: 'error' });
         return;
@@ -324,9 +349,6 @@ input.form-control {
   padding-left: 20px;
   padding-right: 20px;
 }
-#empNum{
-text-align: right;
-}
 #birth{
 text-align: center;
 }
@@ -339,12 +361,6 @@ text-align: center;
 #resignationDate{
   text-align: center;
 }
-#jobNum{
-  text-align: right;
-}
-#level{
-  text-align: right;
-}
  .main-container{
      background-color:  #e9ecef;
      margin-left: 20px;
@@ -352,6 +368,9 @@ text-align: center;
      margin-top: 0px;
      margin-bottom: 0px;
      border-radius: 10px;
+ }
+ .grid-container{
+    margin-top: 9px;
  }
  .content{
     margin-left: 20px;
@@ -364,4 +383,10 @@ text-align: center;
        background-color: $white;
        border: solid 1px  ;
  }
+ /* input 포커스 상태에서도 배경색 유지 */
+input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
  </style>
