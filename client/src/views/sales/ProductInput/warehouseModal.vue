@@ -1,36 +1,42 @@
 <template>
-<!--모달 안에 창고 목록 출력-->
-    <!--모달 안에 제품 목록 출력-->
-    <input type="text" v-model="inputListsearch" class="text-center styled-input" placeholder="창고이름 입력하세요"/>
-    <div class="grid-container">
-        <ag-grid-vue
-        
-        :rowData="rowData"
-        :columnDefs="columnWarlist"
-        :theme="theme"
-        @grid-ready="onReady"
-        :quickFilterText="inputListsearch"
-        :noRowsOverlayComponent="noRowsOverlayComponent"
-        @rowClicked="selectWarehouse"
-        rowSelection="single"
-    />
+    <div>
+            <!--모달 안에 창고 목록 출력-->
+        <input type="text" v-model="inputListsearch" class="text-center styled-input" placeholder="창고이름 입력하세요"/>
+        <div class="grid-container">
+            <ag-grid-vue
+            
+            :rowData="rowData"
+            :columnDefs="columnWarlist"
+            :theme="theme"
+            @grid-ready="onReady"
+            :quickFilterText="inputListsearch"
+            :noRowsOverlayComponent="noRowsOverlayComponent"
+            @rowClicked="selectWarehouse"
+            :rowSelection="{ type: 'single' }" 
+        />
+        </div>
+        <div style="display: none">
+            <CustomNoRowsOverlay/>
+        </div>
     </div>
-    <div style="display: none">
-        <CustomNoRowsOverlay/>
-    </div>
+
 
 </template>
 <script>
 import axios from "axios";
 import { ajaxUrl } from '@/utils/commons.js';
 import theme from "@/utils/agGridTheme";
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 
 export default{
     name : "WarehouseList",
+    components:{
+        CustomNoRowsOverlay,
+    },
 
     data(){
         return{
-
+            noRowsOverlayComponent:'CustomNoRowsOverlay',
             rowData: [],
             selectedwarehouseName:"",
             selectedwarehouseCode:"",
@@ -60,7 +66,7 @@ export default{
         },
         onReady(event){
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
             const paginationPanel = allPanels[0];
