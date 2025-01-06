@@ -357,7 +357,7 @@ export default {
       );
       this.rowData2 = [...this.rowData2, ...newRows]; // rowData2에 추가
       notify({
-        text: `검사 신청 내역에 추가 되었습니다.`,
+        text: `${newRows.length}개의 건이 추가되었습니다.`,
         type: "success", // success, warn, error 가능
       });
     },
