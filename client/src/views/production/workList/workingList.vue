@@ -47,17 +47,10 @@
               <p class="fw-bold data">{{ partialWorkLastEndTime }}</p>
             </div>
             <div class="process-name d-flex align-self-center col-sm-6 col-md-4 col-lg-3">
-              <div class="form-check d-flex">
-                <input class="form-check-input me-1" type="radio" name="status" id="all" value="all" checked v-model="radio">
-                <label class="form-check-label mt-1" for="all">전체</label>
-              </div>
-              <div class="form-check d-flex">
-                <input class="form-check-input me-1" type="radio" name="status" id="in-progress" value="in-progress" v-model="radio">
-                <label class="form-check-label mt-1" for="in-progress">진행중</label>
-              </div>
-              <div class="form-check d-flex">
-                <input class="form-check-input me-1" type="radio" name="status" id="completed" value="completed" v-model="radio">
-                <label class="form-check-label mt-1" for="completed">완료</label>
+              <div style="padding-left: 20px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
+                <label style="white-space: nowrap;" for="all"><input type="radio" id="all" name="status" class="form-check-input cursor-pointer" value="all" v-model="radio"/>&nbsp;&nbsp;전체</label>
+                <label style="white-space: nowrap;" for="in-progress"><input type="radio" id="in-progress" name="status" class="form-check-input cursor-pointer" value="in-progress" v-model="radio"/>&nbsp;&nbsp;진행중</label>
+                <label style="white-space: nowrap;" for="completed"><input type="radio" id="completed" name="status" class="form-check-input cursor-pointer" value="completed" v-model="radio"/>&nbsp;&nbsp;완료</label>
               </div>
             </div>
             <i v-show="partialWorkFinalStatus !== 'process_complete'" class="col-sm-6 col-md-4 col-lg-3 fa fa-plus-circle fa-2x cursor-pointer" @click="addPartialWork"></i>
@@ -748,13 +741,6 @@ export default {
               padding: 0 8px;
               line-height: 40px;
             }
-          }
-          .form-check-input:checked {
-            background-color: orange;
-            border-color: orange;
-          }
-          .form-check-label {
-            font-weight: bold;
           }
           .status {
             > label {
