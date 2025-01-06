@@ -17,7 +17,7 @@ import { ajaxUrl } from '@/utils/commons.js';
 import theme from "@/utils/agGridTheme";
 
 export default{
-    name : "inputModal",
+    name : "partSelect",
 
     props: {
         machineData: Object,

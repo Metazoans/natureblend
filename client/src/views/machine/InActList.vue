@@ -28,9 +28,10 @@
         <div class="row align-items-center">
           <div class="col-auto">
             <div class="row" style="margin-top: 6px;">
-              <div class="col-auto" v-for="type in machineType" :key="type">
-                <label class="me-3">{{ type }}</label>
-                <input type="checkbox" :value="type" v-model="pickedType"/>
+              <div class="col-auto">
+                <label class="me-3" v-for="type in machineType" :key="type">{{ type }}
+                  <input class="form-check-input" type="checkbox" :value="type" v-model="pickedType"/>
+                </label>
               </div>
             </div>
           </div>
@@ -66,6 +67,7 @@
         style="height: 303px;"
         :pagination="true"
         :paginationPageSize="5"
+        :paginationPageSizeSelector="[5, 10, 25, 50]"
         :quickFilterText="inActSearchData"
         :noRowsOverlayComponent="noRowsOverlayComponent"
         :tooltipShowDelay="500"

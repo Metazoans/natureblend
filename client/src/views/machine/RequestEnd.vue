@@ -1,6 +1,6 @@
 <template>
 
-  <div>
+  <div class="container-fluid py-4">
 
     <h3>정비 완료 내역</h3>
     <div class="grid-container" >
@@ -9,9 +9,11 @@
         :columnDefs="requestCol"
         :theme="theme"
         @grid-ready="onReady"
-        style="height: 500px;"
+        :rowHeight="50"
+        style="height: 493px;"
         :pagination="true"
-        :paginationPageSize="5"
+        :paginationPageSize="8"
+        :paginationPageSizeSelector="[8, 16, 40, 80]"
       ></ag-grid-vue>
     </div>
 

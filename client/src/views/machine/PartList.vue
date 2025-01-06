@@ -1,6 +1,6 @@
 <template>
 
-  <div class="partList">
+  <div class="partList container-fluid py-4">
     <h3>부품 관리 페이지</h3>
     <!-- 사용 가능 부품 리스트 -->
     <div class="grid-container" >
@@ -9,9 +9,11 @@
         :columnDefs="partCol"
         :theme="theme"
         @grid-ready="onReady"
-        style="height: 500px;"
+        :rowHeight="50"
+        style="height: 493px;"
         :pagination="true"
-        :paginationPageSize="5"
+        :paginationPageSize="8"
+        :paginationPageSizeSelector="[8, 16, 40, 80]"
         rowSelection="multiple"
         @rowClicked="onRowClicked"
       ></ag-grid-vue>
@@ -49,8 +51,8 @@ const partCol = shallowRef([
     width:75,
   },
   { headerName: '번호', field: 'part_num', cellStyle: { textAlign: "center" }, flex: 2 },
-  { headerName: '부품이름', field: 'part_name', flex: 4 },
-  { headerName: '설비분류', field: 'machine_type', flex: 4 },
+  { headerName: '부품이름', field: 'part_name', flex: 3 },
+  { headerName: '설비분류', field: 'machine_type', flex: 5 },
   { headerName: '거래처', field: 'client_num', flex: 3 },
   { headerName: '교체주기', field: 'replace_cycle', cellStyle: { textAlign: "right" }, flex: 3 },
   { headerName: '구매일자', field: 'buy_date', cellStyle: { textAlign: "center" }, flex: 5 },
