@@ -167,7 +167,8 @@ export default {
                                 return `<span style="text-align: right;">${formatted_qty}</span>`;
                             }
                         } else {
-                            return `<span style="text-align: right;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                            //return `<span style="text-align: left;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                            return `<span style="display: flex; align-items: center; justify-content: flex-start; height: 100%;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
                         }
                     },
                 },
@@ -183,7 +184,8 @@ export default {
                             const formatted_price = params.value.toLocaleString()+' 원';
                             return `<span style="text-align: right;">${formatted_price}</span>`;
                         } else {
-                            return `<span style="text-align: right;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                            //return `<span style="text-align: left;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                            return `<span style="display: flex; align-items: center; justify-content: flex-start; height: 100%;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
                         }
                     },
                 },

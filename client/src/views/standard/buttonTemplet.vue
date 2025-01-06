@@ -31,7 +31,7 @@
         ...mapMutations(["addLoginInfo", "resetState"]),
       async loginconfig() {
         console.log('eee',this.$store.state.loginInfo.name);
-        this.loginData = this.$store.state.loginInfo;
+        this.loginData = await this.$store.state.loginInfo;
         // const result = await axios.get(`${ajaxUrl}/loginconfig`)
         //                           .catch(err => console.log(err));
         // console.log('세션 출력',result.data);
@@ -115,11 +115,11 @@
             this.resetState(null);  //헤더메뉴 초기화
             this.loginData = {}; // 로컬 상태 초기화
 
+            this.$router.push({ name: 'MainPage' });
             console.log('로그인이름', this.$store.state.loginInfo.name);
 
             //로그아웃하면 페이지 리다액션 필요없음 이제
             // 페이지 리다이렉션
-            //this.$router.push({ name: 'MainPage' });
             //this.$router.push('/');
             //window.location.reload();
           }

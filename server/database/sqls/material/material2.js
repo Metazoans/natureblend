@@ -101,12 +101,7 @@ ORDER BY pwh.work_date DESC
 // 착즙 품질
 const process1qclist =
 `
-SELECT CONCAT(product_name, ' (', CASE
-                                      WHEN capacity = 1500 THEN '1.5L'
-                                      WHEN capacity = 750 THEN '750ml'
-                                      WHEN capacity = 500 THEN '500ml'
-                                      ELSE ''
-                                  END , ')') AS product_name,
+SELECT product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
 WHERE pwh.process_status != 'process_waiting' -- process_waiting  -- processing  -- process_complete
@@ -118,12 +113,7 @@ ORDER BY pwh.work_date DESC
 // 세척 공정
 const process2list =
 `
-SELECT CONCAT(product_name, ' (', CASE
-                                      WHEN capacity = 1500 THEN '1.5L'
-                                      WHEN capacity = 750 THEN '750ml'
-                                      WHEN capacity = 500 THEN '500ml'
-                                      ELSE ''
-                                  END , ')') AS product_name,
+SELECT product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
 WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
@@ -135,12 +125,7 @@ ORDER BY pwh.work_date DESC
 // 세척 품질
 const process2qclist =
 `
-SELECT CONCAT(product_name, ' (', CASE
-                                      WHEN capacity = 1500 THEN '1.5L'
-                                      WHEN capacity = 750 THEN '750ml'
-                                      WHEN capacity = 500 THEN '500ml'
-                                      ELSE ''
-                                  END , ')') AS product_name,
+SELECT product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
 WHERE pwh.process_status != 'process_waiting' -- process_waiting  -- processing  -- process_complete
@@ -153,12 +138,7 @@ ORDER BY pwh.work_date DESC
 // 포장 공정
 const process3list =
 `
-SELECT CONCAT(product_name, ' (', CASE
-                                      WHEN capacity = 1500 THEN '1.5L'
-                                      WHEN capacity = 750 THEN '750ml'
-                                      WHEN capacity = 500 THEN '500ml'
-                                      ELSE ''
-                                  END , ')') AS product_name,
+SELECT product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
 WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
