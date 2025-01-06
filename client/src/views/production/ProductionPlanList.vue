@@ -108,19 +108,35 @@ export default {
           editable: true,
           sortable: false,
           checkboxSelection: true,
-          width: 50
+          width: 50,
+          flex: 1
         },
         {
           headerName: "생산계획번호",
           field: 'plan_num',
-          cellStyle: {textAlign: 'right'}
+          cellStyle: {textAlign: 'right'},
+          flex: 2
         },
         {
           headerName: "생산계획명",
           field: 'plan_name',
           editable: params => {
             return params.data.plan_status === '대기중'
-          }
+          },
+          cellRenderer: (params) => {
+            if(params.value && params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <span style="flex-grow: 1; text-align: left;">${params.value}</span>
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                </span>
+                `
+            }
+            else {
+             return `<span style="flex-grow: 1; text-align: left;">${params.value || ''}</span>`
+            }
+          },
+          flex: 3
         },
         {
           headerName: "계획시작일자",
@@ -128,7 +144,23 @@ export default {
           cellStyle: {textAlign: 'center'},
           editable: params => {
             return params.data.plan_status === '대기중'
-          }
+          },
+          cellRenderer: (params) => {
+            if(params.value && params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <span style="flex-grow: 1; text-align: left;">${params.value}</span>
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                </span>
+                `
+            }
+            else {
+              return `<span style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="flex-grow: 1; text-align: left;">${params.value || ''}</span>
+                      </span>`
+            }
+          },
+          flex: 2
         },
         {
           headerName: "계획종료일자",
@@ -136,7 +168,23 @@ export default {
           cellStyle: {textAlign: 'center'},
           editable: params => {
             return params.data.plan_status === '대기중'
-          }
+          },
+          cellRenderer: (params) => {
+            if(params.value && params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <span style="flex-grow: 1; text-align: left;">${params.value}</span>
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                </span>
+                `
+            }
+            else {
+              return `<span style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="flex-grow: 1; text-align: left;">${params.value || ''}</span>
+                      </span>`
+            }
+          },
+          flex: 2
         },
         {
           headerName: "진행상태",
@@ -144,18 +192,50 @@ export default {
           cellClass: (params) => {
             return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
           },
-          cellStyle: {textAlign: 'center'}
+          cellStyle: {textAlign: 'center'},
+          flex: 2
         },
         {
           headerName: "제품명",
           field: 'product_name',
+          cellRenderer: (params) => {
+            if(params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <span style="flex-grow: 1; text-align: left;">${params.value}</span>
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                </span>
+                `
+            }
+            else {
+              return `<span style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="flex-grow: 1; text-align: left;">${params.value || ''}</span>
+                      </span>`
+            }
+          },
         },
         { headerName: "계획수량",
           field: 'plan_qty',
           cellStyle: {textAlign: 'right'},
           editable: params => {
             return params.data.plan_status === '대기중'
-          }
+          },
+          cellRenderer: (params) => {
+            if(params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                    <span style="flex-grow: 1; text-align: right;">${params.value}</span>
+                </span>
+                `
+            }
+            else {
+              return `<span style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="flex-grow: 1; text-align: right;">${params.value || ''}</span>
+                      </span>`
+            }
+          },
+          flex: 2
         },
         { headerName: "주문계획번호", field: 'order_plan_num', hide: true },
         { headerName: "제품 번호", field: 'product_code', hide: true },
@@ -292,7 +372,6 @@ export default {
 
     onReady(param){
       this.gridApi = param.api
-      param.api.sizeColumnsToFit();
 
       const paginationPanel = document.querySelector('.ag-paging-panel');
       if (paginationPanel){

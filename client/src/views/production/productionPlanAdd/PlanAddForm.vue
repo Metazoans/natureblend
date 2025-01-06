@@ -2,6 +2,7 @@
   <div>
     <div class="add-top mt-4">
       <h3>생산계획 등록</h3>
+      <span>* 위의 주문을 클릭 시 생산계획에 추가됩니다.</span>
       <material-button size="sm" color="success" class="button" @click="addPlan">등록</material-button>
     </div>
     <div class="main-container">
@@ -13,7 +14,7 @@
           <thead>
           <tr>
             <th v-for="col in cols" :key="col"
-                class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 text-center"
+                class="text-uppercase text-secondary text-md font-weight-bolder text-center"
             >
               {{ col }}
             </th>
@@ -21,36 +22,36 @@
           </thead>
 
           <tbody v-show="!selectedOrders.length" class="no-data">
-           <tr><td :colspan="cols.length">* 위의 주문을 클릭해서 추가/삭제 해주세요</td></tr>
+           <tr><td :colspan="cols.length"></td></tr>
           </tbody>
           <tbody v-show="selectedOrders.length">
           <tr v-for="order in selectedOrders" :key="order.orderNum">
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.orderNum }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.orderNum }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.orderDate }}</h6>
+              <p class="mb-0 text-sm text-center">{{ order.orderDate }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.dueDate }}</h6>
+              <p class="mb-0 text-sm text-center">{{ order.dueDate }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm">{{ order.productName }}</h6>
+              <p class="mb-0 text-sm">{{ order.productName }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.orderQty }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.orderQty }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.plannedQty }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.plannedQty }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.unplannedQty }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.unplannedQty }}</p>
             </td>
-            <td class="input-group w-50 h-25 text-end m-lg-auto">
-              <input type="number" class="mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
+            <td class="plan-qty-group input-group w-50 h-25 text-end m-lg-auto" :class="{ 'plan-input': !order.planQty  }" >
+              <input type="number" class="plan-qty mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.stockQty }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.stockQty }}</p>
             </td>
           </tr>
           </tbody>
@@ -123,7 +124,7 @@ export default {
       modalTitle: '직원 목록',
       searchEmp: {},
       selectedEmp: {},
-      cols: ['주문번호', '주문일자', '납기일자', '제품명', '주문량', '기계획량', '미계획량', '현계획량', '재고']
+      cols: ['주문번호', '주문일자', '납기일자', '제품명', '주문량(개)', '기계획량(개)', '미계획량(개)', '현계획량(개)', '재고(개)']
     }
   },
 
@@ -181,25 +182,21 @@ export default {
       }
 
       let result =
-          await axios.post(`${ajaxUrl}/production/plan`, planInfo)
+          await axios.post(`${ajaxUrl}/production/planddd`, planInfo)
               .catch(err => console.log(err));
+
       if(result.data.message === 'success') {
         this.$notify({
           text: `${this.planName}이 등록되었습니다.`,
           type: 'success',
         });
 
-
-        // this.planName = ''
-        // this.planQty = 0
-        // this.planStartDate = ''
-        // this.planEndDate = ''
-        // this.selectedEmp = {}
-        //
-        // this.$emit('resetSelectedOrders')
+        this.planName = ''
+        this.planStartDate = ''
+        this.planEndDate = ''
+        this.searchEmp = {}
+        this.$emit('resetSelectedOrders')
       }
-
-
     },
 
     confirm() {
@@ -234,7 +231,8 @@ export default {
     position: absolute;
     left: 180px;
     top: 14px;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: 700;
     margin-left: 12px;
   }
 }
@@ -249,12 +247,42 @@ export default {
     background-color: $gray-100;
     margin-bottom: 40px;
     border-radius: 8px;
+    thead {
+      background-color: #EE9900;
+      tr, th {
+        color: #fff !important;
+      }
+    }
+    tbody p {
+      font-weight: 400;
+      color: #222
+    }
     .no-data{
       td {
         text-align: center;
         height: 80px;
         font-weight: 800;
       }
+    }
+    .plan-qty-group {
+      position: relative;
+      .plan-qty {
+        background-color: #fff;
+        padding-left: 30px;
+      }
+    }
+    .plan-input::before {
+      content: "";
+      background-image: url('http://yeonsus.com/academy/cell-modify-icon.png');
+      background-size: contain; /* 아이콘이 잘리지 않도록 크기 조절 */
+      background-repeat: no-repeat;
+      width: 20px; /* 아이콘 크기 */
+      height: 20px; /* 아이콘 크기 */
+      position: absolute;
+      left: 20px; /* 아이콘 위치 조정 */
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
     }
   }
   .input-container {

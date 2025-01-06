@@ -41,20 +41,23 @@ export default {
           editable: true,
           sortable: false,
           checkboxSelection: true,
-          width: 50
+          width: 50,
+          flex: 1
         },
-        { headerName: "생산지시번호", field: 'production_order_num', cellStyle: { textAlign: 'right' }},
-        { headerName: "생산지시명", field: 'production_order_name' },
-        { headerName: "생산계획명", field: 'plan_name' },
-        { headerName: "작업일자", field: 'work_date', cellStyle: { textAlign: 'center' } },
-        { headerName: "제품명", field: 'product_name' },
-        { headerName: "지시량(개)", field: 'production_order_qty', cellStyle: { textAlign: 'right' } },
+        { headerName: "생산지시번호", field: 'production_order_num', cellStyle: { textAlign: 'right' }, flex: 1},
+        { headerName: "생산지시명", field: 'production_order_name', flex: 2 },
+        { headerName: "생산계획명", field: 'plan_name', flex: 2 },
+        { headerName: "작업일자", field: 'work_date', cellStyle: { textAlign: 'center' }, flex: 1 },
+        { headerName: "제품명", field: 'product_name', flex: 1 },
+        { headerName: "지시량(개)", field: 'production_order_qty', cellStyle: { textAlign: 'right' }, flex: 1 },
         {
           headerName: "작업진행",
           field: 'production_order_status',
           cellClass: (params) => {
             return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
-          }},
+          },
+          flex: 1
+        },
       ],
       prodOrderStatus: {
         'work_waiting': '대기중',
@@ -77,7 +80,7 @@ export default {
   methods: {
     onReady(param){
       this.gridApi = param.api
-      param.api.sizeColumnsToFit();
+      // param.api.sizeColumnsToFit();
 
       const paginationPanel = document.querySelector('.ag-paging-panel');
       if (paginationPanel){

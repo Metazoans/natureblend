@@ -21,7 +21,12 @@
     <div class="input-content">
       <h6>지시수량</h6>
       <div class="input-group w-auto h-25">
-        <input type="number" v-model="orderInfo.prodOrderQty" class="form-control border p-2" @focusout="checkQty"/>
+        <input
+            type="number"
+            v-model="orderInfo.prodOrderQty"
+            class="form-control border p-2"
+            @focusout="checkQty"
+        />
       </div>
       <p class="max-qty">* 최대수량: {{ searchPlan.total_plan_qty }}</p>
     </div>
@@ -73,10 +78,15 @@ import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
 import EmpList from "@/views/production/productionPlanAdd/ModalEmpList.vue";
+// import isNumber from "@/utils/numberCheck";
 
 export default {
   name: "OrderInputForm",
   components: {EmpList, Modal, PlanList},
+
+  props: {
+    isOrderAddFormReset: Boolean
+  },
 
   data() {
     return {
@@ -111,13 +121,27 @@ export default {
               .catch(err => console.log(err));
       let materialList = result.data
 
+      let isFirstNoti = true
       materialList.forEach((item) => {
+        let stockAmount = (item.stok_qty - item.invalid_qty) > 0 ? (item.stok_qty - item.invalid_qty) : 0
+
+        if(!stockAmount && isFirstNoti) {
+          this.$notify({
+            text: "재고가 부족합니다.",
+            type: 'error',
+          });
+          isFirstNoti = false
+          this.$emit('checkStockEnough', false)
+        } else if(stockAmount && isFirstNoti){
+          this.$emit('checkStockEnough', true)
+        }
+
         let row = {
           stockLotSeq: item.lot_seq,
           stockLot: item.lot_code,
           stockMaterialName: item.material_name,
           stockMaterialCode: item.material_code,
-          stockAmount: item.stok_qty - item.invalid_qty,
+          stockAmount: stockAmount,
           expiryDate: item.limit_date.split('T')[0]
         }
         this.rowDataStock.push(row)
@@ -222,6 +246,24 @@ export default {
       deep: true
     },
 
+    isOrderAddFormReset: {
+      handler() {
+        if(this.isOrderAddFormReset) {
+          this.orderInfo = {
+            prodOrderName: '',
+            planNum: 0,
+            productCode: '',
+            workDate: '',
+            prodOrderQty: 1,
+            empNum: 0
+          }
+          this.searchPlan = {}
+          this.searchProduct = ''
+          this.searchEmp = {}
+          this.processFlow = []
+        }
+      },
+    }
   }
 }
 </script>

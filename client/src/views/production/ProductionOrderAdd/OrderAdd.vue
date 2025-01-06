@@ -12,6 +12,8 @@
             @updateInputData="updateInputData"
             @getProcessFlow="getProcessFlow"
             @getSearchPlan="getSearchPlan"
+            @checkStockEnough="checkStockEnough"
+            :isOrderAddFormReset="isOrderAddFormReset"
         />
 
         <div class="grid-container grid-1" >
@@ -83,21 +85,22 @@ export default {
 
   data() {
     return {
+      isStockEnough: true,
       modalTitle: '생산지시 등록',
       isShowModal: false,
       theme: theme,
       rowDataNeed: [],
       columnDefsNeed: [
-        { headerName: "자재명", field: 'needMaterialName'},
-        { headerName: "용량(g 또는 ml)", field: 'needAmount', cellStyle: { textAlign: 'right' } },
+        { headerName: "자재명", field: 'needMaterialName', flex: 1},
+        { headerName: "용량(g 또는 ml)", field: 'needAmount', cellStyle: { textAlign: 'right' }, flex: 1 },
       ],
 
       rowDataStock: [],
       columnDefsStock: [
-        { headerName: "자재Lot번호", field: 'stockLot', cellStyle: { textAlign: 'center' }},
-        { headerName: "자재명", field: 'stockMaterialName' },
-        { headerName: "용량(g 또는 ml)", field: 'stockAmount', cellStyle: { textAlign: 'right' } },
-        { headerName: "유통기한", field: 'expiryDate', cellStyle: { textAlign: 'center' } },
+        { headerName: "자재Lot번호", field: 'stockLot', cellStyle: { textAlign: 'center' }, flex: 1},
+        { headerName: "자재명", field: 'stockMaterialName', flex: 1 },
+        { headerName: "용량(g 또는 ml)", field: 'stockAmount', cellStyle: { textAlign: 'right' }, flex: 1 },
+        { headerName: "유통기한", field: 'expiryDate', cellStyle: { textAlign: 'center' }, flex: 1 },
         { headerName: "자재코드", field: 'stockMaterialCode', hide: true },
         {
           headerName: "사용",
@@ -117,20 +120,22 @@ export default {
               this.selectStock(params)
             });
             return button;
-          }
+          },
+          flex: 1
         },
       ],
 
       rowDataUse: [],
       columnDefsUse: [
-        { headerName: "자재Lot번호", field: 'useLot', cellStyle: { textAlign: 'center' }},
-        { headerName: "자재명", field: 'useMaterialName' },
+        { headerName: "자재Lot번호", field: 'useLot', cellStyle: { textAlign: 'center' }, flex: 1},
+        { headerName: "자재명", field: 'useMaterialName', flex: 2 },
         { headerName: "자재코드", field: 'useMaterialCode', hide: true },
         {
           headerName: "용량(g 또는 ml)",
           field: 'useAmount',
           editable: true,
           cellStyle: { textAlign: 'right' },
+          flex: 2
         },
         {
           headerName: "삭제",
@@ -149,17 +154,23 @@ export default {
               this.deleteMaterial(params)
             });
             return button;
-          }
+          },
+          flex: 1
         },
       ],
       orderInfo: {},
       newProdOrderNum: 0,
       processFlow: [],
       searchPlan: {},
+      isOrderAddFormReset: false
     }
   },
 
   methods: {
+    checkStockEnough(bool) {
+      this.isStockEnough = bool
+    },
+
     focusOnCell() {
       this.gridApi.ensureIndexVisible(0)
       this.gridApi.ensureColumnVisible('useAmount')
@@ -180,6 +191,10 @@ export default {
     },
 
     updateInputData(orderInfo) {
+      if(!orderInfo.prodOrderQty) {
+        return
+      }
+
       this.orderInfo = orderInfo
 
       this.rowDataNeed = this.rowDataNeed.map((data) => {
@@ -261,12 +276,26 @@ export default {
           .catch(err => console.log(err));
 
 
-      if(isLastProcess && result.data.message === 'success') {
+      if(isLastProcess && result.data.message === 'success' && this.isStockEnough) {
         this.$notify({
           text: "생산지시가 등록되었습니다.",
           type: 'success',
         });
+        this.isOrderAddFormReset = false
+        this.resetAddInfo()
+      } else if(isLastProcess) {
+        this.$notify({
+          text: "생산지시 등록을 실패하였습니다.",
+          type: 'error',
+        });
       }
+    },
+
+    resetAddInfo() {
+      this.isOrderAddFormReset = true
+      this.rowDataNeed = []
+      this.rowDataStock = []
+      this.rowDataUse = []
     },
 
     async holdMaterial(data) {
@@ -336,7 +365,7 @@ export default {
 
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      // this.gridApi.sizeColumnsToFit();
     },
   }
 

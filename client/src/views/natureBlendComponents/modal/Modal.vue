@@ -4,7 +4,6 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exampleModalLabel">{{ modalTitle }}</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <slot name="list">slot</slot>
@@ -58,6 +57,12 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
+  .modal-header {
+    background-color: #e9ecef;
+    > button {
+      color: #222;
+    }
+  }
   .modal-body {
     max-height: 500px;
   }
