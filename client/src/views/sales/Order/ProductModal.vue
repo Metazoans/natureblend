@@ -12,7 +12,7 @@
             :quickFilterText="inputListsearch"
             :noRowsOverlayComponent="noRowsOverlayComponent"
             @rowClicked="selectproduct"
-            :rowSelection="{ type: 'single' }" 
+            rowSelection="single" 
         />
         </div>
         <div style="display: none">

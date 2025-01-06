@@ -10,7 +10,7 @@
                     <div class="col-sm-4">
                         <input 
                             id="clientSearch"  class="form-control border p-2"
-                            v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"  />
+                            v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"   placeholder=" 거래처명"/>
                             <Modal
                                 :isShowModal="isShowModal.client"
                                 :modalTitle="'거래처선택'"
@@ -406,7 +406,7 @@ export default{
                const button1 = document.createElement('button');
                button1.textContent = '반품수정';
                button1.style.cursor = 'pointer';
-               button1.style.backgroundColor = '#008000';
+               button1.style.backgroundColor = '#4caf50';
                button1.style.color = 'white';
                button1.style.border = 'none';
                button1.style.padding = '5px 10px';

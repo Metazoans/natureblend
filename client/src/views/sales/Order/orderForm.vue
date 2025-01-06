@@ -11,12 +11,14 @@
                         </div>
                         <div class="sm-2">
                             <label class="col-form-label fw-bold" for="orderlistName">주문서명<span> *</span></label>
-                            <input type="text" class="form-control" id="orderlistName" v-model="orderName"  autocomplete="off"  >
+                            <input type="text" class="form-control" id="orderlistName"
+                                 v-model="orderName"  autocomplete="off" placeholder="주문서명"  >
                         </div>
                         <div class="col-sm-4">
                             <label class="col-form-label fw-bold" for="clientName">거래처명<span> *</span></label>
                             <div class="input-group">
-                            <input type="text" class="form-control" id="clientName" @click="openModal('client')" v-model="searchCom.com_name"  autocomplete="off"  >
+                            <input type="text" class="form-control" id="clientName" 
+                                @click="openModal('client')" v-model="searchCom.com_name"  autocomplete="off" placeholder="거래처명" >
                         </div>
                         <Modal
                             :isShowModal="isShowModal.client"
@@ -72,11 +74,11 @@
                         </div>
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="productCode">제품코드<span> *</span></label>
-                            <input type="text" class="form-control" id="productCode" v-model="material.productCode"  autocomplete="off"  >
+                            <input type="text" class="form-control" id="productCode" v-model="material.productCode"  autocomplete="off" readonly placeholder="제품코드" >
                         </div>
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="productName">제품명<span> *</span></label>
-                            <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product',index)"  autocomplete="off">
+                            <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product',index)"  autocomplete="off" placeholder="제품명">
                         </div>
                         <Modal
                                 :isShowModal="isShowModal.product"
@@ -93,13 +95,15 @@
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="orderNum">주문수량<span> *</span></label>
                             <div class="input-group">
-                            <input type="text" class="form-control" id="orderNum" v-model="material.productNum" autocomplete="off"  >
+                            <input type="number" class="form-control" id="orderNum" 
+                                v-model="material.productNum" autocomplete="off" placeholder="주문수량"  >
                             </div>
                         </div>
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold"  for="perSale">개당가격<span> *</span></label>
                             <div class="input-group">
-                            <input type="text" class="form-control" id="perSale" v-model="material.perPrice" autocomplete="off"  >
+                            <input type="text" class="form-control" id="perSale" 
+                                v-model="material.perPrice" autocomplete="off" placeholder="개당가격" >
                             </div>
                         </div>
                         <div class="col-sm-2">
@@ -201,7 +205,7 @@ export default{
     ...mapMutations(["addLoginInfo"]),
     test(){
       this.testing = this.$store.state.loginInfo;
-      console.log('ddd', this.$store.state.loginInfo);
+      //console.log('ddd', this.$store.state.loginInfo);
       this.searchEmpName = this.$store.state.loginInfo.name;
     },
 
@@ -373,7 +377,7 @@ export default{
         let result =
             await axios.post(`${ajaxUrl}/orderForm/insert`,orderInfo)
                         .catch(err => console.log(err));
-                        console.log(result);
+                        //console.log(result);
         if(result.statusText === 'OK'){
         this.$notify({
             text: `${this.orderName}이 등록되었습니다.`,

@@ -11,7 +11,7 @@
                     <div class="col-sm-4">
                         <input 
                             id="clientSearch"  class="form-control border p-2"
-                            v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"  />
+                            v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off" placeholder="거래처명" />
                             <Modal
                                 :isShowModal="isShowModal.client"
                                 :modalTitle="'거래처선택'"
@@ -32,7 +32,7 @@
                     <div class="col-sm-6">
                         <input 
                         id="orderSearch" class="form-control border p-2"
-                        v-model="orderName"  autocomplete="off"  />
+                        v-model="orderName"  autocomplete="off" placeholder="주문서명" />
                     </div>
                 </div>
                 <!--주문일자 검색 -->
@@ -69,10 +69,10 @@
         @grid-ready="onGridReady"
         :noRowsOverlayComponent="noRowsOverlayComponent"
         @rowClicked="onOrderRowClicked"
-        :rowSelection="{ type: 'multiple' }" 
+        rowSelection="multiple"
         :pagination="true"
-        :paginationPageSize="10"
-        :paginationPageSizeSelector="[10, 20, 50, 100]"
+        :paginationPageSize="5"
+        :paginationPageSizeSelector="[5, 10, 20, 50, 100]"
     />
     </div>
     <div style="display: none">
@@ -90,10 +90,10 @@
                 @grid-ready="onGridReady"
                 :noRowsOverlayComponent="noRowsOverlayComponent"
                 @rowClicked="onDisoutputRowClicked"
-                :rowSelection="{ type: 'multiple' }" 
+                rowSelection="single"
                 :pagination="true"
-                :paginationPageSize="10"
-                :paginationPageSizeSelector="[10, 20, 50, 100]"
+                :paginationPageSize="5"
+                :paginationPageSizeSelector="[5, 10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -111,9 +111,9 @@
                 :editType="'fullRow'"
                 rowSelection="multiple"
                 :pagination="true"
-                :paginationPageSize="10"
+                :paginationPageSize="5"
                 :gridOptions="gridOptions"
-                :paginationPageSizeSelector="[10, 20, 50, 100]"
+                :paginationPageSizeSelector="[5, 10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">

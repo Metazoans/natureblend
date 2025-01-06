@@ -8,7 +8,8 @@
                     <div class="row align-items-center mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')"  autocomplete="off"  >
+                            <input type="text" class="form-control" id="productName" 
+                                v-model="productName" @click="openModal('product')"  autocomplete="off" placeholder=" 제품명" >
                                 <Modal
                                         :isShowModal="isShowModal.product"
                                         :modalTitle="'제품선택'"
@@ -56,7 +57,7 @@
                 <!-- 입고된 주문건 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
-                    style ="height: 450px;"
+                    style ="height: 500px;"
                     :rowData="inputData"
                     :columnDefs="columnInputData"
                     :theme="theme"
@@ -299,7 +300,7 @@ export default{
                const button1 = document.createElement('button');
                button1.textContent = '입고수정';
                button1.style.cursor = 'pointer';
-               button1.style.backgroundColor = '#008000';
+               button1.style.backgroundColor = '#4caf50';
                button1.style.color = 'white';
                button1.style.border = 'none';
                button1.style.padding = '5px 10px';

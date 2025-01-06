@@ -8,7 +8,8 @@
                     <div class="row align-items-center ms-3 mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
                         <div class="col-sm-6 d-flex align-items-center">
-                            <input type="text" class="form-control me-2" id="productName" v-model="productName" @click="openModal()"  autocomplete="off"  >
+                            <input type="text" class="form-control me-2" id="productName" 
+                                v-model="productName" @click="openModal()"  autocomplete="off"   placeholder=" 제품명">
                                 <Modal
                                         :isShowModal="isShowModal"
                                         :modalTitle="'제품선택'"
@@ -36,7 +37,7 @@
                 <!-- 입고된 주문건 조회 -->
                 <div class="grid-container">
                     <ag-grid-vue
-                    style ="height: 450px;"
+                    style ="height: 350px;"
                     :rowData="productNum"
                     :columnDefs="columnProductNum"
                     :theme="theme"
@@ -46,8 +47,8 @@
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     rowSelection="multiple"
                     :pagination="true"
-                    :paginationPageSize="10"
-                    :paginationPageSizeSelector="[10, 20, 50, 100]"
+                    :paginationPageSize="5"
+                    :paginationPageSizeSelector="[5, 10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -64,7 +65,7 @@
                 <div class="grid-container">
                     <h4>제품별 LOT 조회</h4>
                     <ag-grid-vue
-                    style ="height: 450px;"
+                    style ="height: 350px;"
                     :rowData="LotNum"
                     :columnDefs="columnLotNum"
                     :theme="theme"
@@ -73,8 +74,8 @@
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     rowSelection="multiple"
                     :pagination="true"
-                    :paginationPageSize="10"
-                    :paginationPageSizeSelector="[10, 20, 50, 100]"
+                    :paginationPageSize="5"
+                    :paginationPageSizeSelector="[5, 10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">

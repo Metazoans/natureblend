@@ -497,6 +497,10 @@ GROUP BY
     ib.expire_date, 
     status.product_status
 ORDER BY 
+    CASE 
+        WHEN status.product_status = '보관' THEN 1
+        ELSE 2
+    END,
     ib.expire_date`;
 
 

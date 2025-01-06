@@ -10,7 +10,7 @@
                     <div class="col-sm-4">
                         <input 
                             id="clientSearch"  class="form-control border p-2"
-                            v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"  />
+                            v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off" placeholder="거래처명" />
                             <Modal
                                 :isShowModal="isShowModal.client"
                                 :modalTitle="'거래처선택'"
@@ -29,7 +29,8 @@
                   <div class="row align-items-center mb-3">
                     <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')"  autocomplete="off"  >
+                        <input type="text" class="form-control" id="productName" placeholder="제품명"
+                            v-model="productName" @click="openModal('product')"  autocomplete="off"  >
                         <Modal
                                 :isShowModal="isShowModal.product"
                                 :modalTitle="'제품선택'"
@@ -50,7 +51,7 @@
                     <div class="col-sm-6">
                         <input 
                         id="orderSearch" class="form-control border p-2"
-                        v-model="orderName"  autocomplete="off"  />
+                        v-model="orderName"  autocomplete="off" placeholder="주문서명" />
                     </div>
                 </div>
                 <!--주문일자 검색 -->
