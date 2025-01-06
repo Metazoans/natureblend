@@ -2,9 +2,9 @@
   <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header" style ="background-color: #e9ecef;">
           <h1 class="modal-title fs-5" id="exampleModalLabel">{{ modalTitle }}</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <input type="text" v-model="search" class="text-center styled-input" placeholder="검색" />
         </div>
         <div class="modal-body">
           <slot name="list"></slot>
@@ -20,6 +20,7 @@
                 :paginationPageSize="10"
                 @grid-ready="onReady"
                 @rowClicked="onRowClicked"
+                :quickFilterText="search"
             >
               </ag-grid-vue>
             </div>
@@ -49,6 +50,7 @@ export default {
 
   data() {
     return {
+      search:null,
       theme: theme,
       rowData:[],
       columnDefs:[

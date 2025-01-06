@@ -4,7 +4,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">자재 선택</h1>
-            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+            <input type="text" v-model="search" class="text-center styled-input" placeholder="검색" />
           </div>
           <div class="modal-body">
             <slot name="list"></slot>
@@ -21,7 +21,7 @@
                   :paginationPageSize="10"
                   @grid-ready="onReady"
                   @rowClicked="onRowClicked"
-                  :quickFilterText="quickFilterText"
+                  :quickFilterText="search"
               >
               <!-- quickFilterText 검색기능 -->
                 </ag-grid-vue>
@@ -52,6 +52,7 @@
   
     data() {
       return {
+        search:null,
         theme: theme,
         rowData:[], // [] 배열 {} 객체
         columnDefs:[

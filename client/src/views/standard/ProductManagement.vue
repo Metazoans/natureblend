@@ -101,10 +101,10 @@ import { mapMutations } from "vuex";
                  axios.delete(`${ajaxUrl}/productDelete/${params.data.product_code }`)
                    .then((res) => {
                      if (res.data === '성공') {
-                      this.$notify({ title:'제품삭제', text: '제품이 삭제되었습니다.', type: 'success' });
+                      this.$notify({ text: '제품이 삭제되었습니다.', type: 'success' });
                        this.productSelect();
                      } else {
-                      this.$notify({ title:'삭제실패', text: '삭제 실패하였습니다.', type: 'error' });
+                      this.$notify({ text: '삭제 실패하였습니다.', type: 'error' });
                      }
                    })
                    .catch((err) => {
@@ -131,7 +131,7 @@ import { mapMutations } from "vuex";
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -161,14 +161,14 @@ import { mapMutations } from "vuex";
         console.log(this.capacity);
          if(number === 1){
              if(this.productCode === '' || this.productName === '' || this.expirationDate === '' || this.capacity === ''){
-              this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+              this.$notify({ text: '빈칸을 입력해주세요', type: 'error' });
                return;
              }else{
               console.log('빈칸 없음');
               let dataresult = 'ok';
               for(let i = 0; i < this.rowData.length; i++){
                 if(this.rowData[i].product_code === this.productCode){
-                  this.$notify({ title:'중복', text: '이미 존재하는 제품코드입니다.', type: 'error' });
+                  this.$notify({ text: '이미 존재하는 제품코드입니다.', type: 'error' });
                   dataresult = 'no';
                   return;
                 }
@@ -215,10 +215,10 @@ import { mapMutations } from "vuex";
         const result = await axios.post(`${ajaxUrl}/productInsert`, newList)
                                 .catch(err => console.log(err));
         if (result.data === '성공'){
-          this.$notify({ title:'제품등록', text: '제품이 등록되었습니다.', type: 'success' });
+          this.$notify({ text: '제품이 등록되었습니다.', type: 'success' });
             this.productSelect();
         }else{
-          this.$notify({ title:'등록실패', text: '등록 실패하였습니다.', type: 'error' });
+          this.$notify({ text: '등록 실패하였습니다.', type: 'error' });
         }
      }
    },

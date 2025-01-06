@@ -109,10 +109,10 @@
                   axios.delete(`${ajaxUrl}/materialDel/${params.data.material_code}`)
                        .then(res => {
                           if(res.data === '성공'){
-                           this.$notify({ title:'삭제성공', text: '자재가 삭제되었습니다.', type: 'success' });
+                           this.$notify({ text: '자재가 삭제되었습니다.', type: 'success' });
                              this.materialList();
                           }else{
-                           this.$notify({ title:'삭제실패', text: '삭제 실패하였습니다.', type: 'error' });
+                           this.$notify({ text: '삭제 실패하였습니다.', type: 'error' });
                           }
                        })
                        .catch(err => console.log(err));
@@ -136,7 +136,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -148,7 +148,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -182,14 +182,14 @@
          console.log(this.expirationDate);
        if (number === 1) {
          if (this.materialCode === '' || this.materialName === '' || this.safetyInventory === '' || this.expirationDate === '') {
-            this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+            this.$notify({ text: '빈칸을 입력해주세요', type: 'error' });
            return;
          }else{
            console.log('등록');
            let dataresult = 'ok';
            for(let i = 0; i < this.rowData.length; i++){
              if(this.rowData[i].material_code === this.materialCode){
-               this.$notify({ title:'중복', text: '이미 존재하는 자재코드입니다.', type: 'error' });
+               this.$notify({ text: '이미 존재하는 자재코드입니다.', type: 'error' });
                dataresult = 'no';
                return;
              }
@@ -221,7 +221,7 @@
         const result = await axios.post(`${ajaxUrl}/materialUpdate/${this.materialCode}`, newList)
                                    .catch(err => console.log(err));
         if(result.data === '성공'){
-           alert('수정되었습니다.');
+         this.$notify({ text: '자재가 수정되었습니다.', type: 'success' });
            this.materialList();
            this.upin = '';
            this.materialCode = '';
@@ -229,7 +229,7 @@
            this.safetyInventory = '';
            this.expirationDate = '';  
         }else{
-           alert('수정에 실패하였습니다.');
+         this.$notify({ text: '수정 실패하였습니다.', type: 'error' });
         }
      },
       async materialInsert(newList){
@@ -237,10 +237,10 @@
                                     .catch(err => console.log(err));
          console.log('확인용용',result.data);
          if(result.data === '성공'){
-            this.$notify({ title:'등록성공', text: '자재가 등록되었습니다.', type: 'success' });
+            this.$notify({ text: '자재가 등록되었습니다.', type: 'success' });
             this.materialList();
          }else{
-            this.$notify({ title:'등록실패', text: '등록 실패', type: 'error' });
+            this.$notify({ text: '등록 실패', type: 'error' });
          }
       
       },

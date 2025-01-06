@@ -133,7 +133,17 @@
           rowData:[],
           columnBoms: [
             { checkboxSelection: true, headerCheckboxSelection: true, width: 50},
-            { headerName:"자재코드", field : "material_code"},
+            { headerName:"자재코드", field : "material_code",
+            cellStyle:{textAlign:"center"},
+            cellRenderer: params => {
+                        if (params.value) {
+                            return `<span style="text-align: right;">
+                              ${ params.data.material_code }
+                              🔍
+                              </span>`;
+                        }
+                    },
+            },
             { headerName:"자재" , field: "material"},
             { headerName:"수량" , field: "material_con" , editable: true, cellStyle: { textAlign: 'right' }}
           ],
@@ -185,14 +195,10 @@
             button.style.textAlign = 'center';
             button.style.lineHeight = '30px';
             button.addEventListener('click', () => {
-              const isConfirmed = window.confirm('선택한 제품을 삭제하시겠습니까?');
-              if(isConfirmed){
                 console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
                 this.dele(params.data.bom_num);
+                this.$notify({ text: 'BOM이 삭제되었습니다.', type: 'success' });
                 this.getBomList(); // 삭제 후 목록 새로고침
-              }else{
-                console.log('삭제가 취소되었습니다.');
-              }
             });
             return button;
           }
@@ -227,7 +233,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능합니다.', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능합니다.', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -296,14 +302,11 @@
             
             if (selectedRows.length === 0) {
                 this.$notify({
-                    title: '선택된 자재가 없습니다',
                     text: '삭제할 자재를 선택해주세요.',
-                    type: 'warning'
+                    type: 'error'
                 });
                 return;
               }
-            const isConfirmed = window.confirm('선택한 자재를 삭제하시겠습니까?');
-            if (isConfirmed) {
                 for (let i = 0; i < selectedRows.length; i++) {
                     const bomSeq = selectedRows[i].bom_seq;
                     console.log('삭제할 bom_seq:', bomSeq);
@@ -311,18 +314,12 @@
                     try {
                         const result = await axios.get(`${ajaxUrl}/materialdelete/${bomSeq}`);
                         console.log('삭제 결과:', result.data);
-                    } catch (err) {
+                      } catch (err) {
                         console.error('삭제 중 오류 발생:', err);
+                      }
                     }
-                }
+                this.$notify({ text: 'BOM자재가 삭제되었습니다', type: 'success' });
                 this.view(this.searchProduct, this.searchCapacity, this.allInputData.getSelectedRows()[0].bom_num, this.searchMaterialcode, this.searchProductcode);
-            } else {
-                this.$notify({
-                    title: '삭제 취소',
-                    text: '삭제가 취소되었습니다.',
-                    type: 'info'
-                });
-            }
         },
         // async deleteBomList(){
         //   console.log('삭제할 데이터',this.bomBox);
@@ -388,7 +385,7 @@
         
         async updateBomlist({ bom_seq, bom_num, material_code, material, material_con }){
           if(this.bomBox.length === 0){
-            this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+            this.$notify({ text: '빈칸을 입력해주세요', type: 'error' });
             return;
           }
           this.newList = { bom_num, material_code, material, material_con };
@@ -401,22 +398,23 @@
 
           },
           async insertBom() { 
-            const isConfirmed = window.confirm('BOM 등록을 진행하시겠습니까?');
-              if (!isConfirmed) {
-                // 사용자가 취소를 누르면 등록을 취소하고 함수를 종료
-                this.$notify({
-                  title: '등록 취소',
-                  text: 'BOM 등록이 취소되었습니다.',
-                  type: 'info'
-                });
-                return; // 등록을 취소
-              }
-
+            // const isConfirmed = window.confirm('BOM 등록을 진행하시겠습니까?');
+            //   if (!isConfirmed) {
+            //     // 사용자가 취소를 누르면 등록을 취소하고 함수를 종료
+            //     this.$notify({
+            //       text: 'BOM 등록이 취소되었습니다.',
+            //       type: 'info'
+            //     });
+            //     return; // 등록을 취소
+            //   }
+            if(this.searchProductCode === '' || this.searchProduct === '' || this.searchCapacity === ''){
+              this.$notify({ text:'빈칸을 입력해주세요.' , type:'error'});
+              return;
+            }
             // 제품명 중복 체크
             const existingBom = this.bomList.find(bom => bom.product_name === this.searchProduct);
             if (existingBom) {
               this.$notify({
-                title: '중복된 제품명',
                 text: '이미 등록된 제품명이 있습니다.',
                 type: 'error'
               });
@@ -430,7 +428,6 @@
               capacity: this.searchCapacity 
             };
             this.$notify({
-              title: '등록 성공',
               text: '등록에 성공하였습니다.',
               type: 'success'
             });
@@ -480,7 +477,7 @@
           },
           async updateBom() {
             if(this.searchProductcode === ''){
-              this.$notify({ title:'빈칸확인', text: '제품을 선택해주세요', type: 'error' });
+              this.$notify({ text: '제품을 선택해주세요', type: 'error' });
               return;
             }
             for(let i =0; i<this.bomBox2.length; i++){
@@ -504,30 +501,36 @@
                     || this.bomBox[i]['material_con'] != this.bomBox2[i]['material_con']
                   ){
                     if(this.searchProductcode === ''){
-                      this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+                      this.$notify({ text: '빈칸을 입력해주세요', type: 'error' });
+                      return;
                     }
                     console.log('같지않음');
                     if(this.bomBox[i] === ''){
-                      this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+                      this.$notify({ text: '빈칸을 입력해주세요', type: 'error' });
+                      return;
                     }
-                    this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
+
                     // console.log(this.bomBox[i]);
                     this.updateBomlist(this.bomBox[i]);
                   }else if(this.searchProductCode === '') {
-                    this.$notify({ title:'빈칸확인', text: '제품을 선택해주세요',type: 'error'});
+                    this.$notify({ text: '제품을 선택해주세요',type: 'error'});
+                    return;
                   }else{
                     console.log('같은값');
                   }
 
                 }else if(this.searchProductcode === ''){
-                    this.$notify({ title:'빈칸확인', text: '제품을 선택해주세요', type: 'error' });
+                    this.$notify({ text: '제품을 선택해주세요', type: 'error' });
+                    return;
                 }else if(this.bomBox[i].material_code === ''||this.bomBox[i].material === ''||this.bomBox[i].material_con === ''){
-                    this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+                    this.$notify({ text: '빈칸을 입력해주세요', type: 'error' });
+                    return;
                 }else{
-                  this.$notify({ title:'수정성공', text: '수정이 완료되었습니다.', type: 'success' });
+                  // this.$notify({ text: '수정이 완료되었습니다.', type: 'success' });
                   this.insertBomlist(this.bomBox[i]);
                 }
               }
+              this.$notify({ text: '수정이 완료되었습니다.', type: 'success' });
             }
         },
         onReady(param){

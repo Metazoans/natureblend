@@ -30,6 +30,7 @@
         :productCode="selectedProductCode"
         :productName="selectedProductName"
         @selectProcessflow = "setSelectProcessflow"
+        style="z-index : '-1';"
         >
     </processflowModal>
 </div>
@@ -104,7 +105,7 @@ import { mapMutations } from "vuex";
                 if(this.loginInfo.job === '관리자'){
                     console.log('성공');
                 }else{
-                    this.$notify({ title:'로그인요청', text: '관리자만 접속 가능합니다.', type: 'error' });
+                    this.$notify({ text: '관리자만 접속 가능합니다.', type: 'error' });
                     this.$router.push({ name : 'MainPage' });
                 }
             },

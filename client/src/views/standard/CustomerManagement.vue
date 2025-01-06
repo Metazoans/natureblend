@@ -175,15 +175,15 @@
               axios.delete(`${ajaxUrl}/customerDelete/${this.selectedCustomer.client_num}`)
                 .then(res => {
                   if (res.data === '성공') {
-                    this.$notify({ title:'거래처삭제', text: '거래처가 삭제되었습니다.', type: 'success' });
+                    this.$notify({ text: '거래처가 삭제되었습니다.', type: 'success' });
                     this.customerList();
                   } else {
-                    this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+                    this.$notify({ text: '삭제실패.', type: 'error' });
                   }
                 })
             }catch(error){
               console.log(error);
-              this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+              this.$notify({ text: '삭제실패.', type: 'error' });
             }
             this.showDeleteModal = false;
           }
@@ -195,7 +195,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -226,17 +226,17 @@
            const result = await axios.post(`${ajaxUrl}/customerInsert`, newList)
                                      .catch(err => console.log(err));
            if(result.data === '성공'){
-               alert('등록되었습니다.');
+              this.$notify({ text: '거래처가 등록되었습니다.', type: 'success' });
                this.customerList();
            }else{
-                alert('등록 실패');
+              this.$notify({ text: '등록에 실패하였습니다.', type: 'error' });
            }
        },
        async customerUpdate(newList){
           const result = await axios.post(`${ajaxUrl}/customerUpdate/${this.clientNum}`, newList)
                                      .catch(err => console.log(err));
           if(result.data === '성공'){
-              alert('수정되었습니다.');
+            this.$notify({ text: '거래처가 수정되었습니다.', type: 'success' });
               this.customerList();
               this.upin = '';
               this.clientNum = '';
@@ -249,7 +249,7 @@
               this.bossTel = '';
               this.empTel = '';
           }else{
-              alert('수정 실패');
+            this.$notify({ text: '수정 실패하였습니다.', type: 'error' });
           }
        },
         refresh(){
@@ -278,7 +278,7 @@
           console.log(this.empTel);
           if(number === 1){
             if(this.comName === '' || this.boss === '' || this.empName === '' || this.trade === '' || this.comNum === '' || this.address === '' || this.bossTel === '' || this.empTel === ''){
-              this.$notify({ title:'빈칸확인',text: '빈칸을 입력해주세요', type: 'error' });
+              this.$notify({ text: '빈칸을 입력해주세요', type: 'error' });
                 return;
             }else{
                 console.log('등록');
