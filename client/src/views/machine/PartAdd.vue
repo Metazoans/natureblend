@@ -10,24 +10,23 @@
       <div class="partInfo container-fluid py-4" v-bind="partInfo">
         <div class="row gy-2">
 
-          <div class="row align-items-center">
-              <div class="col-3">
-                <label for="">설비선택</label>
-              </div>
-              <div class="col-9">
-                <!-- <input class="form-control" type="text" id="" name="" v-model=""/> -->
-              </div>
-          </div>
-  
           <div class="row gx-3 gy-2 align-items-center">
-              <div class="col-3">
-                <label for="machineType">설비목록</label>
-              </div>
-              <div class="col-9">
-                <input class="form-control" type="text" id="machineType" name="machineType" v-model="partInfo.machine_type"/>
-              </div>
+            <div class="col-3">
+              <label class="">설비선택</label>
+            </div>
+            <div class="col-9">
+              <label class="me-3" v-for="type in machineType" :key="type">
+                {{ type }}
+                <input
+                  class="form-check-input"
+                  :value="type"
+                  type="checkbox"
+                  v-model="pickedType"
+                >
+              </label>
+            </div>
           </div>
-  
+
           <div class="row gx-3 gy-2 align-items-center">
               <div class="col-3">
                 <label for="">부품이름</label>
@@ -51,8 +50,21 @@
                 <label for="">거래처</label>
               </div>
               <div class="col-9">
-                <input class="form-control" type="text" id="" name="" v-model="partInfo.client_num"/>
+                <input class="form-control" type="text" id="" name="" v-model="partInfo.client_num" @click="openClientModal('client')" readonly/>
               </div>
+              
+              <Modal
+                  :isShowModal="isShowModal.client"
+                  :modalTitle="'거래처선택'"
+                  :noBtn="'닫기'"
+                  :yesBtn="'선택'"
+                  @closeModal="closeClientModal('client')"
+                  @confirm="confirmClientModal('client')"
+              >
+                  <template v-slot:list>
+                      <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
+                  </template>
+              </Modal>
           </div>
   
           <div class="row gx-3 gy-2 align-items-center">
@@ -69,7 +81,7 @@
                 <label for="">구매날짜</label>
               </div>
               <div class="col-9">
-                <input class="form-control" type="text" id="" name="" v-model="partInfo.buy_date"/>
+                <input class="form-control" type="date" id="" name="" v-model="partInfo.buy_date"/>
               </div>
           </div>
         </div>
@@ -106,9 +118,40 @@ import ModalMachine from "@/views/natureBlendComponents/modal/ModalMachine.vue";
 import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
-import { ref, onBeforeMount, onUpdated } from "vue";
+import { ref, onUpdated } from "vue";
 import { useStore } from 'vuex';
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
+
+import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import ComList from "@/views/machine/clientModal.vue";
+
+
+//거래처 모달 
+const searchCom = ref(""); // 저장 될 거래처 명 
+const selectedCom = ref(""); //선택된 거래처 명
+
+const isShowModal = ref({
+  client: false,
+})
+// 거래처 모달
+function selectclient(client){
+    selectedCom.value = client.com_name; 
+    partInfo.value.client_num = client.client_num;
+};
+function openClientModal(modalType,index) {
+    isShowModal.value[modalType] = true; 
+    this.indexNum = index; //현재 선택된 index
+};
+function confirmClientModal(modalType){
+    if (modalType === 'client') {
+    searchCom.value = selectedCom.value;
+  } 
+
+  this.closeClientModal(modalType); // 모달 닫기
+};
+function closeClientModal(modalType) {
+    this.isShowModal[modalType] = false;
+};
 
 
 const store = useStore();
@@ -124,12 +167,6 @@ const props = defineProps({
 
 // emit
 const emit = defineEmits(['closeModal', 'confirm']);
-
-// 마운트 전
-onBeforeMount(() => {
-  getSelectItem();
-  
-});
 
 // 업데이트
 onUpdated(() => {
@@ -147,21 +184,30 @@ const partInfo = ref({
   part_location: '',
   buy_date: '',
 })
-const typeSelect = ref([]); // 설비 분류 선택
 const fullInput = ref(true);
 
 
 // 메소드
-const getSelectItem = async () => {
-  let result = await axios.get(`${ajaxUrl}/machine/machineType`)
-                          .catch(err => console.log(err));
-  typeSelect.value = result.data;
-}
+const machineType = ["세척기기", "음료제작기기", "포장기기"];
+const pickedType = ref([]);
 
 const { notify } = useNotification();  // 노티 내용변수입니다
 
 // 등록
 const partInsert = async () => {
+  for(let i in pickedType.value) {
+    if(pickedType.value[i] == '세척기기') {
+      partInfo.value.machine_type += 'p1';
+    } else if(pickedType.value[i] == '음료제작기기') {
+      partInfo.value.machine_type += 'p2';
+    } else if(pickedType.value[i] == '포장기기') {
+      partInfo.value.machine_type += 'p3';
+    }
+    if((Number(i) + 1) < pickedType.value.length) {
+      partInfo.value.machine_type += ' / ';
+    }
+  }
+
   let obj = {
     machine_type: partInfo.value.machine_type,
     part_name: partInfo.value.part_name,
@@ -197,9 +243,23 @@ const getPartInfo = async () => {
   let result = await axios.get(`${ajaxUrl}/parts/partInfo/${props.partNo}`)
                           .catch(err => console.log(err));
   partInfo.value = result.data;
+  partInfo.value.machine_type = '';
 }
 // 수정
 const partUpdate = async () => {
+  for(let i in pickedType.value) {
+    if(pickedType.value[i] == '세척기기') {
+      partInfo.value.machine_type += 'p1';
+    } else if(pickedType.value[i] == '음료제작기기') {
+      partInfo.value.machine_type += 'p2';
+    } else if(pickedType.value[i] == '포장기기') {
+      partInfo.value.machine_type += 'p3';
+    }
+    if((Number(i) + 1) < pickedType.value.length) {
+      partInfo.value.machine_type += ' / ';
+    }
+  }
+
   let obj = {
     machine_type: partInfo.value.machine_type,
     part_name: partInfo.value.part_name,

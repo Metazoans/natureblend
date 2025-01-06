@@ -95,18 +95,6 @@
                     <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
                 </template>
             </Modal>
-
-            <!-- <div class="col-2">
-              <a>제작 업체</a>
-            </div>
-            <div class="col-3">
-              <select class="form-select" aria-label="Default select example"
-                      v-model="machineData.client_num">
-                <option value="1">거래처1</option>
-                <option value="2">거래처2</option>
-                <option value="3">거래처3</option>
-              </select>
-            </div> -->
           </div>
 
           <div class="row gx-3 gy-2 align-items-center">
@@ -689,7 +677,7 @@ input {
 input:read-only {
   background-color: #ffffff; /* 배경색 흰색 고정 */
   color: #495057; /* 텍스트 색상 유지 */
-  cursor: not-allowed; /* 읽기 전용 표시를 위한 커서 */
+  // cursor: not-allowed; /* 읽기 전용 표시를 위한 커서 */
 }
 
 /* input 포커스 상태에서도 배경색 유지 */
@@ -700,11 +688,11 @@ input:focus {
 }
 
 /* readonly input 요소가 포커스되어도 스타일 유지 */
-input:read-only:focus {
-  background-color: #ffffff; /* 배경색 흰색 고정 */
-  border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
-  outline: none; /* 포커스 아웃라인 제거 */
-}
+// input:read-only:focus {
+//   background-color: #ffffff; /* 배경색 흰색 고정 */
+//   border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
+//   outline: none; /* 포커스 아웃라인 제거 */
+// }
 
 select {
   background-color: white;
