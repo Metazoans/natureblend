@@ -10,6 +10,7 @@
       :noRowsOverlayComponent="noRowsOverlayComponent"
       rowSelection="multiple"
       @cellClicked="onCellClicked" 
+      :quickFilterText="inputListsearch1"
       @rowClicked="onRowClicked"
       :pagination="true"
       :paginationPageSize="10"
@@ -91,7 +92,7 @@ export default{
                 checkboxSelection: true,
                 cellStyle: { textAlign: "center" },flex: 1
                 },
-                { headerName : "주문번호", field:'order_num',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
+                { headerName : "주문번호", field:'order_num',resizable: true, sortable: true ,cellStyle: { textAlign: "right" },flex: 2},
                 { headerName : "제품코드", field:'product_code',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 3},
                 { headerName : "제품명", field:'product_name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 4},
                 { headerName : "주문수량"
@@ -100,7 +101,7 @@ export default{
                 , sortable: true 
                 ,cellStyle: { 
                     textAlign: "right",
-                    backgroundColor: "#fff", // 연한 배경색
+                    //backgroundColor: "#fff", // 연한 배경색
                     //border: "0.5px dashed #fb8c00", // 점선 테두리
                     cursor: "text", // 텍스트 커서
                 }
@@ -112,15 +113,12 @@ export default{
                             const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
                             return `
                                 <span style="display: flex; align-items: center; justify-content: flex-start;">
-                                    <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
-                                        width=15 height=15 
-                                        style="margin-right: 5px;" 
-                                        title="더블클릭하여 수정 가능합니다" />
+                                    <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
                                     <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
                                 </span>
                             `;
                         } else {
-                            return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                            return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
                         }
                     } else {
                         if (params.value) {
@@ -137,7 +135,7 @@ export default{
                 , sortable: true 
                 ,cellStyle: { 
                     textAlign: "right",
-                    backgroundColor: "#fff", // 연한 배경색
+                    //backgroundColor: "#fff", // 연한 배경색
                     //border: "0.5px dashed #fb8c00", // 점선 테두리
                     cursor: "text", // 텍스트 커서
                 }
@@ -149,15 +147,12 @@ export default{
                             const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
                             return `
                                 <span style="display: flex; align-items: center; justify-content: flex-start;">
-                                    <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
-                                        width=15 height=15 
-                                        style="margin-right: 5px;" 
-                                        title="더블클릭하여 수정 가능합니다" />
+                                    <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
                                     <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
                                 </span>
                             `;
                         } else {
-                            return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                            return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
                         }
                     } else {
                         if (params.value) {
@@ -309,7 +304,7 @@ export default{
                 const button1 = document.createElement('button');
                button1.textContent = '주문추가';
                button1.style.cursor = 'pointer';
-               button1.style.backgroundColor = '#008000';
+               button1.style.backgroundColor = '#4caf50';
                button1.style.color = 'white';
                button1.style.border = 'none';
                button1.style.padding = '5px 10px';
@@ -457,7 +452,7 @@ export default{
                 // 출고완료 또는 부분출고 상태일 때 알림 추가
                 this.$notify({
                     text: `출고완료 또는 부분출고 상태에서는 수정할 수 없습니다.`,
-                    type: "warning",
+                    type: "warn",
                 });
             }else {
                     this.rowData[this.Scol] = {
@@ -545,7 +540,7 @@ export default{
         // preparing이 아닌 상태가 있는 경우 알림 표시
         this.$notify({
             text: `주문이 진행 중이 주문 건이 있습니다. 확인해주세요.`,
-            type: 'error',
+            type: 'warn',
         });
         return; // 부모로 데이터 전송 중단
         }
@@ -585,7 +580,7 @@ export default{
         }else if (this.order.orderlist_status === '진행중' || this.order.orderlist_status === '완료'){
             this.$notify({
                     text: '현재 출고 진행 중 이거나 출고 가 완료 된 건은 삭제 불가 합니다.',
-                    type: 'error',
+                    type: 'warn',
                 });
         }
      

@@ -30,7 +30,7 @@ const getQtList = async(productCode, startDate,endDate)=>{
           querywhere+= `AND ` + search;  
         };
       
-        querywhere = qtList.length == 0 ? "" : ` ${querywhere}`;
+        querywhere = qtList.length == 0 ? `ORDER BY q.inspec_end` : ` ${querywhere} ORDER BY q.inspec_end`;
         console.log('selected Query', querywhere);
       
         let result = await mysql.query('getQtResult',querywhere);
@@ -210,7 +210,7 @@ const getInventoryLot = async(productStatus,startDate,endDate)=>{
     let result = await mysql.query('lotNum',querywhere);
     return result;
 }
-
+//제품폐기처리
 const disposeLot = async(disposeLot)=>{
   let datas = Object.values(disposeLot);
   let result = await mysql.query('disposeLot',datas);

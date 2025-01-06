@@ -88,7 +88,7 @@
                     <!--담당자 선택 -->
                     <div class="d-flex flex-column justify-content-center ps-5 pt-5">
                         <div class="row align-items-center mb-3">
-                            <label class="col-sm-3  col-form-label fw-bold" >담당자</label>
+                            <label class="col-sm-3  col-form-label fw-bold" >담당자<span> *</span></label>
                                 <div class="col-sm-9 d-flex align-items-center">
                                     <input 
                                     id="EmpName"  class="form-control border p-2" 
@@ -110,7 +110,7 @@
                         <div class="row align-items-center mb-3">
                             <!--반품수량-->
                             <div class="form-section mb-4">
-                                <label class="col-sm-3  col-form-label fw-bold" >반품수량</label>
+                                <label class="col-sm-3  col-form-label fw-bold" >반품수량<span> *</span></label>
                                 <div class="col-sm-9 d-flex align-items-center">
                                     <input 
                                         id="returnNum"  class="form-control border p-2" 
@@ -121,7 +121,7 @@
                         <div class="row align-items-center mb-3">
                              <!--반품사유-->
                              <div class="form-section">
-                                <label class="col-sm-3  col-form-label fw-bold" >반품사유</label>
+                                <label class="col-sm-3  col-form-label fw-bold" >반품사유<span> *</span></label>
                                     <div class="col-sm-9  d-flex align-items-center">
                                         <input 
                                         id="ReturnReason"  class="form-control border p-2" 

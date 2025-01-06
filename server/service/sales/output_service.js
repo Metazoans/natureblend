@@ -28,7 +28,7 @@ const getOutputOrderList = async (orderName,clientName, startDate, endDate)=>{
         let search  = searchList[i];
         querywhere+= `AND ` + search;  
       };
-      querywhere = searchList.length == 0 ? "" : `${querywhere}`;
+      querywhere = searchList.length == 0 ? `ORDER BY o.due_date` : `${querywhere} ORDER BY o.due_date`;
     console.log('selected Query', querywhere);
       
         let result = await mysql.query('outputOrderlist',querywhere);
