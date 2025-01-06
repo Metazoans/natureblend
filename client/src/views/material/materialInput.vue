@@ -1,4 +1,6 @@
-<!--자재 입고 메뉴-->
+<!-- 
+    메뉴 : 자재>자재입고>자재입고 메뉴 부모 페이지
+-->
 <template>
    <div>
       <h3>&nbsp;&nbsp;자재 입고</h3>
@@ -10,6 +12,7 @@
         :theme="theme"
         :pagination="true"
         :paginationPageSize="10"
+        :paginationPageSizeSelector="[10, 20, 50, 100]"
         @grid-ready="onReady"
         style="height: 700px;"
         :quickFilterText="clientNamesearch"
@@ -66,7 +69,7 @@ const loginInfo = () => {
       console.log(loginfo.value.job);
    }else{
       notify({
-         title: "로그인요청",
+         //title: "로그인요청",
          text: "자재팀 또는 관리자만 접속 가능합니다.",
          type: "error", // success, warn, error 가능
       });
@@ -407,7 +410,7 @@ const lotMaking = async function(){
   }
   matrialQcInput(); //그냥 처리 끝나면 새로 DB받아옴
   notify({
-      title: "입고성공",
+      //title: "입고성공",
       text: "입고 완료 되었습니다.",
       type: "success", // success, warn, error 가능
    });

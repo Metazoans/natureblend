@@ -1,10 +1,12 @@
-<!--자재 입고 조회 메뉴 [조회]모달 -->
+<!-- 
+    메뉴 : 자재>자재입고>자재 입고 조회 메뉴   [조회]모달
+-->
 <template>
    <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
        <div class="modal-content">
-         <div class="modal-header">
-           <h1 class="modal-title fs-5" id="exampleModalLabel">입고LOT별 현재고 조회</h1>
+         <div class="modal-header" style="background-color: #e9ecef;">
+           <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-family: Arial, Helvetica, sans-serif;">입고LOT별 현재고 조회</h1>
            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
          </div>
          <div class="modal-body" v-if="isShowModal">
@@ -41,7 +43,7 @@
                 </ul> -->
          </div>
          <div class="modal-footer">
-           <button type="button" class="btn" style="background-color: #4caf50; color: white;" @click="confirm">닫기</button>
+           <button type="button" class="btn btn-secondary" @click="confirm">닫기</button>
          </div>
        </div>
      </div>

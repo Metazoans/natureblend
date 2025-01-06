@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h1>입고검사-검사신청</h1>
+    <h3>입고검사-검사신청</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h3 class="me-3">검색조건</h3>
+        <h4 class="me-3">검색조건</h4>
         <!-- <button class="btn btn-success" size="sm" v-on:click="searchRequestAll">전체 조회</button> -->
       </div>
 
@@ -36,10 +36,8 @@
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-100" v-on:click="searchOrder">검색</material-button>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md" class="w-50" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
 
       </div>
@@ -61,8 +59,8 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" :paginationPageSize="20"
-        :noRowsOverlayComponent="noRowsOverlayComponent">
+        @grid-ready="onReady" :pagination="true" :paginationPageSizeSelector="[10, 20, 50, 100]"
+        :paginationPageSize="10" :noRowsOverlayComponent="noRowsOverlayComponent" rowSelection="multiple">
       </ag-grid-vue>
 
     </div>
@@ -78,8 +76,9 @@
     </div>
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData2" :columnDefs="columnDefs2" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" :pagination="true" @cell-clicked="onCellClicked" :paginationPageSize="20"
-        style="height: 400px;" :noRowsOverlayComponent="noRowsOverlayComponent">
+        @grid-ready="onGridReady" :pagination="true" @cell-clicked="onCellClicked"
+        :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10" style="height: 400px;"
+        :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
 
 
@@ -107,8 +106,11 @@
     <template v-slot:list>
       <p>발주 수량을 확인하시고 다르다면 수정해 주세요.</p>
       <div class="form-group">
-        <label for="quantityInput">실제 수량(g, 개)</label>
-        <input v-model="editedQuantity" type="number" id="quantityInput" class="form-control" />
+        <label for="quantityInput">실제 수량</label>
+        <div class="d-flex align-items-center">
+          <input v-model="editedQuantity" type="number" id="quantityInput" class="form-control" style="width: auto;" />
+          <p class="ms-2 mb-0">{{ materialType }}</p>
+        </div>
       </div>
     </template>
   </Modal>
@@ -183,24 +185,55 @@ export default {
       columnDefs: [ //검색 결과 열
         {
           headerName: "",
-          field: "check",
           resizable: false,
           editable: true,
           sortable: false,
           cellStyle: { textAlign: "center" },
-          flex: 0.0625
+          flex: 0.0625,
+          headerCheckboxSelection: true,
+          checkboxSelection: true,
         },
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.5 },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
-        { headerName: "발주수량(g, 개)", field: "ordQty", resizable: false, cellStyle: { textAlign: "right" }, flex: 0.5 },
+        {
+          headerName: "발주수량", field: "ordQty", resizable: false, cellStyle: { textAlign: "right" }, flex: 0.5,
+          cellRenderer: params => {
+            if (params.value) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
         { headerName: "발주신청일", field: "orderDate", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.25 },
       ],
       rowData2: [],   //신청 내역
       columnDefs2: [
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.5 },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
-        { headerName: "실제수량(g, 개)", field: "ordQty", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 0.5 },
-        { headerName: "발주신청일", field: "orderDate", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.2 },
+        {
+          headerName: "실제수량", field: "ordQty", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 0.5,
+          cellRenderer: params => {
+            if (params.value) {
+              if (params.data.mName.includes('병')) {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              } else {
+                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
+                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              }
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+        },
+        { headerName: "발주신청일", field: "orderDate", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.3 },
         // { headerName: "검사담당인번호", field: "empNum", resizable: false, cellStyle: { textAlign: "left" }, flex: 0.5 },
         { headerName: "검사담당인", field: "empName", resizable: false, cellStyle: { textAlign: "left" }, flex: 0.3 },
         {
@@ -229,7 +262,7 @@ export default {
 
   methods: {
     // ...mapMutations(["addLoginInfo"]),
-    bringIoginInfo(){
+    bringIoginInfo() {
       this.loginInfo = this.$store.state.loginInfo;
       // console.log('로그인 정보', this.loginInfo);
     },
@@ -237,7 +270,6 @@ export default {
     async searchOrder() {
       if (new Date(this.searchInfo.startDate) > new Date(this.searchInfo.endDate)) {
         `${notify({
-          title: "검색실패",
           text: "시작 날짜는 종료 날짜보다 이전이어야 합니다.",
           type: "error", // success, warn, error 가능
         })}`;
@@ -258,7 +290,7 @@ export default {
       this.rowData1 = []
       for (let i = 0; i < this.orderList.length; i++) {
         let col = {
-          "check": false, "orderCode": this.orderList[i].order_code, "mName": this.orderList[i].material_name,
+          "orderCode": this.orderList[i].order_code, "mName": this.orderList[i].material_name,
           "ordQty": this.orderList[i].ord_qty, "orderDate": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
           , "empNum": this.loginInfo.emp_num, "empName": this.loginInfo.name
         };
@@ -276,16 +308,22 @@ export default {
       this.rowData1 = []
       for (let i = 0; i < this.orderList.length; i++) {
         let col = {
-          "check": false, "orderCode": this.orderList[i].order_code, "mName": this.orderList[i].material_name,
+          "orderCode": this.orderList[i].order_code, "mName": this.orderList[i].material_name,
           "ordQty": this.orderList[i].ord_qty, "orderDate": this.dateFormat(this.orderList[i].order_date, 'yyyy-MM-dd')
           , "empNum": this.loginInfo.emp_num, "empName": this.loginInfo.name
         }
         this.rowData1[i] = col;
       }
     },
-
+    //추가용
+    onReady(event) {
+      this.gridApi1 = event.api;
+    },
+    //삭제용
     onGridReady(params) {
       this.gridApi = params.api;
+      this.gridColumnApi = params.columnApi;
+      // console.log(this.gridColumnApi);
       //this.gridApi.sizeColumnsToFit();
 
       // 기존 이벤트 리스너 제거
@@ -304,13 +342,14 @@ export default {
     //검색 결과 관련
     // 체크한 항목을 rowData2(신청내역)에 추가
     addCheckedRows() {
-
+      // 현재 선택된 행 가져오기
+      const selectedNodes = this.gridApi1.getSelectedNodes(); // 선택된 노드
+      const checkedRows = selectedNodes.map(node => node.data); // 선택된 노드의 데이터
       // 체크박스가 true인 항목만 필터링
-      const checkedRows = this.rowData1.filter(row => row["check"] === true);
+      //const checkedRows = this.rowData1.filter(row => row["check"] === true);
       if (checkedRows.length == 0) {
         notify({
-          title: "등록 오류",
-          text: "추가할 자재를 선택하세요.",
+          text: "추가할 자재를 선택하지 않았습니다.",
           type: "error", // success, warn, error 가능
         });
         return;
@@ -327,25 +366,17 @@ export default {
     //생산내역 관련
     //삭제버튼 누를시 해당 행 삭제처리
     deleteRow(rowIndex) {
-      const nodeToDelete = this.gridApi.getDisplayedRowAtIndex(rowIndex);
+      const nodeToDelete = this.gridApi.getDisplayedRowAtIndex(rowIndex).data;
       // 데이터 삭제
-      this.rowData2 = this.rowData2.filter((row) => row !== nodeToDelete.data);
+      this.rowData2 = this.rowData2.filter((row) => row.orderCode !== nodeToDelete.orderCode);
 
-      // console.log('삭제됨');
+      // console.log(nodeToDelete);
       // console.log(this.rowData2);
 
     },
     //초기화
     resetAll() {
-      // // const rawData = toRaw(this.rowData2);
-      // // console.log('Raw rowData2:', rawData);
-      // this.rowData2.forEach((item, index) => {
-      //   console.log(`Index ${index}:`, item);
-      //   console.log(`  자재발주코드: ${item.orderCode}`);
-      //   console.log(`  자재명: ${item.mName}`);
-      //   console.log(`  발주수량: ${item.ordQty}`);
-      //   console.log(`  발주신청일: ${item.orderDate}`);
-      // });
+
       this.searchOrderAll();
       this.rowData2 = []; // 저장된 항목 초기화
     },
@@ -360,7 +391,6 @@ export default {
     openModal() {
       if (this.rowData2.length == 0) {
         notify({
-          title: "등록실패",
           text: "신청내역이 비었습니다.",
           type: "error", // success, warn, error 가능
         });
@@ -370,11 +400,8 @@ export default {
     },
     //저장하면 입고검사테이블에 추가처리
     async confirm() {
-      // console.log('rowData2');
-      // console.log(this.rowData2);
-
       let rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
-      // console.log(rawData);
+      //console.log(rawData);
       // console.log(`${rawData[0].mName}`);
 
 
@@ -382,7 +409,6 @@ export default {
         .catch(err => console.log(err));
       // console.log(`${insertResult.data.successNum}개 입력됨`);
       notify({
-        title: "신청완료",
         text: `${insertResult.data.successNum}건이 신청되었습니다`,
         type: "success", // success, warn, error 가능
       });
@@ -401,7 +427,13 @@ export default {
       }
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = JSON.parse(JSON.stringify(event.data));
-      this.editedQuantity = this.selectedRow.ordQty;
+      if (this.selectedRow.mName.includes('병')) {
+        this.materialType = '개';
+      } else {
+        this.materialType = 'kg';
+
+      }
+      this.editedQuantity = this.selectedRow.ordQty * 0.001;
       this.isShowModalUpdate = true;
     },
 
@@ -412,8 +444,14 @@ export default {
       // console.log(this.selectedRow);
       if (qty <= 0) {
         notify({
-          title: "입력 오류",
-          text: "유효하지 않은 값입니다.",
+          text: "검사할 자재 수량이 존재하지 않습니다.",
+          type: "warn", // success, warn, error 가능
+        });
+        return;
+      }
+      else if(this.materialType === '개'&& !Number.isInteger(qty) ) {
+        notify({
+          text: "해당 자재의 수량은 소수로 입력할 수 없습니다.",
           type: "warn", // success, warn, error 가능
         });
         return;
@@ -422,7 +460,7 @@ export default {
       if (targetIndex !== -1) {
         this.rowData2[targetIndex] = {
           ...this.rowData2[targetIndex],
-          ordQty: qty, // 수량만 업데이트
+          ordQty: qty * 1000, // 수량만 업데이트
         };
 
       }
@@ -437,7 +475,7 @@ export default {
     }
   },
   mounted() {
-      this.bringIoginInfo();
+    this.bringIoginInfo();
   },
   //기본테이블출력
   created() {
@@ -457,22 +495,25 @@ export default {
 }
 
 //검색창 라벨
-.mb-4{
+.mb-4 {
   label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
   }
 }
+
 //검색창 배경색
-.search-background{
+.search-background {
   // background-color: #def2ff; /* 원하는 배경색 */
-  background-color: #e9ecef; /* 원하는 배경색 */
+  background-color: #e9ecef;
+  /* 원하는 배경색 */
 
 
 
   input {
-    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+    background-color: #ffffff;
+    /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;
@@ -492,6 +533,7 @@ export default {
   flex-direction: column;
   /* 세로 정렬 */
   margin-bottom: 15px;
+
   /* 그룹 간 여백 */
   label {
     font-weight: bold;

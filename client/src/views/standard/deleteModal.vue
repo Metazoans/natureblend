@@ -2,8 +2,10 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-content">
         <h3>정말 삭제하시겠습니까?</h3>
-        <button @click="onDeleteConfirmed" class="btn btn-success">확인</button>
-        <button @click="onDeleteCancelled" class="btn btn-danger">취소</button>
+        <div class="button-container">
+          <button @click="onDeleteConfirmed" class="btn btn-success">확인</button>
+          <button @click="onDeleteCancelled" class="btn btn-danger">취소</button>
+        </div>
       </div>
     </div>
   </template>
@@ -27,21 +29,49 @@
   <style scoped>
   .modal-overlay {
     position: fixed;
-    top: 200px;
-    left: 700px;
+    top: 150px;
+    left: 770px;
     right: 0;
     bottom: 0;
-    width: 30%;
+    width: 20%;
     height: 50%;
-    /* background-color: rgba(0, 0, 0, 0.5); */
     display: flex;
     justify-content: center;
     align-items: center;
   }
+  
   .modal-content {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
     max-width: 100%;
   }
-  </style>  
+  
+  .button-container {
+    display: flex;
+    justify-content: center; /* 버튼들을 가로로 중앙 정렬 */
+    gap: 10px; /* 버튼 간의 간격 */
+  }
+  
+  button {
+    font-size: 14px; /* 글씨 크기 조정 */
+    padding: 8px 12px; /* 버튼 크기 조정 */
+  }
+  
+  /* btn 클래스의 스타일을 덮어쓰기 위해 ::v-deep 사용 */
+  ::v-deep .btn {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+  
+  ::v-deep .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  
+  ::v-deep .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  </style>
+  

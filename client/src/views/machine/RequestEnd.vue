@@ -2,7 +2,7 @@
 
   <div>
 
-    <h2>정비 완료 내역</h2>
+    <h3>정비 완료 내역</h3>
     <div class="grid-container" >
       <ag-grid-vue
         :rowData="requestRow"

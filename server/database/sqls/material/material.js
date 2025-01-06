@@ -42,6 +42,7 @@ SELECT mat.material_code,
        COALESCE(mlq.stok_qty, 0) AS stok_qty
 FROM material mat
 LEFT JOIN material_lot_qty mlq ON mat.material_code = mlq.material_code
+WHERE mat.material_code != 'M010'
 ORDER BY mat.material_code ASC
 `;
 
@@ -108,14 +109,14 @@ WHERE trade = '구매'
   AND com_name like IFNULL(?, '%')
 `;
 
-// 상품등록 트렌젝션
+// 자재등록 프로시저
 // CALL material_input_polist(22, 33, 'M032', 150, NOW(), 1500, 30000, @result);
 const input_order =
 `
     CALL material_input_polist(?, ?, ?, ?, ?, ?, ?, @result);
 `;
 
-// ★상품등록 트렌젝션2 [리뉴얼]
+// ★자재등록 프로시저2 [리뉴얼]
 const input_order2 =
 `
     CALL material_input_polist_rmk(?, ?, ?, ?, ?, ?, ?, ?, @v_result);
@@ -210,12 +211,15 @@ SELECT mob.body_num,
            WHEN mob.material_state = 'a1' THEN '발주등록'
            WHEN mob.material_state = 'a3' THEN '취소'
            WHEN mob.material_state = 'a4' THEN '입고완료'
-       END AS material_state
+       END AS material_state,
+       qm.inspec_status
 FROM material_order_body mob
 JOIN material_order_head moh ON mob.order_code = moh.order_code
 JOIN material mat ON mob.material_code = mat.material_code
 JOIN client cli ON moh.client_num = cli.client_num
 JOIN employee emp ON moh.emp_num = emp.emp_num
+LEFT JOIN qc_material qm ON mob.order_code = qm.order_code
+								AND mob.material_code = qm.material_code
 `;
 
 const material_cance =
@@ -354,6 +358,7 @@ SELECT mob.material_code,
 FROM material_order_body mob
 JOIN material mat ON mob.material_code = mat.material_code
 WHERE mob.order_code = ?
+  AND mob.material_state != 'a3'
 `;
 
 // 검수확인증 모달

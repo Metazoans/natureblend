@@ -7,7 +7,7 @@
       <div class="col-8">
         <!-- 정비 요청 내역 그리드 -->
         <div class="grid-container" >
-          <h2>정비 요청 내역</h2>
+          <h3>정비 요청 내역</h3>
           <ag-grid-vue
             :rowData="requestRow"
             :columnDefs="requestCol"
@@ -305,12 +305,12 @@ const requestInsert = async () => {
 
   if(addRes.maintenance_num > 0){
     notify({
-      text: "정비 요청 등록 성공",
+      text: "정비 요청 등록이 성공했습니다.",
       type: 'success',
     });
   } else {
     notify({
-      text: "정비 요청 등록 실패",
+      text: "정비 요청 등록이 실패했습니다.",
       type: 'error',
     });
   }
@@ -336,13 +336,13 @@ const requestUpdate = async () => {
 
   if(updateRes.result) {
     notify({
-      text: "정비 요청 수정 성공",
+      text: "정비 요청 수정이 성공했습니다.",
       type: 'success',
     });
     getRequests();
   } else {
     notify({
-      text: "정비 요청 수정 실패",
+      text: "정비 요청 수정이 실패했습니다.",
       type: 'error',
     });
   }

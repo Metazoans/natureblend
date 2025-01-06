@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-        <h2>제품재고조회</h2>
+        <h3>제품재고조회</h3>
         <div class= "main-container">
             <div class= "pt-5 pb-5">
                     <!--제품명 검색-->
@@ -46,7 +46,8 @@
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     rowSelection="multiple"
                     :pagination="true"
-                    :paginationPageSize="20"
+                    :paginationPageSize="10"
+                    :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -72,7 +73,8 @@
                     :noRowsOverlayComponent="noRowsOverlayComponent"
                     rowSelection="multiple"
                     :pagination="true"
-                    :paginationPageSize="20"
+                    :paginationPageSize="10"
+                    :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -126,11 +128,56 @@ export default{
             columnProductNum : [
             { headerName: "제품코드 ", field: "product_code",flex: 1,cellStyle: { textAlign: "center" } },
             { headerName: "제품명", field: "product_name",flex: 1,cellStyle: { textAlign: "left" } },
-            { headerName: "입고수량 ", field: "valid_input_amount",flex: 1,cellStyle: { textAlign: "right" }},
-            { headerName: "출고수량 ", field: "valid_output_amount",flex: 1,cellStyle: { textAlign: "right" } },
-            { headerName: "입고 취소 수량", field: "canceled_amount",flex: 1,cellStyle: { textAlign: "right" }},
-            { headerName: "제품 폐기 수량", field: "disposed_amount",flex: 1,cellStyle: { textAlign: "right" }},
-            { headerName: "총 재고", field: "stock_amount",flex: 1,cellStyle: { textAlign: "right" }},
+            { headerName: "입고수량 "
+            , field: "valid_input_amount"
+            ,flex: 1
+            ,cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
+            { headerName: "출고수량 "
+            , field: "valid_output_amount"
+            ,flex: 1
+            ,cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
+            { headerName: "입고 취소 수량"
+            , field: "canceled_amount"
+            ,flex: 1
+            ,cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
+            { headerName: "제품 폐기 수량"
+            , field: "disposed_amount"
+            ,flex: 1
+            ,cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
+            { headerName: "총 재고"
+            , field: "stock_amount"
+            ,flex: 1
+            ,cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
             ],
 
             // lot별 재고 갯수 조회 
@@ -143,7 +190,16 @@ export default{
             { headerName: "제품LOT번호 ", field: "product_lot",flex: 1,cellStyle: { textAlign: "center" } },
             { headerName: "제품코드", field: "product_code",flex: 1,cellStyle: { textAlign: "center" } },
             { headerName: "제품명 ", field: "product_name",flex: 1,cellStyle: { textAlign: "center" } },
-            { headerName: "제품수량 ", field: "product_quantity",flex: 1,cellStyle: { textAlign: "center" } },
+            { headerName: "제품수량 "
+            , field: "product_quantity"
+            ,flex: 1
+            ,cellStyle: { textAlign: "center" } 
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+             }},
             { headerName: "창고위치 ", field: "warehouse_name",flex: 1,cellStyle: { textAlign: "center" } },
             { headerName: "제조일자 ", field: "manufacturing_date",flex: 1,cellStyle: { textAlign: "center" } },
             { headerName: "유통기한 ", field: "expire_date",flex: 1,cellStyle: { textAlign: "center" }},

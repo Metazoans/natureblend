@@ -88,29 +88,11 @@
     import productBest from '@/views/material/mainpage/productBest.vue';
     import ProcessResults from '@/views/material/mainpage/ProcessResults.vue';
 
-    import { ref, onBeforeMount } from 'vue'; //onBeforeMount
     //라우팅 정보 가져오기
     import { useRouter } from 'vue-router';
     const router = useRouter();
-    // 로그인 정보 가져오기
-    import { useStore } from 'vuex'; // Vuex 스토어 가져오
-    const store = useStore();
-    const loginfo = ref({});
-    const loginInfo = () => {
-        loginfo.value = store.state.loginInfo;
-        if(loginfo.value.name){
-            console.log(loginfo.value.job);
-        }else{
-            //router.push({ name: 'login' });
-            window.location.reload();
-        }
-    };
-     // 화면 생성되는 시점
-    onBeforeMount(()=>{
-        loginInfo();
-    });
-
-
+    
+    
     // 원본 데이터
     const chartData = {
         labels: ["포도", "사과", "오렌지", "레몬", "망고", "당근", "세척병(500ml)", "세척병(750ml)", "세척병(1.5L)", "설탕", "식용색소", "향료"],

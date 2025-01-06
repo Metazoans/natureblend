@@ -1,8 +1,8 @@
 <template>
   <ModalMachine @click.self="closeModal" :modalSize="modalSize">
     <template v-slot:header>
-      <h2 v-if="isUpdate">설비 수정</h2>
-      <h2 v-else>설비 등록</h2>
+      <h1 class="modal-title fs-5" v-if="isUpdate">설비 수정</h1>
+      <h1 class="modal-title fs-5" v-else>설비 등록</h1>
     </template>
     
     <template v-slot:body>
@@ -37,6 +37,7 @@
                   :value="status"
                   v-model="machineData.machine_state"
                   :disabled="isUpdate"
+                  class="form-check-input"
                 />
               </label>
             </div>
@@ -72,11 +73,28 @@
 
           <div class="row gx-3 gy-2 align-items-center">
             <div class="col-2">
-              <label for="clientNum">업체 이름</label>
+              <label for="clientNum">거래처</label>
             </div>
             <div class="col-6">
-              <input class="form-control" type="text" id="clientNum" name="clientNum" v-model="machineData.client_num"/>
+              <input class="form-control" 
+                     type="text" id="clientNum" name="clientNum" 
+                     @click="openClientModal('client')"
+                     v-model="this.selectedCom"
+                     readonly
+              />
             </div>
+            <Modal
+                :isShowModal="isShowModal.client"
+                :modalTitle="'거래처선택'"
+                :noBtn="'닫기'"
+                :yesBtn="'선택'"
+                @closeModal="closeClientModal('client')"
+                @confirm="confirmClientModal('client')"
+            >
+                <template v-slot:list>
+                    <ComList v-show="isShowModal.client" @selectclient="selectclient"/>
+                </template>
+            </Modal>
 
             <!-- <div class="col-2">
               <a>제작 업체</a>
@@ -103,8 +121,8 @@
                 <div class="col-1 uphUnit"
                      v-if="this.machineData.process_code == 'p1' ||
                      this.machineData.process_code == 'p3'"
-                >병</div>
-                <div class="col-1 uphUnit" v-if="this.machineData.process_code == 'p2'">L</div>
+                >개</div>
+                <div class="col-1 uphUnit" v-if="this.machineData.process_code == 'p2'">ml</div>
               </div>
             </div>
           </div>
@@ -120,11 +138,11 @@
 
           <div class="row gx-3 gy-2 align-items-center">
             <div class="col-2">
-              <label for="empNum" v-if="!isUpdate">등록자</label>
-              <label for="empNum" v-else>수정자</label>
+              <label for="empName" v-if="!isUpdate">등록자</label>
+              <label for="empName" v-else>수정자</label>
             </div>
             <div class="col-6">
-              <input class="form-control" type="number" id="empNum" name="empNum" v-model="machineData.emp_num" readonly/>
+              <input class="form-control" type="text" id="empName" name="empName" v-model="this.machineData.emp_name" readonly/>
             </div>
           </div>
 
@@ -172,6 +190,15 @@
     <template v-slot:footer>
 
       <button
+        class="btn btn-secondary w-100 mb-0 toast-btn"
+        type="button"
+        data-target="warningToast"
+        @click="closeModal"
+      >
+        닫기
+      </button>
+
+      <button
         class="btn btn-success w-100 mb-0 toast-btn"
         type="button"
         data-target="warningToast"
@@ -182,14 +209,6 @@
         <a v-else style="color: white;">등록</a>
       </button>
 
-      <button
-        class="btn btn-danger w-100 mb-0 toast-btn"
-        type="button"
-        data-target="warningToast"
-        @click="closeModal"
-      >
-        취소
-      </button>
     </template>
   </ModalMachine>
 
@@ -203,8 +222,11 @@ import MachineParts from "@/views/machine/MachineParts.vue";
 import userDateUtils from "@/utils/useDates.js";
 import { ajaxUrl, localUrl } from '@/utils/commons.js';
 import axios from 'axios';
-
 import { mapMutations } from "vuex";
+
+import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import ComList from "@/views/machine/clientModal.vue";
+
 
 export default {
   name: "MachineManage",
@@ -216,6 +238,8 @@ export default {
   components: {
     ModalMachine,
     MachineParts,
+    Modal,
+    ComList,
   },
   data() {
     return {
@@ -235,6 +259,7 @@ export default {
         process_code: '',
         
         // 자동
+        emp_name: this.$store.state.loginInfo.name,
         emp_num: this.$store.state.loginInfo.emp_num,
       },
       statusList: ["사용", "미사용"], // 작동 상태 옵션
@@ -256,6 +281,15 @@ export default {
       },
 
       oldPartNum: [], // 수정시 기존 부품 정보
+
+      
+      //거래처 모달 
+      searchCom:"", // 저장 될 거래처 명 
+      selectedCom: "", //선택된 거래처 명
+
+      isShowModal: {
+      client: false, // 거래처 모달
+      },
     }
   },
   beforeMount() {
@@ -354,23 +388,40 @@ export default {
         }
       }
 
+      if(insertState == 'stop') {
+        console.log('insert machine : ', addRes.machine_num);
+        await this.inActInsert(addRes.machine_num, obj);
+      }
+
       // 등록 성공 체크
       if(addRes.machine_num > 0){
-        // 등록메시지 수정 예정
         this.$notify({
-          text: "설비 등록 성공",
+          text: "설비 등록이 성공했습니다.",
           type: 'success',
         });
         this.isInsert = true;
         this.$emit('confirm', this.isInsert);
       } else {
         this.$notify({
-          text: "설비 등록 실패",
+          text: "설비 등록이 실패했습니다.",
           type: 'error',
         });
         this.$emit('confirm', this.isInsert);
       }
     },
+    // 비가동 등록 동작
+    async inActInsert(machineNo, insertData) {
+      let obj = {
+        machine_num: machineNo,
+        inact_start_time: insertData.buy_date,
+        inact_type: '기타',
+        inact_info: '비가동 설비를 등록하였습니다.',
+        inact_start_emp: insertData.emp_num,
+      }
+
+      await axios.post(`${ajaxUrl}/inActs/inActInsert`, obj).catch(err => console.log(err));
+    },
+
 
     // 설비 데이터 가져오기
     async getMachineInfo(selectNo) {
@@ -378,10 +429,9 @@ export default {
                               .catch(err => console.log(err));
       this.machineData = result.data;
       this.machineData.buy_date = this.dateFormat(this.machineData.buy_date, 'yyyy-MM-dd hh:mm:ss');
-      this.machineData.emp_num = this.$store.state.loginInfo.emp_num;
       this.machineData.machine_state = this.machineData.machine_state == 'run' ? '사용' : '미사용';
-
-      console.log('getinfo img : ', this.machineData.machine_img);
+      this.machineData.emp_name = this.$store.state.loginInfo.name;
+      this.selectedCom = this.machineData.com_name;
     },
     // update
     async machineUpdate() {
@@ -398,8 +448,8 @@ export default {
         buy_date: this.machineData.buy_date,
         process_code: this.machineData.process_code,
         
-        // 자동
-        emp_num: this.machineData.emp_num
+        // 수정 작업한 사원으로 변경
+        emp_num: this.$store.state.loginInfo.emp_num,
       }
       
       obj.upd = Number(this.machineData.uph) * 24;     // uph * 24
@@ -422,10 +472,16 @@ export default {
       }
 
       if(updateRes.result) {
-        alert('수정 성공');
+        this.$notify({
+          text: "설비 수정이 성공했습니다.",
+          type: 'success',
+        });
         this.$emit('confirm');
       } else {
-        alert('수정 실패');
+        this.$notify({
+          text: "설비 수정이 실패했습ㅋ니다.",
+          type: 'error',
+        });
         this.$emit('confirm');
       }
     },
@@ -435,7 +491,10 @@ export default {
       if(this.partCnt < 4) {
           this.partCnt++;
       } else {
-        alert('최대 부품 수입니다.');
+        this.$notify({
+          text: "최대 부품 수입니다.",
+          type: 'error',
+        });
       }
     },
     async delClicked(row) {
@@ -561,6 +620,28 @@ export default {
       console.log('저장한 값 : ', this.machineData.machine_img);
     },
 
+    // 거래처 모달
+    selectclient(client){
+        this.selectedCom = client.com_name; 
+        this.machineData.client_num = client.client_num;
+        console.log('client : ', client);
+    },
+    openClientModal(modalType,index) {
+        this.isShowModal[modalType] = true; 
+        this.indexNum = index; //현재 선택된 index
+        console.log(this.indexNum);
+        console.log(`${modalType} modal open`);
+    },
+    confirmClientModal(modalType){
+        if (modalType === 'client') {
+        this.searchCom = this.selectedCom;
+      } 
+
+      this.closeClientModal(modalType); // 모달 닫기
+    },
+    closeClientModal(modalType) {
+        this.isShowModal[modalType] = false;
+    },
   },
   // 유효성 체크 : 설비 이름, 모델 번호, 설비 분류, 제작업체, uph, 설비 위치, 등록자
   watch: {

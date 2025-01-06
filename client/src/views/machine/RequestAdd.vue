@@ -2,7 +2,7 @@
   <!-- 모달로 구성 -->
   <ModalMachine @click.self="closeModal">
     <template v-slot:header>
-      <h2>정비 요청 등록</h2>
+      <h1 class="modal-title fs-5">정비 요청 등록</h1>
     </template>
     <template v-slot:body>
       <div class="requestBody" v-bind="requestData">
@@ -35,21 +35,21 @@
     </template>
     <template v-slot:footer>
       <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="confirm"
-        >
-          등록
-        </button>
-        <button
-          class="btn bg-gradient-warning w-100 mb-0 toast-btn"
-          type="button"
-          data-target="warningToast"
-          @click="closeModal"
-        >
-          취소
-        </button>
+        class="btn btn-secondary w-100 mb-0 toast-btn"
+        type="button"
+        data-target="warningToast"
+        @click="closeModal"
+      >
+        닫기
+      </button>
+      <button
+        class="btn btn-success w-100 mb-0 toast-btn"
+        type="button"
+        data-target="warningToast"
+        @click="confirm"
+      >
+        등록
+      </button>
     </template>
 
   </ModalMachine>

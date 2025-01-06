@@ -7,7 +7,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <slot name="list">slot</slot>
+          <slot name="list"></slot>
           <div class="mb-1">
             <!-- 제품 코드 조회 리스트 -->
             <div class="grid-container" >
@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">{{ noBtn }}</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
         </div>
       </div>
     </div>
@@ -53,6 +53,7 @@ export default {
       rowData:[],
       columnDefs:[
         { headerName:"제품코드",field:"product_code" },
+        { headerName:"제품명",field:"product_name" },
         
       ],
       bomInput:[],
@@ -102,10 +103,10 @@ export default {
 
 <style scoped>
 .modal-dialog {
-  max-width: 30%;
+  max-width: 24%;
 }
 .modal-body{
-  background-color: gray;
+  background-color: white;
 }
 .modal-body .form-control {
     width: 100px;

@@ -1,4 +1,7 @@
-<!-- 자재 발주 관리 메뉴 리메이크 (이걸로 사용중)-->
+<!-- 
+    메뉴 : 자재>자재발주>자재 발주 관리
+    자재 발주 관리 메뉴 리메이크 (이걸로 사용중)
+-->
 <template>
     <div>
         <h3>&nbsp;&nbsp;자재 발주 관리</h3>
@@ -71,7 +74,7 @@ export default {
                 this.productorderlist = result.data;
                 //console.log(result.data);
             }else{
-                this.$notify({ title:'로그인요청', text: '자재팀 또는 관리자만 접속 가능합니다.', type: 'error' });    // success, warn, error 가능
+                this.$notify({ text: '자재팀 또는 관리자만 접속 가능합니다.', type: 'error' });    // success, warn, error 가능 // title:'로그인요청', 
                 this.$router.push({ name : 'MainPage' });
             }
         },
@@ -96,13 +99,12 @@ export default {
             this.polist = data;
             console.log('부모한테 받은 발주서 : ', this.polist);
 
-            // 담당사원번호는 나중에 세션에서
             this.polist = this.polist.map((val) => ({
                 ...val,
                 emp_num: this.loginInfo.emp_num,
                 go_qty: val.material.includes('병') ? Number(val.go_qty) : Number(val.go_qty)*1000,
                 go_price: val.material.includes('병') ? Number(val.go_price) : Number(val.go_price)*1000,
-                go_total_price: val.material.includes('병') ? val.go_total_price : val.go_total_price*1000,
+                go_total_price: val.material.includes('병') ? Number(val.go_total_price) : Number(val.go_total_price)*1000,
             }));
 
             let artificial_head = new Date();
@@ -116,12 +118,12 @@ export default {
             if( this.my_result === 'OK' ){
                 this.showprogress2 = false;
                 this.number = 0;
-                this.$notify({ title:'발주성공', text: '발주 등록에 성공 하셨습니다.', type: 'success' });    // success, warn, error 가능
+                this.$notify({ text: '발주 등록에 성공 하셨습니다.', type: 'success' });    // success, warn, error 가능    // title:'발주성공', 
                 this.$router.push({ name : 'materialOrderList' });
             }else{
                 this.showprogress2 = false;
                 this.number = 0;
-                this.$notify({ title:'발주오류', text: this.my_result+'오류 관리자 호출요망!', type: 'error' });    // success, warn, error 가능
+                this.$notify({ text: this.my_result+'발주 오류 관리자 호출 해주세요.', type: 'error' });    // success, warn, error 가능  // title:'발주오류', 
             }
         },
         async inputpolist(key, data){
