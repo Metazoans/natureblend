@@ -177,7 +177,7 @@ AND q.pass_qnt != 0
 ORDER BY q.inspec_start DESC
 `;
 
-// 제품 출고 대기
+// 제품 출고 대기 [ 검수 완료 2025-01-06 ]
 const produce_out_wait =
 `
 SELECT your_product(product_code, 'product_name') AS product_name,
@@ -186,9 +186,10 @@ FROM orders
 WHERE order_status != 'shipped'
 GROUP BY orderlist_num,
          product_code
+ORDER BY order_num DESC
 `;
 
-//상품재고
+//상품재고 [ 검수 완료 2025-01-06 ]
 const product_qtying = 
 `
 WITH output_aggregated AS (

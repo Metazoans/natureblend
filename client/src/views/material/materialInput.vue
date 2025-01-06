@@ -2,10 +2,10 @@
     메뉴 : 자재>자재입고>자재입고 메뉴 부모 페이지
 -->
 <template>
-   <div>
+   <div class="pt-3" style="padding-left: 16px;">
       <h3>&nbsp;&nbsp;자재 입고</h3>
    </div>
-    <div class="grid-container">
+    <div class="grid-container pt-0">
       <ag-grid-vue
         :rowData="rowData"
         :columnDefs="columnDefs"
