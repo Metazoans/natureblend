@@ -283,7 +283,8 @@ export default {
     confirmInActAdd(check) {
       this.closeInActAdd();
       if(check == true){
-        this.getMachineList();
+        this.searchMachines();
+        // this.getMachineList();
       }
     },
     // 비가동 등록 모달 닫기
@@ -339,7 +340,7 @@ export default {
       let updateRes = result.data;
 
       if(updateRes.result) {
-        this.getMachineList();
+        this.searchMachines();
         console.log('설비 작동 시작');
       } else {
         console.log('설비 작동 실패');
@@ -408,8 +409,11 @@ export default {
       let result = await axios.put(`${ajaxUrl}/machine/search`, obj)
                               .catch(err => console.log(err));
       this.machineList = result.data;
-      console.log(this.machineList);
       this.rowData = result.data;
+
+      for(let i in this.rowData) {
+        this.rowData[i].machine_state = this.rowData[i].machine_state == 'run' ? '작동중' : '작동정지';
+      }
     },
     
     // 엔터키 누르면 하는거

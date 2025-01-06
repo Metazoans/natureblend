@@ -29,7 +29,7 @@ export default{
             rowData:[], //거래처명 목록 저장
             columnData : [
                 {headerName : "부품번호", field:"part_num", flex: 1 },
-                {headerName : "설비분류", field:"machine_type", flex: 1 },
+                {headerName : "설비분류", field:"changeTypeList", flex: 1 },
                 {headerName : "부품이름", field:"part_name", flex: 1 },
             ],
             selectedData : "", // 선택한 값
@@ -42,6 +42,12 @@ export default{
             let result = await axios.get(`${ajaxUrl}/parts/changePartList/${mType}`)
                                     .catch(err=> console.log(err));
             
+
+            for(let i in result.data) {
+              result.data[i].changeTypeList = result.data[i].machine_type.replace('p1', '세척기기')
+                                                                         .replace('p2', '음료제작기기')
+                                                                         .replace('p3', '포장기기');
+            }
             this.rowData = result.data;
         },
 
@@ -59,9 +65,6 @@ export default{
     watch: {
       machineData: {
         handler() {
-          console.log('partInput watch');
-          console.log('machine data : ', this.machineData);
-
           this.getChangePartList(this.machineData.process_code);
         },
         deep: true

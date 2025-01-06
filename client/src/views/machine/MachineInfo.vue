@@ -50,7 +50,10 @@
     <div class="row align-items-center machineInfo">
       <!-- 설비 이미지 -->
       <div class="col-3 mimg">
-        <img v-if="machineData.machine_img" :src="`http://localhost:3000${machineData.machine_img}`" />
+        <img v-if="machineData.machine_img" :src="`http://localhost:3000${machineData.machine_img}`"/>
+        <div v-else class="noImg">
+          <a>이미지 파일이 없습니다</a>
+        </div>
       </div>
 
       <!-- 설비 정보 항목 -->
@@ -373,6 +376,12 @@ img {
   width: 100%;
   height: 100%;
 }
+.noImg {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
 
 .machineInfo {
   height: 300px;
@@ -430,5 +439,6 @@ img {
   color: black !important;
   font-weight: 800;
 }
+
 
 </style>
