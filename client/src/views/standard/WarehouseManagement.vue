@@ -1,5 +1,6 @@
 <!--창고 관리 메뉴-->
 <template>
+   <div class="partList container-fluid py-4">
     <div>
        <h3>&nbsp;&nbsp;창고 관리</h3>
     </div>
@@ -51,12 +52,13 @@
                   <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="warehouseLocation" v-model="warehouseLocation" >
                </div>
                <!-- 저장 버튼 -->
-               <div class="col-sm-5">
-                  <button style="position:relative; left: 144px; top:45px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+               <div class="col-sm-11">
+                  <button style="position:relative;  top:45px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+                  <button style="position:relative; width:120px ; top:45px;" type="button" class="btn btn-warning me-5" @click="refresh"  >새로고침</button>
                </div>
             </div>
-          </div>
-       </form>
+         </div>
+      </form>
     </div>
  </div>
  
@@ -82,6 +84,7 @@
       @deleteCancelled="onDeleteCancelled"
       style="z-index : '9999';"
  />
+ </div>
  </template>
  
  <script>
@@ -151,6 +154,17 @@
      };
    },
    methods: {
+      refresh(){
+         this.warehouseList();
+         this.upin = '';
+         this.warehouseCode = '';
+         this.warehouseName = '';
+         this.storage = '';
+         this.warehouseLocation = '';
+         this.empName = '';
+         this.empTel = '';
+         this.warehouseArea = '';
+      },
       onDeleteCancelled() {
          this.showDeleteModal = false; // 모달 닫기
       },
@@ -207,12 +221,6 @@
     async warehouseInsert(newList){
            const result = await axios.post(`${ajaxUrl}/warehouseInsert`, newList)
                                        .catch(err => console.log(err));
-            if (result.data === '성공') {
-               this.$notify({ text: '창고가 등록되었습니다.', type: 'success' });
-                  this.warehouseList();
-            } else {
-               this.$notify({ text: '등록실패.', type: 'error' });
-            }
            console.log(result.data);
            this.warehouseList();
     },
@@ -230,7 +238,14 @@
                         emp_tel : this.empTel,
                         warehouse_area : this.warehouseArea
        };
-       this.warehouseInsert(this.newList);
+       if(this.upin === 'update'){
+            this.$notify({ text: '수정되었습니다.', type: 'success' });
+            this.warehouseInsert(this.newList);
+         } else {
+            this.$notify({ text: '등록되었습니다.', type: 'success' });
+            this.warehouseInsert(this.newList);
+         }
+      //  this.warehouseInsert(this.newList);
        this.warehouseList();
      },
    },
@@ -263,4 +278,9 @@
        background-color: $white;
        border: solid 1px  ;
  }
+ input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
  </style>

@@ -2,14 +2,14 @@
     <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header" style ="background-color: #e9ecef;">
             <h1 class="modal-title fs-5" id="exampleModalLabel">자재 선택</h1>
-            <input type="text" v-model="search" class="text-center styled-input" placeholder="검색" />
           </div>
           <div class="modal-body">
             <slot name="list"></slot>
             <div class="mb-1">
               <label for="searchInput" class="form-label"></label>
+              <input type="text" v-model="search" class="text-center styled-input" placeholder="검색" />
               <!-- 자재 코드 조회 리스트 -->
               <div class="grid-container" >
                 <ag-grid-vue 
@@ -137,4 +137,24 @@
     /* text-align: center; */
     margin: auto;
   }
+  .styled-input {
+    display: block; /* 가운데 정렬을 위한 블록 처리 */
+    margin: 0 auto; /* 부모 컨테이너 기준 가운데 정렬 */
+    margin-top: 10px;
+    padding: 10px; /* 안쪽 여백 */
+    width: 250px; /* 입력 필드 너비 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    border: 1px solid #ccc; /* 테두리 */
+    border-radius: 20px; /* 테두리 둥글게 */
+    outline: none; /* 포커스 시 기본 테두리 제거 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+    transition: box-shadow 0.3s ease; /* 호버 효과 추가 */
+}
+
+/* 포커스 또는 호버 상태에서 효과 */
+.styled-input:focus,
+.styled-input:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 더 강한 그림자 */
+    border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
+}
   </style>
