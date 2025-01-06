@@ -182,14 +182,14 @@ export default {
       }
 
       let result =
-          await axios.post(`${ajaxUrl}/production/plan`, planInfo)
+          await axios.post(`${ajaxUrl}/production/planddd`, planInfo)
               .catch(err => console.log(err));
+
       if(result.data.message === 'success') {
         this.$notify({
           text: `${this.planName}이 등록되었습니다.`,
           type: 'success',
         });
-
 
         this.planName = ''
         this.planStartDate = ''
@@ -197,8 +197,6 @@ export default {
         this.searchEmp = {}
         this.$emit('resetSelectedOrders')
       }
-
-
     },
 
     confirm() {

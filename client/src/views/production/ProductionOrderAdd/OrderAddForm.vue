@@ -84,6 +84,10 @@ export default {
   name: "OrderInputForm",
   components: {EmpList, Modal, PlanList},
 
+  props: {
+    isOrderAddFormReset: Boolean
+  },
+
   data() {
     return {
       searchPlan: {},
@@ -117,13 +121,25 @@ export default {
               .catch(err => console.log(err));
       let materialList = result.data
 
+      let isFirstNoti = true
+
       materialList.forEach((item) => {
+        let stockAmount = (item.stok_qty - item.invalid_qty) > 0 ? (item.stok_qty - item.invalid_qty) : 0
+
+        if(!stockAmount && isFirstNoti) {
+          this.$notify({
+            text: "재고가 부족합니다.",
+            type: 'error',
+          });
+          isFirstNoti = false
+        }
+
         let row = {
           stockLotSeq: item.lot_seq,
           stockLot: item.lot_code,
           stockMaterialName: item.material_name,
           stockMaterialCode: item.material_code,
-          stockAmount: item.stok_qty - item.invalid_qty,
+          stockAmount: stockAmount,
           expiryDate: item.limit_date.split('T')[0]
         }
         this.rowDataStock.push(row)
@@ -227,6 +243,25 @@ export default {
       },
       deep: true
     },
+
+    isOrderAddFormReset: {
+      handler() {
+        if(this.isOrderAddFormReset) {
+          this.orderInfo = {
+            prodOrderName: '',
+            planNum: 0,
+            productCode: '',
+            workDate: '',
+            prodOrderQty: 1,
+            empNum: 0
+          }
+          this.searchPlan = {}
+          this.searchProduct = ''
+          this.searchEmp = {}
+          this.processFlow = []
+        }
+      },
+    }
   }
 }
 </script>

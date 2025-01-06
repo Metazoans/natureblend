@@ -12,6 +12,7 @@
             @updateInputData="updateInputData"
             @getProcessFlow="getProcessFlow"
             @getSearchPlan="getSearchPlan"
+            :isOrderAddFormReset="isOrderAddFormReset"
         />
 
         <div class="grid-container grid-1" >
@@ -88,7 +89,7 @@ export default {
       theme: theme,
       rowDataNeed: [],
       columnDefsNeed: [
-        { headerName: "자재명", field: 'needMaterialName', flex: 2},
+        { headerName: "자재명", field: 'needMaterialName', flex: 1},
         { headerName: "용량(g 또는 ml)", field: 'needAmount', cellStyle: { textAlign: 'right' }, flex: 1 },
       ],
 
@@ -159,6 +160,7 @@ export default {
       newProdOrderNum: 0,
       processFlow: [],
       searchPlan: {},
+      isOrderAddFormReset: false
     }
   },
 
@@ -273,7 +275,16 @@ export default {
           text: "생산지시가 등록되었습니다.",
           type: 'success',
         });
+        this.isOrderAddFormReset = false
+        this.resetAddInfo()
       }
+    },
+
+    resetAddInfo() {
+      this.isOrderAddFormReset = true
+      this.rowDataNeed = []
+      this.rowDataStock = []
+      this.rowDataUse = []
     },
 
     async holdMaterial(data) {
