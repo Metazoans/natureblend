@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h3>입고검사-검사신청</h3>
+    <h3>입고 검사-검사 신청</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h4 class="me-3">검색조건</h4>
+        <h4 class="me-3">검색 조건</h4>
         <!-- <button class="btn btn-success" size="sm" v-on:click="searchRequestAll">전체 조회</button> -->
       </div>
 
@@ -70,7 +70,7 @@
   <hr>
   <!-- 신청내역 시작 -->
   <div class="container-fluid py-4">
-    <h4>검사신청 내역</h4>
+    <h4>검사 신청 내역</h4>
     <div class="ps-4">
       <p>자재 검사 신청 내역에 있는 수량이 실제 수량과 다르다면 수정할 수 있습니다.</p>
     </div>
@@ -120,7 +120,7 @@
       <h1 class="modal-title fs-5" id="exampleModalLabel">신청 확인</h1>
     </template>
     <template v-slot:list>
-      <b>신청내역대로 저장하시겠습니까?</b>
+      <b>신청 내역대로 저장하시겠습니까?</b>
     </template>
   </Modal>
 
@@ -218,16 +218,22 @@ export default {
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.5 },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
         {
-          headerName: "실제수량", field: "ordQty", resizable: false, editable: true, cellStyle: { textAlign: "right" }, flex: 0.5,
+          headerName: "실제수량", field: "ordQty", resizable: false, editable: true, 
+          cellStyle: {
+            //border: "0.5px dashed #fb8c00", // 점선 테두리
+            cursor: "text", // 텍스트 커서
+            textAlign: "right",
+          },
+          flex: 0.5,
           cellRenderer: params => {
-            if (params.value) {
-              if (params.data.mName.includes('병')) {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
-                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-              } else {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
-                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-              }
+            if (params.value != null) {
+              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              return `
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <i class="fas fa-edit" style=" color: gray; margin-right: 5px;"></i>
+                  <span style="flex-grow: 1; text-align: right;">${formatted_t_qty}</span>
+                </div>
+              `;
             } else {
               return `<span style="text-align: right;"></span>`;
             }
@@ -361,6 +367,11 @@ export default {
       );
       // console.log(newRows);
       this.rowData2 = [...this.rowData2, ...newRows]; // rowData2에 추가
+      notify({
+        text: `검사 신청 내역에 추가 되었습니다.`,
+        // text: `기록된 불량 내역:${result.data.defectNum}`,
+        type: "success", // success, warn, error 가능
+      });
     },
 
     //생산내역 관련
@@ -369,16 +380,27 @@ export default {
       const nodeToDelete = this.gridApi.getDisplayedRowAtIndex(rowIndex).data;
       // 데이터 삭제
       this.rowData2 = this.rowData2.filter((row) => row.orderCode !== nodeToDelete.orderCode);
-
+      notify({
+        text: `신청된 건이 삭제되었습니다.`,
+        // text: `기록된 불량 내역:${result.data.defectNum}`,
+        type: "error", // success, warn, error 가능
+      });
       // console.log(nodeToDelete);
       // console.log(this.rowData2);
 
     },
     //초기화
     resetAll() {
+      if (this.rowData2.length != 0) {
+        this.searchOrderAll();
+        this.rowData2 = []; // 저장된 항목 초기화
+        notify({
+          text: `검사 처리 내역을 초기화 했습니다.`,
+          // text: `기록된 불량 내역:${result.data.defectNum}`,
+          type: "warn", // success, warn, error 가능
+        });
+      }
 
-      this.searchOrderAll();
-      this.rowData2 = []; // 저장된 항목 초기화
     },
 
 
@@ -391,7 +413,7 @@ export default {
     openModal() {
       if (this.rowData2.length == 0) {
         notify({
-          text: "신청내역이 비었습니다.",
+          text: "신청 내역이 비었습니다.",
           type: "error", // success, warn, error 가능
         });
         return;
@@ -449,7 +471,7 @@ export default {
         });
         return;
       }
-      else if(this.materialType === '개'&& !Number.isInteger(qty) ) {
+      else if (this.materialType === '개' && !Number.isInteger(qty)) {
         notify({
           text: "해당 자재의 수량은 소수로 입력할 수 없습니다.",
           type: "warn", // success, warn, error 가능
@@ -462,7 +484,10 @@ export default {
           ...this.rowData2[targetIndex],
           ordQty: qty * 1000, // 수량만 업데이트
         };
-
+        notify({
+          text: "자재의 수량을 수정했습니다.",
+          type: "success", // success, warn, error 가능
+        });
       }
       this.rowData2 = [...this.rowData2,];
       this.closeModal();
@@ -472,7 +497,10 @@ export default {
     closeModal() {
       this.isShowModal = false;
       this.isShowModalUpdate = false;
-    }
+    },
+
+
+
   },
   mounted() {
     this.bringIoginInfo();

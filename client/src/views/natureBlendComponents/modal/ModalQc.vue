@@ -10,8 +10,8 @@
           <slot name="list">slot</slot>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
           <button type="button" class="btn btn-success" @click="confirm">저장</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="closeModal">취소</button>
         </div>
       </div>
     </div>

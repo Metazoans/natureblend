@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h3 class="mb-3">공정검사-음료검사기록조회</h3>
+    <h3 class="mb-3">공정 검사-음료 검사 기록 조회</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h4 class="me-3">검색조건</h4>
+        <h4 class="me-3">검색 조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -16,8 +16,8 @@
           <select class="form-select text-center border cursor-pointer" v-model="searchInfo.qcState"
             aria-label="검사 상태 선택">
             <option value="qcs1">전체</option>
-            <option value="qcs2">검사완료</option>
-            <option value="qcs3">검사미완료</option>
+            <option value="qcs2">검사 완료</option>
+            <option value="qcs3">검사 미완료</option>
           </select>
         </div>
         <div v-if="searchInfo.qcState === 'qcs2'" class="col-md-1">
@@ -65,7 +65,7 @@
   <hr>
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
-    <h4>검사상세정보</h4>
+    <h4>검사 상세 정보</h4>
     <div class="ps-4">
       <p>조회할 검사 건을 선택하시면 자세한 검사 내용을 확인할 수 있습니다.</p>
     </div>
@@ -239,11 +239,11 @@ export default {
           case "pH":
             return `산도(${item.item_name})`;
           case "CFU":
-            return `총세균수(${item.item_name})`;
+            return `총 세균수(${item.item_name})`;
           case "Brix":
             return `당도(${item.item_name})`;
           case "PesticideResidues":
-            return `잔류농약(${item.item_name})`;
+            return `잔류 농약(${item.item_name})`;
           case "YeastAndMold":
             return `효모/곰팡이(${item.item_name})`;
           default:
@@ -510,6 +510,7 @@ export default {
     font-size: 1.2rem;
     font-weight: bold;
     color: #343a40;
+    background-color: #e8ebee;
     /* 헤더 텍스트 색상 */
   }
 
