@@ -6,7 +6,6 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h4 class="me-3">검색 조건</h4>
-        <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
       <div class="row gx-3 p-4 rounded border shadow search-background">
@@ -35,14 +34,14 @@
           <label for="startDate" class="form-label">검사일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
-              v-model="searchInfo.startDate" />
+              v-model="searchInfo.startDate" autocomplete="off" />
           </div>
         </div>
         <div class="col-md-2">
           <label for="endDate" class="form-label">검사일(까지)</label>
           <div class="d-flex gap-2">
-            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
-              v-model="searchInfo.endDate" />
+            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer" v-model="searchInfo.endDate"
+              autocomplete="off" />
           </div>
         </div>
 
@@ -50,13 +49,13 @@
         <div class="col-md-2">
           <label for="pName" class="form-label">제품명</label>
           <input type="search" id="pName" class="form-control border p-2 cursor-pointer" placeholder="제품명"
-            v-model="searchInfo.pName" />
+            v-model="searchInfo.pName" autocomplete="off" />
         </div>
 
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
-          <material-button size="md"  v-on:click="searchOrder">검색</material-button>
-          <material-button size="md" class="m-4"  color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" v-on:click="searchOrder">검색</material-button>
+          <material-button size="md" class="m-4" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
         </div>
       </div>
     </div>
@@ -72,8 +71,9 @@
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
-        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true" :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10"
-        style="height: 700px;" :noRowsOverlayComponent="noRowsOverlayComponent">
+        @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true"
+        :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10" style="height: 700px;"
+        :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
 
@@ -90,7 +90,6 @@
 
   <Modal :isShowModal="showModalRJC" @closeModal="closeModal">
     <template v-slot:title>
-      <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">음료검사 정보</h1> -->
       <h1 class="modal-title fs-5" id="exampleModalLabel">검사 상세 정보</h1>
     </template>
     <template v-slot:list>
@@ -107,11 +106,13 @@
             </tr>
             <tr v-if="selectedRow.inspecResult === '합격'">
               <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">검사 결과</th>
-              <td style="font-weight: bold; text-align: right; border: 1px solid #dee2e6; color: #007bff">{{ selectedRow.inspecResult }}</td>
+              <td style="font-weight: bold; text-align: right; border: 1px solid #dee2e6; color: #007bff">{{
+                selectedRow.inspecResult }}</td>
             </tr>
             <tr v-if="selectedRow.inspecResult === '불합격'">
               <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">검사 결과</th>
-              <td style="font-weight: bold; text-align: right; border: 1px solid #dee2e6; color: #f44335">{{ selectedRow.inspecResult }}</td>
+              <td style="font-weight: bold; text-align: right; border: 1px solid #dee2e6; color: #f44335">{{
+                selectedRow.inspecResult }}</td>
             </tr>
           </tbody>
         </table>
@@ -139,8 +140,8 @@
                 {{ item.input_value }} {{ item.item_unit }}
               </div>
             </div>
-            
-            
+
+
           </div>
         </div>
       </div>
@@ -333,9 +334,6 @@ export default {
       let searchResult = await axios.post(`${ajaxUrl}/${searchSelect}`, result)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
-      // console.log(searchSelect);
-      // console.log(result);
-      // console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
@@ -365,7 +363,6 @@ export default {
 
     //신청 건의 합격량, 불합격량(불량항목, 각각의 수량) 처리
     onCellClicked(event) {
-      // console.log('클릭됨');
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = event.data;
       this.showModalRJC = true;
@@ -427,12 +424,7 @@ export default {
     async callCompletedTestDetail() {
       let list = await axios.get(`${ajaxUrl}/recordQCPBDetails`)
         .catch(err => console.log(err));
-      // console.log(list.data[0]);
       this.completedTestDetails = list.data;
-      //console.log(this.completedTestDetails);
-
-
-
     }
 
 
@@ -441,7 +433,6 @@ export default {
     await this.callCompletedTestDetail();
     await this.callTestDetail();
     this.searchRequestAll();
-    // this.callFaultyCode();
   }
 
 
@@ -467,7 +458,7 @@ export default {
 }
 
 //검색창 라벨
-.mb-4{
+.mb-4 {
   label {
     font-weight: bold;
     margin-bottom: 5px;
@@ -476,12 +467,14 @@ export default {
 }
 
 //검색창 배경색
-.search-background{
-  background-color: #e9ecef; /* 원하는 배경색 */
+.search-background {
+  background-color: #e9ecef;
+  /* 원하는 배경색 */
 
 
-  input, .form-select {
-    background-color: #ffffff; /* input 요소의 배경을 투명으로 설정 */
+  input,
+  .form-select {
+    background-color: #ffffff;
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;
@@ -498,6 +491,7 @@ export default {
 
 //모달
 .modal-css {
+
   .table th,
   .table td {
     font-size: 1.1rem;
@@ -514,15 +508,13 @@ export default {
     /* 헤더 텍스트 색상 */
   }
 
-  // b {
-  //   font-size: 1rem;
-  //   color: #000;
-  //   margin-bottom: 15px;
-  //   display: block;
-  // }
+  .table td {
+    color: #333333;
+    // font-weight: bold;
+  }
 
   .inspection-item {
-    
+
     .item-name {
       font-weight: bold;
       font-size: 1.3rem;
