@@ -83,7 +83,7 @@ const bomByProduct = `
 //     limit_date,
 //     (select sum(material_qty)
 // from invalid_material i
-// where m1.lot_code = i.lot_code) as invalid_qty
+// where m1.lot_seq = i.lot_seq) as invalid_qty
 // from material_lot_qty1 m1 inner join material m2
 // on m1.material_code = m2.material_code
 // where material_nomal = 'b1'
@@ -131,12 +131,20 @@ const prodOrderList = `
     from production_order po
              join production_plan pp
     where po.plan_num = pp.plan_num
+    order by production_order_num desc
 `
 
 const deleteProdOrder = `
   delete from production_order
   where production_order_num in (?)
 `
+
+const deleteProcessWork = `
+    delete from process_work_header
+    where production_order_num in (?)
+`
+
+
 
 module.exports = {
     waitingPlanList,
@@ -147,5 +155,6 @@ module.exports = {
     insertHoldingStock,
     insertProcessWork,
     prodOrderList,
-    deleteProdOrder
+    deleteProdOrder,
+    deleteProcessWork
 }

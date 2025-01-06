@@ -121,27 +121,13 @@ export default {
               .catch(err => console.log(err));
       let materialList = result.data
 
-      let isFirstNoti = true
       materialList.forEach((item) => {
-        let stockAmount = (item.stok_qty - item.invalid_qty) > 0 ? (item.stok_qty - item.invalid_qty) : 0
-
-        if(!stockAmount && isFirstNoti) {
-          this.$notify({
-            text: "재고가 부족합니다.",
-            type: 'error',
-          });
-          isFirstNoti = false
-          this.$emit('checkStockEnough', false)
-        } else if(stockAmount && isFirstNoti){
-          this.$emit('checkStockEnough', true)
-        }
-
         let row = {
           stockLotSeq: item.lot_seq,
           stockLot: item.lot_code,
           stockMaterialName: item.material_name,
           stockMaterialCode: item.material_code,
-          stockAmount: stockAmount,
+          stockAmount: item.stok_qty - (item.invalid_qty === null ? 0 : item.invalid_qty),
           expiryDate: item.limit_date.split('T')[0]
         }
         this.rowDataStock.push(row)
@@ -200,13 +186,6 @@ export default {
 
         this.searchProduct = this.searchPlan.product_name
 
-        // this.searchProduct = this.searchPlan.product_name + ' '
-        // if(this.searchPlan.capacity > 1000) {
-        //   this.searchProduct += (this.searchPlan.capacity / 1000) + 'L'
-        // } else {
-        //   this.searchProduct += this.searchPlan.capacity + 'ML'
-        // }
-
         this.getProcessFlow(this.searchPlan.product_code)
         await this.getBom(this.searchPlan.product_code)
         await this.getMaterialStock()
@@ -240,6 +219,15 @@ export default {
 
   watch: {
     'orderInfo.prodOrderQty': {
+      handler() {
+        setTimeout(() => {
+          this.$emit('updateNeedStock')
+        }, 10)
+      },
+      deep: true
+    },
+
+    orderInfo: {
       handler() {
         this.$emit('updateInputData', this.orderInfo)
       },

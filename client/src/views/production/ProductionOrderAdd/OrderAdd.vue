@@ -9,10 +9,10 @@
         <OrderAddForm
             @setRowDataNeed="setRowDataNeed"
             @setRowDataStock="setRowDataStock"
+            @updateNeedStock="updateNeedStock"
             @updateInputData="updateInputData"
             @getProcessFlow="getProcessFlow"
             @getSearchPlan="getSearchPlan"
-            @checkStockEnough="checkStockEnough"
             :isOrderAddFormReset="isOrderAddFormReset"
         />
 
@@ -85,7 +85,6 @@ export default {
 
   data() {
     return {
-      isStockEnough: true,
       modalTitle: '생산지시 등록',
       isShowModal: false,
       theme: theme,
@@ -99,7 +98,19 @@ export default {
       columnDefsStock: [
         { headerName: "자재Lot번호", field: 'stockLot', cellStyle: { textAlign: 'center' }, flex: 1},
         { headerName: "자재명", field: 'stockMaterialName', flex: 1 },
-        { headerName: "용량(g 또는 ml)", field: 'stockAmount', cellStyle: { textAlign: 'right' }, flex: 1 },
+        {
+          headerName: "용량(g 또는 ml)",
+          field: 'stockAmount',
+          cellStyle: { textAlign: 'right' },
+          flex: 1,
+          cellRenderer: (params) => {
+            if(params.value < 0) {
+              return 0
+            } else {
+              return params.value
+            }
+          }
+        },
         { headerName: "유통기한", field: 'expiryDate', cellStyle: { textAlign: 'center' }, flex: 1 },
         { headerName: "자재코드", field: 'stockMaterialCode', hide: true },
         {
@@ -168,10 +179,6 @@ export default {
   },
 
   methods: {
-    checkStockEnough(bool) {
-      this.isStockEnough = bool
-    },
-
     focusOnCell() {
       this.gridApi.ensureIndexVisible(0)
       this.gridApi.ensureColumnVisible('useAmount')
@@ -191,13 +198,7 @@ export default {
       // cell 편집 후 focusout 됐을 때 트리거됨
     },
 
-    updateInputData(orderInfo) {
-      if(!orderInfo.prodOrderQty) {
-        return
-      }
-
-      this.orderInfo = orderInfo
-
+    updateNeedStock() {
       // 원본 값 저장 (초기화되지 않도록 설정)
       if (this.originalRowDataNeed.length === 0) {
         this.originalRowDataNeed = JSON.parse(JSON.stringify(this.rowDataNeed))
@@ -209,6 +210,14 @@ export default {
           needAmount: data.needAmount * this.orderInfo.prodOrderQty
         }
       })
+    },
+
+    updateInputData(orderInfo) {
+      if(!orderInfo.prodOrderQty) {
+        return
+      }
+
+      this.orderInfo = orderInfo
     },
 
     getProcessFlow(processFlow) {
@@ -244,13 +253,41 @@ export default {
       this.isShowModal = false
     },
 
+    isStockInShort() {
+      // rowDataStock을 group by 자재명으로.
+      let newRowDataStock = []
+
+      this.rowDataStock.forEach((stock) => {
+        if((newRowDataStock.filter((item) => item.stockMaterialName === stock.stockMaterialName)).length) {
+          newRowDataStock.forEach((newData) => {
+            if((newData.stockMaterialName === stock.stockMaterialName) && stock.stockAmount > 0) {
+              newData.stockAmount += stock.stockAmount
+            }
+          })
+        } else {
+          newRowDataStock.push({ stockMaterialName: stock.stockMaterialName, stockAmount: stock.stockAmount > 0 ? stock.stockAmount : 0 })
+        }
+      })
+
+      let isStop = false
+      this.rowDataNeed.forEach((needStock) => {
+        newRowDataStock.forEach((newData) => {
+          if((needStock.needMaterialName === newData.stockMaterialName) && (needStock.needAmount > newData.stockAmount) && !isStop) {
+            this.$notify({
+              text: "재고가 부족합니다.",
+              type: 'error',
+            });
+            this.closeModal()
+            isStop = true
+          }
+        })
+      })
+
+      return isStop
+    },
+
     async confirm() {
-      if(!this.isStockEnough) {
-        this.$notify({
-          text: "재고가 부족합니다.",
-          type: 'error',
-        });
-        this.closeModal()
+      if(this.isStockInShort()) {
         return
       }
 
@@ -380,7 +417,6 @@ export default {
 
     onGridReady(params) {
       this.gridApi = params.api;
-      // this.gridApi.sizeColumnsToFit();
     },
   }
 

@@ -61,6 +61,16 @@ const deleteProdOrder = async (prodOrderNums)=>{
     }
 }
 
+const deleteProcessWork = async (prodOrderNums)=>{
+    let result = await mysql.query('deleteProcessWork', [prodOrderNums])
+
+    if(result.affectedRows > 0) {
+        return { message: 'success' }
+    } else {
+        return { message: 'fail' }
+    }
+}
+
 module.exports = {
     findWaitingPlanList,
     findProcessFlow,
@@ -70,5 +80,6 @@ module.exports = {
     addHoldingStock,
     addProcessWork,
     prodOrderList,
-    deleteProdOrder
+    deleteProdOrder,
+    deleteProcessWork
 }
