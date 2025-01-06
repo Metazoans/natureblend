@@ -1,5 +1,6 @@
 <!--자재 관리 메뉴-->
 <template>
+   <div class="partList container-fluid py-4">
     <div>
        <h3>&nbsp;&nbsp;자재 관리</h3>
     </div>
@@ -7,41 +8,46 @@
  <div class="main-container">
     <div class="content" style="height: 130px; margin: 20px;">
        <form class="row gx-3 gy-2 align-items-center">
+         <div class="d-flex">
+            <div class="p-2 flex-fill">
           <!-- 자재코드 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="materialCode">자재코드</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" >
+             <div class="col-sm-8">
+               <label class="col-form-label fw-bold" for="materialCode">자재코드</label>
+               <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" >
+             <!-- 자재명 -->
+             <div class="col-sm-12">
+                <label class="col-form-label fw-bold" for="materialName">자재명</label>
+                <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialName" v-model="materialName" >
+             </div>
           </div>
- 
-          <!-- 자재명 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="materialName">자재명</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialName" v-model="materialName" >
+         </div>
+         <div class="p-2 flex-fill">
+            <!-- 안전재고 -->
+            <div class="col-sm-8">
+               <label class="col-form-label fw-bold" for="safetyInventory">안전재고(g,개)</label>
+               <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="safetyInventory" v-model="safetyInventory" >
+            </div>
+            <!-- 유통기한 -->
+            <div class="col-sm-8">
+               <label class="col-form-label fw-bold" for="expirationDate">유통기한</label>
+               <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="expirationDate" v-model="expirationDate" >
+            </div>
+            
+         </div>
+         <div class="p-2 flex-fill">
+            <!-- 등록일 -->
+            <div class="col-sm-8">
+               <label class="col-form-label fw-bold" for="regiDate">등록일</label>
+               <input type="date" readonly class="form-control" style="background-color: white; padding-left: 20px;" id="regiDate" v-model="regiDate" >
+            </div>
+            <div class="p-2 flex-fill">
+               <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+               <button style="position:relative; width:120px ; top:29px;" type="button" class="btn btn-warning me-5" @click="refresh"  >새로고침</button>
+            </div>
+
           </div>
- 
-          <!-- 안전재고 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="safetyInventory">안전재고(g,개)</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="safetyInventory" v-model="safetyInventory" >
-          </div>
- 
-          <!-- 유통기한 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="expirationDate">유통기한</label>
-             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="expirationDate" v-model="expirationDate" >
-          </div>
- 
-          <!-- 등록일 -->
-          <div class="col-sm-2">
-             <label class="col-form-label fw-bold" for="regiDate">등록일</label>
-             <input type="date" readonly class="form-control" style="background-color: white; padding-left: 20px;" id="regiDate" v-model="regiDate" >
-          </div>
- 
-          <!-- 저장 버튼 -->
-          <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
-          </div>
-       </form>
+         </div>
+      </form>
     </div>
  </div>
  <!-- 검색 메뉴 레이아웃 끝 -->
@@ -58,6 +64,7 @@
        @cellClicked="onCellClicked"
     >
     </ag-grid-vue>
+ </div>
  </div>
  </template>
  <script>
@@ -79,7 +86,18 @@
        columnDefs: [
          { headerName: "자재코드", field: "material_code", width: 220 },
          { headerName: "자재이름", field: "material_name" },
-         { headerName: "안전재고(g, 개)", field: "safety_inventory" ,cellStyle: { textAlign: 'right' }},
+         { headerName: "안전재고(g, 개)", 
+           field: "safety_inventory" ,
+           cellStyle: { textAlign: 'right'} ,
+           cellRenderer: params => {
+               if (params.value != null) {
+               const formatted_t_qty = Number(params.value).toLocaleString();
+               return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+               } else {
+               return `<span style="text-align: right;"></span>`;
+               }
+            },
+         },
          { headerName: "유통기한(일)", field: "expiration_date" ,cellStyle: { textAlign: 'right' }},
          { headerName: "등록일", field: "regi_date",cellStyle: { textAlign: 'center' } },
          {
@@ -129,18 +147,16 @@
        theme:theme,
      };
    },
-   ...mapMutations(["addLoginInfo"]),
-      async checkLogin(){
-          this.loginInfo = this.$store.state.loginInfo;
-          console.log('직업',this.loginInfo);
-          if(this.loginInfo.job === '관리자'){
-            console.log('성공');
-          }else{
-              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
-              this.$router.push({ name : 'MainPage' });
-          }
-      },
    methods: {
+      refresh(){
+         this.materialList();
+         this.upin = '';
+         this.materialCode = '';
+         this.materialName = '';
+         this.safetyInventory = '';
+         this.expirationDate = '';
+         this.regiDate = '';
+      },
       ...mapMutations(["addLoginInfo"]),
       async checkLogin(){
           this.loginInfo = this.$store.state.loginInfo;
@@ -148,7 +164,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능합니다.', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -255,6 +271,7 @@
  
  <style lang="scss" scoped>
  .main-container{
+     height: 220px;
      background-color:  #e9ecef;
      margin-left: 20px;
      margin-right: 20px;
@@ -273,4 +290,9 @@
        background-color: $white;
        border: solid 1px  ;
  }
+ input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
  </style>

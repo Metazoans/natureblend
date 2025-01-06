@@ -1,5 +1,6 @@
 <!--거래처 관리 메뉴-->
 <template>
+  <div class="partList container-fluid py-4">
    <div>
        <h3>&nbsp;&nbsp;거래처 관리</h3>
    </div>
@@ -21,21 +22,7 @@
                             <label class="col-form-label fw-bold" for="comName">업체명</label>
                             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="comName" v-model="comName" >
                          </div>
-                        <!-- 대표자 -->
-                        <div class="mb-3">
-                           <label class="col-form-label fw-bold" for="boss">대표자</label>
-                           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="boss" v-model="boss" >
-                        </div>
-                            <!-- 담당자 -->
-                            <div class="mb-3">
-                               <label class="col-form-label fw-bold" for="empName">담당자</label>
-                               <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="empName" v-model="empName" >
-                           </div>
-                         <!-- 거래분류 -->
-                         <div class="mb-3">
-                            <label class="col-form-label fw-bold" for="trade">거래분류</label>
-                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="trade" v-model="trade" >
-                         </div>
+
                      </div>
                      <div class="p-2 flex-fill">
                          <!-- 사업자번호 -->
@@ -43,23 +30,45 @@
                             <label class="col-form-label fw-bold" for="comNum">사업자번호</label>
                             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="comNum" v-model="comNum" >
                          </div>
-                           <!-- 주소 -->
-                           <div class="mb-3">
-                           <label class="col-form-label fw-bold" for="address">주소</label>
-                           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="address" v-model="address" >
+                          <!-- 거래분류 -->
+                          <div class="mb-3">
+                            <label class="col-form-label fw-bold" for="trade">거래분류</label>
+                            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="trade" v-model="trade" >
                          </div>
-                         <!-- 대표연락처 -->
-                         <div class="mb-3">
+                     </div>
+                   </div>
+                          <!-- 주소 -->
+                          <div class="mb-1">
+                           <label class="col-form-label fw-bold" for="address">주소</label>
+                           <input type="text" class="form-control" style="background-color: white; margin-left: 8px; width: 384px; padding-left: 20px; " id="address" v-model="address"  autocomplete="off"  >
+                         </div>
+                   <div class="d-flex">
+                     <div class="p-2 flex-fill">
+                      <!-- 대표자 -->
+                      <div class="mb-3">
+                         <label class="col-form-label fw-bold" for="boss">대표자</label>
+                         <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="boss" v-model="boss" >
+                      </div>
+                      <!-- 담당자 -->
+                      <div class="mb-3">
+                          <label class="col-form-label fw-bold" for="empName">담당자</label>
+                          <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="empName" v-model="empName" >
+                      </div>
+
+                    </div>
+                    <div class="p-2 flex-fill">
+                          <!-- 대표연락처 -->
+                          <div class="mb-3">
                             <label class="col-form-label fw-bold" for="bossTel">대표연락처</label>
                             <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="bossTel" v-model="bossTel" >
-                         </div>
+                          </div>
 
                            <!-- 담당자연락처 -->
                            <div class="mb-3">
                                <label class="col-form-label fw-bold" for="empTel">담당자연락처</label>
                                <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="empTel" v-model="empTel" >
                            </div>
-                     </div>
+                    </div>
                    </div>
              <!-- 버튼 -->
              <div class="col-sm-5">
@@ -100,6 +109,7 @@
       @deleteConfirmed="onDeleteConfirmed"
       @deleteCancelled="onDeleteCancelled"
    />
+   </div>
     </template>
     <script>
     import axios from 'axios';
@@ -129,7 +139,7 @@
           columnDefs: [
             { headerName:"업체명" , field:"com_name"},
             { headerName:"주소" , field:"address"},
-            { headerName:"거래분류" , field:"trade"},
+            { headerName:"거래분류" , field:"trade" , cellStyle: { textAlign: 'center' }},
             {
               headerName: "거래처삭제",
               field: "삭제",

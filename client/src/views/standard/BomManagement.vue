@@ -1,25 +1,26 @@
 <template>
+  <div class="partList container-fluid py-4">
   <div class="d-flex">
       <div class="form-container">
           <h3> BOM 관리 </h3>
           <div class="search pe-md-3 d-flex align-items-center ms-md-auto">
               <div class="d-flex align-items-center">
                   <span>BOM번호</span>
-                  <input v-model="searchBomnum" readonly id="search-bomnum" type="text" class="form-control"/>
+                  <input v-model="searchBomnum"  autocomplete="off"  readonly id="search-bomnum" type="text" class="form-control"/>
               </div>
               <div class="d-flex align-items-center">
                   <span>제품코드</span>
-                  <input v-model="searchProductcode" placeholder="클릭해서 제품코드 선택" id="search-productcode" type="text" class="form-control" @click = "openModal('productCodeModal')" />
+                  <input v-model="searchProductcode"  autocomplete="off"  placeholder="클릭해서 제품코드 선택" id="search-productcode" type="text" class="form-control" @click = "openModal('productCodeModal')" />
               </div>
           </div>
           <div class="search pe-md-3 d-flex align-items-center ms-md-auto">
               <div class="d-flex align-items-center">
                   <span>제품명</span>
-                  <input v-model="searchProduct" id="product-search" type="text" class="form-control" readonly/>
+                  <input v-model="searchProduct" id="product-search"  autocomplete="off"  type="text" class="form-control" readonly/>
               </div>
               <div class="d-flex align-items-center ms-md-3">
                   <span>용량</span>
-                  <input v-model="searchCapacity" id="capacity-search" type="text" class="form-control" readonly/>
+                  <input v-model="searchCapacity"  autocomplete="off"  id="capacity-search" type="text" class="form-control" readonly/>
               </div>
           </div>
           
@@ -107,6 +108,7 @@
    @selectMaterial = "setSelectMaterial"
    >
   </materialModal>
+  </div>
   </div>
 </template>
 

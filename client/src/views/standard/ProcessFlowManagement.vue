@@ -1,4 +1,5 @@
 <template>
+  <div class="partList container-fluid py-4">
     <div class = "title" >
        <h3>공정 흐름도 관리</h3>
     </div>
@@ -33,6 +34,7 @@
         style="z-index : '-1';"
         >
     </processflowModal>
+</div>
 </div>
 </template>
 <script>
@@ -173,5 +175,10 @@ import { mapMutations } from "vuex";
 input {
       background-color: white;
       border: solid 1px  ;
+}
+input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
 }
 </style>
