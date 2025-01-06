@@ -148,7 +148,7 @@ export default{
             theme : theme,
             rowData : [],
             columnOrderlist : [
-            { headerName : "출고번호", field:'output_num',flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "출고번호", field:'output_num',flex: 2,cellStyle: { textAlign: "right" }},
             { headerName : "주문서명", field:'orderlist_title' ,flex: 4,cellStyle: { textAlign: "left" }},
             { headerName : "거래처명",field:'com_name' ,flex: 3,cellStyle: { textAlign: "left" }},
             { headerName : "제품코드",field:'product_code' ,flex: 2,cellStyle: { textAlign: "center" }},
@@ -274,7 +274,7 @@ export default{
             //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
             //페이징 영역에 버튼 만들기 
             const allPanels = document.querySelectorAll('.ag-paging-panel');
-            const paginationPanel = allPanels[0];
+            const paginationPanel = allPanels[2];
             if (paginationPanel) {
                // 컨테이너 생성
                const container = document.createElement('div');

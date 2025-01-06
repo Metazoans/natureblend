@@ -79,7 +79,7 @@
                     <div class="d-flex flex-column justify-content-center ps-5 pt-5" style="height: 200px;">
                             <!--담당자 선택 -->
                         <div class="row align-items-center mb-3">
-                            <label class="col-sm-3 col-form-label fw-bold" >담당자</label>
+                            <label class="col-sm-3 col-form-label fw-bold" >담당자<span>*</span></label>
                             <div class="col-sm-9 d-flex">
                                 <input id="EmpName"  class="form-control border p-2" v-model="searchEmpName" @click="openModal('emp')" readonly/>
                                     <Modal
@@ -97,7 +97,7 @@
                             </div>    
                         </div>
                         <div class="row align-items-center mb-3">
-                            <label class="col-sm-3 col-form-label fw-bold" >창고</label>
+                            <label class="col-sm-3 col-form-label fw-bold" >창고<span>*</span></label>
                             <div class="col-sm-9 d-flex">
                                 <input 
                                     id="EmpName"  class="form-control border p-2" 
@@ -120,7 +120,7 @@
                     </div> 
                     <!--검색 및 초기화-->
                     <div class=" pt-5 text-center ">
-                        <material-button  color="success" class="button" @click="tempInputInfo">입고</material-button>
+                        <material-button  color="success" class="button" @click="tempInputInfo">추가</material-button>
                         <material-button color="warning" class="button" @click="resetEmpWar">초기화</material-button>
                     </div>
                 </div>
@@ -148,7 +148,7 @@
             </div>
             <!--검색 및 초기화-->
             <div class=" pt-5 text-center " v-show="tempInput.length != 0">
-                <material-button  color="success" class="button" @click="inputInsert">등록</material-button>
+                <material-button  color="success" class="button" @click="inputInsert">입고</material-button>
                 <material-button color="warning" class="button" @click="resetTempInput">초기화</material-button>
             </div>
         
@@ -564,7 +564,7 @@ export default{
             if (uniqueEmployeeNums.size > 1) {
                 this.$notify({
                     text: "선택된 입고에 담당자가 여러 명 있습니다. 한 명만 선택하세요.",
-                    type: 'warning',
+                    type: 'error',
                 });
                 return; // 함수 종료
             }

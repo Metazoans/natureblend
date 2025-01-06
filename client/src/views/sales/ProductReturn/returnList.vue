@@ -154,7 +154,7 @@ export default{
             { headerName : "거래처명",field:'com_name',resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "left" }},
             { headerName : "제품LOT번호",field:'product_lot',resizable: true, sortable: true,flex: 3,cellStyle: { textAlign: "center" }},
             { headerName : "제품코드",field:'product_code',resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "center" }},
-            { headerName : "제품명",field:'product_name',resizable: true, sortable: true,flex: 3,cellStyle: { textAlign: "right" }},
+            { headerName : "제품명",field:'product_name',resizable: true, sortable: true,flex: 3,cellStyle: { textAlign: "left" }},
             { headerName : "출고량"
             ,field:'output_amount'
             ,resizable: true
@@ -174,7 +174,7 @@ export default{
             , sortable: true
             ,flex: 2
             ,cellStyle: { textAlign: "right",
-                         backgroundColor: "#fff", // 연한 배경색
+                         //backgroundColor: "#fff", // 연한 배경색
                         //border: "0.5px dashed #fb8c00", // 점선 테두리
                         cursor: "text", // 텍스트 커서
              }
@@ -183,16 +183,13 @@ export default{
                         const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
                         return `
                                     <span style="display: flex; align-items: center; justify-content: flex-start;">
-                                        <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
-                                            width=15 height=15 
-                                            style="margin-right: 5px;" 
-                                            title="더블클릭하여 수정 가능합니다" />
+                                        <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
                                         <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
                                     </span>
                                 `;
                     }else{
                          // 값이 없을 경우 수정 가능 아이콘 추가
-                        return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                        return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
                     }
             }},
             { headerName : "담당자",field:'name',resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "left" }},
@@ -203,8 +200,8 @@ export default{
             , sortable: true
             ,flex: 4
             ,cellStyle: {
-                         textAlign: "left",
-                         backgroundColor: "#fff", // 연한 배경색
+                         textAlign: "right",
+                        //backgroundColor: "#fff", // 연한 배경색
                         //border: "0.5px dashed #fb8c00", // 점선 테두리
                         cursor: "text", // 텍스트 커서
             }
@@ -212,17 +209,14 @@ export default{
                     if(params.value){
                         const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
                         return `
-                                    <span style="display: flex; align-items: center; justify-content: flex-start;">
-                                        <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
-                                            width=15 height=15 
-                                            style="margin-right: 5px;" 
-                                            title="더블클릭하여 수정 가능합니다" />
-                                        <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
+                                    <span style="display: flex; align-items: center; justify-content: text-start;">
+                                        <span style="flex-grow: 1;  text-align: left;">${formattedValue}</span>
+                                        <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
                                     </span>
                                 `;
                     }else{
                          // 값이 없을 경우 수정 가능 아이콘 추가
-                        return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                        return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
                     }
             }},
             ],

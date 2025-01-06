@@ -8,6 +8,7 @@
       @grid-ready="onReady"
       :noRowsOverlayComponent="noRowsOverlayComponent"
       rowSelection="multiple"
+      :quickFilterText="inputListsearch"
       @rowClicked="onRowClicked"
       :pagination="true"
       :paginationPageSize="10"
@@ -60,7 +61,7 @@ export default {
       theme : theme,
       rowData : [],
       columnDefs : [
-        { headerName : "주문서번호", field:'orderlist_num',resizable: true, sortable: true ,cellStyle: { textAlign: "center" },flex: 2},
+        { headerName : "주문서번호", field:'orderlist_num',resizable: true, sortable: true ,cellStyle: { textAlign: "right" },flex: 2},
         { headerName : "주문서명", field:'orderlist_title',editable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 4},
         { headerName : "거래처명",field:'com_name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
         { headerName : "담당자",field:'name',resizable: true, sortable: true ,cellStyle: { textAlign: "left" },flex: 2},
@@ -119,7 +120,7 @@ export default {
               //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
               inputText.addEventListener('input',(event)=>{
                   const value = event.target.value;
-                  console.log("입력된 값:", value);
+                  console.log("입력된 값1:", value);
 
                   //검색로직추가기능
                   this.inputListsearch = value;
@@ -232,7 +233,7 @@ export default {
             if (newProductNums.some(num => num === '' || num === null) || newPerPrices.some(price => price === '' || price === null)) {
                 this.$notify({
                     text: `주문 수량과 가격을 입력해주세요.`,
-                    type: 'error',
+                    type: 'warn',
                 });
                 return;  // 추가 작업 진행하지 않음
             }

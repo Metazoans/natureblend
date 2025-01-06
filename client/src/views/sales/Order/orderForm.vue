@@ -10,11 +10,11 @@
                             <input type="text" class="form-control" id="orderlistNum" v-model="orderlistNum" readonly>
                         </div>
                         <div class="sm-2">
-                            <label class="col-form-label fw-bold" for="orderlistName">주문서명</label>
+                            <label class="col-form-label fw-bold" for="orderlistName">주문서명<span> *</span></label>
                             <input type="text" class="form-control" id="orderlistName" v-model="orderName">
                         </div>
                         <div class="col-sm-4">
-                            <label class="col-form-label fw-bold" for="clientName">거래처명</label>
+                            <label class="col-form-label fw-bold" for="clientName">거래처명<span> *</span></label>
                             <div class="input-group">
                             <input type="text" class="form-control" id="clientName" @click="openModal('client')" v-model="searchCom.com_name" readonly>
                         </div>
@@ -32,7 +32,7 @@
                         </Modal>
                         </div>
                         <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="EmpName">담당자</label>
+                            <label class="col-form-label fw-bold" for="EmpName">담당자<span> *</span></label>
                             <div class="input-group">
                             <input type="text" v-if="searchEmpName.name" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name" readonly>
                             <input type="text" v-else class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName" readonly>
@@ -51,7 +51,7 @@
                             </Modal>
                         </div>
                         <div class="col-sm-4">
-                            <label class="col-form-label fw-bold" for="dueDate">납기일자</label>
+                            <label class="col-form-label fw-bold" for="dueDate">납기일자<span> *</span></label>
                             <div class="input-group">
                             <input type="date" class="form-control" id="dueDate" v-model="dueDate">
                             </div>
@@ -75,7 +75,7 @@
                             <input type="text" class="form-control" id="productCode" v-model="material.productCode" readonly>
                         </div>
                         <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="productName">제품명</label>
+                            <label class="col-form-label fw-bold" for="productName">제품명<span> *</span></label>
                             <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product',index)" readonly>
                         </div>
                         <Modal
@@ -91,13 +91,13 @@
                             </template>
                         </Modal>
                         <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="orderNum">주문수량</label>
+                            <label class="col-form-label fw-bold" for="orderNum">주문수량<span> *</span></label>
                             <div class="input-group">
                             <input type="text" class="form-control" id="orderNum" v-model="material.productNum">
                             </div>
                         </div>
                         <div class="col-sm-2">
-                            <label class="col-form-label fw-bold"  for="perSale">개당가격</label>
+                            <label class="col-form-label fw-bold"  for="perSale">개당가격<span> *</span></label>
                             <div class="input-group">
                             <input type="text" class="form-control" id="perSale" v-model="material.perPrice">
                             </div>
@@ -330,11 +330,25 @@ export default{
         let productCodes = []
         let productNums = []
         let perPrices = []
+        //유효하지 않는 행 체크 
+        let invalidRows = [];
         this.materials.forEach((orderInfo)=>{
-            productCodes.push(orderInfo.productCode);
-            productNums.push(orderInfo.productNum);
-            perPrices.push(orderInfo.perPrice);
-        })
+            if(!orderInfo.productCode || !orderInfo.productNum || !orderInfo.perPrice){
+                invalidRows.push(orderInfo);
+            }else{
+                productCodes.push(orderInfo.productCode);
+                productNums.push(orderInfo.productNum);
+                perPrices.push(orderInfo.perPrice);
+            } 
+        });
+         // 유효하지 않은 행이 있으면 알림 띄우고 중단
+         if (invalidRows.length > 0) {
+            this.$notify({
+                text: '제품명,주문수량,개당가격은 필수 값입니다.',
+                type: 'error',
+            });
+            return;
+        }
 
         let orderInfo = {
             orderName : this.orderName,
