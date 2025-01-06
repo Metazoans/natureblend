@@ -160,6 +160,12 @@
             this.$notify({ text: '수정되었습니다.', type: 'success' });
             this.returnInsert(this.newList);
          } else {
+            for(let i = 0; i < this.rowData.length; i++){
+               if(this.rowData[i].return_code === this.returnCode){
+                  this.$notify({ text: '이미 존재하는 반품코드입니다.', type: 'error' });
+                  return;
+               }
+            }
             this.$notify({ text: '등록되었습니다.', type: 'success' });
             this.returnInsert(this.newList);
          }
