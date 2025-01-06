@@ -196,7 +196,7 @@ export default {
           cellRenderer: params => {
             if (params.value) {
               if (params.data.mName.includes('병')) {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                const formatted_t_qty = Number(params.value).toLocaleString() + ' 개';
                 return `<span style="text-align: right;">${formatted_t_qty}</span>`;
               } else {
                 const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
@@ -223,7 +223,7 @@ export default {
           flex: 0.5,
           cellRenderer: params => {
             if (params.value != null) {
-              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              const formatted_t_qty = (params.data.mName.includes('병') ? (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
               return `
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <i class="fas fa-edit" style=" color: gray; margin-right: 5px;"></i>
@@ -357,7 +357,7 @@ export default {
       );
       this.rowData2 = [...this.rowData2, ...newRows]; // rowData2에 추가
       notify({
-        text: `검사 신청 내역에 추가 되었습니다.`,
+        text: `${newRows.length}개의 건이 추가되었습니다.`,
         type: "success", // success, warn, error 가능
       });
     },
@@ -432,11 +432,13 @@ export default {
       this.selectedRow = JSON.parse(JSON.stringify(event.data));
       if (this.selectedRow.mName.includes('병')) {
         this.materialType = '개';
+        this.editedQuantity = this.selectedRow.ordQty;
       } else {
         this.materialType = 'kg';
+        this.editedQuantity = this.selectedRow.ordQty * 0.001;
 
       }
-      this.editedQuantity = this.selectedRow.ordQty * 0.001;
+      
       this.isShowModalUpdate = true;
     },
 
@@ -455,11 +457,21 @@ export default {
         });
         return;
       }
+      
+      //단위에 따라 다르게 처리
+      switch(this.materialType){
+        case 'kg':
+          qty= qty *1000;
+          break;
+        case '개':
+          break;
+      }
+      
       const targetIndex = this.rowData2.findIndex(row => row.orderCode === orderCD);
       if (targetIndex !== -1) {
         this.rowData2[targetIndex] = {
           ...this.rowData2[targetIndex],
-          ordQty: qty * 1000, // 수량만 업데이트
+          ordQty: qty, // 수량만 업데이트
         };
         notify({
           text: "자재의 수량을 수정했습니다.",

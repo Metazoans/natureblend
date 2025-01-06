@@ -117,7 +117,8 @@ export default {
           headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              const formatted_t_qty = (params.data.mName.includes('병') ? (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
+              // Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
               return `<span style="text-align: right;">${formatted_t_qty}</span>`;
             } else {
               return `<span style="text-align: right;"></span>`;
@@ -129,7 +130,7 @@ export default {
           cellRenderer: params => {
             if (params.value != null) {
               if (params.data.mName.includes('병')) {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                const formatted_t_qty = Number(params.value).toLocaleString() + ' 개';
                 return `<span style="text-align: right;">${formatted_t_qty}</span>`;
               } else {
                 const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
@@ -145,7 +146,7 @@ export default {
           cellRenderer: params => {
             if (params.value != null) {
               if (params.data.mName.includes('병')) {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
+                const formatted_t_qty = Number(params.value).toLocaleString() + ' 개';
                 return `<span style="text-align: right;">${formatted_t_qty}</span>`;
               } else {
                 const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
@@ -194,7 +195,7 @@ export default {
           "passQnt": item.pass_qnt,
           "rjcQnt": item.rjc_qnt,
           "inspecStart": this.dateFormat(item.inspec_start, 'yyyy-MM-dd hh:mm:ss'),
-          "inspecEnd": item.inspec_end === ""
+          "inspecEnd": item.inspec_end === null
             ? "" : this.dateFormat(item.inspec_end, 'yyyy-MM-dd hh:mm:ss'),
           "inspecStatus": item.inspec_status
         });
