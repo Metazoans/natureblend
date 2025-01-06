@@ -161,6 +161,12 @@
             this.faultyInsert(this.newList);
          } else {
             // 등록 기능 (불량코드가 중복되지 않으면 등록)
+            for(let i = 0; i < this.rowData.length; i++){
+               if(this.rowData[i].faulty_code === this.faultyCode){
+                  this.$notify({ text: '이미 존재하는 불량코드입니다.', type: 'error' });
+                  return;
+               }
+            }
             this.$notify({ text: '등록되었습니다.', type: 'success' });
             this.faultyInsert(this.newList);
          }
