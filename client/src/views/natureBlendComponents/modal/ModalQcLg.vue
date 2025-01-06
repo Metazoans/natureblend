@@ -1,8 +1,8 @@
 <template>
   <div class="modal fade" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header" style="background-color: #e9ecef;">
           <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">확인</h1> -->
           <slot name="title">title</slot>
         </div>
@@ -10,8 +10,8 @@
           <slot name="list">slot</slot>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
           <button type="button" class="btn btn-success" @click="confirm">저장</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="closeModal">취소</button>
         </div>
       </div>
     </div>

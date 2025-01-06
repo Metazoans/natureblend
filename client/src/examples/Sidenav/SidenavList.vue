@@ -247,7 +247,7 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('qCPackingInspec')">관리</li>
+            <li class="sub-item" @click="movePage('qCPackingInspec')">포장검사관리</li>
             <li class="sub-item" @click="movePage('qCPackingRecord')">검사기록조회</li>
             <li class="sub-item" @click="movePage('qCPackingFaulty')">불량내역조회</li>
           </template>

@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h3 class="mb-3">포장검사-검사기록조회</h3>
+    <h3 class="mb-3">포장 검사-검사 기록 조회</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h4 class="me-3">검색조건</h4>
+        <h4 class="me-3">검색 조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -16,8 +16,8 @@
           <select class="form-select text-center border cursor-pointer" v-model="searchInfo.qcState"
             aria-label="검사 상태 선택">
             <option value="qcs1">전체</option>
-            <option value="qcs2">검사완료</option>
-            <option value="qcs3">검사미완료</option>
+            <option value="qcs2">검사 완료</option>
+            <option value="qcs3">검사 미완료</option>
           </select>
         </div>
 
@@ -57,7 +57,7 @@
   <hr>
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
-    <h4>입고상세정보</h4>
+    <h4>입고 상세 정보</h4>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
