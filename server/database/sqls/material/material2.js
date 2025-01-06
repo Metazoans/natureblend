@@ -86,19 +86,20 @@ ORDER BY po.production_order_date DESC
 // ORDER BY production_order_date DESC
 // `;
 
-// 착즙 공정
+// 음료제작 공정
 const process1list =
 `
 SELECT product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
-WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
+WHERE pwh.process_status = 'processing' -- process_waiting  -- processing  -- process_complete
 
   AND pwh.process_name = '음료제작공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+  AND process_start_time IS NOT NULL
 ORDER BY pwh.work_date DESC
 `;
 
-// 착즙 품질
+// 음료제작 품질
 const process1qclist =
 `
 SELECT product_name,
@@ -116,9 +117,10 @@ const process2list =
 SELECT product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
-WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
+WHERE pwh.process_status = 'processing' -- process_waiting  -- processing  -- process_complete
 
-  AND pwh.process_name = '세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+  AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+  AND process_start_time IS NOT NULL
 ORDER BY pwh.work_date DESC
 `;
 
@@ -130,24 +132,25 @@ SELECT product_name,
 FROM process_work_header pwh
 WHERE pwh.process_status != 'process_waiting' -- process_waiting  -- processing  -- process_complete
 
-  AND pwh.process_name = '세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+  AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
 ORDER BY pwh.work_date DESC
 `;
 
 
-// 포장 공정
+// 포장 공정 (확인 완료)
 const process3list =
 `
 SELECT product_name,
        production_order_qty AS product_qty
 FROM process_work_header pwh
-WHERE pwh.process_status = 'process_waiting' -- process_waiting  -- processing  -- process_complete
+WHERE pwh.process_status = 'processing' -- process_waiting  -- processing  -- process_complete
 
   AND pwh.process_name = '포장공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+  AND process_start_time IS NOT NULL
 ORDER BY pwh.work_date DESC 
 `;
 
-// 포장 품질
+// 포장 품질 ( 확인 완료 )
 const process3qclist =
 `
 SELECT b.product_name AS product_name,
@@ -213,19 +216,7 @@ FROM
 LEFT JOIN input_body i
 ON p.product_code = i.product_code
 LEFT JOIN output_aggregated oa
-ON i.input_num = oa.input_num 
-WHERE ( NVL(
-        (SUM(CASE 
-                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
-                ELSE 0 
-            END) 
-         - 
-         SUM(CASE 
-                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
-                ELSE 0 
-            END)
-        ), 0) ) != 0
-GROUP BY p.product_code, p.product_name
+ON i.input_num = oa.input_num
 ORDER BY product_qty DESC
 `;
 // GROUP BY p.product_code, p.product_name

@@ -134,7 +134,7 @@
         <div class="d-flex flex-row mb-0">
             <div class="p-0 process_processing">
                 <div style="width: 285px;">
-                    <h5 class="mb-0">&nbsp;&nbsp;착즙공정</h5>
+                    <h5 class="mb-0">&nbsp;&nbsp;음료제작공정</h5>
                     <process1 :process1_list="process1_list" />
                 </div>
             </div>
@@ -145,7 +145,7 @@
             </div>
             <div class="p-0 process_processing">
                 <div style="width: 285px;">
-                    <h5 class="mb-0">&nbsp;&nbsp;착즙검사</h5>
+                    <h5 class="mb-0">&nbsp;&nbsp;음료제작검사</h5>
                     <process1qc :process1_qc_list="process1_qc_list"/>
                 </div>
             </div>
