@@ -80,11 +80,11 @@ router.post('/qc', async (req, res)=>{
     let qcInfo = req.body
     let result = null
 
-    if(qcInfo.qcType === 'P1') {
+    if(qcInfo.qcType === 'P1' || qcInfo.qcType === 'p1') {
         result = await workService.qcCleaning(qcInfo.info)
-    } else if(qcInfo.qcType === 'P2') {
+    } else if(qcInfo.qcType === 'P2' || qcInfo.qcType === 'p2') {
         result = await workService.qcJuice(qcInfo.info)
-    } else if(qcInfo.qcType === 'P3'){
+    } else if(qcInfo.qcType === 'P3' || qcInfo.qcType === 'p3'){
         result = await workService.qcPackaging(qcInfo.info)
     } else {
         console.log('해당 공정 검사가 없습니다.')

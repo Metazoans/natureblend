@@ -68,8 +68,9 @@ const qualityRoute = [
   //입고검사 
   // - 신청
   {
-    path: '',
+    path: '/',
     redirect : { name : 'qualityList'},
+    name: 'qualityList',
     beforeEnter: (to, from, next) => {
       checkAuth(to, next)
     }

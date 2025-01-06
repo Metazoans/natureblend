@@ -44,7 +44,8 @@ const checkAuth = (to, next) => {
 
 const productionRoute = [
   {
-    path: '',
+    path: '/',
+    name: 'productionPlanList',
     redirect : { name : 'productionPlanList'},
     beforeEnter: (to, from, next) => {
       checkAuth(to, next)
