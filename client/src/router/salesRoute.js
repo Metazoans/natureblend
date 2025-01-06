@@ -44,7 +44,7 @@ const salesRoute = [
         }
     },
     {
-        path:'/orderForm/insert',
+        path:'orderlist/insert',
         name :'orderForm',
         component: orderForm,
         beforeEnter: (to, from, next) => {
@@ -52,7 +52,7 @@ const salesRoute = [
         }
     },
     {
-        path:'/orderlist/search',
+        path:'orderlist/management',
         name :'orderlistSearch',
         component: orderlistSearch,
         beforeEnter: (to, from, next) => {
@@ -61,7 +61,7 @@ const salesRoute = [
     },
 
     {
-        path:'/orderlist/orderinfo/:no',
+        path:'orderlist/orderinfo/:no',
         name : 'orderInfo',
         component: orderInfo,
         beforeEnter: (to, from, next) => {
@@ -70,7 +70,7 @@ const salesRoute = [
     },
 
     {
-        path:'/output/management',
+        path:'output/management',
         name:'outputManage',
         component:outputManage,
         beforeEnter: (to, from, next) => {
@@ -78,7 +78,7 @@ const salesRoute = [
         }
     },
     {
-        path:'/output/outputlist',
+        path:'output/outputlist',
         name:'outputList',
         component :outputList,
         beforeEnter: (to, from, next) => {
@@ -87,7 +87,7 @@ const salesRoute = [
     },
 
     {
-        path:'/input/management',
+        path:'input/management',
         name: 'inputManage',
         component:inputManage,
         beforeEnter: (to, from, next) => {
@@ -95,7 +95,7 @@ const salesRoute = [
         }
     },
     {
-        path : '/input/inputlist',
+        path : 'input/inputlist',
         name : 'inputList',
         component:inputList,
         beforeEnter: (to, from, next) => {
@@ -103,7 +103,7 @@ const salesRoute = [
         }
     },
     {
-        path : '/inventory/product',
+        path : 'inventory/product',
         name : 'productInventory',
         component:productInventory,
         beforeEnter: (to, from, next) => {
@@ -111,7 +111,7 @@ const salesRoute = [
         }
     },
     {
-        path:'/inventory/lot',
+        path:'inventory/lot',
         name:'lotInventory',
         component:lotInventory,
         beforeEnter: (to, from, next) => {
@@ -120,7 +120,7 @@ const salesRoute = [
 
     },
     {
-        path:'return/product',
+        path:'return/management',
         name : 'returnManage',
         component:returnManage,
         beforeEnter: (to, from, next) => {
@@ -128,7 +128,7 @@ const salesRoute = [
         }
     },
     {
-        path:'return/search',
+        path:'return/returnlist',
         name:'returnList',
         component :returnList,
         beforeEnter: (to, from, next) => {

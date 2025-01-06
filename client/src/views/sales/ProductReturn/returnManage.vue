@@ -12,7 +12,7 @@
                             <div class="col-sm-4">
                             <input 
                                 id="clientSearch"  class="form-control"
-                                v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"  />
+                                v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"  placeholder=" 거래처명"/>
                                 <Modal
                                     :isShowModal="isShowModal.client"
                                     :modalTitle="'거래처선택'"
@@ -53,14 +53,14 @@
         :quickFilterText="inputListsearch"
         rowSelection="multiple"
         :pagination="true"
-        :paginationPageSize="10"
-        :paginationPageSizeSelector="[10, 20, 50, 100]"
+        :paginationPageSize="5"
+        :paginationPageSizeSelector="[5, 10, 20, 50, 100]"
     />
     </div>
     <div style="display: none">
         <CustomNoRowsOverlay/>
     </div>
-    <div class="container-fluid py-4" v-show="rowDataOutputOrder.length != 0">
+    <div class="container-fluid py-4">
         <h4>출고 완료 된 주문 조회</h4>
         <div class="d-flex">
             <div class="grid-container">
@@ -83,7 +83,7 @@
                 <CustomNoRowsOverlay/>
             </div>
                
-            <div class="select-container">
+            <div class="select-container" v-show="rowDataOutputOrder.length != 0">
                 <div class= "form-section">
                     <!--담당자 선택 -->
                     <div class="d-flex flex-column justify-content-center ps-5 pt-5">
@@ -113,8 +113,8 @@
                                 <label class="col-sm-3  col-form-label fw-bold" >반품수량<span> *</span></label>
                                 <div class="col-sm-9 d-flex align-items-center">
                                     <input 
-                                        id="returnNum"  class="form-control border p-2" 
-                                        v-model="returnNum"/>
+                                        id="returnNum"  class="form-control border p-2" autocomplete="off"
+                                        v-model="returnNum"  placeholder=" 반품수량"/>
                                 </div>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                                     <div class="col-sm-9  d-flex align-items-center">
                                         <input 
                                         id="ReturnReason"  class="form-control border p-2" 
-                                        v-model="searchReturnReason" @click="openModal('returns')"  autocomplete="off"  />
+                                        v-model="searchReturnReason" @click="openModal('returns')"  autocomplete="off"  placeholder="반품사유" />
                                         <Modal
                                             :isShowModal="isShowModal.returns"
                                             :modalTitle="'반품사유'"

@@ -27,7 +27,7 @@
                         <div class="col-sm-4">
                             <input 
                                 id="clientSearch"  class="form-control border p-2"
-                                v-model="searchCom.com_name" @click="openModal"  autocomplete="off"  />
+                                v-model="searchCom.com_name" @click="openModal"  autocomplete="off" placeholder="거래처명" />
                                 <Modal
                                     :isShowModal="isShowModal"
                                     :modalTitle="'거래처선택'"
@@ -48,7 +48,7 @@
                         <div class="col-sm-6">
                             <input 
                             id="orderSearch" class="form-control border p-2"
-                            v-model="orderName"  autocomplete="off"  />
+                            v-model="orderName"  autocomplete="off" placeholder="주문서명" />
                         </div>
                     </div>
                     <!--주문일자 검색 -->
@@ -194,21 +194,20 @@ export default{
   margin: 0 10px; /* 버튼 사이 간격 추가 */
 }
 
+
+/* 일반 input 태그 스타일 */
 input {
-      background-color: $white;
+  background-color: #ffffff; /* 배경색 흰색 */
+  border: solid 1px #ced4da; /* 테두리 색상 */
+  color: #495057; /* 텍스트 색상 */
 }
 
-
-</style>
-<style scoped>
-/* input.form-check-input:checked {
-    background-color: green !important;
-    border-color: green !important;
+/* input 포커스 상태에서도 배경색 유지 */
+input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
 }
-input.form-check-input {
-    background-color: white !important;
-    border-color: white !important;
-    border-radius: 100%;
-} */
+
 
 </style>

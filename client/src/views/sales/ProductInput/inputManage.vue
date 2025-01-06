@@ -9,7 +9,8 @@
                     <div class="row align-items-center mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')"  autocomplete="off"  >
+                            <input type="text" class="form-control" id="productName" 
+                                v-model="productName" @click="openModal('product')"  autocomplete="off" placeholder=" 제품명" >
                                 <Modal
                                         :isShowModal="isShowModal.product"
                                         :modalTitle="'제품선택'"
@@ -101,7 +102,7 @@
                             <div class="col-sm-9 d-flex">
                                 <input 
                                     id="EmpName"  class="form-control border p-2" 
-                                    v-model="warehouseName" @click="openModal('warehouse')" autocomplete="off" />
+                                    v-model="warehouseName" @click="openModal('warehouse')" autocomplete="off" placeholder=" 창고명" />
                                     <Modal
                                         :isShowModal="isShowModal.warehouse"
                                         :modalTitle="'창고선택'"
