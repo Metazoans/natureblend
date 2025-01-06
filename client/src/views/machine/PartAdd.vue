@@ -50,7 +50,12 @@
                 <label for="">거래처</label>
               </div>
               <div class="col-9">
-                <input class="form-control" type="text" id="" name="" v-model="partInfo.client_num" @click="openClientModal('client')" readonly/>
+                <input class="form-control" type="text" id="" name=""
+                       v-model="partInfo.client_num"
+                       @click="openClientModal('client')"
+                       placeholder="🔍"
+                       readonly
+                />
               </div>
               
               <Modal
@@ -351,6 +356,10 @@ button {
 
 .partInfo {
   padding-left: 29px;
+}
+
+input::placeholder {
+  text-align: right;
 }
 
 </style>
