@@ -8,7 +8,7 @@
                     <div class="row align-items-center mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')" readonly>
+                            <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')"  autocomplete="off"  >
                                 <Modal
                                         :isShowModal="isShowModal.product"
                                         :modalTitle="'제품선택'"
@@ -30,14 +30,14 @@
                             <input 
                             type="date" 
                             id="startDate" class="form-control border p-2"
-                            v-model="startDate"/>
+                            v-model="startDate"  autocomplete="off"  />
                         </div>
                         <div class="col-sm-1 text-center">~</div>
                         <div class="col-sm-4">
                             <input 
                             type="date" 
                             id="endDate" class="form-control border p-2"
-                            v-model="endDate" />
+                            v-model="endDate"  autocomplete="off"   />
                         </div>
                     </div>
                 </div>
@@ -184,12 +184,12 @@ export default{
                                     
                                     <span style="display: flex; align-items: center; justify-content: text-start;">
                                         <span style="flex-grow: 1; text-align: left;">${formattedValue}</span>
-                                        <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
+                                        <i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i>
                                     </span>
                                 `;
                     }else{
                          // 값이 없을 경우 수정 가능 아이콘 추가
-                        return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
+                        return `<span><i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i></span>`;
                     }
              }},
             { headerName: "입고날짜 ", field: "input_date", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" } },
@@ -232,7 +232,7 @@ export default{
         },
         openModal(modalType){
             this.isShowModal[modalType] = true; 
-            console.log(`${modalType} modal open`);
+            //console.log(`${modalType} modal open`);
 
             // warehouse_name을 업데이트할 컬럼을 저장
             if (modalType === 'warehouse') {
@@ -240,12 +240,12 @@ export default{
                 const selectedNodes = this.gridApi.getSelectedNodes();
                 if (selectedNodes.length > 0) {
                     this.selectedCol = selectedNodes[0];  // 첫 번째 선택된 셀을 가져옵니다.
-                    console.log("선택된 셀:", this.selectedCol);
+                    //console.log("선택된 셀:", this.selectedCol);
                     //초기값 저장 
                     this.originWarehouseName  = this.selectedCol.data.warehouse_name;
-                    console.log(this.originWarehouseName)
+                    //console.log(this.originWarehouseName)
                 } else {
-                    console.log("선택된 셀이 없습니다.");
+                    //console.log("선택된 셀이 없습니다.");
                 }
             }
         },
@@ -257,10 +257,10 @@ export default{
             } else if (modalType === 'warehouse'){
                 this.warehouseCode = this.selectedWarehouseCode;
                 this.warehouseName = this.selectedWarehouseName; 
-                console.log("컴펌박스:",this.warehouseName);
+                //console.log("컴펌박스:",this.warehouseName);
                 
                 this.selectedCol.data.warehouse_name = this.warehouseName;
-                console.log("변경된 warehouse_name:", this.selectedCol.data.warehouse_name);
+                //console.log("변경된 warehouse_name:", this.selectedCol.data.warehouse_name);
 
                 // ag-Grid에 적용하기
                 this.gridApi.applyTransaction({
@@ -350,7 +350,7 @@ export default{
                 //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
                 inputText.addEventListener('input',(event)=>{
                     const value = event.target.value;
-                    console.log("입력된 값:", value);
+                    //console.log("입력된 값:", value);
 
                     //검색로직추가기능
                     this.inputListsearch = value;
@@ -382,10 +382,10 @@ export default{
                 endDate : this.endDate,
             }
 
-            console.log(this.filters);
+            //console.log(this.filters);
             let result = await axios.put(`${ajaxUrl}/input/inputlist`,this.filters )
                                     .catch(err => console.log(err));
-            console.log(result.data);
+            //console.log(result.data);
             this.inputData = result.data;
             this.inputData = result.data.map((col) => ({
                 ...col,
@@ -410,7 +410,7 @@ export default{
         },
         onCellClicked(col) {
             if (col.colDef.field === 'warehouse_name') {
-                console.log("작동");
+                //console.log("작동");
                 // warehouse_name의 셀을 클릭시에만 모달 작동 
                 this.openModal('warehouse');
            
@@ -447,7 +447,7 @@ export default{
                 update: [this.selectedCol.data] // 수정된 행만 업데이트
             });
 
-            console.log("초기값으로 롤백 완료:", this.originWarehouseName);
+            //console.log("초기값으로 롤백 완료:", this.originWarehouseName);
             }
             this.gridApi.deselectAll();
             this.originWarehouseName = null;
@@ -459,7 +459,7 @@ export default{
             //let inputAmounts = []
             let warehouseNames = []
             selectedRows.forEach(row => {
-                console.log("row:",row.product_lot);
+                //console.log("row:",row.product_lot);
                 productLots.push(row.product_lot);
                 //inputAmounts.push(row.input_amount);
                 warehouseNames.push(row.warehouse_name);
@@ -513,7 +513,7 @@ export default{
                 }
                 let result = await axios.put(`${ajaxUrl}/inputUpdate/update`,updateInputInfo)
                                         .catch(err => console.log(err));
-                console.log(result.data.result);
+                //console.log(result.data.result);
                 // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
                 if(result.data.result === true){
                         this.$notify({
@@ -536,20 +536,20 @@ export default{
             const selectedRows = this.gridApi.getSelectedRows(); 
             let productLots = []
             selectedRows.forEach(row => {
-                console.log("row:",row.product_lot);
+                //console.log("row:",row.product_lot);
                 productLots.push(row.product_lot);
             });
 
             let deleteInfo = {
                 productLot : JSON.stringify(productLots)
             }
-            console.log("삭제:",deleteInfo);
+            //console.log("삭제:",deleteInfo);
 
             let result = 
                 await axios.put(`${ajaxUrl}/input/delete`,deleteInfo)
                             .catch(err => console.log(err)); 
 
-                console.log(result);
+                //console.log(result);
              // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
             if(result.data.result === true){
                         this.$notify({

@@ -120,7 +120,7 @@ export default {
               //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
               inputText.addEventListener('input',(event)=>{
                   const value = event.target.value;
-                  console.log("입력된 값1:", value);
+                  //console.log("입력된 값1:", value);
 
                   //검색로직추가기능
                   this.inputListsearch = value;
@@ -150,12 +150,12 @@ export default {
         endDate:this.filters.endDate 
       }
 
-      console.log(obj.orderStatus);
+      //console.log(obj.orderStatus);
       //서버에 검색 필터 데이터 전송
         let result = await axios.put(`${ajaxUrl}/orderlist/search`,obj)
                                 .catch(err=> console.log(err));
         this.rowData = result.data;
-      console.log("rowdata===",this.rowData)
+      //console.log("rowdata===",this.rowData)
         this.rowData = result.data.map((col) => ({
             ...col,
             order_date: this.dateFormat(col.order_date, "yyyy-MM-dd"),
@@ -175,14 +175,14 @@ export default {
 
     onRowClicked(row) {
         this.order = row.data
-        console.log('클릭된 셀 데이터:',this.order);
+        //console.log('클릭된 셀 데이터:',this.order);
         //this.$router.push({ name:'orderInfo', params : {no: order.orderListNum} })
       },
 
 //주문의 수정 및 추가주문 진행 
       async updateOrder(updateOrderInfo){
-        console.log("부모로 온 데이터:",updateOrderInfo);
-        console.log("주문서변경값:", this.order.orderlist_title , this.order.due_date);
+        //console.log("부모로 온 데이터:",updateOrderInfo);
+        //console.log("주문서변경값:", this.order.orderlist_title , this.order.due_date);
         // 문자열을 배열로 변환
           const orderCodeArray = JSON.parse(updateOrderInfo.orderCode);  // ['null', 34]
           const productCodeArray = JSON.parse(updateOrderInfo.productCode);  // ['P006', 'P002']
@@ -213,7 +213,7 @@ export default {
         //주문추가 
        
         if(ordersWithoutOrderNum.length >0){
-          console.log("orderCode가 null인 주문:", ordersWithoutOrderNum);
+          //console.log("orderCode가 null인 주문:", ordersWithoutOrderNum);
           let newProductCodes = []
           let newProductNums = []
           let newPerPrices = []
@@ -240,7 +240,7 @@ export default {
             await axios.post(`${ajaxUrl}/orderUpdate/insert`,addOrdersWithoutOrderNum)
                         .then(Response =>{
                               if(Response.statusText === 'OK'){
-                                console.log("추가등록완료");
+                                //console.log("추가등록완료");
                                 this.added = true;
                               }
                             })
@@ -253,7 +253,7 @@ export default {
           //업데이트 작업 
           
         if(ordersWithOrderNum.length > 0){
-          console.log("orderCode가 null이 아닌 주문:", ordersWithOrderNum);
+          //console.log("orderCode가 null이 아닌 주문:", ordersWithOrderNum);
           //업데이트 해야 하는 주문 내용 (배열형성)
           let orderAmounts = []
           let perPrices = []
@@ -281,7 +281,7 @@ export default {
 
           let result = await axios.put(`${ajaxUrl}/orderUpdate/update/${this.order.orderlist_num}`,updateOrdersWithOrderNum)
                                   .catch(err=>console.log(err));
-              console.log(result);
+              //console.log(result);
           if(result.statusText === 'OK'){
             this.updated = true; 
           }
@@ -294,19 +294,19 @@ export default {
                   text: `${this.order.orderlist_title}에 주문이 추가 되고 수정되었습니다.`,
                   type: 'success',
               }); 
-              //window.location.reload();  
+              window.location.reload();  
         }else if (this.added){
           this.$notify({
                   text: `${this.order.orderlist_title}에 주문이 추가 되었습니다.`,
                   type: 'success',
               }); 
-              //window.location.reload();  
+              window.location.reload();  
         }else if (this.updated){
           this.$notify({
                   text: `${this.order.orderlist_title}이 수정되었습니다.`,
                   type: 'success',
               }); 
-              //window.location.reload();  
+              window.location.reload();  
         }
           
        

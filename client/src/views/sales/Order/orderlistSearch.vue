@@ -27,7 +27,7 @@
                         <div class="col-sm-4">
                             <input 
                                 id="clientSearch"  class="form-control border p-2"
-                                v-model="searchCom.com_name" @click="openModal"/>
+                                v-model="searchCom.com_name" @click="openModal"  autocomplete="off"  />
                                 <Modal
                                     :isShowModal="isShowModal"
                                     :modalTitle="'거래처선택'"
@@ -44,11 +44,11 @@
                     </div>
                     <!--주문서명 검색 -->
                     <div  class="row align-items-center mb-3">
-                        <label class="col-sm-2 col-form-label fw-bold">주문서명</label>
+                        <label class="col-sm-2 col-form-label fw-bold" >주문서명</label>
                         <div class="col-sm-6">
                             <input 
                             id="orderSearch" class="form-control border p-2"
-                            v-model="orderName" />
+                            v-model="orderName"  autocomplete="off"  />
                         </div>
                     </div>
                     <!--주문일자 검색 -->
@@ -58,14 +58,14 @@
                             <input 
                             type="date" 
                             id="startDate" class="form-control border p-2"
-                            v-model="startDate"/>
+                            v-model="startDate"  autocomplete="off"  />
                         </div>
                         <div class="col-sm-1 text-center">~</div>
                         <div class="col-sm-4">
                             <input 
                             type="date" 
                             id="endDate" class="form-control border p-2"
-                            v-model="endDate" />
+                            v-model="endDate"  autocomplete="off"   />
                         </div>
                     </div>
                 </div>
@@ -74,6 +74,9 @@
                     <material-button  color="success" class="button" @click="searchOrderlists">검색</material-button>
                     <material-button color="warning" class="button" @click="resetSearch">초기화</material-button>
                 </div>
+            </div>
+            <div style="display: none">
+                <CustomNoRowsOverlay/>
             </div>
     </div>
     <!--orderList  컴포넌트 : 등록 또는  수정 -->
@@ -87,6 +90,7 @@ import MaterialButton from "@/components/MaterialButton.vue";
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import ComList from "@/views/sales/Order/clientModal.vue";
 import orderList from "./orderList.vue";
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 
 
  
@@ -98,9 +102,11 @@ export default{
             Modal,
             ComList,
             orderList,
+            CustomNoRowsOverlay,
     },
     data(){
         return{
+            noRowsOverlayComponent:'CustomNoRowsOverlay',
             isShowModal : false,
 
             //주문서상태 체크 박스 관련 데이터
@@ -128,7 +134,7 @@ export default{
             this.selectedCom = client; 
         },
         async openModal(){
-            console.log("modal 열림")
+            //console.log("modal 열림")
             this.isShowModal = !this.isShowModal; //모달 열기 
         },
         

@@ -6,24 +6,22 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h4 class="me-3">검색 조건</h4>
-        <!-- <button class="btn btn-success" size="sm" v-on:click="searchRequestAll">전체 조회</button> -->
       </div>
 
       <div class="row gx-3 p-4 rounded border shadow search-background">
         <!-- 날짜 범위 -->
-        <!-- ps-5 추가하기 -->
         <div class="col-md-2 ps-5">
           <label for="startDate" class="form-label">등록일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
-              v-model="searchInfo.startDate" />
+              v-model="searchInfo.startDate" autocomplete="off" />
           </div>
         </div>
         <div class="col-md-2">
           <label for="endDate" class="form-label">등록일(까지)</label>
           <div class="d-flex gap-2">
-            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
-              v-model="searchInfo.endDate" />
+            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer" v-model="searchInfo.endDate"
+              autocomplete="off" />
           </div>
         </div>
 
@@ -31,7 +29,7 @@
         <div class="col-md-3">
           <label for="mName" class="form-label">자재명</label>
           <input type="search" id="mName" class="form-control border p-2 cursor-pointer" placeholder="자재명"
-            v-model="searchInfo.mName" />
+            v-model="searchInfo.mName" autocomplete="off" />
         </div>
 
         <!-- 검색 버튼 -->
@@ -48,11 +46,9 @@
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4 ">
     <h4>검색 결과</h4>
-    <!-- ps-4 추가하기 -->
     <div class="ps-4">
       <p>자재 검사 신청 내역에 추가할 입고 예정 자재를 선택해 주세요.</p>
     </div>
-    <!-- ps-4 추가하기 -->
     <div class="col-2 ps-4">
       <material-button class="btn-success" size="md" color="primary" @click="addCheckedRows">선택 항목 추가</material-button>
     </div>
@@ -108,7 +104,8 @@
       <div class="form-group">
         <label for="quantityInput">실제 수량</label>
         <div class="d-flex align-items-center">
-          <input v-model="editedQuantity" type="number" id="quantityInput" class="form-control" style="width: auto;" />
+          <input v-model="editedQuantity" type="number" id="quantityInput" class="form-control" style="width: auto;"
+            autocomplete="off" />
           <p class="ms-2 mb-0">{{ materialType }}</p>
         </div>
       </div>
@@ -132,7 +129,6 @@
 
 <script>
 import { toRaw } from 'vue';
-// import { mapMutations } from "vuex";
 
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
@@ -218,7 +214,7 @@ export default {
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.5 },
         { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 1 },
         {
-          headerName: "실제수량", field: "ordQty", resizable: false, editable: true, 
+          headerName: "실제수량", field: "ordQty", resizable: false, editable: true,
           cellStyle: {
             //border: "0.5px dashed #fb8c00", // 점선 테두리
             cursor: "text", // 텍스트 커서
@@ -240,7 +236,6 @@ export default {
           },
         },
         { headerName: "발주신청일", field: "orderDate", resizable: false, cellStyle: { textAlign: "center" }, flex: 0.3 },
-        // { headerName: "검사담당인번호", field: "empNum", resizable: false, cellStyle: { textAlign: "left" }, flex: 0.5 },
         { headerName: "검사담당인", field: "empName", resizable: false, cellStyle: { textAlign: "left" }, flex: 0.3 },
         {
           cellRenderer: (params) => {
@@ -267,10 +262,8 @@ export default {
 
 
   methods: {
-    // ...mapMutations(["addLoginInfo"]),
     bringIoginInfo() {
       this.loginInfo = this.$store.state.loginInfo;
-      // console.log('로그인 정보', this.loginInfo);
     },
     //검색창 관련
     async searchOrder() {
@@ -329,8 +322,6 @@ export default {
     onGridReady(params) {
       this.gridApi = params.api;
       this.gridColumnApi = params.columnApi;
-      // console.log(this.gridColumnApi);
-      //this.gridApi.sizeColumnsToFit();
 
       // 기존 이벤트 리스너 제거
       document.removeEventListener("click", this.handleDeleteButtonClick);
@@ -352,7 +343,6 @@ export default {
       const selectedNodes = this.gridApi1.getSelectedNodes(); // 선택된 노드
       const checkedRows = selectedNodes.map(node => node.data); // 선택된 노드의 데이터
       // 체크박스가 true인 항목만 필터링
-      //const checkedRows = this.rowData1.filter(row => row["check"] === true);
       if (checkedRows.length == 0) {
         notify({
           text: "추가할 자재를 선택하지 않았습니다.",
@@ -365,11 +355,9 @@ export default {
       const newRows = checkedRows.filter(row =>
         !this.rowData2.some(existingRow => existingRow["orderCode"] === row["orderCode"])
       );
-      // console.log(newRows);
       this.rowData2 = [...this.rowData2, ...newRows]; // rowData2에 추가
       notify({
         text: `검사 신청 내역에 추가 되었습니다.`,
-        // text: `기록된 불량 내역:${result.data.defectNum}`,
         type: "success", // success, warn, error 가능
       });
     },
@@ -381,12 +369,9 @@ export default {
       // 데이터 삭제
       this.rowData2 = this.rowData2.filter((row) => row.orderCode !== nodeToDelete.orderCode);
       notify({
-        text: `신청된 건이 삭제되었습니다.`,
-        // text: `기록된 불량 내역:${result.data.defectNum}`,
+        text: `해당 건을 삭제했습니다.`,
         type: "error", // success, warn, error 가능
       });
-      // console.log(nodeToDelete);
-      // console.log(this.rowData2);
 
     },
     //초기화
@@ -396,7 +381,6 @@ export default {
         this.rowData2 = []; // 저장된 항목 초기화
         notify({
           text: `검사 처리 내역을 초기화 했습니다.`,
-          // text: `기록된 불량 내역:${result.data.defectNum}`,
           type: "warn", // success, warn, error 가능
         });
       }
@@ -423,13 +407,10 @@ export default {
     //저장하면 입고검사테이블에 추가처리
     async confirm() {
       let rawData = toRaw(this.rowData2);   //[{mName:"당근", ordQty:"100000", ...}, {...}, ...]
-      //console.log(rawData);
-      // console.log(`${rawData[0].mName}`);
 
 
       let insertResult = await axios.post(`${ajaxUrl}/insertQCM`, rawData)
         .catch(err => console.log(err));
-      // console.log(`${insertResult.data.successNum}개 입력됨`);
       notify({
         text: `${insertResult.data.successNum}건이 신청되었습니다`,
         type: "success", // success, warn, error 가능
@@ -460,10 +441,6 @@ export default {
     },
 
     updateQnt(orderCD, qty) {
-      // console.log('값수정');
-      // console.log(orderCD);
-      // console.log(qty);
-      // console.log(this.selectedRow);
       if (qty <= 0) {
         notify({
           text: "검사할 자재 수량이 존재하지 않습니다.",
@@ -491,7 +468,6 @@ export default {
       }
       this.rowData2 = [...this.rowData2,];
       this.closeModal();
-      //console.log(this.rowData2);
     },
     //모달 닫기
     closeModal() {
@@ -517,9 +493,6 @@ export default {
 .container-fluid {
   min-height: 500px;
 
-  // .search {
-  //   margin-top: 24px;
-  // }
 }
 
 //검색창 라벨
@@ -533,15 +506,13 @@ export default {
 
 //검색창 배경색
 .search-background {
-  // background-color: #def2ff; /* 원하는 배경색 */
   background-color: #e9ecef;
-  /* 원하는 배경색 */
+
 
 
 
   input {
     background-color: #ffffff;
-    /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;

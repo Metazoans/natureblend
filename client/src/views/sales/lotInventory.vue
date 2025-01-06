@@ -27,14 +27,14 @@
                                 <input 
                                 type="date" 
                                 id="startDate" class="form-control border p-2"
-                                v-model="startDate"/>
+                                v-model="startDate"  autocomplete="off"  />
                             </div>
                             <div class="col-sm-1 text-center">~</div>
                             <div class="col-sm-4">
                                 <input 
                                 type="date" 
                                 id="endDate" class="form-control border p-2"
-                                v-model="endDate" />
+                                v-model="endDate"  autocomplete="off"  />
                             </div>
                             <div class="col-sm-4 text-end">
                                 <!--검색 및 초기화-->
@@ -209,7 +209,7 @@ export default{
                 //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
                 inputText1.addEventListener('input',(event)=>{
                     const value = event.target.value;
-                    console.log("입력된 값:", value);
+                    //console.log("입력된 값:", value);
 
                     //검색로직추가기능
                     this.inputListsearch1 = value;
@@ -238,10 +238,10 @@ export default{
                 endDate : this.endDate,
             }
 
-            console.log(this.filters);
+            //console.log(this.filters);
             let result = await axios.put(`${ajaxUrl}/inventory/lot`,this.filters )
                                     .catch(err => console.log(err));
-            console.log(result.data);
+            //console.log(result.data);
             this.LotNum = result.data;
             this.LotNum = result.data.map((col) => ({
                 ...col,
@@ -263,7 +263,7 @@ export default{
             };
             let result = await axios.put(`${ajaxUrl}/inventory/dispose`,disposeLot)
                                     .catch(err => console.log(err));
-            console.log(result.data.result);
+            //console.log(result.data.result);
             // ===  은 타입 까지 비교 (true,false는 boolean 타입 그래서 ''빼줘야 한다.)
             if(result.data.result === true){
                     this.$notify({

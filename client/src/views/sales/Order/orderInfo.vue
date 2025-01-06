@@ -41,6 +41,7 @@
         <material-button  color="danger" class="button" @click="deleteOrder">주문서삭제</material-button>
     </div>
 </template>
+
 <script>
 import MaterialButton from "@/components/MaterialButton.vue";
 import theme from "@/utils/agGridTheme";
@@ -69,6 +70,7 @@ export default{
 
     data(){
         return{
+            noRowsOverlayComponent:'CustomNoRowsOverlay',
             Scol : 0,
             originalValue: null,  // 셀의 원래 값 저장
 
@@ -113,12 +115,12 @@ export default{
                             const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
                             return `
                                 <span style="display: flex; align-items: center; justify-content: flex-start;">
-                                    <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
+                                    <i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i>
                                     <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
                                 </span>
                             `;
                         } else {
-                            return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
+                            return `<span><i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i></span>`;
                         }
                     } else {
                         if (params.value) {
@@ -147,12 +149,12 @@ export default{
                             const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
                             return `
                                 <span style="display: flex; align-items: center; justify-content: flex-start;">
-                                    <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
+                                    <i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i>
                                     <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
                                 </span>
                             `;
                         } else {
-                            return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
+                            return `<span><i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i></span>`;
                         }
                     } else {
                         if (params.value) {
@@ -250,12 +252,12 @@ export default{
             }
             this.originalValues[params.node.id] = this.originalValues[params.node.id] || {};
             this.originalValues[params.node.id][params.column.colId] = params.value; // 특정 셀의 원래 값 저장
-            console.log("원래값==",this.originalValue)
+            //console.log("원래값==",params.value)
         }
         // 'product_name' 필드 클릭 시 모달 열기
         if (params.colDef.field === 'product_name') {
             this.Scol = params.node.rowIndex;  // 행 인덱스 저장
-            console.log(this.Scol);
+            //console.log(this.Scol);
             this.openModal();  // 모달 열기
         }
     },
@@ -357,7 +359,7 @@ export default{
                 //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
                 inputText1.addEventListener('input',(event)=>{
                     const value = event.target.value;
-                    console.log("입력된 값:", value);
+                    //console.log("입력된 값:", value);
 
                     //검색로직추가기능
                     this.inputListsearch1 = value;
@@ -377,7 +379,7 @@ export default{
         // 부모로 부터 (주문서조회) 부터 받은 order 
         async getOrderInfo() { 
             
-            console.log("넘어온값",this.order);
+            //console.log("넘어온값",this.order);
             let result = await axios.get(`${ajaxUrl}/orderInfo/${this.order.orderlist_num}}`)
                                     .catch(err=> console.log(err));
                        
@@ -387,7 +389,7 @@ export default{
             order_status : this.statusOrderMap[col.order_status],
             })
         );
-        console.log("rowData:",this.rowData);
+        //console.log("rowData:",this.rowData);
             
             
         },
@@ -415,25 +417,25 @@ export default{
 
         openModal() {
             this.isShowModal = true; 
-            console.log("modalopen")
+            //console.log("modalopen")
         },
 
         selectproduct(product){
         //console.log(product); 
         this.selectedProCode = product.product_code;
         this.selectedProName = product.product_name;
-        console.log("선택", this.selectedProCode,this.selectedProName);
+        //console.log("선택", this.selectedProCode,this.selectedProName);
         },
 
         confirm(){
-            console.log("선택된변경컬럼====",this.Scol);
+            //console.log("선택된변경컬럼====",this.Scol);
             // this.rowData[this.Scol] = this.rowData[this.Scol].map((col) => ({
             //     ...col,
             //     product_code : this.selectedProCode,
             //     product_name : this.selectedProName,
             //      })
             // );  
-            console.log(this.rowData[this.Scol].order_num ,this.rowData[this.Scol].order_status )
+            //console.log(this.rowData[this.Scol].order_num ,this.rowData[this.Scol].order_status )
 
             if(this.rowData[this.Scol].order_status == "미출고"){
                     this.rowData[this.Scol] ={
@@ -470,7 +472,7 @@ export default{
             // 넣고 나서 다시 풀었다가 다시 배열 형성 
             this.rowData = [... this.rowData]
             
-            console.log("최종:",this.rowData[this.Scol] )
+            //console.log("최종:",this.rowData[this.Scol] )
         
             this.closeModal();
         },
@@ -507,7 +509,7 @@ export default{
     
         //주문  업데이트
         const selectedRows = this.gridApi.getSelectedRows(); 
-        console.log(selectedRows);
+        //console.log(selectedRows);
         //업데이트 해야 하는 주문 내용 (배열형성)
         let orderAmounts = []
         let perPrices = []
@@ -518,7 +520,7 @@ export default{
         let hasInvalidStatus = false;
 
         selectedRows.forEach(row=>{
-            console.log(row.order_status);
+            //console.log(row.order_status);
             if(row.product_code === '' || row.product_code === null || row.order_amount === '' || row.order_amount === null || row.per_price === '' || row.per_price === null ){
                 this.$notify({
                     text: `제품명과 주문수량, 개별금액은 필수로 입력해야 합니다.`,
@@ -552,7 +554,7 @@ export default{
             orderAmount : JSON.stringify(orderAmounts),
             perPrice : JSON.stringify(perPrices),
         }
-        console.log("보내기:",updateOrderInfo);
+        //console.log("보내기:",updateOrderInfo);
         //부모에게 주문 수정 내용 넘기기 
         this.$emit('updateOrder',updateOrderInfo);
 
@@ -561,7 +563,7 @@ export default{
 
       // 삭제 (주문서)
       async deleteOrder(){
-        console.log("삭제 실행 ", this.order);
+        //console.log("삭제 실행 ", this.order);
         if(this.order.orderlist_status === '등록'){
             let result = await axios.delete(`${ajaxUrl}/orderlist/delete/${this.order.orderlist_num}`)
                                     .catch(err => console.log(err));
@@ -589,7 +591,7 @@ export default{
       //주문삭제 
       async deleteOrders(){
         const selectedRows = this.gridApi.getSelectedRows();
-        console.log("삭제될것==",selectedRows);
+        //console.log("삭제될것==",selectedRows);
 
         let errorMessage = null; // 알림 메시지를 저장할 변수
 
@@ -618,7 +620,7 @@ export default{
                 orderNum : JSON.stringify(orderNums)
             }
 
-            console.log("서버에 보낼 데이터==",deleteOrder);
+            //console.log("서버에 보낼 데이터==",deleteOrder);
 
             let result = await axios.put(`${ajaxUrl}/order/delete`,deleteOrder)
                                     .catch(err => console.log(err));

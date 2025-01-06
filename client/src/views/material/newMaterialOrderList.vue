@@ -15,10 +15,10 @@
             :pagination="true"
             :noRowsOverlayComponent="noRowsOverlayComponent"
             :quickFilterText="clientNamesearch"
-            :paginationPageSize="5"
-            :paginationPageSizeSelector="[5, 10, 20, 40]"
+            :paginationPageSize="4"
+            :paginationPageSizeSelector="[4, 10, 20, 40]"
             @grid-ready="onReady"
-            style="height: 303px;"
+            style="height: 261px;"
             rowSelection="multiple"
         >
         </ag-grid-vue>
