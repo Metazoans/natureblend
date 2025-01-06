@@ -123,6 +123,19 @@ export default {
           editable: params => {
             return params.data.plan_status === '대기중'
           },
+          cellRenderer: (params) => {
+            if(params.value && params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <span style="flex-grow: 1; text-align: left;">${params.value}</span>
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                </span>
+                `
+            }
+            else {
+             return `<span style="flex-grow: 1; text-align: left;">${params.value || ''}</span>`
+            }
+          },
           flex: 3
         },
         {
@@ -132,6 +145,21 @@ export default {
           editable: params => {
             return params.data.plan_status === '대기중'
           },
+          cellRenderer: (params) => {
+            if(params.value && params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <span style="flex-grow: 1; text-align: left;">${params.value}</span>
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                </span>
+                `
+            }
+            else {
+              return `<span style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="flex-grow: 1; text-align: left;">${params.value || ''}</span>
+                      </span>`
+            }
+          },
           flex: 2
         },
         {
@@ -140,6 +168,21 @@ export default {
           cellStyle: {textAlign: 'center'},
           editable: params => {
             return params.data.plan_status === '대기중'
+          },
+          cellRenderer: (params) => {
+            if(params.value && params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <span style="flex-grow: 1; text-align: left;">${params.value}</span>
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                </span>
+                `
+            }
+            else {
+              return `<span style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="flex-grow: 1; text-align: left;">${params.value || ''}</span>
+                      </span>`
+            }
           },
           flex: 2
         },
@@ -155,12 +198,42 @@ export default {
         {
           headerName: "제품명",
           field: 'product_name',
+          cellRenderer: (params) => {
+            if(params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <span style="flex-grow: 1; text-align: left;">${params.value}</span>
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                </span>
+                `
+            }
+            else {
+              return `<span style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="flex-grow: 1; text-align: left;">${params.value || ''}</span>
+                      </span>`
+            }
+          },
         },
         { headerName: "계획수량",
           field: 'plan_qty',
           cellStyle: {textAlign: 'right'},
           editable: params => {
             return params.data.plan_status === '대기중'
+          },
+          cellRenderer: (params) => {
+            if(params.data.plan_status === '대기중'){
+              return `
+                <span style="display: flex; align-items: center; justify-content: flex-end;">
+                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                    <span style="flex-grow: 1; text-align: right;">${params.value}</span>
+                </span>
+                `
+            }
+            else {
+              return `<span style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="flex-grow: 1; text-align: right;">${params.value || ''}</span>
+                      </span>`
+            }
           },
           flex: 2
         },

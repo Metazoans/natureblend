@@ -14,7 +14,7 @@
           <thead>
           <tr>
             <th v-for="col in cols" :key="col"
-                class="text-uppercase text-secondary text-md font-weight-bolder opacity-7 text-center"
+                class="text-uppercase text-secondary text-md font-weight-bolder text-center"
             >
               {{ col }}
             </th>
@@ -27,31 +27,31 @@
           <tbody v-show="selectedOrders.length">
           <tr v-for="order in selectedOrders" :key="order.orderNum">
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.orderNum }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.orderNum }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.orderDate }}</h6>
+              <p class="mb-0 text-sm text-center">{{ order.orderDate }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-center">{{ order.dueDate }}</h6>
+              <p class="mb-0 text-sm text-center">{{ order.dueDate }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm">{{ order.productName }}</h6>
+              <p class="mb-0 text-sm">{{ order.productName }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.orderQty }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.orderQty }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.plannedQty }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.plannedQty }}</p>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.unplannedQty }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.unplannedQty }}</p>
             </td>
             <td class="plan-qty-group input-group w-50 h-25 text-end m-lg-auto" :class="{ 'plan-input': !order.planQty  }" >
               <input type="number" class="plan-qty mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
             </td>
             <td>
-              <h6 class="mb-0 text-sm text-end">{{ order.stockQty }}</h6>
+              <p class="mb-0 text-sm text-end">{{ order.stockQty }}</p>
             </td>
           </tr>
           </tbody>
@@ -124,7 +124,7 @@ export default {
       modalTitle: '직원 목록',
       searchEmp: {},
       selectedEmp: {},
-      cols: ['주문번호', '주문일자', '납기일자', '제품명', '주문량', '기계획량', '미계획량', '현계획량', '재고']
+      cols: ['주문번호', '주문일자', '납기일자', '제품명', '주문량(개)', '기계획량(개)', '미계획량(개)', '현계획량(개)', '재고(개)']
     }
   },
 
@@ -247,6 +247,16 @@ export default {
     background-color: $gray-100;
     margin-bottom: 40px;
     border-radius: 8px;
+    thead {
+      background-color: #EE9900;
+      tr, th {
+        color: #fff !important;
+      }
+    }
+    tbody p {
+      font-weight: 400;
+      color: #222
+    }
     .no-data{
       td {
         text-align: center;
