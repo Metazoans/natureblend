@@ -12,6 +12,7 @@
             @updateInputData="updateInputData"
             @getProcessFlow="getProcessFlow"
             @getSearchPlan="getSearchPlan"
+            @checkStockEnough="checkStockEnough"
             :isOrderAddFormReset="isOrderAddFormReset"
         />
 
@@ -84,6 +85,7 @@ export default {
 
   data() {
     return {
+      isStockEnough: true,
       modalTitle: '생산지시 등록',
       isShowModal: false,
       theme: theme,
@@ -165,6 +167,10 @@ export default {
   },
 
   methods: {
+    checkStockEnough(bool) {
+      this.isStockEnough = bool
+    },
+
     focusOnCell() {
       this.gridApi.ensureIndexVisible(0)
       this.gridApi.ensureColumnVisible('useAmount')
@@ -270,13 +276,18 @@ export default {
           .catch(err => console.log(err));
 
 
-      if(isLastProcess && result.data.message === 'success') {
+      if(isLastProcess && result.data.message === 'success' && this.isStockEnough) {
         this.$notify({
           text: "생산지시가 등록되었습니다.",
           type: 'success',
         });
         this.isOrderAddFormReset = false
         this.resetAddInfo()
+      } else if(isLastProcess) {
+        this.$notify({
+          text: "생산지시 등록을 실패하였습니다.",
+          type: 'error',
+        });
       }
     },
 

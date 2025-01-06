@@ -122,7 +122,6 @@ export default {
       let materialList = result.data
 
       let isFirstNoti = true
-
       materialList.forEach((item) => {
         let stockAmount = (item.stok_qty - item.invalid_qty) > 0 ? (item.stok_qty - item.invalid_qty) : 0
 
@@ -132,6 +131,9 @@ export default {
             type: 'error',
           });
           isFirstNoti = false
+          this.$emit('checkStockEnough', false)
+        } else if(stockAmount && isFirstNoti){
+          this.$emit('checkStockEnough', true)
         }
 
         let row = {
