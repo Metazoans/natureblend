@@ -86,7 +86,7 @@ ORDER BY po.production_order_date DESC
 // ORDER BY production_order_date DESC
 // `;
 
-// 음료제작 공정
+// 음료제작 공정  [검사 완료 2025-01-06]
 const process1list =
 `
 SELECT
@@ -104,16 +104,23 @@ FROM
 			AND qpb.inspec_status = '검사요청완료'
 `;
 
-// 음료제작 품질
+// 음료제작 품질 [검사 완료 2025-01-06]
 const process1qclist =
 `
-SELECT product_name,
-       production_order_qty AS product_qty
-FROM process_work_header pwh
-WHERE pwh.process_status != 'process_waiting' -- process_waiting  -- processing  -- process_complete
-
-  AND pwh.process_name = '음료제작공정' -- 세척공정 -- 포장공정 -- 음료제작공정
-ORDER BY pwh.work_date DESC
+SELECT
+	pwh.process_work_header_num,
+	pwh.product_name,
+	sum(pwb.success_qty) AS product_qty
+FROM process_work_body pwb
+JOIN process_work_header pwh ON pwb.process_work_header_num = pwh.process_work_header_num
+AND pwh.process_name = '음료제작공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+AND pwh.process_start_time IS NOT NULL
+AND pwh.process_end_time IS NULL
+JOIN qc_process_beverage qpb ON pwb.process_num = qpb.process_num
+AND qpb.inspec_status = '검사완료'
+WHERE pwb.partial_process_end_time IS NULL
+GROUP BY pwh.process_work_header_num, pwh.product_name
+ORDER BY pwb.process_num DESC
 `;
 
 // 세척 공정
