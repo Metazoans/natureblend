@@ -183,6 +183,10 @@ export default {
     },
 
     updateInputData(orderInfo) {
+      if(!orderInfo.prodOrderQty) {
+        return
+      }
+
       this.orderInfo = orderInfo
 
       this.rowDataNeed = this.rowDataNeed.map((data) => {

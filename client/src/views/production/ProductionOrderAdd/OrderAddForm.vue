@@ -21,7 +21,12 @@
     <div class="input-content">
       <h6>지시수량</h6>
       <div class="input-group w-auto h-25">
-        <input type="number" v-model="orderInfo.prodOrderQty" class="form-control border p-2" @focusout="checkQty"/>
+        <input
+            type="number"
+            v-model="orderInfo.prodOrderQty"
+            class="form-control border p-2"
+            @focusout="checkQty"
+        />
       </div>
       <p class="max-qty">* 최대수량: {{ searchPlan.total_plan_qty }}</p>
     </div>
@@ -73,6 +78,7 @@ import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
 import axios from "axios";
 import {ajaxUrl} from "@/utils/commons";
 import EmpList from "@/views/production/productionPlanAdd/ModalEmpList.vue";
+// import isNumber from "@/utils/numberCheck";
 
 export default {
   name: "OrderInputForm",
@@ -221,7 +227,6 @@ export default {
       },
       deep: true
     },
-
   }
 }
 </script>
