@@ -23,7 +23,7 @@ JOIN client cli ON moh.client_num = cli.client_num
 JOIN employee emp ON moh.emp_num = emp.emp_num
 `;
 
-//자재검사중 [ 확인 완료 2025-01-06 ]
+//자재검사중  (이건 돌려쓰는거라 삭제금지!!) [ 확인 완료 2025-01-06 ]
 const selectQCMRWithConditions2 =`
 SELECT q.qc_material_id,
        q.order_code,
@@ -42,7 +42,7 @@ FROM qc_material q LEFT JOIN employee e ON q.emp_num = e.emp_num
 
 `;
 
-//자재 입고해야할 목록(자재입고대기) [ 확인 완료 2025-01-06 ]
+//자재 입고해야할 목록(자재입고대기) (이건 돌려쓰는거라 삭제금지!!) [ 확인 완료 2025-01-06 ]
 const material_input_qc_list2 =
 `
 SELECT mb.body_num,
@@ -77,14 +77,6 @@ WHERE po.plan_num = pp.plan_num
   AND po.production_order_status = 'work_waiting'
 ORDER BY po.production_order_date DESC
 `;
-// `
-// SELECT 
-// your_product(product_code, 'product_name') AS product_name,
-// production_order_qty AS product_qty
-// FROM production_order
-// WHERE production_order_status = 'work_waiting'
-// ORDER BY production_order_date DESC
-// `;
 
 // 음료제작 공정  [검사 완료 2025-01-06]
 const process1list =
@@ -123,62 +115,109 @@ GROUP BY pwh.process_work_header_num, pwh.product_name
 ORDER BY pwb.process_num DESC
 `;
 
-// 세척 공정
+// 세척 공정  [ 실패작 더이상 아이디어가 안떠오름 DB설계가 잘못되어있음 ㅠ]
 const process2list =
 `
-SELECT product_name,
-       production_order_qty AS product_qty
-FROM process_work_header pwh
-WHERE pwh.process_status = 'processing' -- process_waiting  -- processing  -- process_complete
-
-  AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
-  AND process_start_time IS NOT NULL
-ORDER BY pwh.work_date DESC
+SELECT
+		pwh.product_name,
+		sum(pwb.process_todo_qty) AS product_qty
+FROM
+		process_work_body pwb
+		JOIN process_work_header pwh
+			ON pwb.process_work_header_num = pwh.process_work_header_num
+				AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+			  AND pwh.process_start_time IS NOT NULL
+			  AND pwh.process_end_time IS NULL
+		JOIN qc_process_cleaning qpc
+			ON	pwb.process_num = qpc.process_num
+			AND qpc.inspec_status = '검사요청완료'
+			GROUP BY pwh.process_work_header_num, pwh.product_name
+      ORDER BY pwb.process_num DESC
 `;
 
-// 세척 품질
+// 세척 품질  [ 아 몰라 ㅋㅋㅋㅋㅋ 포기하면 편해 ㅠㅠ]
 const process2qclist =
 `
-SELECT product_name,
-       production_order_qty AS product_qty
-FROM process_work_header pwh
-WHERE pwh.process_status != 'process_waiting' -- process_waiting  -- processing  -- process_complete
-
-  AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
-ORDER BY pwh.work_date DESC
+SELECT
+	pwh.process_work_header_num,
+	pwh.product_name,
+	sum(pwb.success_qty) AS product_qty
+FROM process_work_body pwb
+JOIN process_work_header pwh ON pwb.process_work_header_num = pwh.process_work_header_num
+AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+AND pwh.process_start_time IS NOT NULL
+AND pwh.process_end_time IS NULL
+JOIN qc_process_cleaning qpb ON pwb.process_num = qpb.process_num
+AND qpb.inspec_status = '검사완료'
+WHERE pwb.partial_process_end_time IS NULL
+GROUP BY pwh.process_work_header_num, pwh.product_name
+ORDER BY pwb.process_num DESC
 `;
+// `
+// SELECT product_name,
+//        production_order_qty AS product_qty
+// FROM process_work_header pwh
+// WHERE pwh.process_status != 'process_waiting' -- process_waiting  -- processing  -- process_complete
+
+//   AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+// ORDER BY pwh.work_date DESC
+// `;
 
 
 // 포장 공정
 const process3list =
 `
-SELECT product_name,
-       production_order_qty AS product_qty
-FROM process_work_header pwh
-WHERE pwh.process_status = 'processing' -- process_waiting  -- processing  -- process_complete
-
-  AND pwh.process_name = '포장공정' -- 세척공정 -- 포장공정 -- 음료제작공정
-  AND process_start_time IS NOT NULL
-ORDER BY pwh.work_date DESC 
+SELECT
+		pwh.product_name,
+		sum(pwb.process_todo_qty) AS product_qty
+FROM
+		process_work_body pwb
+		JOIN process_work_header pwh
+			ON pwb.process_work_header_num = pwh.process_work_header_num
+				AND pwh.process_name = '포장공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+			  AND pwh.process_start_time IS NOT NULL
+			  AND pwh.process_end_time IS NULL
+		JOIN qc_packaging qpc
+			ON	pwb.process_num = qpc.process_num
+			AND qpc.inspec_status = '검사요청완료'
+			GROUP BY pwh.process_work_header_num, pwh.product_name
+      ORDER BY pwb.process_num DESC
 `;
 
 // 포장 품질
 const process3qclist =
 `
-SELECT b.product_name AS product_name,
-       qcpp.total_qnt AS product_qty
-FROM qc_packaging qcpp
-LEFT JOIN process_work_body pb ON qcpp.process_num = pb.process_num
-LEFT JOIN bom b ON pb.product_code = b.product_code
-WHERE qcpp.inspec_end IS NULL
-ORDER BY qcpp.inspec_start DESC
+SELECT
+		pwh.product_name,
+		sum(pwb.process_todo_qty) AS product_qty
+FROM
+		process_work_body pwb
+		JOIN process_work_header pwh
+			ON pwb.process_work_header_num = pwh.process_work_header_num
+				AND pwh.process_name = '포장공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+			  AND pwh.process_start_time IS NOT NULL
+			  AND pwh.process_end_time IS NULL
+		JOIN qc_packaging qpc
+			ON	pwb.process_num = qpc.process_num
+			AND qpc.inspec_status = '검사요청완료'
+			GROUP BY pwh.process_work_header_num, pwh.product_name
+      ORDER BY pwb.process_num DESC
 `;
+// `
+// SELECT b.product_name AS product_name,
+//        qcpp.total_qnt AS product_qty
+// FROM qc_packaging qcpp
+// LEFT JOIN process_work_body pb ON qcpp.process_num = pb.process_num
+// LEFT JOIN bom b ON pb.product_code = b.product_code
+// WHERE qcpp.inspec_end IS NULL
+// ORDER BY qcpp.inspec_start DESC
+// `;
 
 // 제품 입고 대기  [ 검사 완료 2025-01-06]
 const product_input_wait =
 `
 SELECT p.product_name ,
-       q.pass_qnt AS product_qty
+       sum(q.pass_qnt) AS product_qty
 FROM process_work_body w
 LEFT JOIN qc_packaging q ON q.process_num = w.process_num
 LEFT JOIN product p ON w.product_code = p.product_code
@@ -186,6 +225,7 @@ WHERE q.qc_packing_id NOT IN
     (SELECT qc_packing_id
      FROM input_body)
 AND q.pass_qnt != 0
+GROUP BY p.product_name
 ORDER BY q.inspec_start DESC
 `;
 
