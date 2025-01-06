@@ -6,7 +6,6 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h4 class="me-3">검색 조건</h4>
-        <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
       <div class="row gx-3 p-4 rounded border shadow search-background">
@@ -15,14 +14,14 @@
           <label for="startDate" class="form-label">등록일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
-              v-model="searchInfo.startDate" />
+              v-model="searchInfo.startDate" autocomplete="off" />
           </div>
         </div>
         <div class="col-md-2">
           <label for="endDate" class="form-label">등록일(까지)</label>
           <div class="d-flex gap-2">
-            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
-              v-model="searchInfo.endDate" />
+            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer" v-model="searchInfo.endDate"
+              autocomplete="off" />
           </div>
         </div>
 
@@ -30,7 +29,7 @@
         <div class="col-md-3">
           <label for="mName" class="form-label">자재명</label>
           <input type="search" id="mName" class="form-control border p-2 cursor-pointer" placeholder="자재명"
-            v-model="searchInfo.mName" />
+            v-model="searchInfo.mName" autocomplete="off" />
         </div>
 
         <!-- 검색 버튼 -->
@@ -136,7 +135,8 @@
           </div>
           <div class="form-group mt-2">
             <label :for="'defectQty' + index">불량 수량(개):</label>
-            <input type="number" v-model="detail.qty" :id="'defectQty' + index" class="form-control" />
+            <input type="number" v-model="detail.qty" :id="'defectQty' + index" class="form-control"
+              autocomplete="off" />
           </div>
           <div class="d-flex justify-content-end mt-3">
             <button class="btn btn-danger mt-2"
@@ -163,8 +163,6 @@
 </template>
 
 <script>
-// import { toRaw } from 'vue';
-
 import MaterialButton from "@/components/MaterialButton.vue";
 
 import axios from 'axios';
@@ -218,17 +216,16 @@ export default {
           },
         },
         {
-          headerName: "합격량", field: "passQnt", resizable: false, editable: true, 
+          headerName: "합격량", field: "passQnt", resizable: false, editable: true,
           cellStyle: {
             //border: "0.5px dashed #fb8c00", // 점선 테두리
             cursor: "text", // 텍스트 커서
             textAlign: "right",
-          },  
+          },
           flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
               const formatted_t_qty = Number(params.value).toLocaleString() + ' 개';
-              // return `<span style="text-align: right;">${formatted_t_qty}</span>`;
               return `
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <i class="fas fa-edit" style=" color: gray; margin-right: 5px;"></i>
@@ -241,17 +238,16 @@ export default {
           },
         },
         {
-          headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true, 
+          headerName: "불합격량", field: "rjcQnt", resizable: false, editable: true,
           cellStyle: {
             //border: "0.5px dashed #fb8c00", // 점선 테두리
             cursor: "text", // 텍스트 커서
             textAlign: "right",
-          },  
+          },
           flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
               const formatted_t_qty = Number(params.value).toLocaleString() + ' 개';
-              // return `<span style="text-align: right;">${formatted_t_qty}</span>`;
               return `
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <i class="fas fa-edit" style=" color: gray; margin-right: 5px;"></i>
@@ -344,7 +340,6 @@ export default {
       let searchResult = await axios.post(`${ajaxUrl}/requestQCPC`, result)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
-      // console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
@@ -360,7 +355,6 @@ export default {
       let searchResult = await axios.post(`${ajaxUrl}/requestQCPC`)
         .catch(err => console.log(err));
       this.searchList = searchResult.data;
-      // console.log(searchResult.data);
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
@@ -373,7 +367,6 @@ export default {
 
     //신청 건의 합격량, 불합격량(불량항목, 각각의 수량) 처리
     onCellClicked(event) {
-      // console.log('클릭됨');
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = event.data;
       this.showModalRJC = true;
@@ -419,7 +412,7 @@ export default {
         });
         return;
       }
-      else if(defectDetails.some(detail =>  !Number.isInteger(detail.qty)) ) {
+      else if (defectDetails.some(detail => !Number.isInteger(detail.qty))) {
         notify({
           text: "해당 자재의 수량은 소수로 입력할 수 없습니다.",
           type: "warn", // success, warn, error 가능
@@ -437,7 +430,6 @@ export default {
       }
 
       const pass = total - rjcQntSum;
-      // console.log(`저장 완료: ${qcProcessId}, 합격량: ${pass}, 불량 총합: ${rjcQntSum}`);
       // 업데이트 로직
       const rowIndex = this.rowData1.findIndex(row => row.qcProcessId === this.selectedRow.qcProcessId);
       if (rowIndex !== -1) {
@@ -451,16 +443,10 @@ export default {
       }
 
       this.closeModal();
-      // console.log('현재 검색결과 테이블');
-      // console.log(this.rowData1);
-      // console.log('불량상세테이블');
-      // console.log(this.defectDetailsMap);
-      // console.log('테스트(검사완료 처리할 검사 건수들)')
-      this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료')
-      // console.log(this.rowData2);
+      this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료');
       notify({
-          text: `검사 결과 - 합격량: ${pass}개, 불합격량: ${rjcQntSum}개 입니다.`,
-          type: "success", // success, warn, error 가능
+        text: `검사 결과 - 합격량: ${pass}개, 불합격량: ${rjcQntSum}개 입니다.`,
+        type: "success", // success, warn, error 가능
       });
     },
 
@@ -474,13 +460,8 @@ export default {
         return;
       }
       this.showModalDone = !this.showModalDone
-      // console.log(this.rowData2);
-      // console.log(this.defectDetailsMap);
     },
     async confirm() {
-      // console.log('저장처리!')
-      // console.log(this.rowData2);
-      // console.log(this.defectDetailsMap);
       // 객체를 배열로 변환
       let defectDetailsArray = [];
       for (let qcId in this.defectDetailsMap) {
@@ -508,7 +489,6 @@ export default {
       };
       let result = await axios.post(`${ajaxUrl}/completeQCPC`, qcData)
         .catch(err => console.log(err));
-      // console.log(result);
       notify({
         text: `완료된 검사: ${result.data.updatedRows}건, 기록된 불량 내역: ${result.data.defectNum}건`,
         type: "success", // success, warn, error 가능
@@ -536,11 +516,10 @@ export default {
 
     //리셋
     reset() {
-      if(this.rowData2.length != 0){
+      if (this.rowData2.length != 0) {
         this.searchRequestAll();
         notify({
           text: `검사 처리 내역을 초기화 했습니다.`,
-          // text: `기록된 불량 내역:${result.data.defectNum}`,
           type: "warn", // success, warn, error 가능
         });
       }
@@ -587,12 +566,10 @@ export default {
 //검색창 배경색
 .search-background {
   background-color: #e9ecef;
-  /* 원하는 배경색 */
 
 
   input {
     background-color: #ffffff;
-    /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;
@@ -624,6 +601,11 @@ export default {
     color: #343a40;
     background-color: #e8ebee;
     /* 헤더 텍스트 색상 */
+  }
+
+  .table td {
+    color: #333333;
+    // font-weight: bold;
   }
 
   .defect-item {

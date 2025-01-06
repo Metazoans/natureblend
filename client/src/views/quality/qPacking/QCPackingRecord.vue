@@ -6,7 +6,6 @@
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
         <h4 class="me-3">검색 조건</h4>
-        <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
       <div class="row gx-3 p-4 rounded border shadow search-background">
@@ -26,14 +25,14 @@
           <label for="startDate" class="form-label">검사일(부터)</label>
           <div class="d-flex gap-2">
             <input type="date" id="startDate" class="form-control border p-2 cursor-pointer"
-              v-model="searchInfo.startDate" />
+              v-model="searchInfo.startDate" autocomplete="off" />
           </div>
         </div>
         <div class="col-md-2">
           <label for="endDate" class="form-label">검사일(까지)</label>
           <div class="d-flex gap-2">
-            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer"
-              v-model="searchInfo.endDate" />
+            <input type="date" id="endDate" class="form-control border p-2 cursor-pointer" v-model="searchInfo.endDate"
+              autocomplete="off" />
           </div>
         </div>
 
@@ -41,7 +40,7 @@
         <div class="col-md-2">
           <label for="pName" class="form-label">제품명</label>
           <input type="search" id="pName" class="form-control border p-2 cursor-pointer" placeholder="제품명"
-            v-model="searchInfo.pName" />
+            v-model="searchInfo.pName" autocomplete="off" />
         </div>
 
         <!-- 검색 버튼 -->
@@ -166,7 +165,6 @@ export default {
   methods: {
     onGridReady(params) {
       this.gridApi = params.api;
-      //this.gridApi.sizeColumnsToFit();
 
     },
     // 날짜를 YYYY-MM-DD 형식으로 변환
@@ -289,7 +287,6 @@ export default {
   input,
   .form-select {
     background-color: #ffffff;
-    /* input 요소의 배경을 투명으로 설정 */
     border-radius: 5px;
     padding: 8px 12px;
     font-size: 16px;
