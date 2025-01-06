@@ -38,6 +38,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999;
   }
   
   .modal-content {
@@ -45,6 +46,7 @@
     padding: 20px;
     border-radius: 10px;
     max-width: 100%;
+    z-index: 10000;
   }
   
   .button-container {

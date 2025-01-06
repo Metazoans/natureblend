@@ -93,10 +93,10 @@
                     axios.delete(`${ajaxUrl}/processDelete/${params.data.process_code}`)
                     .then(res => {
                         if(res.data === '성공'){
-                            this.$notify({ title:'공정삭제', text: '공정이 삭제되었습니다.', type: 'success' });
+                            this.$notify({ text: '공정이 삭제되었습니다.', type: 'success' });
                             this.processList();
                         }else{
-                            this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+                            this.$notify({ text: '삭제실패.', type: 'error' });
                         }
                     })
                     .catch(err => console.log(err));
@@ -121,7 +121,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -151,7 +151,7 @@
         console.log(this.machineType);
         if(number === 1){
             if(this.processCode === '' || this.processName === '' || this.machineType === ''){
-                this.$notify({ title:'빈값', text: '빈칸을 입력해주세요.', type: 'error' });
+                this.$notify({ text: '빈칸을 입력해주세요.', type: 'error' });
                 return;
             }else{
                 console.log('등록');
@@ -159,7 +159,7 @@
                 // 중복체크
                 for(let i = 0; i < this.rowData.length; i++){
                     if(this.rowData[i].process_code === this.processCode){
-                        this.$notify({ title:'중복', text: '중복된 공정입니다.', type: 'error' });
+                        this.$notify({  text: '중복된 공정입니다.', type: 'error' });
                         dataresult = 'no';
                         return;
                     }
@@ -189,23 +189,23 @@
         const result = await axios.post(`${ajaxUrl}/processInsert`, newList)
                                     .catch(err => console.log(err));
             if(result.data === '성공'){
-                this.$notify({ title:'등록성공', text: '공정이 등록되었습니다.', type: 'success' });
+                this.$notify({ text: '공정이 등록되었습니다.', type: 'success' });
                 this.processList();
             }else{
-                this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
+                this.$notify({ text: '등록실패.', type: 'error' });
             }
      },
         async processUpdate(newList){
             const result = await axios.post(`${ajaxUrl}/processUpdate/${this.processCode}`, newList)
                 if(result.data === '성공'){
-                    this.$notify({ title:'수정성공', text: '공정이 수정되었습니다.', type: 'success' });
+                    this.$notify({ text: '공정이 수정되었습니다.', type: 'success' });
                     this.processList();
                     this.upin = '';
                     this.processCode = '';
                     this.processName = '';
                     this.machineType = '';
                 }else{
-                    this.$notify({ title:'수정실패', text: '수정실패.', type: 'error' });
+                    this.$notify({ text: '수정실패.', type: 'error' });
                 }
         },
    },
