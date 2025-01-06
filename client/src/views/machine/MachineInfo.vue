@@ -50,7 +50,8 @@
     <div class="row align-items-center machineInfo">
       <!-- 설비 이미지 -->
       <div class="col-3 mimg">
-        <img v-if="machineData.machine_img" :src="`http://localhost:3000${machineData.machine_img}`"/>
+        <!-- 배포시 이미지 경로 제거(localUrl제거) -->
+        <img v-if="machineData.machine_img" :src="`${localUrl}${machineData.machine_img}`"/>
         <div v-else class="noImg">
           <a>이미지 파일이 없습니다</a>
         </div>
@@ -224,7 +225,7 @@
 
 <script>
 import axios from 'axios';
-import { ajaxUrl } from '@/utils/commons.js';
+import { ajaxUrl, localUrl } from '@/utils/commons.js';
 import userDateUtils from "@/utils/useDates.js";
 import MachineManage from "./MachineManage.vue";
 
@@ -238,6 +239,8 @@ export default {
   },
   data() {
     return {
+      localUrl: localUrl,
+
       // 로그인 사원 권한 체크
       checkJob: this.$store.state.loginInfo.job == '설비' ? true : this.$store.state.loginInfo.position == '관리자' ? true : false,
 

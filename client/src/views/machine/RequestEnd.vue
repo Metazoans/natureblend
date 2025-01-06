@@ -36,7 +36,7 @@ const requestCol = shallowRef([
   { headerName: '설비분류', field: 'machine_type', flex: 3 },
   { headerName: '설비이름', field: 'machine_name', flex: 3 },
   { headerName: '정비내용', field: 'maintenance_detail', flex: 4 },
-  { headerName: '작업자', field: 'work_emp', cellStyle: { textAlign: "center" }, flex: 2 },
+  { headerName: '작업자', field: 'work_emp_name', cellStyle: { textAlign: "center" }, flex: 2 },
   { headerName: '완료일자', field: 'end_date', cellStyle: { textAlign: "center" }, flex: 3 },
 ]);
 

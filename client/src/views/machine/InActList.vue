@@ -101,9 +101,8 @@ export default {
     const machineRow = shallowRef([]);
     const machineCol = shallowRef([
       { headerName: '번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 2 },
-      { headerName: '공정코드', field: 'process_code', cellStyle: { textAlign: "center" }, flex: 3 },
       { headerName: '공정이름', field: 'process_name', flex: 4 },
-      { headerName: '모델번호', field: 'model_num', flex: 3 },
+      { headerName: '모델번호', field: 'model_num', flex: 4 },
       { headerName: '설비분류', field: 'machine_type', flex: 4 },
       { headerName: '설비이름', field: 'machine_name', flex: 4 },
       { headerName: '설비위치', field: 'machine_location', flex: 3 },

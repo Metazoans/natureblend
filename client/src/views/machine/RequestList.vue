@@ -184,9 +184,10 @@ const checkJob = ref(
 const requestRow = shallowRef([]);
 const requestCol = shallowRef([
   { headerName: '설비번호', field: 'machine_num', cellStyle: { textAlign: "center" }, flex: 2 },
-  { headerName: '설비분류', field: 'machine_type', flex: 3 },
+  { headerName: '설비분류', field: 'machine_type', flex: 2 },
   { headerName: '설비이름', field: 'machine_name', flex: 3 },
   { headerName: '요청사유', field: 'request', flex: 3 },
+  { headerName: '요청자', field: 'request_emp_name', flex: 2 },
   { headerName: '요청일자', field: 'request_date', cellStyle: { textAlign: "center" }, flex: 3 },
 ]);
 
@@ -227,8 +228,6 @@ const selectFnc = (data) => {
   maintenanceInfo.value.machine_type = data.machine_type;
   maintenanceInfo.value.machine_location = data.machine_location;
   maintenanceInfo.value.machine_num = data.machine_num;
-
-  console.log('select data : ', data);
 }
 
 // 정비 요청 내역 데이터
@@ -307,7 +306,6 @@ const getmaintenanceInfo = async () => {
   let result = await axios.get(`${ajaxUrl}/maintenances/maintenanceInfo/${selectNo.value}`)
                           .catch(err => console.log(err));
   maintenanceInfo.value = result.data;
-  console.log(maintenanceInfo.value);
 }
 
 // 수정 / 완료 탭
@@ -343,12 +341,9 @@ const requestInsert = async () => {
   let obj = {
     machine_num: maintenanceInfo.value.machine_num,
     request: maintenanceInfo.value.request,
-    request_emp : 1,
+    request_emp: store.state.loginInfo.emp_num,
+    request_date: maintenanceInfo.value.request_date,
   }
-  
-  obj.request_date = getToday();
-
-  console.log(obj);
 
   let result = await axios.post(`${ajaxUrl}/maintenances/request`, obj)
                           .catch(err => console.log(err));
@@ -372,14 +367,13 @@ const requestUpdate = async () => {
   let obj = {};
   if(inputType.value == 'update') { // 수정페이지인 경우
     obj.request = maintenanceInfo.value.request;
-    obj.request_date = getToday();
+    obj.request_date = maintenanceInfo.value.request_date;
   } else if(inputType.value == 'complete') { // 등록 페이지인 경우
     obj.maintenance_detail = maintenanceInfo.value.maintenance_detail;
     obj.maintenance_state = 'done';
-    obj.work_emp = 99; // 현재 사용자 정보 가져오는 기능으로 변경 예정
+    obj.work_emp = store.state.loginInfo.emp_num; // 현재 사용자 정보 가져오는 기능으로 변경 예정
     obj.end_date = getToday();
   }
-  console.log('update obj : ', obj);
 
   let result = await axios.put(`${ajaxUrl}/maintenances/maintenanceUpdate/${selectNo.value}`, obj)
                           .catch(err => console.log(err));
