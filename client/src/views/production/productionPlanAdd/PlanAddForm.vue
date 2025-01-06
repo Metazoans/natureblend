@@ -48,7 +48,7 @@
               <p class="mb-0 text-sm text-end">{{ order.unplannedQty }}</p>
             </td>
             <td class="plan-qty-group input-group w-50 h-25 text-end m-lg-auto" :class="{ 'plan-input': !order.planQty  }" >
-              <input type="number" class="plan-qty mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
+              <input type="number" autocomplete="off" class="plan-qty mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
             </td>
             <td>
               <p class="mb-0 text-sm text-end">{{ order.stockQty }}</p>
@@ -61,25 +61,25 @@
         <div class="input-content">
           <h6>생산계획명</h6>
           <div class="input-group w-auto h-25">
-            <input type="text" class="form-control border p-2" v-model="planName"/>
+            <input type="text" autocomplete="off" class="form-control border p-2" v-model="planName"/>
           </div>
         </div>
         <div class="input-content">
           <h6>계획시작일자</h6>
           <div class="input-group w-auto h-25">
-            <input type="date" class="form-control border p-2" v-model="planStartDate"/>
+            <input type="date" autocomplete="off" class="form-control border p-2" v-model="planStartDate"/>
           </div>
         </div>
         <div class="input-content">
           <h6>계획종료일자</h6>
           <div class="input-group w-auto h-25">
-            <input type="date" class="form-control border p-2" v-model="planEndDate"/>
+            <input type="date" autocomplete="off" class="form-control border p-2" v-model="planEndDate"/>
           </div>
         </div>
         <div class="input-content ">
           <h6>등록인</h6>
           <div class="input-group w-auto h-25">
-            <input type="text" @click="openModal" :value="searchEmp.name" readonly class="form-control border p-2 emp" />
+            <input type="text" @click="openModal" autocomplete="off" :value="searchEmp.name" readonly class="form-control border p-2 emp" />
           </div>
         </div>
       </div>

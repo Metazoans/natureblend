@@ -128,7 +128,7 @@ export default {
               return `
                 <span style="display: flex; align-items: center; justify-content: flex-end;">
                     <span style="flex-grow: 1; text-align: left;">${params.value}</span>
-                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                    <i class="fas fa-edit" style="color: #6c757d88" title="더블클릭하여 수정해주세요."></i>
                 </span>
                 `
             }
@@ -150,7 +150,7 @@ export default {
               return `
                 <span style="display: flex; align-items: center; justify-content: flex-end;">
                     <span style="flex-grow: 1; text-align: left;">${params.value}</span>
-                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                    <i class="fas fa-edit" style="color: #6c757d88" title="더블클릭하여 수정해주세요."></i>
                 </span>
                 `
             }
@@ -174,7 +174,7 @@ export default {
               return `
                 <span style="display: flex; align-items: center; justify-content: flex-end;">
                     <span style="flex-grow: 1; text-align: left;">${params.value}</span>
-                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                    <i class="fas fa-edit" style="color: #6c757d88" title="더블클릭하여 수정해주세요."></i>
                 </span>
                 `
             }
@@ -203,7 +203,7 @@ export default {
               return `
                 <span style="display: flex; align-items: center; justify-content: flex-end;">
                     <span style="flex-grow: 1; text-align: left;">${params.value}</span>
-                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                    <i class="fas fa-edit" style="color: #6c757d88" title="더블클릭하여 수정해주세요."></i>
                 </span>
                 `
             }
@@ -224,7 +224,7 @@ export default {
             if(params.data.plan_status === '대기중'){
               return `
                 <span style="display: flex; align-items: center; justify-content: flex-end;">
-                    <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                    <i class="fas fa-edit" style="color: #6c757d88" title="더블클릭하여 수정해주세요."></i>
                     <span style="flex-grow: 1; text-align: right;">${params.value}</span>
                 </span>
                 `

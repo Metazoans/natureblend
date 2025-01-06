@@ -3,7 +3,7 @@
     <div class="search-container mt-4 mb-2">
       <h3 class="">주문목록</h3>
       <div class="input-group w-auto h-25">
-        <input type="text" @click="openModal" :value="searchProduct.product_name" readonly class="form-control border p-2 cursor-pointer" placeholder="제품명">
+        <input type="text" @click="openModal" autocomplete="off" :value="searchProduct.product_name" readonly class="form-control border p-2 cursor-pointer" placeholder="제품명">
       </div>
       <material-button size="sm" color="success" class="button" @click="findOrdersAll">전체조회</material-button>
     </div>
