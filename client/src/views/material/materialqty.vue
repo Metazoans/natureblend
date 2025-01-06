@@ -1,4 +1,6 @@
-<!-- 자재 재고 조회 메뉴 -->
+<!-- 
+    메뉴 : 자재>자재재조>자재재고 조회 메뉴 부모 페이지
+-->
 <template>
    <div>
       <h3>&nbsp;&nbsp;자재 재고 조회</h3>
@@ -23,13 +25,13 @@
          <!-- 자재코드 -->
          <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="materialCode">자재코드</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" @keydown.enter="enterkey">
+            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" autocomplete="off" @keydown.enter="enterkey">
          </div>
  
          <!-- 자재명 -->
          <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="materialName">자재명</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialName" v-model="materialName" @keydown.enter="enterkey">
+            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialName" v-model="materialName" autocomplete="off" @keydown.enter="enterkey">
          </div>
           
       </form>
@@ -53,7 +55,7 @@
          <div class="col-sm-2" style="width:120px;">
             <label class="col-form-label fw-bold" for="limitOut">폐기필요</label><br>
             <div id="limitOut" style="padding-left: 10px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
-               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="out" v-model="limitOut" />&nbsp;&nbsp;재자 보기</label>
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="out" v-model="limitOut" />&nbsp;&nbsp;자재 보기</label>
             </div>
          </div>
 
@@ -61,7 +63,7 @@
          <div class="col-sm-2" style="width:120px;">
             <label class="col-form-label fw-bold" for="product_qty">생산대기</label><br>
             <div id="product_qty" style="padding-left: 10px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
-               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="out" v-model="product_qty" />&nbsp;&nbsp;재자 보기</label>
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="out" v-model="product_qty" />&nbsp;&nbsp;자재 보기</label>
             </div>
          </div>
 
@@ -69,7 +71,7 @@
          <div class="col-sm-2" style="width:120px;">
             <label class="col-form-label fw-bold" for="order_qty">발주중인</label><br>
             <div id="order_qty" style="padding-left: 10px; display: inline-flex; align-items: center; gap: 15px; white-space: nowrap;">
-               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="out" v-model="order_qty" />&nbsp;&nbsp;재자 보기</label>
+               <label style="white-space: nowrap;"><input type="checkbox" class="form-check-input" value="out" v-model="order_qty" />&nbsp;&nbsp;자재 보기</label>
             </div>
          </div>
 
@@ -94,6 +96,7 @@
       :theme="theme"
       :pagination="true"
       :paginationPageSize="10"
+      :paginationPageSizeSelector="[10, 20, 50, 100]"
       @grid-ready="onReady"
       style="height: 513px;"
       rowSelection="multiple"
@@ -128,7 +131,7 @@ const loginInfo = () => {
       console.log(loginfo.value.job);
    }else{
       notify({
-         title: "로그인요청",
+         //title: "로그인요청",
          text: "로그인 하셔야 접속 가능합니다.",
          type: "error", // success, warn, error 가능
       });
@@ -170,11 +173,11 @@ const loginInfo = () => {
    }
    qtylist();   //초기화버튼 누르면 이거 실행
  
-   notify({
-       title: "검색조건",
-       text: "초기화 완료 했습니다.",
-       type: "success", // success, warn, error 가능
-    });
+   // notify({
+   //     title: "검색조건",
+   //     text: "초기화 완료 했습니다.",
+   //     type: "success", // success, warn, error 가능
+   //  });
   
  };
  
@@ -249,11 +252,11 @@ const onExportClick = () => {
    
    rowData.value = result.data.map(val => ({
       ...val,
-      stok_qty: val.material_name.includes('병') ? Number(val.stok_qty) + ' 개' : Number(val.stok_qty)*0.001 + ' kg',
-      reject_qty : val.material_name.includes('병') ? Number(val.reject_qty) + ' 개' : Number(val.reject_qty)*0.001 + ' kg',
-      trush_qty : val.material_name.includes('병') ? Number(val.trush_qty) + ' 개' : Number(val.trush_qty)*0.001 + ' kg', 
-      order_qty : val.material_name.includes('병') ? Number(val.order_qty) + ' 개' : Number(val.order_qty)*0.001 + ' kg',  
-      safety_inventory : val.material_name.includes('병') ? Number(val.safety_inventory) + ' 개' : Number(val.safety_inventory)*0.001 + ' kg',   
+      stok_qty: val.material_name.includes('병') ? Number(val.stok_qty).toLocaleString() + ' 개' : (Number(val.stok_qty)*0.001).toLocaleString() + ' kg',
+      reject_qty : val.material_name.includes('병') ? Number(val.reject_qty).toLocaleString() + ' 개' : (Number(val.reject_qty)*0.001).toLocaleString() + ' kg',
+      trush_qty : val.material_name.includes('병') ? Number(val.trush_qty).toLocaleString() + ' 개' : (Number(val.trush_qty)*0.001).toLocaleString() + ' kg', 
+      order_qty : val.material_name.includes('병') ? Number(val.order_qty).toLocaleString() + ' 개' : (Number(val.order_qty)*0.001).toLocaleString() + ' kg',  
+      safety_inventory : val.material_name.includes('병') ? Number(val.safety_inventory).toLocaleString() + ' 개' : (Number(val.safety_inventory)*0.001).toLocaleString() + ' kg',   
       regi_date : userDateUtils.dateFormat(val.regi_date, "yyyy-MM-dd"),
    }));
  }

@@ -1,4 +1,7 @@
-<!-- 자재 발주 관리 메뉴 리메이크 의 회사선정 리스트 컴포넌트 -->
+<!-- 
+    메뉴 : 자재>자재발주>자재 발주 관리 [발주업체 선정]
+    자재 발주 관리 메뉴 리메이크 의 회사선정 리스트 컴포넌트
+-->
 <template>
    <div>
      <h4 v-show="isVisible2" style="margin-bottom: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;[{{ material_name }}] 발주업체 선정</h4>
@@ -13,6 +16,7 @@
             :noRowsOverlayComponent="noRowsOverlayComponent"
             :quickFilterText="clientNamesearch"
             :paginationPageSize="5"
+            :paginationPageSizeSelector="[5, 10, 20, 40]"
             @grid-ready="onReady"
             style="height: 303px;"
             rowSelection="multiple"
@@ -139,17 +143,21 @@ export default {
         },
         async allInput(){
          const selectedRows = this.gridApi.getSelectedRows(); // 선택된 행의 데이터 가져오기
-         this.selectedRows = selectedRows.map((col) => ({
-            ...col,
-            material: this.material_name,
-            material_code: this.material_code,
-         }));
-         //이거 부모한테 보내는거
-         //console.log(this.selectedRows);
-         this.$emit('planAndClientList', this.selectedRows);
-         this.clientdate = [];
-         this.isVisible2 = !this.isVisible2;
-         this.$notify({ title:'거래처선택', text: '선택이 정상적으로 됐습니다.', type: 'success' });    // success, warn, error 가능
+         if (selectedRows.length > 0) {
+             this.selectedRows = selectedRows.map((col) => ({
+                ...col,
+                material: this.material_name,
+                material_code: this.material_code,
+             }));
+             //이거 부모한테 보내는거
+             //console.log(this.selectedRows);
+             this.$emit('planAndClientList', this.selectedRows);
+             this.clientdate = [];
+             this.isVisible2 = !this.isVisible2;
+             this.$notify({ text: '거래처가 정상적으로 선택 됐습니다.', type: 'success' });    // success, warn, error 가능
+         }else{
+            this.$notify({ text: '선택된 거래처가 없습니다.', type: 'error' }); // title:'주문생성', 
+         }
         },
         async fullClient(){
             if(this.material_code){

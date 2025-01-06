@@ -1,4 +1,6 @@
-<!-- 자재 발주 조회 메뉴 -->
+<!-- 
+    메뉴 : 자재>자재발주>자재 발주 조회
+-->
 <template>
   <div>
      <h3>&nbsp;&nbsp;자재 발주 조회</h3>
@@ -10,19 +12,19 @@
         <!-- 자재명 -->
         <div class="col-sm-2">
            <label class="col-form-label fw-bold" for="materialCode">자재명</label>
-           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" @keydown.enter="enterkey">
+           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" @keydown.enter="enterkey" autocomplete="off">
         </div>
 
         <!-- 주문서명 -->
         <div class="col-sm-2">
            <label class="col-form-label fw-bold" for="clientName">업체명</label>
-           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="clientName" v-model="clientName" @keydown.enter="enterkey">
+           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="clientName" v-model="clientName" @keydown.enter="enterkey" autocomplete="off">
         </div>
 
         <!-- 자재발주코드 -->
         <div class="col-sm-2">
            <label class="col-form-label fw-bold" for="POListCode">자재발주코드</label>
-           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="POListCode" v-model="POListCode" @keydown.enter="enterkey">
+           <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="POListCode" v-model="POListCode" @keydown.enter="enterkey" autocomplete="off">
         </div>
 
          <!-- 발주 상태 -->
@@ -69,6 +71,7 @@
      :theme="theme"
      :pagination="true"
      :paginationPageSize="10"
+     :paginationPageSizeSelector="[10, 20, 50, 100]"
      @grid-ready="onReady"
      style="height: 513px;"
      rowSelection="multiple"
@@ -77,7 +80,7 @@
   </ag-grid-vue>
 </div>
 <div>
-   <Modal :isShowModal="isShowModal" :deleteList="deleteList" @closeModal="closeModal" @confirm="confirm">
+   <Modal :isShowModal="isShowModal" :deleteList="deleteList" :totalcanceNO_display="totalcanceNO_display" @closeModal="closeModal" @confirm="confirm">
    </Modal>
 </div>
 </template>
@@ -108,7 +111,7 @@ const loginInfo = () => {
       console.log(loginfo.value.job);
    }else{
       notify({
-         title: "로그인요청",
+         //title: "로그인요청",
          text: "자재팀 또는 관리자만 접속 가능합니다.",
          type: "error", // success, warn, error 가능
       });
@@ -148,11 +151,11 @@ const reSet = () => {
 
   //this.$notify({ text: '필수 정보를 모두 입력하세요.', type: 'error' });
 
-  notify({
-      title: "검색조건",
-      text: "초기화 완료 했습니다.",
-      type: "success", // success, warn, error 가능
-   });
+//   notify({
+//       title: "검색조건",
+//       text: "초기화 완료 했습니다.",
+//       type: "success", // success, warn, error 가능
+//    });
 
 };
 
@@ -201,7 +204,22 @@ const columnDefs = ref([
   { headerName: "단가", field: "unit_price", width:110, cellStyle: { textAlign: "right" } },
   { headerName: "금액", field: "total_price", width:110, cellStyle: { textAlign: "right" } },
   { headerName: "발주담당", field: "name", width:100, cellStyle: { textAlign: "center" } },
-  { headerName: "상태", field: "material_state", width:100, cellStyle: { textAlign: "center" } },
+  { headerName: "상태", field: "material_state", width:100, 
+   cellStyle: { textAlign: "center" },
+   cellRenderer: params => {
+      if (params.value) {
+         if(params.data.material_state==='발주등록' && params.data.inspec_status==='검사요청완료'){
+            return '입고검사중';
+         }else if(params.data.material_state==='발주등록' && params.data.inspec_status==='검사완료'){
+            return '입고대기중';
+         }else{
+            return params.value;
+         }
+      }else{
+         return;
+      }
+   },
+  },
   {
       headerName: "출력",
       field: "비고",
@@ -243,7 +261,7 @@ const columnDefs = ref([
       width: 100,
       editable: false,
       cellRenderer: params => {
-         if (params.data.material_state === "발주등록") {
+         if (params.data.material_state === "발주등록" && !params.data.inspec_status) {
             const div = document.createElement('div');
             div.style.display = 'flex';
             div.style.justifyContent = 'center';
@@ -267,6 +285,12 @@ const columnDefs = ref([
             button2.addEventListener('click', () => {
                console.log("주문취소 : ", JSON.stringify(params.data));
                // 여기서도 모달열고 1건 던져주게 만들어야함 (배열에 담아서)
+               console.log(params.data.order_code);
+               const totalcanceNO = rowData.value.find( idx => idx.order_code === params.data.order_code && idx.inspec_status);
+               if(totalcanceNO){
+                  //console.log(totalcanceNO.body_num);
+                  totalcanceNO_display.value = false;
+               }
                deleteList.value = params.data;
                console.log('모달 오픈');
                isShowModal.value = true;
@@ -278,6 +302,8 @@ const columnDefs = ref([
       }
    },
 ]);
+
+const totalcanceNO_display = ref(true);
 
 
 //사업자 정보가져오기
@@ -483,9 +509,10 @@ const isShowModal = ref(false);
 // 모달 취소
 const closeModal = () => {
    isShowModal.value = false;
+   totalcanceNO_display.value = true;
    notify({
-      title: "취소",
-      text: "적용 취소 하였습니다.",
+      //title: "취소",
+      text: "발주를 취소하지 않았습니다.",
       type: "error", // success, warn, error 가능
    });
 };
@@ -494,15 +521,16 @@ const closeModal = () => {
 const confirm = (deleteNum) => {
    console.log("모달 확인 버튼 클릭됨", deleteList.value);
    console.log("deleteNum : ", deleteNum);
+   totalcanceNO_display.value = true;
    isShowModal.value = false; // 모달 닫기
    if(!deleteNum){
       notify({
-         title: "관리자문의요망",
-         text: "값이 정상적으로 넘어오지 않았습니다",
+         //title: "관리자문의요망",
+         text: "관리자 문의 부탁드립니다.",
          type: "error", // success, warn, error 가능
       });
    }else{
-      // 1=전체취소 // 2=단건취소
+      // 1=전체취소 // 2=단건취소 ( deleteNum )
       const materialObj = {
          deleteNum: deleteNum,
          body_num: deleteList.value.body_num,
@@ -520,7 +548,7 @@ const poList_delete = async function(materialObj){
   console.log(result.data);
   if(result.data.affectedRows >= 1){
       notify({
-         title: "알림 제목",
+         //title: "알림 제목",
          text: "삭제 완료 했습니다.",
          type: "success", // success, warn, error 가능
       });

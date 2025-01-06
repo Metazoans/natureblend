@@ -1,9 +1,11 @@
-<!--자재 LOT 조회에 있는 폐기처리 모달-->
+<!-- 
+    메뉴 : 자재>자재재고>자재 LOT 조회 메뉴 [페기처리]모달
+-->
 <template>
     <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header" style="background-color: #e9ecef;">
             <h1 class="modal-title fs-5" id="exampleModalLabel">폐기 처리</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -58,8 +60,8 @@
                </div>
            </div>
           <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
             <button type="button" class="btn" style="background-color: #f44335; color: white;" @click="confirm">폐기하기</button>
-            <button type="button" class="btn" style="background-color: #4caf50; color: white;" data-bs-dismiss="modal" @click="closeModal">닫기</button>
           </div>
         </div>
       </div>

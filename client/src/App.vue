@@ -20,7 +20,7 @@
     <notifications />
 </div>
 <div id="app" v-else>
-  <LoginPage/>
+  <LoginPage />
 </div>
 
 </template>
@@ -55,18 +55,16 @@ export default {
       "showConfig",
       "hideConfigButton",
     ]),
+    loginPass() {
+      return this.$store.state.loginInfo.name ? true : false;
+    },
   },
   data() {
     return {
-      loginPass: false,
     };
   },
-  beforeMount() {
-    
-    if(this.$store.state.loginInfo.name){
-      this.loginPass = true;
-      console.log('로그인정보',this.$store.state.loginInfo);
-    }
+  mounted() {
+    console.log("로그인 상태:", this.loginPass);
     this.$store.state.isTransparent = "bg-transparent";
 
     const sidenav = document.getElementsByClassName("g-sidenav-show")[0];

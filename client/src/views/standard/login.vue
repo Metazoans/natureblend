@@ -1,7 +1,12 @@
 <template>
     <div class="login-container">
       <div class="login-form">
-        <h2>로그인</h2>
+        <div class="d-flex justify-content-center align-items-center pb-3">
+          <img src="http://yeonsus.com/moive/jussionejo_color.png" width="70" alt="Nature Blend" class="logimg">
+            <h2 style="font-family: 'Roboto', Helvetica, Arial, sans-serif; margin: 0;">
+              &nbsp;&nbsp;Nature Blend
+            </h2>
+        </div>
         <form @submit.prevent="eventLogin">
           <div class="form-group">
             <label for="username">사원번호</label>
@@ -30,7 +35,7 @@
           </div>
   
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary" @click="login">로그인</button>
+            <button type="submit" class="btn btn-success" @click="login">로그인</button>
           </div>
         </form>
   
@@ -83,10 +88,12 @@
           };
           
           this.addLoginInfo(loginObj);
+          console.log('로그인성공', loginObj);
+          this.$router.push('/');   // 로그인 성공시 메인페이지로 이동
 
-          if (this.$store.state.loginInfo.name) {
-            window.location.reload();
-          }
+          // if (this.$store.state.loginInfo.name) {
+          //   window.location.reload();
+          // }
         } else {
           // 로그인 실패
           this.errorMessage = '아이디 또는 비밀번호가 잘못되었습니다.';
@@ -98,15 +105,16 @@
         // window.location.reload();
       }
     },
-      async loginconfig() {
-        if(this.$store.state.loginInfo.name){
-          this.$router.push({name : 'MainPage'});
-        }
-      },
+      // async loginconfig() {
+      //   if(this.$store.state.loginInfo.name){
+      //     this.$router.push('/mainpage');
+      //     //this.$router.push({name : 'MainPage'});
+      //   }
+      // },
     },
     mounted() { // 페이지 조회시 바로 발생
         console.log('로그인 테스트');
-        this.loginconfig();
+        //this.loginconfig();
     },
   };
   </script>
@@ -128,11 +136,11 @@
     background-image: url('@/assets/img/illustrations/login.webp');
     background-size: cover;
     background-position: center;
-    opacity: 0.5; /* 투명도 설정 */
+    opacity: 0.6; /* 투명도 설정 */
     z-index: -1; /* 배경을 뒤로 보냄 */
   }
   .login-form {
-    background-color: white;
+    background-color: #ffffffdd;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -174,16 +182,17 @@
   .form-actions button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    /* background-color: #007bff; */
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
+    box-shadow: 0px 0px 0px #fff;
   }
   
   .form-actions button:hover {
-    background-color: #0056b3;
+    background-color: #3e8d40;
   }
   
   .signup-link {
