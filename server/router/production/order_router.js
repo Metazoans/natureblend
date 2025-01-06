@@ -54,4 +54,9 @@ router.post('/delete', async (req, res)=>{
     res.send(await orderService.deleteProdOrder(prodOrderNums));
 });
 
+router.post('/delete/process', async (req, res)=>{
+    let prodOrderNums = req.body;
+    res.send(await orderService.deleteProcessWork(prodOrderNums));
+});
+
 module.exports = router
