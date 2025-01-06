@@ -239,7 +239,7 @@ export default {
   },
 
   watch: {
-    orderInfo: {
+    'orderInfo.prodOrderQty': {
       handler() {
         this.$emit('updateInputData', this.orderInfo)
       },

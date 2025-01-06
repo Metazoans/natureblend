@@ -162,7 +162,8 @@ export default {
       newProdOrderNum: 0,
       processFlow: [],
       searchPlan: {},
-      isOrderAddFormReset: false
+      isOrderAddFormReset: false,
+      originalRowDataNeed: [],
     }
   },
 
@@ -197,7 +198,12 @@ export default {
 
       this.orderInfo = orderInfo
 
-      this.rowDataNeed = this.rowDataNeed.map((data) => {
+      // 원본 값 저장 (초기화되지 않도록 설정)
+      if (this.originalRowDataNeed.length === 0) {
+        this.originalRowDataNeed = JSON.parse(JSON.stringify(this.rowDataNeed))
+      }
+
+      this.rowDataNeed = this.originalRowDataNeed.map((data) => {
         return {
           ...data,
           needAmount: data.needAmount * this.orderInfo.prodOrderQty
@@ -239,6 +245,15 @@ export default {
     },
 
     async confirm() {
+      if(!this.isStockEnough) {
+        this.$notify({
+          text: "재고가 부족합니다.",
+          type: 'error',
+        });
+        this.closeModal()
+        return
+      }
+
       await this.addProductionOrder()
 
       // 자재별 홀딩자재 등록
@@ -276,14 +291,14 @@ export default {
           .catch(err => console.log(err));
 
 
-      if(isLastProcess && result.data.message === 'success' && this.isStockEnough) {
+      if(isLastProcess && result.data.message === 'success') {
         this.$notify({
           text: "생산지시가 등록되었습니다.",
           type: 'success',
         });
         this.isOrderAddFormReset = false
         this.resetAddInfo()
-      } else if(isLastProcess) {
+      } else if(result.data.message !== 'success') {
         this.$notify({
           text: "생산지시 등록을 실패하였습니다.",
           type: 'error',
