@@ -404,7 +404,15 @@ export default {
       } else if(isStarted && (this.partialWorkFinalQty < production_order_qty)) {
         this.partialWorkFinalStatus = 'processing'
       } else {
+        let isStop = false
         this.partialWorkFinalStatus = 'process_complete'
+
+        this.partialWorkList.forEach((partialWork) => {
+          if(partialWork.partial_process_status !=='partial_process_complete' && !isStop) {
+            this.partialWorkFinalStatus = 'processing'
+            isStop = true
+          }
+        })
       }
     },
 
@@ -650,8 +658,11 @@ export default {
           .catch(err => console.log(err));
     },
     partialWorkLastEndTime() {
+      if(this.partialWorkLastEndTime === '-') {
+        return
+      }
       let endInfo = {
-        processEndTime: this.partialWorkLastEndTime === '-' ? null : this.partialWorkLastEndTime,
+        processEndTime: this.partialWorkLastEndTime,
         processWorkHeaderNum: this.selectedRow.process_work_header_num
       }
       axios.put(`${ajaxUrl}/production/work/process/end`, endInfo)

@@ -3,7 +3,7 @@
     자재 발주 관리 메뉴 리메이크 (이걸로 사용중)
 -->
 <template>
-    <div>
+    <div class="p-3 pb-0">
         <h3>&nbsp;&nbsp;자재 발주 관리</h3>
     </div>
     <div class="d-flex">

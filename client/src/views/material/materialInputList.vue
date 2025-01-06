@@ -2,7 +2,7 @@
     메뉴 : 자재>자재입고>자재 입고 조회 메뉴
 -->
 <template>
-   <div>
+   <div class="p-3">
       <h3>&nbsp;&nbsp;자재 입고 조회</h3>
    </div>
 <!-- 검색 메뉴 레이아웃 -->
@@ -60,10 +60,10 @@
       :columnDefs="columnDefs"
       :theme="theme"
       :pagination="true"
-      :paginationPageSize="10"
-      :paginationPageSizeSelector="[10, 20, 50, 100]"
+      :paginationPageSize="9"
+      :paginationPageSizeSelector="[9, 20, 50, 100]"
       @grid-ready="onReady"
-      style="height: 513px;"
+      style="height: 471px;"
       rowSelection="multiple"
       :noRowsOverlayComponent="CustomNoRowsOverlay"
    >
