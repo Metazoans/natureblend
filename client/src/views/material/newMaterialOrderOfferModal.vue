@@ -1,6 +1,8 @@
-<!--자재 검색 모달-->
+<!-- 
+    메뉴 : 자재>자재발주>자재 발주 관리 [개별주문 모달 > 자재리스팅 그리드]
+-->
 <template>
-    <input type="text" v-model="inputListsearch" class="text-center styled-input" placeholder="자재명 입력하세요"/>
+    <input type="text" v-model="inputListsearch" class="text-center styled-input" placeholder="자재명 입력하세요" />
     <div class="grid-container">
         <ag-grid-vue
             :rowData="rowData"
@@ -33,8 +35,39 @@ export default{
             columnMateriallist : [
                 {headerName : "자재코드", field:"material_code",resizable: true, sortable: true, flex: 2, cellStyle: { textAlign: "center" }},
                 {headerName : "자재명", field:"material_name",resizable: true, sortable: true, flex: 3, cellStyle: { textAlign: "left" }},
-                {headerName : "안전재고", field:"safety_inventory",resizable: true, sortable: true, flex: 2, cellStyle: { textAlign: "right" }},
-                {headerName : "현재재고", field:"stok_qty",resizable: true, sortable: true, flex: 2, cellStyle: { textAlign: "right" }},
+                {headerName : "안전재고", field:"safety_inventory",resizable: true, sortable: true, flex: 2, 
+                    cellStyle: { textAlign: "right" },
+                    cellRenderer: params => {
+                        if (params.value) {
+                            if(params.data.material_name.includes('병')){
+                                const formatted_qty = params.value.toLocaleString()+' 개';
+                                return `<span style="text-align: right;">${formatted_qty}</span>`;
+                            }else{
+                                const formatted_qty = params.value.toLocaleString()+' kg';
+                                return `<span style="text-align: right;">${formatted_qty}</span>`;
+                            }
+                        } else {
+                            return `<span style="text-align: right;"></span>`;
+                        }
+                    },
+
+                },
+                {headerName : "현재재고", field:"stok_qty",resizable: true, sortable: true, flex: 2, 
+                    cellStyle: { textAlign: "right" },
+                    cellRenderer: params => {
+                        if (params.value) {
+                            if(params.data.material_name.includes('병')){
+                                const formatted_t_qty = params.value.toLocaleString()+' 개';
+                                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+                            }else{
+                                const formatted_t_qty = params.value.toLocaleString()+' kg';
+                                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+                            }
+                        } else {
+                            return `<span style="text-align: right;"></span>`;
+                        }
+                    },
+                },
             ],
             //검색어 검색 (그리드 안)
             inputListsearch: "", //검색어 1 (제품)
@@ -50,17 +83,17 @@ export default{
             //this.rowData = result.data; //거래처목록 저장
             // this.rowData = result.data.map((col) => ({
             //     ...col,
-            //     stok_qty: col.material.includes('병') ? Number(col.stok_qty).toLocaleString() : Math.ceil(col.stok_qty * 0.001).toLocaleString(),
-            //     safety_inventory: col.material.includes('병') ? Number(col.safety_inventory).toLocaleString() : Math.ceil(col.safety_inventory * 0.001).toLocaleString(),
+            //     stok_qty: col.material.includes('병') ? Number(col.stok_qty).toLocaleString() : (col.stok_qty * 0.001).toLocaleString(),
+            //     safety_inventory: col.material.includes('병') ? Number(col.safety_inventory).toLocaleString() : (col.safety_inventory * 0.001).toLocaleString(),
             // }));
             this.rowData = result.data.map((col) => ({
                 ...col,
-                stok_qty: col.material && col.material.includes('병')
+                stok_qty: col.material_name && col.material_name.includes('병')
                     ? Number(col.stok_qty).toLocaleString()
-                    : Math.ceil(col.stok_qty * 0.001).toLocaleString(),
-                safety_inventory: col.material && col.material.includes('병')
+                    : (col.stok_qty * 0.001).toLocaleString(),
+                safety_inventory: col.material_name && col.material_name.includes('병')
                     ? Number(col.safety_inventory).toLocaleString()
-                    : Math.ceil(col.safety_inventory * 0.001).toLocaleString(),
+                    : (col.safety_inventory * 0.001).toLocaleString(),
             }));
 
 

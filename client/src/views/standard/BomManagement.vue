@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex">
       <div class="form-container">
-          <h1> BOM 관리 </h1>
+          <h3> BOM 관리 </h3>
           <div class="search pe-md-3 d-flex align-items-center ms-md-auto">
               <div class="d-flex align-items-center">
                   <span>BOM번호</span>
@@ -9,7 +9,7 @@
               </div>
               <div class="d-flex align-items-center">
                   <span>제품코드</span>
-                  <input v-model="searchProductcode"  id="search-productcode" type="text" class="form-control" @click = "openModal('productCodeModal')" />
+                  <input v-model="searchProductcode" placeholder="클릭해서 제품코드 선택" id="search-productcode" type="text" class="form-control" @click = "openModal('productCodeModal')" />
               </div>
           </div>
           <div class="search pe-md-3 d-flex align-items-center ms-md-auto">
@@ -37,8 +37,22 @@
                   <input v-model="item.material_con" :id="'unit-' + index" type="text" class="form-control"/>
               </div>
           </div> -->
-
-          <div class="grid-bom" >
+        <!-- 조회 그리드 -->
+        <div class="grid-container" >
+           <ag-grid-vue 
+             style ="width: 479px; height: 513px;"
+             :rowData="bomList"
+             :columnDefs="columnDefs"
+             :theme="theme"
+             :pagination="true"
+             :paginationPageSize="10"
+             :paginationPageSizeSelector="[10, 20, 50, 100]"
+             @grid-ready="onReady2"
+         >
+          </ag-grid-vue>
+         </div>
+        </div>
+         <div class="grid-bom" >
            <ag-grid-vue 
              style ="width: 652px; height: 530px;"
              :rowData="bomBox"
@@ -47,13 +61,13 @@
              :pagination="true"
              :paginationPageSize="10"
              @grid-ready="onReady"
+             :paginationPageSizeSelector="[10, 20, 50, 100]"
              @cellEditingStopped="onCellEditingStopped"
              @rowSelection="rowSelection"
              rowSelection="multiple"
              @cellClicked="onCellClicked"
          >
           </ag-grid-vue>
-         </div>
           <button type="button" @click="updateBom" class="btn btn-success">
               수정 완료
           </button>
@@ -66,19 +80,6 @@
           <button type="button" @click="deleteBomList" class="btn btn-danger">
             선택한 자재 삭제
           </button>
-        </div>
-        <!-- 조회 그리드 -->
-        <div class="grid-container" >
-           <ag-grid-vue 
-             style ="width: 479px; height: 513px;"
-             :rowData="bomList"
-             :columnDefs="columnDefs"
-             :theme="theme"
-             :pagination="true"
-             :paginationPageSize="10"
-             @grid-ready="onReady2"
-         >
-          </ag-grid-vue>
          </div>
   </div>
   <div>
@@ -174,7 +175,7 @@
             button.innerText = '삭제';
             button.style.marginRight = '10px';
             button.style.cursor = 'pointer';
-            button.style.backgroundColor = '#f7b84d';
+            button.style.backgroundColor = '#f44335';
             button.style.width = '60px';
             button.style.height = '30px';
             button.style.color = 'white';
@@ -226,7 +227,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능합니다.', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -264,11 +265,13 @@
         },
         setSelectProduct(product) {
         // 모달에서 선택한 데이터가 부모로 전달되면 이를 입력상자에 반영
-        console.log(product);
-        this.searchProductcode = product.product_code;  // 선택한 제품코드를 인풋 박스에 설정
-        this.searchProduct = product.product_name;
-        this.searchCapacity = product.capacity;
-        this.closeModal();
+          console.log(product);
+          this.searchProductcode = product.product_code;  // 선택한 제품코드를 인풋 박스에 설정
+          this.searchProduct = product.product_name;
+          this.searchCapacity = product.capacity;
+          this.searchBomnum = '';
+          this.closeModal();
+          this.bomBox = [];
         },
         setSelectMaterial(material) {
           console.log(material);
@@ -384,21 +387,10 @@
         
         
         async updateBomlist({ bom_seq, bom_num, material_code, material, material_con }){
-        /*
-        console.log(bomarray);
-        console.log(bomarray.bom_seq);
-        if (!Array.isArray(bomarray)) {
-              console.error('Invalid data: bomarray is not an array', bomarray);
-              return; 
-        };
-      
-        this.newList = bomarray.map(({ bom_num, material_code, material, material_con }) => ({
-              bom_num,
-              material_code,
-              material,
-              material_con
-          })); */
-        
+          if(this.bomBox.length === 0){
+            this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+            return;
+          }
           this.newList = { bom_num, material_code, material, material_con };
               console.log(this.newList);
 
@@ -475,12 +467,21 @@
             this.bomBox.push({ bom_num:this.searchBomnum, material_code: '', material: '', material_con: 0 });
             this.bomBox = [...this.bomBox];
           },
+          async insertBomlist({ bom_num, material_code, material, material_con }){
+            
+          this.newList = { bom_num, material_code, material, material_con };
+              console.log(this.newList);
+              console.log('insert 데이터');
+            let result = await axios.post(`${ajaxUrl}/bominsert/${bom_num}`, this.newList);
+            console.log(result.data);
+          },
           goToDetail(bomNum) {
             this.$router.push({ name : 'bomInfo', params : { bomno : bomNum }});
           },
-          updateBom() {
+          async updateBom() {
             if(this.searchProductcode === ''){
               this.$notify({ title:'빈칸확인', text: '제품을 선택해주세요', type: 'error' });
+              return;
             }
             for(let i =0; i<this.bomBox2.length; i++){
               console.log(i);
@@ -506,6 +507,9 @@
                       this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
                     }
                     console.log('같지않음');
+                    if(this.bomBox[i] === ''){
+                      this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+                    }
                     this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
                     // console.log(this.bomBox[i]);
                     this.updateBomlist(this.bomBox[i]);
@@ -517,11 +521,11 @@
 
                 }else if(this.searchProductcode === ''){
                     this.$notify({ title:'빈칸확인', text: '제품을 선택해주세요', type: 'error' });
+                }else if(this.bomBox[i].material_code === ''||this.bomBox[i].material === ''||this.bomBox[i].material_con === ''){
+                    this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
                 }else{
-                  this.$notify({ title:'수정완료 버튼', text: '수정이 완료되었습니다.', type: 'success' });
-                  console.log('insert 해야하는 데이터');
-                  console.log(this.bomBox[i]);
-                  // this.insertBomlist(this.bomBox[i]);
+                  this.$notify({ title:'수정성공', text: '수정이 완료되었습니다.', type: 'success' });
+                  this.insertBomlist(this.bomBox[i]);
                 }
               }
             }
@@ -542,19 +546,17 @@
   justify-content: space-between;
 }
 
-.grid-container {
-  margin-top: 211px;
-}
-
 .grid-bom {
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-top: 205px;
+  margin-right: 100px;
 }
 
 .form-container {
   width: 45%;
 }
-
+.grid-container {
+  margin-left: 70px;
+}
 .table-container {
   width: 50%;
 }

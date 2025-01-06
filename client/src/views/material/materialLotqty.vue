@@ -1,7 +1,9 @@
-<!-- 자재 LOT 재고 조회 메뉴 -->
+<!-- 
+    메뉴 : 자재>자재재고>자재 LOT 조회 메뉴
+-->
 <template>
    <div>
-      <h3>&nbsp;&nbsp;자재 LOT 조회</h3>
+      <h3 style="font-family: Arial, Helvetica, sans-serif;">&nbsp;&nbsp;자재 LOT 조회</h3>
    </div>
  <!-- 검색 메뉴 레이아웃 -->
  <div class="main-container">
@@ -23,19 +25,19 @@
          <!-- 자재명 -->
          <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="materialCode">자재명</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" @keydown.enter="enterkey">
+            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" autocomplete="off" @keydown.enter="enterkey">
          </div>
  
          <!-- 주문서명 -->
          <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="clientName">업체명</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="clientName" v-model="clientName" @keydown.enter="enterkey">
+            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="clientName" v-model="clientName" autocomplete="off" @keydown.enter="enterkey">
          </div>
  
          <!-- 자재발주코드 -->
          <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="POListCode">자재LOT번호</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="POListCode" v-model="POListCode" @keydown.enter="enterkey">
+            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="POListCode" v-model="POListCode" autocomplete="off" @keydown.enter="enterkey">
          </div>
  
           <!-- 입고 상태 -->
@@ -100,6 +102,7 @@
       :theme="theme"
       :pagination="true"
       :paginationPageSize="10"
+      :paginationPageSizeSelector="[10, 20, 50, 100]"
       @grid-ready="onReady"
       style="height: 513px;"
       rowSelection="multiple"
@@ -143,7 +146,7 @@ const loginInfo = () => {
       console.log(loginfo.value.job);
    }else{
       notify({
-         title: "로그인요청",
+         //title: "로그인요청",
          text: "로그인 하셔야 접속 가능합니다.",
          type: "error", // success, warn, error 가능
       });
@@ -190,11 +193,11 @@ const loginInfo = () => {
    }
    lotqtylist();   //초기화버튼 누르면 이거 실행
  
-   notify({
-       title: "검색조건",
-       text: "초기화 완료 했습니다.",
-       type: "success", // success, warn, error 가능
-    });
+   // notify({
+   //     title: "검색조건",
+   //     text: "초기화 완료 했습니다.",
+   //     type: "success", // success, warn, error 가능
+   //  });
  
  };
  
@@ -276,8 +279,8 @@ const loginInfo = () => {
                const quantity = Number(deleteList.value.hold_qty.split(' ')[0]);
                if(quantity !== 0){
                notify({
-                  title: "폐기불가",
-                  text: "공정 투입중인 자재 입니다. 폐기불가!",
+                  //title: "폐기불가",
+                  text: "공정 투입중인 자재는 폐기불가 합니다.",
                   type: "error", // success, warn, error 가능
                });
                }else{
@@ -299,7 +302,7 @@ const loginInfo = () => {
  const closeModal = () => {
     isShowModal.value = false;
     notify({
-       title: "폐기취소",
+       //title: "폐기취소",
        text: "폐기 취소 하였습니다.",
        type: "error", // success, warn, error 가능
     });
@@ -318,7 +321,7 @@ const loginInfo = () => {
        trush_go(newObject);
     }else{
       notify({
-         title: "폐기실패",
+         //title: "폐기실패",
          text: "폐기사유가 꼭 필요합니다.",
          type: "error", // success, warn, error 가능
       });
@@ -333,15 +336,15 @@ const loginInfo = () => {
    //console.log('aaaaaa',result.data);
    if(result.data[0][0]['v_result']==='OK'){
       notify({
-         title: "폐기성공",
+         //title: "폐기성공",
          text: "폐기 성공 하였습니다.",
          type: "success", // success, warn, error 가능
       });
       lotqtylist();
    }else{
       notify({
-         title: "폐기실패",
-         text: result.data[0]['v_result']+"해당사유로 관리자 문의",
+         //title: "폐기실패",
+         text: "폐기실패 "+result.data[0]['v_result']+" 관리자 문의 해주세요.",
          type: "error", // success, warn, error 가능
       });
    }

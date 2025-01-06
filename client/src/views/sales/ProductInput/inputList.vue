@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-        <h2>제품입고조회</h2>
+        <h3>제품입고조회</h3>
         <div class= "main-container ps-4">
             <div class= "pt-5 pb-5">
                     <!--제품명 검색-->
@@ -66,7 +66,8 @@
                     @cellClicked="onCellClicked" 
                     rowSelection="multiple"
                     :pagination="true"
-                    :paginationPageSize="20"
+                    :paginationPageSize="10"
+                    :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 <!--@cellClicked="onClickedWh"  특정 셀값에 이벤트 걸때 꼭 cellClicked 
                  :quickFilterText="inputListsearch" 그리드 내부에 검색창 넣기 
@@ -154,8 +155,45 @@ export default{
             { headerName: "완제품코드", field: "product_code", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" } },
             { headerName: "제품명 ", field: "product_name", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "left" } },
             { headerName: "제품LOT번호 ", field: "product_lot", resizable: true, sortable: true ,flex: 3, cellStyle: { textAlign: "center" }},
-            { headerName: "입고수량 ", field: "input_amount", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "right" }},
-            { headerName: "창고위치 ", field: "warehouse_name", editable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "left" }},
+            { headerName: "입고수량 ", 
+            field: "input_amount", 
+            resizable: true, 
+            sortable: true ,
+            flex: 2, 
+            cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
+            { headerName: "창고위치 ", 
+            field: "warehouse_name", 
+            editable: true, 
+            sortable: true ,
+            flex: 2, 
+            cellStyle: { textAlign: "left",
+                         backgroundColor: "#fff", // 연한 배경색
+                        //border: "0.5px dashed #fb8c00", // 점선 테두리
+                        cursor: "text", // 텍스트 커서
+             }
+             ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `
+                                    <span style="display: flex; align-items: center; justify-content: flex-start;">
+                                        <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
+                                            width=15 height=15 
+                                            style="margin-right: 5px;" 
+                                            title="더블클릭하여 수정 가능합니다" />
+                                        <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
+                                    </span>
+                                `;
+                    }else{
+                         // 값이 없을 경우 수정 가능 아이콘 추가
+                        return `<span><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                    }
+             }},
             { headerName: "입고날짜 ", field: "input_date", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" } },
             
         ],

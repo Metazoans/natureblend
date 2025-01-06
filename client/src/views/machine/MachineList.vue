@@ -17,6 +17,7 @@
                   name="status"
                   :value="status"
                   v-model="pickedStatus"
+                  class="form-check-input"
                 />
               </label>
             </div>
@@ -32,6 +33,7 @@
                   type="checkbox"
                   :value="type"
                   v-model="pickedType"
+                  class="form-check-input"
                 />
               </label>
             </div>
@@ -55,6 +57,7 @@
               v-model="searchData"
               placeholder="검색 내용을 입력하세요"
               class="form-control search"
+              @keydown.enter="enterkey"
             />
           </div>
         </div>
@@ -100,7 +103,11 @@
         :pagination="true"
         :paginationPageSize="8"
         @cellClicked="cellClickFnc"
+        :noRowsOverlayComponent="noRowsOverlayComponent"
       ></ag-grid-vue>
+    </div>
+    <div style="display: none">
+        <CustomNoRowsOverlay/>
     </div>
 
     <MachineManage
@@ -124,6 +131,7 @@ import userDateUtils from "@/utils/useDates.js";
 import {shallowRef} from 'vue';
 
 import { mapMutations } from "vuex";
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
 
 export default {
   name: "machineList",
@@ -170,6 +178,7 @@ export default {
   components: {
     MachineManage,
     InActAdd,
+    CustomNoRowsOverlay,
   },
   
   data() {
@@ -193,6 +202,8 @@ export default {
       searchData: "", // 검색 내용
 
       filters: [],
+      
+      noRowsOverlayComponent: 'CustomNoRowsOverlay',
 
     };
   },
@@ -339,7 +350,7 @@ export default {
     resetSearch() {
       this.pickedStatus = "";
       this.pickedType = [];
-      this.selectSearchType = "";
+      this.selectSearchType = "전체검색";
       this.searchData = "";
       this.filters = [];
       this.getMachineList();
@@ -399,6 +410,12 @@ export default {
       this.machineList = result.data;
       console.log(this.machineList);
       this.rowData = result.data;
+    },
+    
+    // 엔터키 누르면 하는거
+    enterkey(event) {
+      event.preventDefault();
+      this.updateFilter();
     },
 
     // 날짜 관련

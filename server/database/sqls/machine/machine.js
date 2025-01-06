@@ -25,14 +25,20 @@ SELECT machine_num,
        model_num,
        machine_type,
        machine_state,
-       emp_num,
-       client_num,
+       m.emp_num,
+       e.name,
+       m.client_num,
+       c.com_name,
        buy_date,
        uph,
        upd,
        m.process_code
 FROM machine m JOIN process p
                ON (m.process_code = p.process_code)
+               JOIN employee e
+               ON (m.emp_num = e.emp_num)
+               JOIN client c
+               ON (m.client_num = c.client_num)
 WHERE machine_num = ?
 `;
 // 설비 생산 정보 -> success_qty 체크는 나중에 is_inspected(검사 여부) 체크로 변경
@@ -94,6 +100,14 @@ FROM machine m JOIN process p
                ON (m.process_code = p.process_code) 
 `;
 
+//거래처조회 
+const clientList = 
+`SELECT com_name,
+		client_num
+FROM client
+WHERE trade='구매'
+ORDER BY com_name`;
+
 module.exports = {
   machineList,
   machineInsert,
@@ -104,5 +118,6 @@ module.exports = {
   machineUpdate,
   machineDelete,
   searchMachineList,
+  clientList,
 
 }

@@ -1,9 +1,12 @@
-<!--자재 발주 조회메뉴의 취소 모달-->
+<!-- 
+    메뉴 : 자재>자재입고>자재입고의 검사표 모달
+    메뉴 : 자재>자재입고>자재입고조회의 검사표 모달
+-->
 <template>
    <div class="modal fade" @click.self="closeModal2" :class="{ show: isShowModal2 }" id="exampleModal" tabindex="-1">
      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
        <div class="modal-content">
-         <div class="modal-header">
+         <div class="modal-header" style="background-color: #e9ecef;">
            <h1 class="modal-title fs-5" id="exampleModalLabel">[ {{ inspection_data.material_name }} ] 검수확인증</h1>
            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
          </div>
@@ -68,7 +71,7 @@
 
           </div>
          <div class="modal-footer">
-           <button type="button" class="btn" style="background-color: #4caf50; color: white;" @click="confirm2">확인</button>
+           <button type="button" class="btn btn-secondary" @click="confirm2">닫기</button>
            <!--<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="closeModal2">닫기</button>-->
          </div>
        </div>

@@ -2,8 +2,8 @@
 <template>
   <ModalMachine @click.self="closeModal">
     <template v-slot:header>
-      <h2 v-if="isUpdate">부품 수정</h2>
-      <h2 v-else>부품 등록</h2>
+      <h1 class="modal-title fs-5" v-if="isUpdate">부품 수정</h1>
+      <h1 class="modal-title fs-5" v-else>부품 등록</h1>
     </template>
     
     <template v-slot:body>
@@ -79,6 +79,14 @@
     
     <template v-slot:footer>
       <button
+        class="btn btn-secondary w-100 mb-0 toast-btn"
+        type="button"
+        data-target="warningToast"
+        @click="closeModal"
+      >
+        닫기
+      </button>
+      <button
         class="btn btn-success w-100 mb-0 toast-btn"
         type="button"
         data-target="warningToast"
@@ -87,15 +95,6 @@
       >
         <a v-if="props.isUpdate">수정</a>
         <a v-else>등록</a>
-      </button>
-
-      <button
-        class="btn btn-danger w-100 mb-0 toast-btn"
-        type="button"
-        data-target="warningToast"
-        @click="closeModal"
-      >
-        취소
       </button>
     </template>
   </ModalMachine>
@@ -109,6 +108,7 @@ import { ajaxUrl } from '@/utils/commons.js';
 import axios from 'axios';
 import { ref, onBeforeMount, onUpdated } from "vue";
 import { useStore } from 'vuex';
+import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
 
 
 const store = useStore();
@@ -158,6 +158,8 @@ const getSelectItem = async () => {
   typeSelect.value = result.data;
 }
 
+const { notify } = useNotification();  // 노티 내용변수입니다
+
 // 등록
 const partInsert = async () => {
   let obj = {
@@ -176,14 +178,14 @@ const partInsert = async () => {
   // 등록 성공 체크
   if(addRes.part_num > 0){
     // 등록메시지 수정 예정
-    this.$notify({
-      text: "부품 등록 성공",
+    notify({
+      text: "부품 등록이 성공했습니다.",
       type: 'success',
     });
     emit('confirm');
   } else {
-    this.$notify({
-      text: "부품 등록 실패",
+    notify({
+      text: "부품 등록이 실패했습니다.",
       type: 'error',
     });
     emit('confirm');
@@ -212,10 +214,16 @@ const partUpdate = async () => {
   let updateRes = result.data;
 
   if(updateRes.result) {
-    alert('수정 성공');
+    notify({
+      text: "부품 수정이 성공했습니다.",
+      type: 'success',
+    });
     emit('confirm');
   } else {
-    alert('수정 실패');
+    notify({
+      text: "부품 수정이 실패했습니다.",
+      type: 'error',
+    });
     emit('confirm');
   }
 

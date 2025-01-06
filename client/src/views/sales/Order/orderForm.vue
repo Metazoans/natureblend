@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid py-4">
-        <h2>주문서등록</h2>
+        <h3>주문서등록</h3>
             <div class= "main-container">
             <div class="content">
                 <div class="orderlistForm">
@@ -58,7 +58,7 @@
                         </div>
                     </form>
                     <div class="mb-3 text-end">
-                        <material-button size="sm" color="success" class="button"  @click="addMaterial">+</material-button>
+                        <material-button size="sm" color="success" class="button"  @click="addMaterial">주문추가</material-button>
                     </div>
 
                 </div>
@@ -155,7 +155,15 @@ export default{
             productNum:'',
             perPrice:'',
 
-            materials:[],
+            materials:[
+            {
+                orderCode: '', // 초기값
+                productCode: '', // 초기값
+                productName: '', // 초기값
+                productNum: '', // 초기값
+                perPrice: '' // 초기값
+            }
+            ],
             indexNum: null, // 선택된 index 저장
 
             //거래처 모달 

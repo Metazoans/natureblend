@@ -35,7 +35,8 @@ const checkAuth = (to, next) => {
 }
 const machineRoute = [
   {
-    path: '',
+    path: '/',
+    name: 'machineList',
     redirect : { name : 'machineList'},
     beforeEnter: (to, from, next) => {
       checkAuth(to, next)

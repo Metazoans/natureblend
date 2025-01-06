@@ -56,6 +56,7 @@
           :quickFilterText="listSearch"
           @cell-editing-stopped="onCellEditingStopped"
           @cellDoubleClicked="onCellDoubleClicked"
+          :paginationPageSizeSelector="[10, 20, 50, 100]"
       >
       </ag-grid-vue>
     </div>
@@ -189,7 +190,7 @@ export default {
 
   methods: {
     onCellDoubleClicked(params) {
-      if(params.colDef.field === 'product_name') {
+      if(params.colDef.field === 'product_name' && params.data.plan_status === '대기중') {
         this.setPlanInfo(params.data)
         this.openModal(true)
       }

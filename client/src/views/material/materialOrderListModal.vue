@@ -3,7 +3,7 @@
    <div class="modal fade" @click.self="closeModal" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1">
      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
        <div class="modal-content">
-         <div class="modal-header">
+         <div class="modal-header" style="background-color: #e9ecef;">
            <h1 class="modal-title fs-5" id="exampleModalLabel">발주서 취소</h1>
            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
          </div>
@@ -42,9 +42,9 @@
               </div>
           </div>
          <div class="modal-footer">
-           <button type="button" class="btn" style="background-color: #f44335; color: white;" @click="confirm(1)">전체취소</button>
+           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">닫기</button>
+           <button type="button" v-if="totalcanceNO_display" class="btn" style="background-color: #f44335; color: white;" @click="confirm(1)">전체취소</button>
            <button type="button" class="btn" style="background-color: #fb8c00; color: white;" @click="confirm(2)">자재취소</button>
-           <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: #4caf50; color: white;" @click="closeModal">닫기</button>
          </div>
        </div>
      </div>
@@ -55,14 +55,15 @@
 <script setup>
   import { defineProps, defineEmits } from 'vue';     //watch
 
-const { isShowModal, deleteList } = defineProps({
+const { isShowModal, deleteList, totalcanceNO_display } = defineProps({
       isShowModal: Boolean,
       deleteList: Object,
+      totalcanceNO_display: Boolean,
   });
 
 console.log(deleteList);
 
-  const emit = defineEmits(['closeModal', 'confirm', 'confirmALL']);
+  const emit = defineEmits(['closeModal', 'confirm']);
 
    const closeModal = () => {
        emit('closeModal'); // 부모 컴포넌트로 이벤트 전송

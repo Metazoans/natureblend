@@ -1,7 +1,7 @@
 <template>
 
   <div class="partList">
-    <h1>부품 관리 페이지</h1>
+    <h3>부품 관리 페이지</h3>
     <!-- 사용 가능 부품 리스트 -->
     <div class="grid-container" >
       <ag-grid-vue

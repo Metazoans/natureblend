@@ -10,10 +10,15 @@
         aria-hidden="true"
         id="iconSidenav"
       ></i>
-      <a class="m-0 navbar-brand" href="/" @click="resetState">
-        <span class="text-2xl font-weight-bold text-white"
-          ><img src="http://yeonsus.com/moive/jussionejo.png" width="35" alt="Nature Blend" class="logimg">Nature Blend</span
-        >
+      <a class="m-0 p-3 navbar-brand" href="#" @click.prevent="handleResetAndNavigate">
+        <span class="text-2xl font-weight-bold text-white">
+          <div class="d-flex justify-content-center align-items-center pb-3">
+          <img src="http://yeonsus.com/moive/jussionejo_color.png" width="60" alt="Nature Blend" class="logimg">
+            <span style="margin: 0;">
+              Nature Blend
+            </span>
+        </div>
+        </span>
       </a>
     </div>
     <hr class="horizontal light mt-0 mb-2" />
@@ -44,6 +49,10 @@ export default {
 
   methods: {
     ...mapMutations(["resetState"]),
+    handleResetAndNavigate() {
+      this.resetState(); // Vuex 상태 초기화
+      this.$router.push("/"); // 라우터 이동
+    },
   }
 };
 </script>

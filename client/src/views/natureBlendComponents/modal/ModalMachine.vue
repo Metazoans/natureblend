@@ -52,4 +52,8 @@ export default {
 .show {
   display: block;
 }
+
+.modal-header {
+  background-color: #e9ecef;
+}
 </style>

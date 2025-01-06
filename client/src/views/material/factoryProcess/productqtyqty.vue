@@ -3,7 +3,7 @@
         <div class="P-0" style="width: 35px; height: 110px; display: flex; justify-content: center; align-items: center;">
         </div>
         <div class="P-0">
-            <div style="height: 150px; width: 230px;" class="overflow-y-scroll">
+            <div style="height: 150px; width: 240px;" class="overflow-y-scroll">
                 <table class="table align-items-center text-center">
                     <tr>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">

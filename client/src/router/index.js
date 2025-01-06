@@ -6,8 +6,8 @@ import MachineApp from '@/views/machine/MachineApp.vue';
 import machineRoute from "./machineRoute";
 
 import MaterialApp from '@/views/material/MaterialApp.vue';
-import Factoryprocess from '@/views/material/factoryProcess/factoryProcess.vue';
 import materialRoute from "./materialRoute";
+import Factoryprocess from '@/views/material/factoryProcess/factoryProcess.vue';
 
 import ProductionApp from '@/views/production/ProductionApp.vue';
 import productionRoute from "./productionRoute";
@@ -33,9 +33,9 @@ const routes = [
 
   // 공용 페이지
   {
-    path: '/',
-    redirect : { name : 'MainPage'}
-    
+    path: "/",
+    name: "/",
+    redirect: "/mainpage",
   },
   {
     path: "/mainpage",

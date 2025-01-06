@@ -1,4 +1,7 @@
-<!-- 자재 발주 관리 메뉴 리메이크 의 BOM기반 발주서 리스트 컴포넌트 -->
+<!-- 
+    메뉴 : 자재>자재발주>자재 발주 관리 [자재주문 그리드]
+    자재 발주 관리 메뉴 리메이크 의 BOM기반 발주서 리스트 컴포넌트
+-->
 <template>
     <div>
       <h4 style="margin-bottom: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;자재주문</h4>
@@ -30,12 +33,22 @@
             </template>
         </Modal>
     </div>
+    <flat-pickr
+    class="form-control custom-input"
+    placeholder="📅  "
+    v-model="selectedDate"
+    :config="dateConfig"
+  />
 </template>
 <script>
 import theme from "@/utils/agGridTheme";
 import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
-import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
-import matelList from "@/views/material/newMaterialOrderOfferModal.vue"
+import Modal from "@/views/material/newMaterialOrderOfferMomModal.vue";
+import matelList from "@/views/material/newMaterialOrderOfferModal.vue";
+
+//달력!!!!!!!!
+// eslint-disable-next-line vue/no-unused-components
+//import FlatPickrCellRenderer from '@/views/material/FlatPickrCellRenderer.vue';
 
 export default {
     //컴포넌트 선언했어
@@ -43,6 +56,7 @@ export default {
         CustomNoRowsOverlay,
         Modal,
         matelList,
+        //FlatPickrCellRenderer,    //달력 능력부족으로 실패
     },
     //엄마가 주는 데이터 받을꺼
     props: {
@@ -136,13 +150,83 @@ export default {
                     }
                 },
                 { headerName: "거래처명", field: "com_name", cellStyle: { textAlign: "left" } },
-                { headerName: "발주량", field: "go_qty", width:100, editable: true, cellStyle: { textAlign: "right" } },
-                { headerName: "단가", field: "go_price", width:80, editable: true, cellStyle: { textAlign: "right" } },
-                { headerName: "총금액", field: "go_total_price", width:110, cellStyle: { textAlign: "right" } },
-                { headerName: "납기일", field: "limit_date", width:130, editable: true, cellEditor: 'agDateCellEditor', cellStyle: { textAlign: "center" },
+                { headerName: "발주량", field: "go_qty", width:100, editable: true, 
+                    cellStyle: { 
+                        backgroundColor: "#fff", // 연한 배경색
+                        //border: "0.5px dashed #fb8c00", // 점선 테두리
+                        cursor: "text", // 텍스트 커서
+                        textAlign: "right",
+                    },
+                    cellRenderer: params => {
+                        if (params.value) {
+                            if(params.data.material.includes('병')){
+                                const formatted_qty = params.value.toLocaleString()+' 개';
+                                return `<span style="text-align: right;">${formatted_qty}</span>`;
+                            }else{
+                                const formatted_qty = params.value.toLocaleString()+' kg';
+                                return `<span style="text-align: right;">${formatted_qty}</span>`;
+                            }
+                        } else {
+                            return `<span style="text-align: right;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                        }
+                    },
+                },
+                { headerName: "단가", field: "go_price", width:100, editable: true, 
+                    cellStyle: { 
+                        backgroundColor: "#fff",
+                        //border: "0.5px dashed #fb8c00",
+                        cursor: "text",
+                        textAlign: "right",
+                    },
+                    cellRenderer: params => {
+                        if (params.value) {
+                            const formatted_price = params.value.toLocaleString()+' 원';
+                            return `<span style="text-align: right;">${formatted_price}</span>`;
+                        } else {
+                            return `<span style="text-align: right;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                        }
+                    },
+                },
+                { headerName: "총금액", field: "go_total_price", width:130, 
+                    cellStyle: { 
+                        textAlign: "right" 
+                    },
+                    cellRenderer: params => {
+                        if (params.value) {
+                            const formatted_total_price = params.value.toLocaleString()+' 원';
+                            return `<span style="text-align: right;">${formatted_total_price}</span>`;
+                        } else {
+                            return `<span style="text-align: right;"></span>`;
+                        }
+                    }, 
+                },
+                // {
+                //     headerName: "납기일",
+                //     field: "limit_date",
+                //     width: 130,
+                //     editable: true,
+                //     cellRendererFramework: FlatPickrCellRenderer, // Vue 컴포넌트를 렌더러로 사용
+                // },
+                { headerName: "납기일", field: "limit_date", width:130, editable: true, cellEditor: 'agDateCellEditor', 
+                    cellStyle: { 
+                        backgroundColor: "#fff",
+                        //border: "0.5px dashed #fb8c00",
+                        cursor: "text",
+                        textAlign: "right",
+                    },
+                    cellRenderer: params => {
+                        if (params.value) {
+                            const date = new Date(params.value);
+                            if (isNaN(date.getTime())) return params.value;
+                            const formattedDate = date.toISOString().split('T')[0];
+                            return `<span style="text-align: right;">${formattedDate}</span>`;
+                        } else {
+                            return `<span style="text-align: right;">📅</span>`;
+                        }
+                    },
                     cellEditorParams: {
                         dateFormat: 'yyyy-MM-dd',
-                    }, 
+                    },
                     valueFormatter: (params) => {
                         if (!params.value) return '';
                         // 값이 ISO 문자열 형식이면 YYYY-MM-DD 형식으로 변환
@@ -201,7 +285,7 @@ export default {
             theme : theme,
         };
     },
-    methods: {
+    methods: {        
         onReady(event) {
             this.gridApi = event.api;
             event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
@@ -266,18 +350,29 @@ export default {
                 material: data.material_name  + ' (개별주문)',
             };
             this.materialdate.push(newObject); // 새로운 객체 추가
+            //this.materialdate.sort((a, b) => a.material_code.localeCompare(b.material_code));
+            this.materialdate = [...this.materialdate]; //업데이트 안돼서 재할당함
         },
+
         onCellValueChanged(event) {
             //console.log('여기옴');
-            const { data } = event;
+            const { data } = event; //colDef
+
+            // //달력이벤트
+            // if (colDef.field === 'limit_date') {
+            //     // 변경된 값 저장
+            //     console.log('납기일 변경:', data.limit_date);
+            // }   //달력이벤트끝
+
+
             // console.log(data.go_qty);
             // console.log(data.go_price);
 
-            if ( data.go_qty && data.go_price ) {
+            if ( data.go_qty || data.go_price ) {
                 const quantity = parseFloat(data.go_qty) || 0;
                 const price = parseFloat(data.go_price) || 0;
 
-                //data.go_total_price = (quantity * price).toLocaleString();
+                //data.go_total_price = (quantity * price).toLocaleString()+' 원';
                 data.go_total_price = (quantity * price);
 
                 //console.log(data.go_total_price);
@@ -332,25 +427,31 @@ export default {
         allInput2(){
             const selectedRows = this.gridApi.getSelectedRows();
             console.log(selectedRows);
-            
-            let NOOK = 'OK';
-            selectedRows.forEach(val => {
-                if(val.limit_date){
-                    const date2 = new Date(val.limit_date);
-                    val.limit_date = date2.toISOString().split('T')[0];
+            if (selectedRows.length > 0) {
+                let NOOK = 'OK';
+                selectedRows.forEach(val => {
+                    if(val.limit_date){
+                        const date2 = new Date(val.limit_date);
+                        val.limit_date = date2.toISOString().split('T')[0];
+                    }
+                    if (!val.com_name || !val.go_qty || !val.go_price || !val.limit_date) {
+                        this.$notify({ text: '선택한 행의 값을 모두 채워주세요.', type: 'error' }); //title:'값이 없음', 
+                        NOOK = 'NO';
+                        return;
+                    }
+                });
+                if(NOOK==='OK'){
+                    //this.$notify({ title:'발주성공', text: '발주처리중 잠시 기다려주세요.', type: 'success' });    //error , success
+                    //console.log('발주자재 검사', selectedRows);
+                    this.$emit('goPOlist', selectedRows);
                 }
-                if (!val.com_name || !val.go_qty || !val.go_price || !val.limit_date) {
-                    this.$notify({ title:'값이 없음', text: '선택한 행의 값을 모두 채워주세요.', type: 'error' });
-                    NOOK = 'NO';
-                    return;
-                }
-            });
-            if(NOOK==='OK'){
-                //this.$notify({ title:'발주성공', text: '발주처리중 잠시 기다려주세요.', type: 'success' });    //error , success
-                this.$emit('goPOlist', selectedRows);
+            }else{
+                this.$notify({ text: '선택된 자재가 없습니다.', type: 'error' }); // title:'주문생성', 
             }
-        }
-    },
+        },
+
+    },  //메소드끝
+
 };
 
 </script>

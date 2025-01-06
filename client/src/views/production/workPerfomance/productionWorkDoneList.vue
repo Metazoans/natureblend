@@ -38,6 +38,7 @@
           style="height: 513px;"
           rowSelection="multiple"
           :quickFilterText="listSearch"
+          :paginationPageSizeSelector="[10, 20, 50, 100]"
       >
       </ag-grid-vue>
     </div>

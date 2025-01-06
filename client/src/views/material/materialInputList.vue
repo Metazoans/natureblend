@@ -1,4 +1,6 @@
-<!--자재 입고조회 메뉴-->
+<!-- 
+    메뉴 : 자재>자재입고>자재 입고 조회 메뉴
+-->
 <template>
    <div>
       <h3>&nbsp;&nbsp;자재 입고 조회</h3>
@@ -10,19 +12,19 @@
          <!-- 자재명 -->
          <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="materialCode">자재명</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" @keydown.enter="enterkey">
+            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="materialCode" v-model="materialCode" autocomplete="off" @keydown.enter="enterkey">
          </div>
 
          <!-- 주문서명 -->
          <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="clientName">업체명</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="clientName" v-model="clientName" @keydown.enter="enterkey">
+            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="clientName" v-model="clientName" autocomplete="off" @keydown.enter="enterkey">
          </div>
 
          <!-- 자재발주코드 -->
          <div class="col-sm-2">
             <label class="col-form-label fw-bold" for="POListCode">자재발주코드</label>
-            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="POListCode" v-model="POListCode" @keydown.enter="enterkey">
+            <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="POListCode" v-model="POListCode" autocomplete="off" @keydown.enter="enterkey">
          </div>
       </form>
 
@@ -59,6 +61,7 @@
       :theme="theme"
       :pagination="true"
       :paginationPageSize="10"
+      :paginationPageSizeSelector="[10, 20, 50, 100]"
       @grid-ready="onReady"
       style="height: 513px;"
       rowSelection="multiple"
@@ -103,7 +106,7 @@ const loginInfo = () => {
       console.log(loginfo.value.job);
    }else{
       notify({
-         title: "로그인요청",
+         //title: "로그인요청",
          text: "자재팀 또는 관리자만 접속 가능합니다.",
          type: "error", // success, warn, error 가능
       });
@@ -137,11 +140,11 @@ const reSet = () => {
 
   //this.$notify({ text: '필수 정보를 모두 입력하세요.', type: 'error' });
 
-  notify({
-      title: "검색조건",
-      text: "초기화 완료 했습니다.",
-      type: "success", // success, warn, error 가능
-   });
+//   notify({
+//       title: "검색조건",
+//       text: "초기화 완료 했습니다.",
+//       type: "success", // success, warn, error 가능
+//    });
 };
 
 
@@ -308,9 +311,9 @@ const lotinfo = async (lotdata) =>{
       material_name: lotdata.material_name,
       lot_code: lotinfodata.value[0]['lot_code'],
       //pass_stok_qty: ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 ) + lotdata.material_name.includes('병') ? ' 개' : ' kg',
-      pass_stok_qty: lotdata.material_name.includes('병') ? ( lotinfodata.value[0]['pass_stok_qty'] )+' 개' : ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 )+' kg',
+      pass_stok_qty: lotdata.material_name.includes('병') ? ( lotinfodata.value[0]['pass_stok_qty'] ).toLocaleString()+' 개' : ( lotinfodata.value[0]['pass_stok_qty'] * 0.001 ).toLocaleString()+' kg',
       //reject_stok_qty: ( lotinfodata.value[0]['reject_stok_qty'] * 0.001 ) + ' kg',
-      reject_stok_qty: lotdata.material_name.includes('병') ? ( lotinfodata.value[0]['reject_stok_qty']  )+' 개' : ( lotinfodata.value[0]['reject_stok_qty'] * 0.001 )+' kg',
+      reject_stok_qty: lotdata.material_name.includes('병') ? ( lotinfodata.value[0]['reject_stok_qty']  ).toLocaleString()+' 개' : ( lotinfodata.value[0]['reject_stok_qty'] * 0.001 ).toLocaleString()+' kg',
    };
    console.log('newObject ',newObject);
 

@@ -8,8 +8,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <slot name="list">slot</slot>
-            <div class="mb-1">>
+            <slot name="list"></slot>
+            <div class="mb-1">
               <!-- 공정 조회  -->
               <div class="grid-container" >
                 <ag-grid-vue 
@@ -110,7 +110,7 @@
     max-width: 30%;
   }
   .modal-body{
-    background-color: gray;
+    background-color: white;
   }
   .modal-body .form-control {
       width: 100px;

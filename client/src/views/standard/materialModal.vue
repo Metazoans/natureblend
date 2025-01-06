@@ -7,16 +7,13 @@
             <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
           </div>
           <div class="modal-body">
-            <slot name="list">slot</slot>
+            <slot name="list"></slot>
             <div class="mb-1">
-              <label for="searchInput" class="form-label">검색어</label>
-              <div class="d-flex ">
-                <input type="text" v-model="quickFilterText" class="form-control" id="searchInput" placeholder="검색할 물품">
-              </div>
+              <label for="searchInput" class="form-label"></label>
               <!-- 자재 코드 조회 리스트 -->
               <div class="grid-container" >
                 <ag-grid-vue 
-                  style ="width: 100%; "
+                  style ="width: 100%;  "
                   :rowData="rowData"
                   :columnDefs="columnDefs"
                   :theme="theme"
@@ -110,7 +107,7 @@
     max-width: 30%;
   }
   .modal-body{
-    background-color: gray;
+    background-color: white;
   }
   .modal-body .form-control {
       width: 100px;
