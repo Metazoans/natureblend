@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="add-top mt-4">
-      <h3>생산계획 등록</h3>
+      <h4>생산계획 등록</h4>
       <span>* 위의 주문을 클릭 시 생산계획에 추가됩니다.</span>
       <material-button size="sm" color="success" class="button" @click="addPlan">등록</material-button>
     </div>
@@ -48,7 +48,7 @@
               <p class="mb-0 text-sm text-end">{{ order.unplannedQty }}</p>
             </td>
             <td class="plan-qty-group input-group w-50 h-25 text-end m-lg-auto" :class="{ 'plan-input': !order.planQty  }" >
-              <input type="number" class="plan-qty mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
+              <input type="number" autocomplete="off" class="plan-qty mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
             </td>
             <td>
               <p class="mb-0 text-sm text-end">{{ order.stockQty }}</p>
@@ -61,25 +61,25 @@
         <div class="input-content">
           <h6>생산계획명</h6>
           <div class="input-group w-auto h-25">
-            <input type="text" class="form-control border p-2" v-model="planName"/>
+            <input type="text" autocomplete="off" class="form-control border p-2" v-model="planName"/>
           </div>
         </div>
         <div class="input-content">
           <h6>계획시작일자</h6>
           <div class="input-group w-auto h-25">
-            <input type="date" class="form-control border p-2" v-model="planStartDate"/>
+            <input type="date" autocomplete="off" class="form-control border p-2" v-model="planStartDate"/>
           </div>
         </div>
         <div class="input-content">
           <h6>계획종료일자</h6>
           <div class="input-group w-auto h-25">
-            <input type="date" class="form-control border p-2" v-model="planEndDate"/>
+            <input type="date" autocomplete="off" class="form-control border p-2" v-model="planEndDate"/>
           </div>
         </div>
         <div class="input-content ">
           <h6>등록인</h6>
           <div class="input-group w-auto h-25">
-            <input type="text" @click="openModal" :value="searchEmp.name" readonly class="form-control border p-2 emp" />
+            <input type="text" @click="openModal" autocomplete="off" :value="searchEmp.name" readonly class="form-control border p-2 emp" />
           </div>
         </div>
       </div>
@@ -182,7 +182,7 @@ export default {
       }
 
       let result =
-          await axios.post(`${ajaxUrl}/production/planddd`, planInfo)
+          await axios.post(`${ajaxUrl}/production/plan`, planInfo)
               .catch(err => console.log(err));
 
       if(result.data.message === 'success') {
@@ -229,8 +229,8 @@ export default {
   }
   > span {
     position: absolute;
-    left: 180px;
-    top: 14px;
+    left: 150px;
+    top: 6px;
     font-size: 16px;
     font-weight: 700;
     margin-left: 12px;

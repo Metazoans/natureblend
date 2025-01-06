@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid working-list py-4">
-    <h1>작업 목록</h1>
+    <h3>작업 목록</h3>
     <div class="container-fluid">
       <div class="search-container mt-4 mb-2">
         <div class="input-group w-auto h-25">
@@ -74,13 +74,13 @@
                   <p class="mb-2 text-center w-100 d-flex flex-column">
                     <strong>작업자</strong>
                     <span v-if="partialWork.emp_num !== null" class="m-lg-2">{{ partialWork.emp_name }}</span>
-                    <input v-else readonly @click="openModal('emp')" :value="searchEmp.name" class="form-control border p-2 cursor-pointer" />
+                    <input v-else readonly @click="openModal('emp', partialWork.process_num)" :value="partialWork.searchEmp?.name" class="form-control border p-2 cursor-pointer" />
                   </p>
 
                   <p class="mb-2 text-center w-48 d-flex flex-column">
                     <strong>설비명</strong>
                     <span v-if="partialWork.machine_num !== null" class="m-lg-2">{{ partialWork.machine_name }}</span>
-                    <input v-else readonly @click="openModal('machine')" :value="searchMachine.machine_name" class="form-control border p-2 cursor-pointer" />
+                    <input v-else readonly @click="openModal('machine', partialWork.process_num)" :value="partialWork.searchMachine?.machine_name" class="form-control border p-2 cursor-pointer" />
                   </p>
 
                   <p class="mb-2 text-center w-48 ml-4 d-flex flex-column">
@@ -102,8 +102,19 @@
                   </p>
 
                   <div class="text-center mb-2 w-100">
-                    <button @click="startPartialWork(partialWork)" class="btn start text-md" :disabled="partialWork.partial_process_start_time">시작</button>
-                    <button @click="endPartialWork(partialWork)" class="btn end text-md" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>
+                    <button
+                        @click="startPartialWork(partialWork)"
+                        class="btn start text-md"
+                        :disabled="partialWork.partial_process_start_time"
+                    >
+                      시작
+                    </button>
+                    <button
+                        @click="endPartialWork(partialWork)"
+                        class="btn end text-md"
+                        :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time"
+                    >
+                      종료</button>
                   </div>
 
                   <p class="text-center mb-2 w-100">
@@ -223,12 +234,11 @@ export default {
       partialWorkFinalStatus: 'process_waiting', //process_waiting, processing, process_complete
       selectedRow: {},
       selectedEmp: {},
-      searchEmp: {},
       selectedMachine: {},
-      searchMachine: {},
       partialWorkFinalQty: 0,
       partialWorkFirstStartTime: '-',
-      partialWorkLastEndTime: '-'
+      partialWorkLastEndTime: '-',
+      modalForProcessNum: 0,
     }
   },
 
@@ -242,14 +252,14 @@ export default {
     },
 
     async startPartialWork(partialWork) {
-      if(!this.searchEmp.emp_num) {
+      if(!partialWork.searchEmp.emp_num) {
         this.$notify({
           text: "작업자를 선택해주세요.",
           type: 'error',
         });
         return
       }
-      if(!this.searchMachine.machine_num ) {
+      if(!partialWork.searchMachine.machine_num ) {
         this.$notify({
           text: "설비를 선택해주세요.",
           type: 'error',
@@ -265,8 +275,8 @@ export default {
       }
 
       let workInfo = {
-        empName: this.searchEmp.emp_num,
-        machineNum: this.searchMachine.machine_num,
+        empName: partialWork.searchEmp.emp_num,
+        machineNum: partialWork.searchMachine.machine_num,
         todoQty: partialWork.new_process_todo_qty,
         failQty: partialWork.new_fail_qty,
         successQty: partialWork.new_success_qty,
@@ -287,9 +297,6 @@ export default {
           this.updateProdOrderStatus('work_in_process')
           this.updatePlanStatus('plan_in_process')
         }
-
-        this.searchEmp = {}
-        this.searchMachine = {}
       }
     },
 
@@ -299,7 +306,7 @@ export default {
         info: {
           processNum: partialWork.process_num,
           qty: partialWork.new_process_todo_qty,
-          empNum: this.searchEmp.emp_num
+          empNum: partialWork.searchEmp.emp_num
         }
       }
 
@@ -308,17 +315,17 @@ export default {
     },
 
     async endPartialWork(partialWork) {
-      if(partialWork.fail_qty === null && partialWork.new_fail_qty === null) {
+      if(typeof partialWork.fail_qty !== 'number' && typeof partialWork.new_fail_qty !== 'number') {
         this.$notify({
           text: "불량량을 입력해주세요.",
-          type: 'fail',
+          type: 'error',
         });
         return
       }
-      if(partialWork.success_qty === null && partialWork.new_success_qty === null) {
+      if(typeof partialWork.success_qty !== 'number' && typeof partialWork.new_success_qty !== 'number') {
         this.$notify({
           text: "합격량을 입력해주세요.",
-          type: 'fail',
+          type: 'error',
         });
         return
       }
@@ -471,15 +478,16 @@ export default {
 
     onGridReady(params) {
       this.gridApi = params.api;
-      // this.gridApi.sizeColumnsToFit();
     },
 
-    openModal(type) {
+    openModal(type, processNum) {
       if(type === 'prodOrder') {
         this.modalTitle = '생산지시 목록'
       } else if(type === 'emp'){
+        this.modalForProcessNum = processNum
         this.modalTitle = '생산직원 목록'
       } else if(type === 'machine'){
+        this.modalForProcessNum = processNum
         this.modalTitle = '설비 목록'
       }
 
@@ -497,9 +505,17 @@ export default {
         this.searchWorkingOrder = this.selectedWorkingOrder
         this.getWorkList()
       } else if(this.modalType === 'emp') {
-        this.searchEmp = this.selectedEmp
+        this.partialWorkList.forEach((partialWork) => {
+          if(partialWork.process_num === this.modalForProcessNum) {
+            partialWork.searchEmp = this.selectedEmp
+          }
+        })
       } else if(this.modalType === 'machine') {
-        this.searchMachine = this.selectedMachine
+        this.partialWorkList.forEach((partialWork) => {
+          if(partialWork.process_num === this.modalForProcessNum) {
+            partialWork.searchMachine = this.selectedMachine
+          }
+        })
       }
 
       this.closeModal()

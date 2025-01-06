@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid py-4">
-    <div class="pb-4">
-      <h1>생산 지시 목록</h1>
+    <div>
+      <h3>생산 지시 목록</h3>
     </div>
     <div class="grid-container work" style="padding-top: 10px;">
       <ag-grid-vue
