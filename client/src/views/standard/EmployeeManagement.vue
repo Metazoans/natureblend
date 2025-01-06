@@ -216,16 +216,16 @@
           axios.delete(`${ajaxUrl}/employeeDelete/${this.selectedEmployee.emp_num}`)
             .then(res => {
               if (res.data === '성공') {
-               this.$notify({ title:'사원삭제', text: '사원이 삭제되었습니다.', type: 'success' });
+               this.$notify({ text: '사원이 삭제되었습니다.', type: 'success' });
                 this.employeeList();
               } else {
-               this.$notify({ title:'삭제실패', text: '삭제실패하였습니다.', type: 'error' });
+               this.$notify({ text: '삭제실패하였습니다.', type: 'error' });
               }
             })
 
         }catch(error) {
           console.log(error);
-          this.$notify({ title:'삭제실패', text: '삭제실패하였습니다.', type: 'error' });
+          this.$notify({ text: '삭제실패하였습니다.', type: 'error' });
         }
         this.showDeleteModal = false;
     }
@@ -269,7 +269,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능합니다.', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능합니다.', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -298,25 +298,25 @@
                                   .catch(err => console.log(err));
             if (result.data === '성공') {
                   if(existingEmployee){
-                    this.$notify({ title:'수정성공', text: '사원이 수정되었습니다.', type: 'success' });
+                    this.$notify({ text: '사원이 수정되었습니다.', type: 'success' });
                   }else{
-                    this.$notify({ title:'등록성공', text: '사원이 등록되었습니다.', type: 'success' });
+                    this.$notify({ text: '사원이 등록되었습니다.', type: 'success' });
                   }
                   this.employeeList();
             }else {
-              this.$notify({ title:'등록실패', text: '등록실패하였습니다.', type: 'error' });
+              this.$notify({ text: '등록실패하였습니다.', type: 'error' });
             }
         console.log(result.data);
         this.employeeList();
     },
     input_update() {
       if(this.empNum === '' || this.name === '' || this.birth === '' || this.tel === '' || this.job === '' || this.jobNum === '' || this.position === '' || this.employmentDate === ''){
-        this.$notify({ title:'빈칸확인', text: '빈칸을 입력해주세요', type: 'error' });
+        this.$notify({ text: '빈칸을 입력해주세요', type: 'error' });
         return;
       }
       
       if(this.tel.length !== 13){
-        this.$notify({ title:'연락처 확인', text: '연락처를 확인해주세요', type: 'error' });
+        this.$notify({ text: '연락처를 확인해주세요', type: 'error' });
         return;
       }
 

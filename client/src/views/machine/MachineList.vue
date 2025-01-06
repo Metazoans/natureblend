@@ -10,31 +10,30 @@
           <div class="col-sm-auto">
             <label class="col-form-label fw-bold">작동 상태</label>
             <div>
-              <label v-for="status in statusList" :key="status" class="me-3">
+              <label class="me-3" v-for="status in statusList" :key="status">
                 {{ status }}
                 <input
-                  type="radio"
-                  name="status"
-                  :value="status"
-                  v-model="pickedStatus"
                   class="form-check-input"
-                />
+                  :value="status"
+                  type="radio"
+                  v-model="pickedStatus"
+                >
               </label>
             </div>
           </div>
-  
+          
           <!-- 설비 분류 -->
           <div class="col-sm-auto">
             <label class="col-form-label fw-bold">설비 분류</label>
             <div>
-              <label v-for="type in machineType" :key="type" class="me-3">
+              <label class="me-3" v-for="type in machineType" :key="type">
                 {{ type }}
                 <input
-                  type="checkbox"
-                  :value="type"
-                  v-model="pickedType"
                   class="form-check-input"
-                />
+                  :value="type"
+                  type="checkbox"
+                  v-model="pickedType"
+                >
               </label>
             </div>
           </div>
@@ -66,7 +65,7 @@
           <!-- 검색 및 초기화 버튼 -->
           <div class="col-sm-auto">
             <button
-              class="btn-sm btn-success toast-btn"
+              class="btn btn-success toast-btn"
               type="button"
               data-target="warningToast"
               @click="updateFilter"
@@ -76,7 +75,7 @@
           </div>
           <div class="col-sm-auto">
             <button
-              class="btn-sm btn-warning toast-btn"
+              class="btn btn-warning toast-btn"
               type="button"
               data-target="warningToast"
               @click="resetSearch"
@@ -102,6 +101,7 @@
         style="height: 493px;"
         :pagination="true"
         :paginationPageSize="8"
+        :paginationPageSizeSelector="[8, 16, 40, 80]"
         @cellClicked="cellClickFnc"
         :noRowsOverlayComponent="noRowsOverlayComponent"
       ></ag-grid-vue>
@@ -429,7 +429,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .main-container{
    background-color:  #e9ecef;
    margin: 0 20px;
@@ -439,11 +439,6 @@ export default {
   margin: 10px 20px;
   padding: 20px 0;
 }
-// input {
-//   background-color: #ffffff; /* 배경색 흰색 */
-//   border: solid 1px; /* 테두리 색상 */
-//   color: #495057; /* 텍스트 색상 */
-// }
 
 select {
   background-color: white;
@@ -459,7 +454,6 @@ select:focus {
 }
 
 
-
 /* 일반 input 태그 스타일 */
 input {
   background-color: #ffffff; /* 배경색 흰색 */
@@ -470,7 +464,6 @@ input {
 input:read-only {
   background-color: #ffffff; /* 배경색 흰색 고정 */
   color: #495057; /* 텍스트 색상 유지 */
-  cursor: not-allowed; /* 읽기 전용 표시를 위한 커서 */
 }
 
 /* input 포커스 상태에서도 배경색 유지 */
@@ -481,10 +474,10 @@ input:focus {
 }
 
 /* readonly input 요소가 포커스되어도 스타일 유지 */
-input:read-only:focus {
-  background-color: #ffffff; /* 배경색 흰색 고정 */
-  border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
-  outline: none; /* 포커스 아웃라인 제거 */
-}
+// input:read-only:focus {
+//   background-color: #ffffff; /* 배경색 흰색 고정 */
+//   border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
+//   outline: none; /* 포커스 아웃라인 제거 */
+// }
 
 </style>

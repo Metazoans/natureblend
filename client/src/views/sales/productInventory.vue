@@ -189,21 +189,21 @@ export default{
             columnLotNum :[
             { headerName: "제품LOT번호 ", field: "product_lot",flex: 1,cellStyle: { textAlign: "center" } },
             { headerName: "제품코드", field: "product_code",flex: 1,cellStyle: { textAlign: "center" } },
-            { headerName: "제품명 ", field: "product_name",flex: 1,cellStyle: { textAlign: "center" } },
+            { headerName: "제품명 ", field: "product_name",flex: 1,cellStyle: { textAlign: "left" } },
             { headerName: "제품수량 "
             , field: "product_quantity"
             ,flex: 1
-            ,cellStyle: { textAlign: "center" } 
+            ,cellStyle: { textAlign: "right" } 
             ,cellRenderer: params =>{
                     if(params.value){
                         const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
                         return `<span>${formattedValue}</span>`;
                     }
              }},
-            { headerName: "창고위치 ", field: "warehouse_name",flex: 1,cellStyle: { textAlign: "center" } },
+            { headerName: "창고위치 ", field: "warehouse_name",flex: 1,cellStyle: { textAlign: "left" } },
             { headerName: "제조일자 ", field: "manufacturing_date",flex: 1,cellStyle: { textAlign: "center" } },
             { headerName: "유통기한 ", field: "expire_date",flex: 1,cellStyle: { textAlign: "center" }},
-            { headerName: "상태", field: "product_status",flex: 1,cellStyle: { textAlign: "center" } },  
+            { headerName: "상태", field: "product_status",flex: 1,cellStyle: { textAlign: "left" } },  
         ],
 
 

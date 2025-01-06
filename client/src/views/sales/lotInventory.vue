@@ -18,7 +18,6 @@
                                 >
                                 </label>
                             </div>
-                       
                     </div>
                     <!--유통기한 검색-->
                     <div class="row align-items-center">
@@ -130,7 +129,7 @@ export default{
             { headerName: "창고위치 ", field: "warehouse_name", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "left" }},
             { headerName: "제조일자 ", field: "manufacturing_date", resizable: true, sortable: true,flex: 2, cellStyle: { textAlign: "center" } },
             { headerName: "유통기한 ", field: "expire_date", resizable: true, sortable: true ,flex: 2, cellStyle: { textAlign: "center" }},
-            { headerName: "상태", field: "product_status", resizable: true, sortable: true ,flex: 1, cellStyle: { textAlign: "center" }},
+            { headerName: "상태", field: "product_status", resizable: true, sortable: true ,flex: 1, cellStyle: { textAlign: "left" }},
             {
                 headerName : "폐기",
                 field : "status",
@@ -332,11 +331,11 @@ input {
   color: #495057; /* 텍스트 색상 */
 }
 /* readonly 상태의 input 태그 스타일 */
-input:read-only {
-  background-color: #ffffff; /* 배경색 흰색 고정 */
-  color: #495057; /* 텍스트 색상 유지 */
-  cursor: not-allowed; /* 읽기 전용 표시를 위한 커서 */
-}
+// input:read-only {
+//   background-color: #ffffff; /* 배경색 흰색 고정 */
+//   color: #495057; /* 텍스트 색상 유지 */
+//   cursor: not-allowed; /* 읽기 전용 표시를 위한 커서 */
+// }
 
 /* input 포커스 상태에서도 배경색 유지 */
 input:focus {
@@ -346,9 +345,9 @@ input:focus {
 }
 
 /* readonly input 요소가 포커스되어도 스타일 유지 */
-input:read-only:focus {
-  background-color: #ffffff; /* 배경색 흰색 고정 */
-  border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
-  outline: none; /* 포커스 아웃라인 제거 */
-}
+// input:read-only:focus {
+//   background-color: #ffffff; /* 배경색 흰색 고정 */
+//   border-color: #ced4da; /* readonly 상태에서는 테두리 기본값 */
+//   outline: none; /* 포커스 아웃라인 제거 */
+// }
 </style>

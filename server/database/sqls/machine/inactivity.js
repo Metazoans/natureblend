@@ -35,9 +35,9 @@ FROM inactivity i JOIN machine m
                     ON (i.machine_num = m.machine_num)
                   JOIN process p
                     ON (m.process_code = p.process_code)
-                  JOIN employee se
+                  LEFT JOIN employee se
                     ON (i.inact_start_emp = se.emp_num)
-                  JOIN employee ee
+                  LEFT JOIN employee ee
                     ON (i.inact_end_emp = ee.emp_num)
 ORDER BY inact_start_time DESC
 `;

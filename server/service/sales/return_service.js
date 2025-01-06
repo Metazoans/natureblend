@@ -1,5 +1,5 @@
 const mysql = require('../../database/mapper.js');
-//반품코드 조회회
+//반품코드 조회
 const getReturnList = async()=>{
     let list = await mysql.query('getReturn');
     return list;

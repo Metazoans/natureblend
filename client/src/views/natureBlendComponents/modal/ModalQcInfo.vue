@@ -2,7 +2,7 @@
   <div class="modal fade" :class="{ show: isShowModal }" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header" style="background-color: #e9ecef;">
           <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">음료검사 정보</h1> -->
           <slot name="title">title</slot>
         </div>

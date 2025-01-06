@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h3 class="mb-3">입고검사-불량내역조회</h3>
+    <h3 class="mb-3">입고 검사-불량 내역 조회</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h4 class="me-3">검색조건</h4>
+        <h4 class="me-3">검색 조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -46,7 +46,7 @@
   <hr>
   <!-- 검사결과 시작 -->
   <div class="container-fluid py-4">
-    <h4>불량내역</h4>
+    <h4>불량 내역</h4>
 
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"

@@ -159,14 +159,14 @@
         try {
           const res = await axios.delete(`${ajaxUrl}/warehouseDelete/${this.selectedWarehouse.warehouse_code}`);
           if (res.data === '성공') {
-            this.$notify({ title: '창고삭제', text: '창고가 삭제되었습니다.', type: 'success' });
+            this.$notify({ text: '창고가 삭제되었습니다.', type: 'success' });
             this.warehouseList(); // 삭제 후 목록 새로고침
           } else {
-            this.$notify({ title: '삭제실패', text: '삭제 실패.', type: 'error' });
+            this.$notify({ text: '삭제 실패.', type: 'error' });
           }
         } catch (error) {
           console.log(error);
-          this.$notify({ title: '삭제실패', text: '삭제 중 오류 발생', type: 'error' });
+          this.$notify({ text: '삭제 중 오류 발생', type: 'error' });
         }
       }
       this.showDeleteModal = false; // 모달 닫기
@@ -178,7 +178,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -208,10 +208,10 @@
            const result = await axios.post(`${ajaxUrl}/warehouseInsert`, newList)
                                        .catch(err => console.log(err));
             if (result.data === '성공') {
-               this.$notify({ title:'등록성공', text: '창고가 등록되었습니다.', type: 'success' });
+               this.$notify({ text: '창고가 등록되었습니다.', type: 'success' });
                   this.warehouseList();
             } else {
-               this.$notify({ title:'등록실패', text: '등록실패.', type: 'error' });
+               this.$notify({ text: '등록실패.', type: 'error' });
             }
            console.log(result.data);
            this.warehouseList();
@@ -219,7 +219,7 @@
      input_update() {
        console.log('등록 또는 수정 기능여기서 추가');
        if(this.warehouseCode === '' || this.warehouseName === '' || this.storage === '' || this.warehouseLocation === '' || this.empName === '' || this.empTel === '' || this.warehouseArea === ''){
-         this.$notify({ title:'빈값', text: '빈칸을 입력해주세요.', type: 'error' });
+         this.$notify({ text: '빈칸을 입력해주세요.', type: 'error' });
            return;
        }
        this.newList = { warehouse_code : this.warehouseCode,

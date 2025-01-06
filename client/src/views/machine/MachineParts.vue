@@ -67,7 +67,7 @@ import { ref, onBeforeMount ,onUpdated , watch } from 'vue';
 import axios from 'axios';
 import { ajaxUrl } from '@/utils/commons.js';
 import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
-import ComList from "@/views/machine/PartInputModal.vue";
+import ComList from "@/views/machine/PartSelect.vue";
 
 
 // props

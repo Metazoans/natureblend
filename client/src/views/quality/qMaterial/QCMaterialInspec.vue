@@ -1,11 +1,11 @@
 <template>
   <div class="px-4 py-4">
-    <h3 class="mb-3">입고검사-검사관리</h3>
+    <h3 class="mb-3">입고 검사-검사 관리</h3>
     <hr>
     <!-- 검사조건 부분 시작 -->
     <div class="mb-4">
       <div class="d-flex align-items-center mb-3">
-        <h4 class="me-3">검색조건</h4>
+        <h4 class="me-3">검색 조건</h4>
         <!-- <material-button class="btn-search ms-auto" size="sm" v-on:click="searchRequestAll">전체 조회</material-button> -->
       </div>
 
@@ -79,7 +79,7 @@
         <material-button class="btn btn-success" size="lg" @click="openModal">저장</material-button>
       </div>
       <div class="col-auto">
-        <material-button class="btn btn-warning" size="lg" @click="searchRequestAll">초기화</material-button>
+        <material-button class="btn btn-warning" size="lg" @click="reset">초기화</material-button>
       </div>
     </div>
   </div>
@@ -212,45 +212,53 @@ export default {
           headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              if (params.data.mName.includes('병')) {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
-                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-              } else {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
-                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-              }
+              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              return `<span style="text-align: right;">${formatted_t_qty}</span>`;
             } else {
               return `<span style="text-align: right;"></span>`;
             }
           },
         },
         {
-          headerName: "합격량", field: "passQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
+          headerName: "합격량", field: "passQnt", resizable: false, 
+          cellStyle: {
+            //border: "0.5px dashed #fb8c00", // 점선 테두리
+            cursor: "text", // 텍스트 커서
+            textAlign: "right",
+          }, 
+          flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              if (params.data.mName.includes('병')) {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
-                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-              } else {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
-                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-              }
+              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              return `
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <i class="fas fa-edit" style=" color: gray; margin-right: 5px;"></i>
+                  <span style="flex-grow: 1; text-align: right;">${formatted_t_qty}</span>
+                </div>
+              `;
             } else {
               return `<span style="text-align: right;"></span>`;
             }
           },
         },
         {
-          headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
+          headerName: "불합격량", field: "rjcQnt", resizable: false, 
+          cellStyle: {
+            //border: "0.5px dashed #fb8c00", // 점선 테두리
+            cursor: "text", // 텍스트 커서
+            textAlign: "right",
+          },  
+          flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              if (params.data.mName.includes('병')) {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' 개';
-                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-              } else {
-                const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + ' kg';
-                return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-              }
+              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              // return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+              return `
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <i class="fas fa-edit" style=" color: gray; margin-right: 5px;"></i>
+                  <span style="flex-grow: 1; text-align: right;">${formatted_t_qty}</span>
+                </div>
+              `;
             } else {
               return `<span style="text-align: right;"></span>`;
             }
@@ -454,6 +462,10 @@ export default {
       // console.log('테스트(검사완료 처리할 검사 건수들)')
       this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료');
       // console.log(this.rowData2);
+      notify({
+          text: `검사 결과 - 합격량: ${pass * 0.001}${this.materialType}, 불합격량: ${rjcQntSum * 0.001}${this.materialType} 입니다.`,
+          type: "success", // success, warn, error 가능
+      });
     },
 
 
@@ -526,6 +538,18 @@ export default {
 
       });
       this.defectReasons = arrData;
+    },
+
+    //리셋
+    reset() {
+      if(this.rowData2.length != 0){
+        this.searchRequestAll();
+        notify({
+          text: `검사 처리 내역을 초기화 했습니다.`,
+          // text: `기록된 불량 내역:${result.data.defectNum}`,
+          type: "warn", // success, warn, error 가능
+        });
+      }
     }
 
 
@@ -603,6 +627,7 @@ export default {
     font-size: 1.2rem;
     font-weight: bold;
     color: #343a40;
+    background-color: #e8ebee;
     /* 헤더 텍스트 색상 */
   }
 

@@ -176,8 +176,9 @@
 
 .table-title {
    font-weight: bold;
-   background-color: #f8f9fa;
+   background-color: #e9ecef;
    text-align: center;
+   color: black;
 }
 .highlight-green {
    color: green;

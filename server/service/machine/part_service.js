@@ -49,7 +49,8 @@ const delPartInfo = async (pno) => {
 
 // 교체 가능한 부품 목록
 const findChangeParts = async (mType) => {
-  let list = await mariadb.query('changePartList', [mType]);
+  let code = '%' + mType + '%';
+  let list = await mariadb.query('changePartList', [code]);
   return list;
 }
 

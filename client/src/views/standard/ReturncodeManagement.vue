@@ -82,10 +82,10 @@
                     axios.delete(`${ajaxUrl}/returnDelete/${params.data.return_code}`)
                     .then(res => {
                         if(res.data === '성공'){
-                           this.$notify({ title:'코드삭제', text: '코드가 삭제되었습니다.', type: 'success' });
+                           this.$notify({ text: '코드가 삭제되었습니다.', type: 'success' });
                             this.returnList();
                         }else{
-                           this.$notify({ title:'삭제실패', text: '삭제실패.', type: 'error' });
+                           this.$notify({ text: '삭제실패.', type: 'error' });
                         }
                     })
                     .catch(err => console.log(err));
@@ -110,7 +110,7 @@
           if(this.loginInfo.job === '관리자'){
             console.log('성공');
           }else{
-              this.$notify({ title:'로그인요청', text: '관리자만 접속 가능', type: 'error' });
+              this.$notify({ text: '관리자만 접속 가능', type: 'error' });
               this.$router.push({ name : 'MainPage' });
           }
       },
@@ -134,7 +134,7 @@
         const result = await axios.post(`${ajaxUrl}/returnInsert`, newList)
                                   .catch(err => console.log(err));
         if (result.data === '성공') {
-         this.$notify({ title:'등록성공', text: '코드가 등록되었습니다.', type: 'success' });
+         this.$notify({ text: '코드가 등록되었습니다.', type: 'success' });
             this.returnList();
         } else {
             alert('등록 실패');
@@ -143,7 +143,7 @@
      input_update() {
        console.log('등록 또는 수정 기능여기서 추가');
        if(this.returnCode === '' || this.returnReason === ''){
-         this.$notify({ title:'빈값', text: '빈칸을 입력해주세요.', type: 'error' });
+         this.$notify({ text: '빈칸을 입력해주세요.', type: 'error' });
            return;
        }
        this.newList = {

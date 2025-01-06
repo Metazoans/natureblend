@@ -9,32 +9,28 @@
            <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-family: Arial, Helvetica, sans-serif;">입고LOT별 현재고 조회</h1>
            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
          </div>
-         <div class="modal-body" v-if="isShowModal">
-            <div class="modal-body">
-               <div class="container">
-                  <!-- 자재명 -->
-                  <div class="row align-items-center g-0 mb-3">
-                     <div class="col-4 fw-bold text-start">자재명 :</div>
-                     <div class="col-8 fw-bold text-start fs-3 text-dark">{{ newObject.material_name }}</div>
-                  </div>
-                  <!-- 로트번호 -->
-                  <div class="row align-items-center g-0 mb-3">
-                     <div class="col-4 fw-bold text-start">로트번호 :</div>
-                     <div class="col-8 text-start text-dark">{{ newObject.lot_code }}</div>
-                  </div>
-                  <!-- 정상수량 -->
-                  <div class="row align-items-center g-0 mb-3">
-                     <div class="col-4 fw-bold text-start">정상수량 :</div>
-                     <div class="col-8 fw-bold text-start text-success fs-2">{{ newObject.pass_stok_qty }}</div>
-                  </div>
-                  <!-- 불량수량 -->
-                  <div class="row align-items-center g-0 mb-3">
-                     <div class="col-4 fw-bold text-start">불량수량 :</div>
-                     <div class="col-8  fw-bold text-start text-danger fs-2">{{ newObject.reject_stok_qty }}</div>
-                  </div>
-               </div>
-            </div>
-           
+         <div class="modal-body m-3" v-if="isShowModal">
+          
+            <table class="table table-bordered">
+              <tbody>
+                  <tr>
+                    <td class="table-title">자재명</td>
+                    <td style="color: black; text-align: center;"><h3>{{ newObject.material_name }}</h3></td>
+                  </tr>
+                  <tr>
+                    <td class="table-title">로트번호</td>
+                    <td style="color: black; text-align: center;">{{ newObject.lot_code }}</td>
+                  </tr>
+                  <tr>
+                    <td class="table-title">정상수량</td>
+                    <td class="highlight-green">{{ newObject.pass_stok_qty }}</td>
+                  </tr>
+                  <tr>
+                    <td class="table-title">불량수량</td>
+                    <td class="highlight-red">{{ newObject.reject_stok_qty }}</td>
+                  </tr>
+              </tbody>
+            </table>
 
                <!-- <ul>
                     <li v-for="(row, index) in newObject" :key="index">
@@ -94,4 +90,28 @@
    max-width: 360px;
    margin: auto;
    }
+
+
+   .table-title {
+   font-weight: bold;
+   background-color: #e9ecef;
+   text-align: center;
+   color: black;
+   vertical-align: middle;
+}
+.highlight-green {
+   color: #4caf50;
+   font-weight: bold;
+   font-size: 32px;
+   text-align: right;
+}
+.highlight-red {
+   color: #f44335;
+   font-weight: bold;
+   font-size: 32px;
+   text-align: right;
+}
+.table-bordered td, .table-bordered th {
+   border: 1px solid #dee2e6 !important;
+}
  </style>

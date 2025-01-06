@@ -120,7 +120,7 @@
                 </div>
                 <!--담당자 선택 -->
                 <div class="row align-items-center mb-3" v-show="rowDataOrder.length != 0">
-                    <label class="col-sm-2 col-form-label fw-bold" >담당자</label>
+                    <label class="col-sm-2 col-form-label fw-bold" >담당자<span> *</span></label>
                     <div class="col-sm-4">
                         <input id="EmpName"  class="form-control border p-2" v-if="searchEmpName.name" v-model="searchEmpName.name" @click="openModal('emp')" readonly/>
                         <input type="text" v-else class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName" readonly>
@@ -194,7 +194,7 @@ export default{
             theme : theme,
             rowData : [],
             columnOrderlist : [
-            { headerName : "주문서번호", field:'orderlist_num' ,flex: 2,cellStyle: { textAlign: "center" }},
+            { headerName : "주문서번호", field:'orderlist_num' ,flex: 2,cellStyle: { textAlign: "right" }},
             { headerName : "주문서명", field:'orderlist_title' ,flex: 4,cellStyle: { textAlign: "left" }},
             { headerName : "거래처명",field:'com_name' ,flex: 2,cellStyle: { textAlign: "left" }},
             { headerName : "담당자",field:'name' ,flex: 2,cellStyle: { textAlign: "left" }},
@@ -209,7 +209,7 @@ export default{
             },
             rowDataOrder : [],
             columnOrder : [
-                {headerName :"주문번호",field: 'order_num',flex: 2,cellStyle: { textAlign: "center" } },
+                {headerName :"주문번호",field: 'order_num',flex: 2,cellStyle: { textAlign: "right" } },
                 {headerName :"제품코드",field: 'product_code',flex: 2,cellStyle: { textAlign: "center" }},
                 {headerName :"제품명",field: 'product_name',flex: 3,cellStyle: { textAlign: "left" }},
                 {headerName :"주문수량"
@@ -242,7 +242,7 @@ export default{
                         return `<span>${formattedValue}</span>`;
                     }
                 }},
-                {headerName :"상태여부",field: 'order_status',flex: 2,cellStyle: { textAlign: "center" }}
+                {headerName :"상태여부",field: 'order_status',flex: 2,cellStyle: { textAlign: "left" }}
             ],
 
             //출고 시킬 제품 선택 
@@ -273,7 +273,7 @@ export default{
             ,flex: 3
             ,cellStyle: { 
                 textAlign: "right",
-                backgroundColor: "#fff", // 연한 배경색
+                //backgroundColor: "#fff", // 연한 배경색
                 //border: "0.5px dashed #fb8c00", // 점선 테두리
                 cursor: "text", // 텍스트 커서
             }
@@ -283,10 +283,11 @@ export default{
                     return `<span  style="flex-grow: 1; text-align: right;">${formattedValue}</span>`;
                 } else {
                     // 값이 없을 경우 수정 가능 아이콘 추가
-                    return `<span style="display: flex; align-items: center; justify-content: flex-start; padding-top:10px">
-                                <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
-                                    width=15 height=15  style="margin-right: 5px;"
-                                     title="더블클릭하여 추가 가능합니다"/></span>`;
+                    return `
+                                <span style="display: flex; align-items: center; justify-content: flex-start;">
+                                    <i class="fas fa-edit pt-2" style="color:grey;" title="더블클릭하여 수정 가능합니다"></i>
+                                </span>
+                            `;
                 }
             }
             },
@@ -449,73 +450,90 @@ export default{
             
            
         },
-
+        // 출고처리
         async processData(){
             //체크된 행만 처리 
-            const selectedRows = this.gridApi.getSelectedRows();  
+            const selectedRows = this.gridApi.getSelectedRows();
+            if (selectedRows.length === 0) {
+                this.$notify({ text: '선택된 행이 없습니다.', type: 'error' });
+                return;
+            }  
             let clientName = selectedRows[0].com_name;
             let orderNum = selectedRows[0].order_num;
             //console.log(selectedRows[0].com_name, selectedRows[0].order_num)
             console.log("disorder:",selectedRows[0].disorder_amount);
+            
 
             let outputNums = []
             let productLots = []
           
 
-    
-            selectedRows.forEach(row =>{
-                 console.log( row.output_num,row.product_lot,row.com_name, row.order_num,this.searchEmpName);
-                 // row.output_num,row.product_lot,  배열로 만들어서 보내고 row.com_name, row.order_num, this.searchEmpName 객체로 보내기 
-                 outputNums.push(Number(row.output_num));
-                 productLots.push(row.product_lot);
-
-
-            })
-
-            const totalOutput = outputNums.reduce((sum,value)=> sum + Number(value),0);
-            if(selectedRows.length > 0 && Number(selectedRows[0].disorder_amount) < totalOutput){
-                this.$notify({
-                    text: '출고수는 미출고량보다 많을 수 없습니다.',
-                    type: 'error',
-                });
-                return; 
+         // 유효하지 않은 행 확인 (재고 갯수가 출고 갯수보다 작은 경우)
+        let invalidRows = [];
+        selectedRows.forEach(row =>{
+            console.log("체크==",row );
+            if (Number(row.total_amount) < row.output_num) {
+                //재고 갯수가 출고 갯수보다 작은 경우 유효하지 않는 행에 추가 
+                invalidRows.push(row);
+            }else{
+                //아닌 경우 보낼 데이터로 푸쉬
+                outputNums.push(Number(row.output_num));
+                productLots.push(row.product_lot);
             }
+                    
+        });
+         // 유효하지 않은 행이 있으면 알림 띄우고 중단
+        if (invalidRows.length > 0) {
+            this.$notify({
+                text: '출고수는 보유 재고량보다 많을 수 없습니다.',
+                type: 'error',
+            });
+            return;
+        }
 
-            if(!this.searchEmpName || totalOutput == 0){
-                this.$notify({ text: '출고수량 과 담당자를 입력 해 주세요.', type: 'error' });
-                return;
-            }
+        // 출고수량 합계 계산
+        const totalOutput = outputNums.reduce((sum,value)=> sum + Number(value),0);
+        //미출고량 합계 계산
+        if(selectedRows.length > 0 && Number(selectedRows[0].disorder_amount) < totalOutput){
+            this.$notify({
+                text: '출고수는 미출고량보다 많을 수 없습니다.',
+                type: 'error',
+            });
+            return; 
+        }
 
-            let outputInfo = {
-                product_lot : JSON.stringify(productLots),
-                output_amount : JSON.stringify(outputNums),
-                order_num : orderNum,
-                com_name : clientName,
-            }
-            // 조건에 따라 `name` 속성을 동적으로 추가
-            if (!this.searchEmpName.name) {
-                outputInfo.name = this.searchEmpName;
-            } else {
-                outputInfo.name = this.searchEmpName.name;
-            }
+        //담당자, 출고 수량 확인
+        if(!this.searchEmpName || totalOutput == 0){
+            this.$notify({ text: '출고수량 과 담당자를 입력 해 주세요.', type: 'error' });
+            return;
+        }
+        //서버 보낼 데이터 생성
+        let outputInfo = {
+            product_lot : JSON.stringify(productLots),
+            output_amount : JSON.stringify(outputNums),
+            order_num : orderNum,
+            com_name : clientName,
+        }
+        // 조건에 따라 `name` 속성을 동적으로 추가
+        if (!this.searchEmpName.name) {
+            outputInfo.name = this.searchEmpName;
+        } else {
+            outputInfo.name = this.searchEmpName.name;
+        }
 
-            console.log(outputInfo);
-            let result =
-                await axios.post(`${ajaxUrl}/output/insert`, outputInfo)
-                            .catch(err => console.log(err));
-                            console.log(result.data);
-            if(result.statusText === 'OK'){
-                this.$notify({
-                    text: `출고가 완료되었습니다.`,
-                    type: 'success',
-                }); 
-                // this.resetSearch();
-                // this.resetLot();
-                // this.rowDataLot = [];
-                // this.rowDataOrder = [];
-                window.location.reload();
-             
-            }
+        console.log(outputInfo);
+        let result =
+            await axios.post(`${ajaxUrl}/output/insert`, outputInfo)
+                        .catch(err => console.log(err));
+                        console.log(result.data);
+        if(result.statusText === 'OK'){
+            this.$notify({
+                text: `출고가 완료되었습니다.`,
+                type: 'success',
+            }); 
+            window.location.reload();
+            
+        }
 
             
         },

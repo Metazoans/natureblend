@@ -1,22 +1,24 @@
 <template>
-
   <div class="container-fluid py-4">
+    <h3>정비 요청 내역</h3>
 
     <div class="row align-items-center">
 
       <div class="col-8">
         <!-- 정비 요청 내역 그리드 -->
         <div class="grid-container" >
-          <h3>정비 요청 내역</h3>
           <ag-grid-vue
             :rowData="requestRow"
             :columnDefs="requestCol"
             :theme="theme"
             @grid-ready="onReady"
-            style="height: 500px;"
+            :rowHeight="50"
+            style="height: 493px;"
             :pagination="true"
-            :paginationPageSize="5"
+            :paginationPageSize="8"
+            :paginationPageSizeSelector="[8, 16, 40, 80]"
             @rowClicked="rowClick"
+            :noRowsOverlayComponent="CustomNoRowsOverlay"
           ></ag-grid-vue>
         </div>
       </div>
@@ -37,47 +39,65 @@
           </div>
 
           <div class="row my-3 align-items-center">
-            <div class="col-auto">
+            <div class="col-4">
               <label>설비 번호 : </label>
             </div>
             <div class="col">
               <input class="form-control" type="text" style="background-color: white;"
-                    v-model="maintenanceInfo.machine_num">
+                     v-model="maintenanceInfo.machine_num"
+                     @click="openModal"
+                     readonly
+                     placeholder="🔍"
+              >
+              
+              <Modal
+                :isShowModal="isShowModal"
+                :modalTitle="'설비 선택'"
+                :noBtn="'닫기'"
+                :yesBtn="'선택'"
+                @closeModal="closeModal"
+                @confirm="confirm"
+              >
+                <template v-slot:list>
+                  <ComList v-show="isShowModal" @selectData="selectFnc"/>
+                </template>
+              </Modal>
+
             </div>
           </div>
 
           <div class="row my-3 align-items-center">
-            <div class="col-auto">
+            <div class="col-4">
               <label>설비 이름 : </label>
             </div>
             <div class="col">
               <input class="form-control" type="text" style="background-color: white;"
-                    v-model="maintenanceInfo.machine_name">
+                    v-model="maintenanceInfo.machine_name" readonly>
             </div>
           </div>
 
           <div class="row my-3 align-items-center">
-            <div class="col-auto">
+            <div class="col-4">
               <label>설비 분류 : </label>
             </div>
             <div class="col">
               <input class="form-control" type="text" style="background-color: white;"
-                    v-model="maintenanceInfo.machine_type">
+                    v-model="maintenanceInfo.machine_type" readonly>
             </div>
           </div>
 
           <div class="row my-3 align-items-center">
-            <div class="col-auto">
+            <div class="col-4">
               <label>설비 위치 : </label>
             </div>
             <div class="col">
               <input class="form-control" type="text" style="background-color: white;"
-                    v-model="maintenanceInfo.machine_location">
+                    v-model="maintenanceInfo.machine_location" readonly>
             </div>
           </div>
 
           <div class="row my-3 align-items-center">
-            <div class="col-auto">
+            <div class="col-4">
               <label>요청 사유 : </label>
             </div>
             <div class="col">
@@ -87,17 +107,17 @@
           </div>
 
           <div class="row my-3 align-items-center">
-            <div class="col-auto">
+            <div class="col-4">
               <label>요청 일자 : </label>
             </div>
-            <div class="col">
-              <input class="form-control" type="text" style="background-color: white;"
+            <div class="col-8">
+              <input class="form-control" type="datetime-local" style="background-color: white;"
                     v-model="maintenanceInfo.request_date">
             </div>
           </div>
 
           <div class="row my-3 align-items-center">
-            <div class="col-auto">
+            <div class="col-4">
               <label>정비 내역 : </label>
             </div>
             <div class="col">
@@ -149,6 +169,11 @@ import {shallowRef, onBeforeMount, ref} from 'vue';
 
 import { useStore } from 'vuex';
 import { useNotification } from "@kyvg/vue3-notification";  //노티 드리겠습니다
+import CustomNoRowsOverlay from "@/views/natureBlendComponents/grid/noDataMsg.vue";
+
+import Modal from "@/views/natureBlendComponents/modal/Modal.vue";
+import ComList from "@/views/machine/MachineSelect.vue";
+
 
 const store = useStore();
 const checkJob = ref(
@@ -165,6 +190,7 @@ const requestCol = shallowRef([
   { headerName: '요청일자', field: 'request_date', cellStyle: { textAlign: "center" }, flex: 3 },
 ]);
 
+
 const maintenanceInfo = shallowRef({
   machine_num: '',
   machine_name: '',
@@ -179,6 +205,31 @@ const selectNo = shallowRef();
 // 입력페이지 상태
 const inputType = ref('add');
 
+// 교체 모달
+const isShowModal = ref(false);
+const openModal = () => {
+  isShowModal.value = true; 
+}
+const confirm = () => {
+  closeModal();
+
+}
+const closeModal = () => {
+  isShowModal.value = false;
+}
+
+const selectData = ref();
+const selectFnc = (data) => {
+  selectData.value = data;
+  
+  maintenanceInfo.value.machine_num = data.machine_num;
+  maintenanceInfo.value.machine_name = data.machine_name;
+  maintenanceInfo.value.machine_type = data.machine_type;
+  maintenanceInfo.value.machine_location = data.machine_location;
+  maintenanceInfo.value.machine_num = data.machine_num;
+
+  console.log('select data : ', data);
+}
 
 // 정비 요청 내역 데이터
 const getRequests = async () => {
@@ -366,22 +417,6 @@ onBeforeMount(()=>{
   getRequests();
 });
 
-// 입력확인
-// const fullInput = ref(false);
-// watch (
-//   maintenanceInfo.value,
-//   (newVal) => {
-//     let btnActive = true;
-//     for(let key in newVal) {
-//       if(newVal[key] == '' && key != 'maintenance_detail') {
-//         btnActive = false;
-//         break;
-//       }
-//     }
-//     fullInput.value = btnActive;
-//   },
-//   { deep: true }
-// )
 </script>
 
 
@@ -424,5 +459,8 @@ input {
   width: 100%;
 }
 
+input::placeholder {
+  text-align: right;
+}
 </style>
 

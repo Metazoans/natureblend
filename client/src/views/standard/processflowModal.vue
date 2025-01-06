@@ -44,16 +44,22 @@
       >
       </processAddModal>
     </div>
+    <deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="onDeleteConfirmed"
+      @deleteCancelled="onDeleteCancelled"
+    />
   </template>
   <script>
     import theme from "@/utils/agGridTheme";
     import { ajaxUrl } from '@/utils/commons.js';
     import axios from 'axios';
     import processAddModal from "./processAddModal.vue";
+    import deleteModal from './deleteModal.vue';
   
   export default {
     name: "Modal",
-    components:{processAddModal},
+    components:{processAddModal,deleteModal},
     props: {
       isShowModal: Boolean,
       modalTitle: String,
@@ -65,11 +71,15 @@
     },
     data() {
       return {
+
         isShowModal2 : false,
         modalType2:'',
         modalTitle2:'공정 정보',
         processCode : '',
         processName : '',
+        showDeleteModal:false,
+        selectedFlow:null,
+        deleteData:null,
 
         theme: theme,
         rowData:[],
@@ -97,7 +107,7 @@
                 button1.style.lineHeight = '30px';
                 button1.addEventListener('click', () => {
                   if(params.data.process_sequence === 1){
-                    this.$notify({ title:'첫번째 공정', text: '첫번째 공정입니다.', type: 'error' });
+                    this.$notify({ text: '첫번째 공정입니다.', type: 'error' });
                     return;
                   }
                   const rowData = params.node.data; // 클릭된 행 데이터
@@ -127,7 +137,7 @@
                 button2.style.lineHeight = '30px';
                 button2.addEventListener('click', () => {
                   if(params.data.process_sequence === this.rowData.length){
-                    this.$notify({ title:'마지막 공정', text: '마지막 공정입니다.', type: 'error' });
+                    this.$notify({ text: '마지막 공정입니다.', type: 'error' });
                     return;
                   }
                   const rowData = params.node.data; // 클릭된 행 데이터
@@ -156,23 +166,25 @@
                 button3.style.textAlign = 'center';
                 button3.style.lineHeight = '30px';
                 button3.addEventListener('click', () => {
+                  this.showDeleteModal = true;
                   console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
-                  const rowData = params.node.data; // 클릭된 행 데이터
-                  console.log(rowData);
-                  if (confirm('삭제하시겠습니까?')){
-                    const deletedProcessSeq = rowData.process_sequence;
-                    axios.delete(`${ajaxUrl}/flowDelete/${params.data.process_chart_num}`)
-                         .then(res => {
-                          if(res.data === '성공'){
-                            this.$notify({ title:'삭제성공', text: '공정이 삭제되었습니다.', type: 'success' });
-                            this.updateProcessSequencesAfterDelete(deletedProcessSeq);
-                            this.flowList();
-                          }else{
-                            this.$notify({ title:'삭제실패', text: '삭제실패하였습니다', type: 'error' });
-                          }
-                      })
-                      .catch(err => console.log(err));
-                  }
+                  // const rowData = params.node.data; // 클릭된 행 데이터
+                  this.deleteData = params.node.data;
+                  // console.log(rowData);
+                  // if (confirm('삭제하시겠습니까?')){
+                  //   const deletedProcessSeq = rowData.process_sequence;
+                  //   axios.delete(`${ajaxUrl}/flowDelete/${params.data.process_chart_num}`)
+                  //        .then(res => {
+                  //         if(res.data === '성공'){
+                  //           this.$notify({ text: '공정이 삭제되었습니다.', type: 'success' });
+                  //           this.updateProcessSequencesAfterDelete(deletedProcessSeq);
+                  //           this.flowList();
+                  //         }else{
+                  //           this.$notify({ text: '삭제실패하였습니다', type: 'error' });
+                  //         }
+                  //     })
+                  //     .catch(err => console.log(err));
+                  // }
                 });
                 return button3;
               
@@ -199,6 +211,33 @@
     //   this.getBomInput();
     },
     methods: {
+      onDeleteCancelled() {
+        this.showDeleteModal = false;
+      },
+      async onDeleteConfirmed() {
+          this.showDeleteModal = false;
+          const rowDataToDelete = this.deleteData; // 삭제할 행 데이터
+          console.log("삭제할 데이터: ", rowDataToDelete);
+
+          // 삭제 요청 처리
+          try {
+            const response = await axios.delete(`${ajaxUrl}/flowDelete/${rowDataToDelete.process_chart_num}`);
+            if (response.data === '성공') {
+              this.$notify({ text: '공정이 삭제되었습니다.', type: 'success' });
+              this.updateProcessSequencesAfterDelete(rowDataToDelete.process_sequence);
+              this.flowList();
+            } else {
+              this.$notify({ text: '삭제에 실패했습니다.', type: 'error' });
+            }
+          } catch (error) {
+            console.error("삭제 오류: ", error);
+            this.$notify({ text: '서버 오류로 삭제에 실패했습니다.', type: 'error' });
+          }
+        },
+        deleteProcess(rowData) {
+          this.selectedFlow = rowData; // 삭제할 데이터 저장
+          this.showDeleteModal = true; // 삭제 모달 표시
+        },
       async updateProcessSequencesAfterDelete(deletedProcessSeq) {
   // 4. 삭제된 공정 순서보다 큰 공정 순서들을 -1
         const updateDataList = this.rowData.filter(row => row.process_sequence > deletedProcessSeq);
@@ -293,10 +332,11 @@
                                   .catch(err => console.log(err));
         console.log('얘가 먼저 실행되야함');
         if (result && result.data === '성공') {
+          this.$notify({ text: '공정순서가 변경되었습니다.', type: 'success' });
           //alert('공정순서가 변경되었습니다.');
           // this.flowList(); // 공정 목록 재호출
         } else {
-          alert('공정순서 변경 실패');
+          this.$notify({ text: '변경 실패하였습니다.', type: 'error' });
         }
       },
 
@@ -320,7 +360,6 @@
         const isExist = this.rowData.some(row => row.process_code === process.process_code);
           if (isExist) {
             this.$notify({ 
-              title: '등록 실패', 
               text: '해당 공정은 이미 등록되어 있습니다.', 
               type: 'error' 
             });
@@ -334,10 +373,10 @@
                                   .catch(err => console.log(err));
                                   console.log('result data 확인',result.data);
             if(result.data === '성공'){
-              this.$notify({ title:'등록성공', text: '공정이 등록되었습니다.', type: 'success' });
+              this.$notify({ text: '공정이 등록되었습니다.', type: 'success' });
                 this.flowList();
             }else{
-              this.$notify({ title:'등록실패', text: '등록 실패하였습니다.', type: 'error' });
+              this.$notify({ text: '등록 실패하였습니다.', type: 'error' });
             }
       },
 
