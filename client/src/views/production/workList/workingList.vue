@@ -102,8 +102,19 @@
                   </p>
 
                   <div class="text-center mb-2 w-100">
-                    <button @click="startPartialWork(partialWork)" class="btn start text-md" :disabled="partialWork.partial_process_start_time">시작</button>
-                    <button @click="endPartialWork(partialWork)" class="btn end text-md" :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time">종료</button>
+                    <button
+                        @click="startPartialWork(partialWork)"
+                        class="btn start text-md"
+                        :disabled="partialWork.partial_process_start_time"
+                    >
+                      시작
+                    </button>
+                    <button
+                        @click="endPartialWork(partialWork)"
+                        class="btn end text-md"
+                        :disabled="!partialWork.partial_process_start_time || partialWork.partial_process_end_time"
+                    >
+                      종료</button>
                   </div>
 
                   <p class="text-center mb-2 w-100">
@@ -308,17 +319,17 @@ export default {
     },
 
     async endPartialWork(partialWork) {
-      if(partialWork.fail_qty === null && partialWork.new_fail_qty === null) {
+      if(typeof partialWork.fail_qty !== 'number' && typeof partialWork.new_fail_qty !== 'number') {
         this.$notify({
           text: "불량량을 입력해주세요.",
-          type: 'fail',
+          type: 'error',
         });
         return
       }
-      if(partialWork.success_qty === null && partialWork.new_success_qty === null) {
+      if(typeof partialWork.success_qty !== 'number' && typeof partialWork.new_success_qty !== 'number') {
         this.$notify({
           text: "합격량을 입력해주세요.",
-          type: 'fail',
+          type: 'error',
         });
         return
       }
