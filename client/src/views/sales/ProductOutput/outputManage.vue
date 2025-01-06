@@ -1,8 +1,8 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-    <h2>제품출고 등록</h2>
-    <h4>주문서 조회</h4>
+    <h3>제품출고 등록</h3>
+    <h4 class="pt-2">주문서 조회</h4>
     <div class= "main-container ps-4">
         <div class= "pt-5 pb-5">
                 <!--거래처명 검색-->
@@ -72,6 +72,7 @@
         rowSelection="multiple"
         :pagination="true"
         :paginationPageSize="10"
+        :paginationPageSizeSelector="[10, 20, 50, 100]"
     />
     </div>
     <div style="display: none">
@@ -92,6 +93,7 @@
                 rowSelection="multiple"
                 :pagination="true"
                 :paginationPageSize="10"
+                :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -110,6 +112,7 @@
                 :row-selection="'multiple'"
                 :pagination="true"
                 :paginationPageSize="10"
+                :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -209,9 +212,36 @@ export default{
                 {headerName :"주문번호",field: 'order_num',flex: 2,cellStyle: { textAlign: "center" } },
                 {headerName :"제품코드",field: 'product_code',flex: 2,cellStyle: { textAlign: "center" }},
                 {headerName :"제품명",field: 'product_name',flex: 3,cellStyle: { textAlign: "left" }},
-                {headerName :"주문수량",field: 'order_amount',flex: 2,cellStyle: { textAlign: "right" }},
-                {headerName :"미출고량",field: 'disorder_amount',flex: 2,cellStyle: { textAlign: "right" }}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
-                {headerName :"출고량",field: 'output_amount',flex: 2,cellStyle: { textAlign: "right" }},
+                {headerName :"주문수량"
+                ,field: 'order_amount'
+                ,flex: 2
+                ,cellStyle: { textAlign: "right" }
+                ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+                }},
+                {headerName :"미출고량"
+                ,field: 'disorder_amount'
+                ,flex: 2
+                ,cellStyle: { textAlign: "right" }
+                ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+                }}, // 커리 보낼때 as (alias)로 보내면 해당 이름이 된다.
+                {headerName :"출고량"
+                ,field: 'output_amount'
+                ,flex: 2
+                ,cellStyle: { textAlign: "right" }
+                ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+                }},
                 {headerName :"상태여부",field: 'order_status',flex: 2,cellStyle: { textAlign: "center" }}
             ],
 
@@ -241,9 +271,35 @@ export default{
             // 셀 값이 변경될 때마다 실행되는 함수
             onCellValueChanged: this.onCellValueChanged
             ,flex: 3
-            ,cellStyle: { textAlign: "right" }
+            ,cellStyle: { 
+                textAlign: "right",
+                backgroundColor: "#fff", // 연한 배경색
+                //border: "0.5px dashed #fb8c00", // 점선 테두리
+                cursor: "text", // 텍스트 커서
+            }
+            ,cellRenderer: params => {
+                if (params.value) {
+                    const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                    return `<span  style="flex-grow: 1; text-align: right;">${formattedValue}</span>`;
+                } else {
+                    // 값이 없을 경우 수정 가능 아이콘 추가
+                    return `<span style="display: flex; align-items: center; justify-content: flex-start; padding-top:10px">
+                                <img src="http://yeonsus.com/academy/cell-modify-icon.png" 
+                                    width=15 height=15  style="margin-right: 5px;"
+                                     title="더블클릭하여 추가 가능합니다"/></span>`;
+                }
+            }
             },
-            {headerName :"재고수 ",field: 'total_amount',flex: 4,cellStyle: { textAlign: "right" }},
+            {headerName :"재고수 "
+            ,field: 'total_amount'
+            ,flex: 4
+            ,cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+             }},
             {headerName :"제조일자 ",field: 'inspec_end',flex: 4,cellStyle: { textAlign: "center" }},
 
            

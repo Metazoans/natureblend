@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-    <h2>제품출고조회</h2>
+    <h3>제품출고조회</h3>
     <div class= "main-container ps-4">
         <div class= "pt-5 pb-5">
                 <!--거래처명 검색-->
@@ -91,7 +91,8 @@
         @rowClicked="onOrderRowClicked"
         rowSelection="multiple"
         :pagination="true"
-        :paginationPageSize="20"
+        :paginationPageSize="10"
+        :paginationPageSizeSelector="[10, 20, 50, 100]"
     />
     </div>
     <div style="display: none">
@@ -153,7 +154,16 @@ export default{
             { headerName : "제품코드",field:'product_code' ,flex: 2,cellStyle: { textAlign: "center" }},
             { headerName : "제품명",field:'product_name' ,flex: 3,cellStyle: { textAlign: "left" }},
             { headerName : "제품LOT번호",field:'product_lot' ,flex: 3,cellStyle: { textAlign: "center" }},
-            { headerName : "출고수량",field:'output_amount' ,flex: 2,cellStyle: { textAlign: "right" }},
+            { headerName : "출고수량",
+            field:'output_amount' ,
+            flex: 2,
+            cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
             { headerName : "출고날짜",field:'output_date' ,flex: 3,cellStyle: { textAlign: "center" }},
             ],
            

@@ -1,8 +1,8 @@
 <template>
     <div class="container-fluid py-4">
     <!--검색 폼 -->
-        <h2>제품입고등록</h2>
-        <h4>완제품 품질 검사 조회</h4>
+        <h3>제품입고등록</h3>
+        <h4 class="pt-2">완제품 품질 검사 조회</h4>
         <div class= "main-container ps-4">
             <div class= "pt-5 pb-5">
                     <!--제품명 검색-->
@@ -69,6 +69,7 @@
                     @rowClicked="onQtRowClicked"
                     :pagination="true"
                     :paginationPageSize="10"
+                    :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -138,6 +139,7 @@
                 :rowSelection="'multiple'"  
                 :pagination="true"
                 :paginationPageSize="10"
+                :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 </div>
                 <div style="display: none">
@@ -208,7 +210,16 @@ export default{
             { headerName : "제품코드", field:'product_code',flex: 2, cellStyle: { textAlign: "center" }},
             { headerName : "제품명",field:'product_name',flex: 2, cellStyle: { textAlign: "left" }},
             { headerName : "작업번호",field:'process_num',flex: 2, cellStyle: { textAlign: "right" }},
-            { headerName : "입고수량",field:'pass_qnt',flex: 2, cellStyle: { textAlign: "right" }},
+            { headerName : "입고수량"
+            ,field:'pass_qnt'
+            ,flex: 2
+            , cellStyle: { textAlign: "right" }
+            ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+            }},
             { headerName : "통과날짜",field:'inspec_end',flex: 2, cellStyle: { textAlign: "center" }},
              ],
 
@@ -251,7 +262,18 @@ export default{
                 { headerName: "포장검사코드 ", field: "qtId", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "center" }},
                 { headerName: "제품 코드", field: "tempProductCode", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "center" }},
                 { headerName: "제품 명", field: "tempProductName", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "left" }},
-                { headerName: "입고수량", field: "inputAmount", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "right" } },
+                { headerName: "입고수량"
+                , field: "inputAmount"
+                , resizable: true
+                , sortable: true 
+                ,flex: 2
+                ,cellStyle: { textAlign: "right" }
+                ,cellRenderer: params =>{
+                    if(params.value){
+                        const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
+                        return `<span>${formattedValue}</span>`;
+                    }
+                }},
                 { headerName: "창고 위치", field: "warehouseName", resizable: true, sortable: true ,flex: 2,cellStyle: { textAlign: "left" }},
                 { headerName: "담당자", field: "employeeName", resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "left" } },
                 { headerName: "통과 날짜", field: "inspectDate", resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "center" } },
