@@ -6,17 +6,17 @@
                 <div class="orderlistForm">
                     <form class="row gx-3 gy-2 align-items-center">
                         <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="orderlistNum">주문서코드</label>
-                            <input type="text" class="form-control" id="orderlistNum" v-model="orderlistNum" readonly>
+                            <label class="col-form-label fw-bold" for="orderlistNum">주문서번호</label>
+                            <input type="text" class="form-control" id="orderlistNum" v-model="orderlistNum" autocomplete="off" readonly>
                         </div>
                         <div class="sm-2">
                             <label class="col-form-label fw-bold" for="orderlistName">주문서명<span> *</span></label>
-                            <input type="text" class="form-control" id="orderlistName" v-model="orderName">
+                            <input type="text" class="form-control" id="orderlistName" v-model="orderName"  autocomplete="off"  >
                         </div>
                         <div class="col-sm-4">
                             <label class="col-form-label fw-bold" for="clientName">거래처명<span> *</span></label>
                             <div class="input-group">
-                            <input type="text" class="form-control" id="clientName" @click="openModal('client')" v-model="searchCom.com_name" readonly>
+                            <input type="text" class="form-control" id="clientName" @click="openModal('client')" v-model="searchCom.com_name"  autocomplete="off"  >
                         </div>
                         <Modal
                             :isShowModal="isShowModal.client"
@@ -34,8 +34,8 @@
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="EmpName">담당자<span> *</span></label>
                             <div class="input-group">
-                            <input type="text" v-if="searchEmpName.name" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name" readonly>
-                            <input type="text" v-else class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName" readonly>
+                            <input type="text" v-if="searchEmpName.name" class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName.name"  autocomplete="off"  >
+                            <input type="text" v-else class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName"  autocomplete="off"  >
                             </div>
                             <Modal
                                 :isShowModal="isShowModal.emp"
@@ -53,7 +53,7 @@
                         <div class="col-sm-4">
                             <label class="col-form-label fw-bold" for="dueDate">납기일자<span> *</span></label>
                             <div class="input-group">
-                            <input type="date" class="form-control" id="dueDate" v-model="dueDate">
+                            <input type="date" class="form-control" id="dueDate" v-model="dueDate"  autocomplete="off"  >
                             </div>
                         </div>
                     </form>
@@ -67,16 +67,16 @@
                 <div  v-for="(material, index) in materials" :key="index" class="row gx-3 gy-2 align-items-center plus-section">
                     <form class="row gx-3 gy-2 align-items-center mt-2">
                         <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="orderCode">주문코드</label>
-                            <input type="text" class="form-control" id="orderCode" v-model="material.orderCode" readonly>
+                            <label class="col-form-label fw-bold" for="orderCode">주문번호</label>
+                            <input type="text" class="form-control" id="orderCode" v-model="material.orderCode"  autocomplete="off" readonly >
                         </div>
                         <div class="col-sm-2">
-                            <label class="col-form-label fw-bold" for="productCode">제품코드</label>
-                            <input type="text" class="form-control" id="productCode" v-model="material.productCode" readonly>
+                            <label class="col-form-label fw-bold" for="productCode">제품코드<span> *</span></label>
+                            <input type="text" class="form-control" id="productCode" v-model="material.productCode"  autocomplete="off"  >
                         </div>
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="productName">제품명<span> *</span></label>
-                            <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product',index)" readonly>
+                            <input type="text" class="form-control" id="productName" v-model="material.productName" @click="openModal('product',index)"  autocomplete="off">
                         </div>
                         <Modal
                                 :isShowModal="isShowModal.product"
@@ -93,13 +93,13 @@
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold" for="orderNum">주문수량<span> *</span></label>
                             <div class="input-group">
-                            <input type="text" class="form-control" id="orderNum" v-model="material.productNum">
+                            <input type="text" class="form-control" id="orderNum" v-model="material.productNum" autocomplete="off"  >
                             </div>
                         </div>
                         <div class="col-sm-2">
                             <label class="col-form-label fw-bold"  for="perSale">개당가격<span> *</span></label>
                             <div class="input-group">
-                            <input type="text" class="form-control" id="perSale" v-model="material.perPrice">
+                            <input type="text" class="form-control" id="perSale" v-model="material.perPrice" autocomplete="off"  >
                             </div>
                         </div>
                         <div class="col-sm-2">
@@ -116,6 +116,7 @@
             </div>
         </div>
     </div>
+   
     
 </template>
 
@@ -132,6 +133,7 @@ import { mapMutations } from "vuex";
 
 
 
+
 export default{
     name:"orderForm",
     components:{
@@ -140,6 +142,7 @@ export default{
         EmpList,
         proList,
         Modal,
+       
     },
     data(){
         return{
@@ -217,7 +220,7 @@ export default{
     openModal(modalType,index) {
         this.isShowModal[modalType] = true; 
         this.indexNum = index; //현재 선택된 index
-        console.log(this.indexNum);
+        //console.log(this.indexNum);
         console.log(`${modalType} modal open`);
     },
     confirm(modalType){
@@ -229,7 +232,7 @@ export default{
         this.productCode = this.selectedProCode;
         this.productName = this.selectedProName;
         
-        console.log(this.materials[this.indexNum])
+        //console.log(this.materials[this.indexNum])
         this.materials[this.indexNum]['productCode'] = this.productCode;
         this.materials[this.indexNum]['productName'] = this.productName;
 
@@ -243,7 +246,7 @@ export default{
         // }
 
 
-        console.log(this.materials);
+        //console.log(this.materials);
         
       }
 

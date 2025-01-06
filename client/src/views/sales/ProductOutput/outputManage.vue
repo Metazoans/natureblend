@@ -11,7 +11,7 @@
                     <div class="col-sm-4">
                         <input 
                             id="clientSearch"  class="form-control border p-2"
-                            v-model="searchCom.com_name" @click="openModal('client')" readonly/>
+                            v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"  />
                             <Modal
                                 :isShowModal="isShowModal.client"
                                 :modalTitle="'거래처선택'"
@@ -32,7 +32,7 @@
                     <div class="col-sm-6">
                         <input 
                         id="orderSearch" class="form-control border p-2"
-                        v-model="orderName" />
+                        v-model="orderName"  autocomplete="off"  />
                     </div>
                 </div>
                 <!--주문일자 검색 -->
@@ -42,14 +42,14 @@
                         <input 
                         type="date" 
                         id="startDate" class="form-control border p-2"
-                        v-model="startDate"/>
+                        v-model="startDate"  autocomplete="off"  />
                     </div>
                     <div class="col-sm-1 text-center">~</div>
                     <div class="col-sm-4">
                         <input 
                         type="date" 
                         id="endDate" class="form-control border p-2"
-                        v-model="endDate" />
+                        v-model="endDate"  autocomplete="off"   />
                     </div>
                 </div>
             </div>
@@ -69,7 +69,7 @@
         @grid-ready="onGridReady"
         :noRowsOverlayComponent="noRowsOverlayComponent"
         @rowClicked="onOrderRowClicked"
-        rowSelection="multiple"
+        :rowSelection="{ type: 'multiple' }" 
         :pagination="true"
         :paginationPageSize="10"
         :paginationPageSizeSelector="[10, 20, 50, 100]"
@@ -90,7 +90,7 @@
                 @grid-ready="onGridReady"
                 :noRowsOverlayComponent="noRowsOverlayComponent"
                 @rowClicked="onDisoutputRowClicked"
-                rowSelection="multiple"
+                :rowSelection="{ type: 'multiple' }" 
                 :pagination="true"
                 :paginationPageSize="10"
                 :paginationPageSizeSelector="[10, 20, 50, 100]"
@@ -109,9 +109,10 @@
                 @grid-ready="onGridReady"
                 :noRowsOverlayComponent="noRowsOverlayComponent"
                 :editType="'fullRow'"
-                :row-selection="'multiple'"
+                rowSelection="multiple"
                 :pagination="true"
                 :paginationPageSize="10"
+                :gridOptions="gridOptions"
                 :paginationPageSizeSelector="[10, 20, 50, 100]"
                 />
                 </div>
@@ -122,8 +123,8 @@
                 <div class="row align-items-center mb-3" v-show="rowDataOrder.length != 0">
                     <label class="col-sm-2 col-form-label fw-bold" >담당자<span> *</span></label>
                     <div class="col-sm-4">
-                        <input id="EmpName"  class="form-control border p-2" v-if="searchEmpName.name" v-model="searchEmpName.name" @click="openModal('emp')" readonly/>
-                        <input type="text" v-else class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName" readonly>
+                        <input id="EmpName"  class="form-control border p-2" v-if="searchEmpName.name" v-model="searchEmpName.name" @click="openModal('emp')"  autocomplete="off"  />
+                        <input type="text" v-else class="form-control" id="EmpName" @click="openModal('emp')" v-model="searchEmpName"  autocomplete="off"  >
                             <Modal
                                 :isShowModal="isShowModal.emp"
                                 :modalTitle="'담당자선택'"
@@ -250,6 +251,12 @@ export default{
             searchEmpName:"", // 저장될 직원 명 
             selectedEmpName:"", //선택될 직원 명 
 
+            gridOptions: {
+                rowSelection: {
+                    checkboxes: true,  // 이 옵션으로 체크박스를 활성화
+                }
+            },
+           
             rowDataLot :[],
             columnLot :[
             {headerName: "",
@@ -285,7 +292,7 @@ export default{
                     // 값이 없을 경우 수정 가능 아이콘 추가
                     return `
                                 <span style="display: flex; align-items: center; justify-content: flex-start;">
-                                    <i class="fas fa-edit pt-2" style="color:grey;" title="더블클릭하여 수정 가능합니다"></i>
+                                    <i class="fas fa-edit pt-2" style="color:#6c757d88;" title="더블클릭하여 수정 가능합니다"></i>
                                 </span>
                             `;
                 }
@@ -329,7 +336,7 @@ export default{
         ...mapMutations(["addLoginInfo"]),
         test(){
         this.testing = this.$store.state.loginInfo;
-        console.log('ddd', this.$store.state.loginInfo);
+        //console.log('ddd', this.$store.state.loginInfo);
         this.searchEmpName = this.$store.state.loginInfo.name;
         },
         
@@ -341,7 +348,7 @@ export default{
         },
         openModal(modalType){
             this.isShowModal[modalType] = true; 
-            console.log(`${modalType} modal open`);
+            //console.log(`${modalType} modal open`);
         },
         
         confirm(modalType){
@@ -386,7 +393,7 @@ export default{
         }
     
 
-        console.log(this.filters);
+        //console.log(this.filters);
 
         let result = await axios.put(`${ajaxUrl}/output/search`,this.filters )
                                 .catch(err => console.log(err));
@@ -425,12 +432,12 @@ export default{
                 };
             });
 
-            console.log("rowDataOrder:",this.rowDataOrder);
+            //console.log("rowDataOrder:",this.rowDataOrder);
         },
         // 미출고주문에 해당하는 제품의 lot 들
         async onDisoutputRowClicked(row){
-            console.log("rows:",row)
-            console.log("클릭된 미출고주문 데이터",row.data.order_num);
+            //console.log("rows:",row)
+            //console.log("클릭된 미출고주문 데이터",row.data.order_num);
             let disorder = row.data;
             let result = await axios.get(`${ajaxUrl}/output/product/${disorder.product_code}`)
                                     .catch(err => console.log(err))
@@ -446,7 +453,7 @@ export default{
                 }));
             this.currentDisorder = disorder;
 
-            console.log("rowDataLot:",this.rowDataLot)
+            //console.log("rowDataLot:",this.rowDataLot)
             
            
         },
@@ -461,7 +468,7 @@ export default{
             let clientName = selectedRows[0].com_name;
             let orderNum = selectedRows[0].order_num;
             //console.log(selectedRows[0].com_name, selectedRows[0].order_num)
-            console.log("disorder:",selectedRows[0].disorder_amount);
+            //console.log("disorder:",selectedRows[0].disorder_amount);
             
 
             let outputNums = []
@@ -471,7 +478,7 @@ export default{
          // 유효하지 않은 행 확인 (재고 갯수가 출고 갯수보다 작은 경우)
         let invalidRows = [];
         selectedRows.forEach(row =>{
-            console.log("체크==",row );
+            //console.log("체크==",row );
             if (Number(row.total_amount) < row.output_num) {
                 //재고 갯수가 출고 갯수보다 작은 경우 유효하지 않는 행에 추가 
                 invalidRows.push(row);
@@ -521,11 +528,11 @@ export default{
             outputInfo.name = this.searchEmpName.name;
         }
 
-        console.log(outputInfo);
+        //console.log(outputInfo);
         let result =
             await axios.post(`${ajaxUrl}/output/insert`, outputInfo)
                         .catch(err => console.log(err));
-                        console.log(result.data);
+            //console.log(result.data);
         if(result.statusText === 'OK'){
             this.$notify({
                 text: `출고가 완료되었습니다.`,

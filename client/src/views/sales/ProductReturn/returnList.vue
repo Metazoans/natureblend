@@ -10,7 +10,7 @@
                     <div class="col-sm-4">
                         <input 
                             id="clientSearch"  class="form-control border p-2"
-                            v-model="searchCom.com_name" @click="openModal('client')" readonly/>
+                            v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"  />
                             <Modal
                                 :isShowModal="isShowModal.client"
                                 :modalTitle="'거래처선택'"
@@ -32,14 +32,14 @@
                         <input 
                         type="date" 
                         id="startDate" class="form-control border p-2"
-                        v-model="startDate"/>
+                        v-model="startDate"  autocomplete="off"  />
                     </div>
                     <div class="col-sm-1 text-center">~</div>
                     <div class="col-sm-4">
                         <input 
                         type="date" 
                         id="endDate" class="form-control border p-2"
-                        v-model="endDate" />
+                        v-model="endDate" autocomplete="off"   />
                     </div>
                 </div>
             </div>
@@ -183,13 +183,13 @@ export default{
                         const formattedValue = params.value.toLocaleString(); // 숫자에 쉼표 추가
                         return `
                                     <span style="display: flex; align-items: center; justify-content: flex-start;">
-                                        <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
+                                        <i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i>
                                         <span style="flex-grow: 1; text-align: right;">${formattedValue}</span>
                                     </span>
                                 `;
                     }else{
                          // 값이 없을 경우 수정 가능 아이콘 추가
-                        return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
+                        return `<span><i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i></span>`;
                     }
             }},
             { headerName : "담당자",field:'name',resizable: true, sortable: true,flex: 2,cellStyle: { textAlign: "left" }},
@@ -211,12 +211,12 @@ export default{
                         return `
                                     <span style="display: flex; align-items: center; justify-content: text-start;">
                                         <span style="flex-grow: 1;  text-align: left;">${formattedValue}</span>
-                                        <i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i>
+                                        <i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i>
                                     </span>
                                 `;
                     }else{
                          // 값이 없을 경우 수정 가능 아이콘 추가
-                        return `<span><i class="fas fa-edit" style="color:grey" title="더블클릭하여 수정 가능합니다"></i></span>`;
+                        return `<span><i class="fas fa-edit" style="color:#6c757d88" title="더블클릭하여 수정 가능합니다"></i></span>`;
                     }
             }},
             ],
@@ -244,8 +244,8 @@ export default{
             }
             this.originalValues[col.node.id] = this.originalValues[col.node.id] || {};
             this.originalValues[col.node.id][col.column.colId] = col.value; // 특정 셀의 원래 값 저장
-            console.log("원래값==",this.originalValues[col.node.id][col.column.colId]);
-            console.log("파람==",col);
+            //console.log("원래값==",this.originalValues[col.node.id][col.column.colId]);
+            //console.log("파람==",col);
         }
         // 'product_name' 필드 클릭 시 모달 열기
         if (col.colDef.field === 'return_reason') {
@@ -284,7 +284,7 @@ export default{
             update: [this.selectedCol.data] // 수정된 행만 업데이트
         });
 
-        console.log("초기값으로 롤백 완료:", this.originalReturnReason, this.originalReturnCode);
+        //console.log("초기값으로 롤백 완료:", this.originalReturnReason, this.originalReturnCode);
         }
         // 체크박스 해제
         this.gridApi.deselectAll();
@@ -304,7 +304,7 @@ export default{
         
         openModal(modalType){
             this.isShowModal[modalType] = true; 
-            console.log(`${modalType} modal open`);
+            //console.log(`${modalType} modal open`);
 
             // return_reason 을 업데이트할 컬럼을 저장
             if (modalType === 'returns') {
@@ -316,7 +316,7 @@ export default{
                     //반품이유, 코드 초기값 저장 
                     this.originalReturnReason = this.selectedCol.data.return_reason;
                     this.originalReturnCode = this.selectedCol.data.return_code;
-                    console.log( this.originalReturnReason,this.originalReturnCode)
+                    //console.log( this.originalReturnReason,this.originalReturnCode)
                 } else {
                     console.log("선택된 셀이 없습니다.");
                 }
@@ -371,7 +371,7 @@ export default{
         }
     
 
-        console.log(this.filters);
+        //console.log(this.filters);
 
         let result = await axios.put(`${ajaxUrl}/return/search`,this.filters )
                                 .catch(err => console.log(err));
@@ -457,7 +457,7 @@ export default{
                 //텍스트 계속 바꿔서 치면 ag그리드가 바꿔줌
                 inputText.addEventListener('input',(event)=>{
                     const value = event.target.value;
-                    console.log("입력된 값:", value);
+                    //console.log("입력된 값:", value);
 
                     //검색로직추가기능
                     this.inputListsearch = value;
@@ -486,7 +486,7 @@ export default{
             let returnNums = []
             let returnCodes = []
 
-            console.log("선택된값값",selectedRows);
+            //console.log("선택된값값",selectedRows);
 
             // 조건 체크 및 데이터 수집
             for (const row of selectedRows) {
@@ -538,7 +538,7 @@ export default{
                 returnlistNum : JSON.stringify(returnlistNums)
             }
 
-            console.log(deleteInfo);
+            //console.log(deleteInfo);
 
             let result = await axios.put(`${ajaxUrl}/return/delete`,deleteInfo)
                                     .catch(err=> console.log(err));

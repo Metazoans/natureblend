@@ -8,7 +8,7 @@
                     <div class="row align-items-center ms-3 mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
                         <div class="col-sm-6 d-flex align-items-center">
-                            <input type="text" class="form-control me-2" id="productName" v-model="productName" @click="openModal()" readonly>
+                            <input type="text" class="form-control me-2" id="productName" v-model="productName" @click="openModal()"  autocomplete="off"  >
                                 <Modal
                                         :isShowModal="isShowModal"
                                         :modalTitle="'제품선택'"
@@ -352,7 +352,7 @@ export default{
         }, 
         // 제품선택해서 제품에 대한 lot 출력
         async onProductLot(row){
-            console.log("제품코드1",row.data.product_code);
+            //console.log("제품코드1",row.data.product_code);
            
 
             let result = await axios.get(`${ajaxUrl}/inventory/productLot/${row.data.product_code}`)

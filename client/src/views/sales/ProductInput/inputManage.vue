@@ -9,7 +9,7 @@
                     <div class="row align-items-center mb-3">
                         <label class="col-sm-2 col-form-label fw-bold" >제품명</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')" readonly>
+                            <input type="text" class="form-control" id="productName" v-model="productName" @click="openModal('product')"  autocomplete="off"  >
                                 <Modal
                                         :isShowModal="isShowModal.product"
                                         :modalTitle="'제품선택'"
@@ -31,14 +31,14 @@
                             <input 
                             type="date" 
                             id="startDate" class="form-control border p-2"
-                            v-model="startDate"/>
+                            v-model="startDate"  autocomplete="off"  />
                         </div>
                         <div class="col-sm-1 text-center">~</div>
                         <div class="col-sm-4">
                             <input 
                             type="date" 
                             id="endDate" class="form-control border p-2"
-                            v-model="endDate" />
+                            v-model="endDate"  autocomplete="off"  />
                         </div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                         <div class="row align-items-center mb-3">
                             <label class="col-sm-3 col-form-label fw-bold" >담당자<span>*</span></label>
                             <div class="col-sm-9 d-flex">
-                                <input id="EmpName"  class="form-control border p-2" v-model="searchEmpName" @click="openModal('emp')" readonly/>
+                                <input id="EmpName"  class="form-control border p-2" v-model="searchEmpName" @click="openModal('emp')"  autocomplete="off"  />
                                     <Modal
                                         :isShowModal="isShowModal.emp"
                                         :modalTitle="'담당자선택'"
@@ -101,7 +101,7 @@
                             <div class="col-sm-9 d-flex">
                                 <input 
                                     id="EmpName"  class="form-control border p-2" 
-                                    v-model="warehouseName" @click="openModal('warehouse')" readonly/>
+                                    v-model="warehouseName" @click="openModal('warehouse')" autocomplete="off" />
                                     <Modal
                                         :isShowModal="isShowModal.warehouse"
                                         :modalTitle="'창고선택'"
@@ -298,7 +298,7 @@ export default{
         ...mapMutations(["addLoginInfo"]),
         test(){
         this.testing = this.$store.state.loginInfo;
-        console.log('ddd', this.$store.state.loginInfo);
+        //console.log('ddd', this.$store.state.loginInfo);
         this.searchEmpName = this.$store.state.loginInfo.name;
         this.searchEmpNum = this.$store.state.loginInfo.emp_num;
         },
@@ -317,7 +317,7 @@ export default{
         },
         openModal(modalType){
             this.isShowModal[modalType] = true; 
-            console.log(`${modalType} modal open`);
+            //console.log(`${modalType} modal open`);
         },
         
         confirm(modalType){
@@ -360,11 +360,11 @@ export default{
                 return;
             }
 
-            console.log(this.filters);
+            //console.log(this.filters);
 
             let result = await axios.put(`${ajaxUrl}/input/qtsearch`,this.filters )
                                     .catch(err => console.log(err));
-            console.log(result.data);
+            //console.log(result.data);
             this.QtData = result.data;
             this.QtData = result.data.map((col) => ({
                 ...col,
@@ -491,8 +491,8 @@ export default{
             this.inspectDate= order.inspec_end;
             this.tempProcessNum = order.process_num;
 
-            console.log("클릭된데이터:",this.tempProductCode,this.tempProductName,this.inputAmount,this.qtId,this.inspectDate,this.searchEmpName,this.warehouseCode,this.tempProcessNum);
-            console.log(this.warehouseName , this.searchEmpName);
+            //console.log("클릭된데이터:",this.tempProductCode,this.tempProductName,this.inputAmount,this.qtId,this.inspectDate,this.searchEmpName,this.warehouseCode,this.tempProcessNum);
+            //console.log(this.warehouseName , this.searchEmpName);
             // 입고를 원하는 검사 결과 클릭한 정보 +  담당자,창고 선택 폼 등장 
             // => 여기서 입고 정보 다 가지고 있어야 함   
         },
@@ -524,7 +524,7 @@ export default{
                 //tempInput 데이터 추가 (배열 객체를 풀어서 다시 객체 추가 후 배열 지정 )
                 this.tempInput = [...this.tempInput,selectedData];
                 //this.tempInput.push(selectedData);
-                console.log("데이터추가:",selectedData);
+                //console.log("데이터추가:",selectedData);
             }else{
                 this.$notify({
                     text: ' 중복된 품질검사 입니다.',
@@ -532,7 +532,7 @@ export default{
                 });
                 return;
             } 
-            console.log("현재 tempInput 상태:",this.tempInput);  
+            //console.log("현재 tempInput 상태:",this.tempInput);  
         },
         resetTempInput(){
             this.tempInput = []
@@ -540,7 +540,7 @@ export default{
         //tempInput의 입고 저장 삭제 
         deleteInputs(){
             const selectedRows = this.gridApi.getSelectedRows();
-            console.log(selectedRows);
+            //console.log(selectedRows);
             // 선택된 항목들의 qtId와 tempProductCode를 기준으로 tempInput에서 삭제
             this.tempInput = this.tempInput.filter(item => {
                 // 선택된 항목 중에서 qtId와 tempProductCode가 일치하지 않으면 유지
@@ -549,13 +549,13 @@ export default{
                 );
             });
 
-            console.log("입고 데이터 삭제 후 tempInput 상태:", this.tempInput);
+            //console.log("입고 데이터 삭제 후 tempInput 상태:", this.tempInput);
         },
         //입고추가 
         async inputInsert(){
             
             const selectedRows = this.gridApi.getSelectedRows();
-            console.log("선택된값==",selectedRows ,"임시보관값==",this.tempInput);
+            //console.log("선택된값==",selectedRows ,"임시보관값==",this.tempInput);
              // 선택된 행들의 담당자 번호 추출
             let employeeNums = selectedRows.map(row => row.employeeNum);
             let uniqueEmployeeNums = new Set(employeeNums); // 고유한 값만 남김 
@@ -582,7 +582,7 @@ export default{
             let warehouseCodes = [];
 
             selectedRows.forEach(row => {
-                console.log("row:",row.tempProductCode , row.processNum , row.inputAmount , row.qtId);
+                //console.log("row:",row.tempProductCode , row.processNum , row.inputAmount , row.qtId);
                 productCodes.push(row.tempProductCode);
                 processNums.push(row.processNum);
                 inputAmounts.push(row.inputAmount);
@@ -600,11 +600,11 @@ export default{
                 warehouse_code : JSON.stringify(warehouseCodes),
                 name : empNum,
             }
-            console.log("보내는데이터:",inputInfo);
+            //console.log("보내는데이터:",inputInfo);
             let result =
                 await axios.post(`${ajaxUrl}/input/insert`,inputInfo)
                             .catch(err => console.log(err));
-                            console.log(result.data);
+                //console.log(result.data);
                 if(result.statusText === 'OK'){
                     this.$notify({
                         text: `입고가 완료되었습니다.`,

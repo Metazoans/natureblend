@@ -12,7 +12,7 @@
                             <div class="col-sm-4">
                             <input 
                                 id="clientSearch"  class="form-control"
-                                v-model="searchCom.com_name" @click="openModal('client')" readonly/>
+                                v-model="searchCom.com_name" @click="openModal('client')"  autocomplete="off"  />
                                 <Modal
                                     :isShowModal="isShowModal.client"
                                     :modalTitle="'거래처선택'"
@@ -92,7 +92,7 @@
                                 <div class="col-sm-9 d-flex align-items-center">
                                     <input 
                                     id="EmpName"  class="form-control border p-2" 
-                                    v-model="searchEmpName" @click="openModal('emp')" readonly/>
+                                    v-model="searchEmpName" @click="openModal('emp')"  autocomplete="off"  />
                                     <Modal
                                         :isShowModal="isShowModal.emp"
                                         :modalTitle="'담당자선택'"
@@ -125,7 +125,7 @@
                                     <div class="col-sm-9  d-flex align-items-center">
                                         <input 
                                         id="ReturnReason"  class="form-control border p-2" 
-                                        v-model="searchReturnReason" @click="openModal('returns')" readonly/>
+                                        v-model="searchReturnReason" @click="openModal('returns')"  autocomplete="off"  />
                                         <Modal
                                             :isShowModal="isShowModal.returns"
                                             :modalTitle="'반품사유'"
@@ -297,7 +297,7 @@ export default{
         ...mapMutations(["addLoginInfo"]),
         test(){
         this.testing = this.$store.state.loginInfo;
-        console.log('ddd', this.$store.state.loginInfo);
+        //console.log('ddd', this.$store.state.loginInfo);
         this.searchEmpName = this.$store.state.loginInfo.name;
         this.searchEmpNum = this.$store.state.loginInfo.emp_num;
         },
@@ -314,7 +314,7 @@ export default{
         },
         openModal(modalType){
             this.isShowModal[modalType] = true; 
-            console.log(`${modalType} modal open`);
+            //console.log(`${modalType} modal open`);
         },
         
         confirm(modalType){
@@ -353,7 +353,7 @@ export default{
             clientName : this.searchCom,
             
         }
-        console.log(this.filters);
+        //console.log(this.filters);
 
         let result = await axios.put(`${ajaxUrl}/orderlist/search`,this.filters )
                                 .catch(err => console.log(err));
@@ -463,7 +463,7 @@ export default{
 
     //주문서 클릭 시 해당 주문서의 미출고 주문 출력 
     async onOrderRowClicked(row) {
-        console.log("row.data===",row.data);
+        //console.log("row.data===",row.data);
         let order = row.data;
     
 
@@ -477,7 +477,7 @@ export default{
             com_name : row.data.com_name,
             })
         );
-        console.log("rowDataOutputOrder:",this.rowDataOutputOrder);
+        //console.log("rowDataOutputOrder:",this.rowDataOutputOrder);
     },
 
     //반품을 원하는 상품 클릭 
@@ -487,7 +487,7 @@ export default{
         this.productCode = output.product_code;
         this.outputNum = output.output_num;
         this.clientNum = output.client_num;
-        console.log("출고할 값",output);
+        //console.log("출고할 값",output);
         
     },
     //반품등록
@@ -512,7 +512,7 @@ export default{
         let result = 
                     await axios.post(`${ajaxUrl}/return/insert`,returnInfo)
                                .catch(err => console.log(err));
-        console.log(result.data);
+        //console.log(result.data);
         if(result.statusText === 'OK'){
                     this.$notify({
                         text: `반품처리가 완료되었습니다.`,
