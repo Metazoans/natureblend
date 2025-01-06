@@ -152,7 +152,7 @@ export default {
                 { headerName: "거래처명", field: "com_name", cellStyle: { textAlign: "left" } },
                 { headerName: "발주량", field: "go_qty", width:100, editable: true, 
                     cellStyle: { 
-                        backgroundColor: "#fff", // 연한 배경색
+                        //backgroundColor: "#fff", // 연한 배경색
                         //border: "0.5px dashed #fb8c00", // 점선 테두리
                         cursor: "text", // 텍스트 커서
                         textAlign: "right",
@@ -168,13 +168,19 @@ export default {
                             }
                         } else {
                             //return `<span style="text-align: left;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
-                            return `<span style="display: flex; align-items: center; justify-content: flex-start; height: 100%;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                            return `<span style="display: flex; align-items: center; justify-content: flex-start; height: 100%;"><i class="fas fa-edit" style="color: #6c757d88"></i></span>`;
+                            // return `
+                            // <span style="display: flex; align-items: center; justify-content: flex-end;">
+                            //     <span style="flex-grow: 1; text-align: left;"></span>
+                            //     <i class="fas fa-edit" style="color: gray" title="더클클릭하여 수정해주세요."></i>
+                            // </span>
+                            // `;
                         }
                     },
                 },
                 { headerName: "단가", field: "go_price", width:100, editable: true, 
                     cellStyle: { 
-                        backgroundColor: "#fff",
+                        //backgroundColor: "#fff",
                         //border: "0.5px dashed #fb8c00",
                         cursor: "text",
                         textAlign: "right",
@@ -185,7 +191,7 @@ export default {
                             return `<span style="text-align: right;">${formatted_price}</span>`;
                         } else {
                             //return `<span style="text-align: left;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
-                            return `<span style="display: flex; align-items: center; justify-content: flex-start; height: 100%;"><img src="http://yeonsus.com/academy/cell-modify-icon.png" width=15 height=15 /></span>`;
+                            return `<span style="display: flex; align-items: center; justify-content: flex-start; height: 100%;"><i class="fas fa-edit" style="color: #6c757d88"></i></span>`;
                         }
                     },
                 },
@@ -211,7 +217,7 @@ export default {
                 // },
                 { headerName: "납기일", field: "limit_date", width:130, editable: true, cellEditor: 'agDateCellEditor', 
                     cellStyle: { 
-                        backgroundColor: "#fff",
+                        //backgroundColor: "#fff",
                         //border: "0.5px dashed #fb8c00",
                         cursor: "text",
                         textAlign: "right",
@@ -223,7 +229,7 @@ export default {
                             const formattedDate = date.toISOString().split('T')[0];
                             return `<span style="text-align: right;">${formattedDate}</span>`;
                         } else {
-                            return `<span style="text-align: right;">📅</span>`;
+                            return `<span style="text-align: right;"><i class="far fa-calendar-alt" style="color: #6c757d88"></i></span>`;
                         }
                     },
                     cellEditorParams: {
