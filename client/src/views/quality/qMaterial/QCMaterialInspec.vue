@@ -107,8 +107,12 @@
             </tr>
             <tr>
               <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">총 수량</th>
-              <td style="text-align: right; border: 1px solid #dee2e6;">{{ selectedRow.totalQnt * 0.001 }} {{
-                this.materialType }}</td>
+              <td v-if="this.materialType === 'kg'" style="text-align: right; border: 1px solid #dee2e6;">
+                {{ selectedRow.totalQnt * 0.001 }} {{this.materialType }}
+              </td>
+              <td v-else-if="this.materialType === '개'" style="text-align: right; border: 1px solid #dee2e6;">
+                {{ selectedRow.totalQnt * 1 }} {{this.materialType }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -211,7 +215,8 @@ export default {
           headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              const formatted_t_qty = (params.data.mName.includes('병') ? 
+              (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
               return `<span style="text-align: right;">${formatted_t_qty}</span>`;
             } else {
               return `<span style="text-align: right;"></span>`;
@@ -228,7 +233,8 @@ export default {
           flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              const formatted_t_qty = (params.data.mName.includes('병') ? 
+              (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
               return `
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <i class="fas fa-edit" style=" color: gray; margin-right: 5px;"></i>
@@ -250,7 +256,8 @@ export default {
           flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              const formatted_t_qty = (params.data.mName.includes('병') ? 
+              (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
               // return `<span style="text-align: right;">${formatted_t_qty}</span>`;
               return `
                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -289,6 +296,7 @@ export default {
 
       rowData2: [], //rowData1 중 검사상태(inspecStatus)가 '검사내역작성완료'인 것을 담음
       showModalDone: false,
+
 
 
     }
@@ -395,7 +403,7 @@ export default {
       if (!this.defectDetailsMap[qcMaterialId]) {
         this.defectDetailsMap[qcMaterialId] = [];
       }
-      this.defectDetailsMap[qcMaterialId].push({ reason: "", qty: 0 });
+      this.defectDetailsMap[qcMaterialId].push({ reason: "", qty: 0, unit: this.materialType });
     },
     removeDefectDetailForRow(qcMaterialId, index) {
       if (this.defectDetailsMap[qcMaterialId]) {
@@ -407,42 +415,45 @@ export default {
     },
     saveDefectDetailsForRow(qcMaterialId, total) {
       const defectDetails = this.defectDetailsMap[qcMaterialId] || [];
+
+      // 유효성 검사
       if (defectDetails.some(detail => !detail.reason)) {
         notify({
           text: "불량 사유가 입력되지 않은 항목이 있습니다.",
-          type: "warn", // success, warn, error 가능
+          type: "warn",
         });
         return;
-      }
-      else if (defectDetails.some(detail => detail.qty <= 0)) {
+      } else if (defectDetails.some(detail => detail.qty <= 0)) {
         notify({
           text: "수량이 입력되지 않았거나 0 이하를 입력한 항목이 있습니다.",
-          type: "warn", // success, warn, error 가능
+          type: "warn",
         });
         return;
-      }
-      else if (this.materialType === '개' && defectDetails.some(detail => !Number.isInteger(detail.qty))) {
+      } else if (this.materialType === '개' && defectDetails.some(detail => !Number.isInteger(detail.qty))) {
         notify({
           text: "해당 자재의 수량은 소수로 입력할 수 없습니다.",
-          type: "warn", // success, warn, error 가능
+          type: "warn",
         });
         return;
       }
 
-      const rjcQntSum = defectDetails.reduce((sum, detail) => sum + (detail.qty * 1000), 0);
+      const rjcQntSum = defectDetails.reduce((sum, detail) => {
+        const convertedQty = this.materialType === 'kg' ? detail.qty * 1000 : detail.qty;
+        return sum + convertedQty;
+      }, 0);
+
       if (rjcQntSum > total) {
         notify({
           text: "불량 총합량이 총합량보다 클 수 없습니다.",
-          type: "warn", // success, warn, error 가능
+          type: "warn",
         });
         return;
       }
 
       const pass = total - rjcQntSum;
-      // 업데이트 로직
       const rowIndex = this.rowData1.findIndex(row => row.qcMaterialId === this.selectedRow.qcMaterialId);
+
       if (rowIndex !== -1) {
-        // 새 데이터 배열 생성 (Vue의 반응형 감지를 위해)
         this.rowData1 = this.rowData1.map((row, index) => {
           if (index === rowIndex) {
             return { ...row, passQnt: pass, rjcQnt: rjcQntSum, inspecStatus: '검사내역입력완료' };
@@ -453,11 +464,16 @@ export default {
 
       this.closeModal();
       this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료');
+
       notify({
-        text: `검사 결과 - 합격량: ${pass * 0.001}${this.materialType}, 불합격량: ${rjcQntSum * 0.001}${this.materialType} 입니다.`,
-        type: "success", // success, warn, error 가능
+        text: `검사 결과 - 합격량: ${pass / (this.materialType === 'kg' ? 1000 : 1)}${this.materialType}, 불합격량: ${rjcQntSum / (this.materialType === 'kg' ? 1000 : 1)}${this.materialType} 입니다.`,
+        type: "success",
       });
+
+      console.log(defectDetails);
+      console.log(this.defectDetailsMap);
     },
+
 
 
     //최종 처리 버튼
@@ -476,11 +492,12 @@ export default {
       let defectDetailsArray = [];
       for (let qcId in this.defectDetailsMap) {
         if (Object.prototype.hasOwnProperty.call(this.defectDetailsMap, qcId)) {
+
           this.defectDetailsMap[qcId].forEach(detail => {
             defectDetailsArray.push({
               qcMaterialId: qcId,
               faultyCode: detail.reason,
-              qty: detail.qty * 1000,
+              qty: detail.unit === 'kg' ? detail.qty * 1000 : detail.qty,
             });
           });
         }

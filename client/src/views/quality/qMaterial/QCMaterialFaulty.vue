@@ -100,13 +100,13 @@ export default {
         { headerName: "불량품번호", field: "qcMaterialRjcId", resizable: false, cellStyle: { textAlign: "center" }, flex: 4 },
         { headerName: "자재발주코드", field: "orderCode", resizable: false, cellStyle: { textAlign: "center" }, flex: 4 },
         { headerName: "입고검사번호", field: "qcMaterialId", resizable: false, cellStyle: { textAlign: "center" }, flex: 4 },
-        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3 },
+        { headerName: "자재명", field: "mName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3.1 },
         { headerName: "검사담당자", field: "eName", resizable: false, cellStyle: { textAlign: "left" }, flex: 3 },
         {
           headerName: "불합격량", field: "rjcQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 3.5,
           cellRenderer: params => {
             if (params.value) {
-              const formatted_t_qty = Number(params.value * 0.001).toLocaleString() + (params.data.mName.includes('병') ? ' 개' : ' kg');
+              const formatted_t_qty = (params.data.mName.includes('병') ? (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
               return `<span style="text-align: right;">${formatted_t_qty}</span>`;
             } else {
               return `<span style="text-align: right;"></span>`;
