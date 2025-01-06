@@ -202,16 +202,17 @@ export default {
       rowData: [],
 
       columnDefs: [
-        { headerName: "작업번호", field: 'process_work_header_num', cellStyle: { textAlign: 'right' }},
-        { headerName: "공정코드", field: 'process_code', cellStyle: { textAlign: 'center' } },
-        { headerName: "공정명", field: 'process_name' },
-        { headerName: "설비분류", field: 'machine_type' },
-        { headerName: "지시량(개)", field: 'production_order_qty', cellStyle: { textAlign: 'right' }  },
+        { headerName: "작업번호", field: 'process_work_header_num', cellStyle: { textAlign: 'right' }, flex: 1},
+        { headerName: "공정코드", field: 'process_code', cellStyle: { textAlign: 'center' } , flex: 1},
+        { headerName: "공정명", field: 'process_name', flex: 2 },
+        { headerName: "설비분류", field: 'machine_type', flex: 2 },
+        { headerName: "지시량(개)", field: 'production_order_qty', cellStyle: { textAlign: 'right' } , flex: 1 },
         { headerName: "진행상태",
           field: 'process_status',
           cellClass: (params) => {
             return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
           },
+          flex: 1
         },
       ],
       processList: [],
@@ -477,7 +478,7 @@ export default {
 
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      // this.gridApi.sizeColumnsToFit();
     },
 
     openModal(type) {

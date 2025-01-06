@@ -2,6 +2,7 @@
   <div>
     <div class="add-top mt-4">
       <h3>생산계획 등록</h3>
+      <span>* 위의 주문을 클릭 시 생산계획에 추가됩니다.</span>
       <material-button size="sm" color="success" class="button" @click="addPlan">등록</material-button>
     </div>
     <div class="main-container">
@@ -21,7 +22,7 @@
           </thead>
 
           <tbody v-show="!selectedOrders.length" class="no-data">
-           <tr><td :colspan="cols.length">* 위의 주문을 클릭해서 추가/삭제 해주세요</td></tr>
+           <tr><td :colspan="cols.length"></td></tr>
           </tbody>
           <tbody v-show="selectedOrders.length">
           <tr v-for="order in selectedOrders" :key="order.orderNum">
@@ -234,7 +235,8 @@ export default {
     position: absolute;
     left: 180px;
     top: 14px;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: 700;
     margin-left: 12px;
   }
 }

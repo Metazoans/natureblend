@@ -108,19 +108,22 @@ export default {
           editable: true,
           sortable: false,
           checkboxSelection: true,
-          width: 50
+          width: 50,
+          flex: 1
         },
         {
           headerName: "생산계획번호",
           field: 'plan_num',
-          cellStyle: {textAlign: 'right'}
+          cellStyle: {textAlign: 'right'},
+          flex: 2
         },
         {
           headerName: "생산계획명",
           field: 'plan_name',
           editable: params => {
             return params.data.plan_status === '대기중'
-          }
+          },
+          flex: 3
         },
         {
           headerName: "계획시작일자",
@@ -128,7 +131,8 @@ export default {
           cellStyle: {textAlign: 'center'},
           editable: params => {
             return params.data.plan_status === '대기중'
-          }
+          },
+          flex: 2
         },
         {
           headerName: "계획종료일자",
@@ -136,7 +140,8 @@ export default {
           cellStyle: {textAlign: 'center'},
           editable: params => {
             return params.data.plan_status === '대기중'
-          }
+          },
+          flex: 2
         },
         {
           headerName: "진행상태",
@@ -144,7 +149,8 @@ export default {
           cellClass: (params) => {
             return params.value === '완료' ? 'green' : params.value === '진행중' ? 'gray' : params.value === '대기중' ? 'red' : ''
           },
-          cellStyle: {textAlign: 'center'}
+          cellStyle: {textAlign: 'center'},
+          flex: 2
         },
         {
           headerName: "제품명",
@@ -155,7 +161,8 @@ export default {
           cellStyle: {textAlign: 'right'},
           editable: params => {
             return params.data.plan_status === '대기중'
-          }
+          },
+          flex: 2
         },
         { headerName: "주문계획번호", field: 'order_plan_num', hide: true },
         { headerName: "제품 번호", field: 'product_code', hide: true },
@@ -292,7 +299,6 @@ export default {
 
     onReady(param){
       this.gridApi = param.api
-      param.api.sizeColumnsToFit();
 
       const paginationPanel = document.querySelector('.ag-paging-panel');
       if (paginationPanel){

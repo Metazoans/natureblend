@@ -71,13 +71,13 @@ export default {
       rowData: [],
 
       columnDefs: [
-        { headerName: "주문번호", field: 'orderNum', cellStyle: { textAlign: 'right' }},
-        { headerName: "주문일자", field: 'orderDate', cellStyle: { textAlign: 'center' } },
-        { headerName: "납기일자", field: 'dueDate', cellStyle: { textAlign: 'center' } },
-        { headerName: "제품명", field: 'productName' },
-        { headerName: "주문량", field: 'orderQty', cellStyle: { textAlign: 'right' }  },
-        { headerName: "기계획량", field: 'plannedQty', cellStyle: { textAlign: 'right' } },
-        { headerName: "미계획량", field: 'unplannedQty', cellStyle: { textAlign: 'right' } },
+        { headerName: "주문번호", field: 'orderNum', cellStyle: { textAlign: 'right' },  flex: 1},
+        { headerName: "주문일자", field: 'orderDate', cellStyle: { textAlign: 'center' }, flex: 2 },
+        { headerName: "납기일자", field: 'dueDate', cellStyle: { textAlign: 'center' }, flex: 2 },
+        { headerName: "제품명", field: 'productName', flex: 2 },
+        { headerName: "주문량", field: 'orderQty', cellStyle: { textAlign: 'right' }, flex: 1  },
+        { headerName: "기계획량", field: 'plannedQty', cellStyle: { textAlign: 'right' }, flex: 1 },
+        { headerName: "미계획량", field: 'unplannedQty', cellStyle: { textAlign: 'right' }, flex: 1 },
         { headerName: "재고", field: 'stockQty', hide: true },
         { headerName: "상품코드", field: 'productCode', hide: true },
       ],
@@ -93,7 +93,7 @@ export default {
   methods: {
     onGridReady(params) {
       this.gridApi = params.api;
-      this.gridApi.sizeColumnsToFit();
+      // this.gridApi.sizeColumnsToFit();
     },
 
     dateFormat(value, format) {

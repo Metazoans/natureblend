@@ -80,17 +80,17 @@ export default {
       listSearch: '',
       rowData: [],
       columnDefs: [
-        { headerName: "No.", field: 'no', cellStyle: { textAlign: 'right' }},
-        { headerName: "생산지시번호", field: 'production_order_num', cellStyle: { textAlign: 'right' }, width: 250},
-        { headerName: "공정명", field: 'process_name' },
-        { headerName: "제품명", field: 'product_name' },
-        { headerName: "설비명", field: 'machine_name' },
-        { headerName: "작업자", field: 'emp_name' },
-        { headerName: "생산량(개)", field: 'production_qty', cellStyle: { textAlign: 'right' }},
-        { headerName: "불량량(개)", field: 'fail_qty', cellStyle: { textAlign: 'right' }},
-        { headerName: "합격량(개)", field: 'success_qty', cellStyle: { textAlign: 'right' } },
-        { headerName: "작업시작시간", field: 'partial_process_start_time', cellStyle: { textAlign: 'center' }, width: 320 },
-        { headerName: "작업완료시간", field: 'partial_process_end_time', cellStyle: { textAlign: 'center' }, width: 320 },
+        { headerName: "No.", field: 'no', cellStyle: { textAlign: 'right' }, flex: 1},
+        { headerName: "생산지시번호", field: 'production_order_num', cellStyle: { textAlign: 'right' }, flex: 2},
+        { headerName: "공정명", field: 'process_name', flex: 2 },
+        { headerName: "제품명", field: 'product_name', flex: 2 },
+        { headerName: "설비명", field: 'machine_name', flex: 2 },
+        { headerName: "작업자", field: 'emp_name', flex: 2 },
+        { headerName: "생산량(개)", field: 'production_qty', cellStyle: { textAlign: 'right' }, flex: 2},
+        { headerName: "불량량(개)", field: 'fail_qty', cellStyle: { textAlign: 'right' }, flex: 2},
+        { headerName: "합격량(개)", field: 'success_qty', cellStyle: { textAlign: 'right' }, flex: 2 },
+        { headerName: "작업시작시간", field: 'partial_process_start_time', cellStyle: { textAlign: 'center' }, flex: 3 },
+        { headerName: "작업완료시간", field: 'partial_process_end_time', cellStyle: { textAlign: 'center' }, flex: 3},
       ],
       selectedProdOrder: {},
       searchProdOrder: {},
@@ -166,8 +166,8 @@ export default {
       this.isShowModal = !this.isShowModal
     },
 
-    onReady(param){
-      param.api.sizeColumnsToFit();
+    onReady(){
+      // param.api.sizeColumnsToFit();
 
       const paginationPanel = document.querySelector('.ag-paging-panel');
       if (paginationPanel){
