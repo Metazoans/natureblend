@@ -47,8 +47,8 @@
             <td>
               <h6 class="mb-0 text-sm text-end">{{ order.unplannedQty }}</h6>
             </td>
-            <td class="input-group w-50 h-25 text-end m-lg-auto">
-              <input type="number" class="mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
+            <td class="plan-qty-group input-group w-50 h-25 text-end m-lg-auto" :class="{ 'plan-input': !order.planQty  }" >
+              <input type="number" class="plan-qty mb-0 text-sm text-end form-control border p-2 cursor-pointer" v-model="order.planQty"/>
             </td>
             <td>
               <h6 class="mb-0 text-sm text-end">{{ order.stockQty }}</h6>
@@ -191,13 +191,11 @@ export default {
         });
 
 
-        // this.planName = ''
-        // this.planQty = 0
-        // this.planStartDate = ''
-        // this.planEndDate = ''
-        // this.selectedEmp = {}
-        //
-        // this.$emit('resetSelectedOrders')
+        this.planName = ''
+        this.planStartDate = ''
+        this.planEndDate = ''
+        this.searchEmp = {}
+        this.$emit('resetSelectedOrders')
       }
 
 
@@ -257,6 +255,26 @@ export default {
         height: 80px;
         font-weight: 800;
       }
+    }
+    .plan-qty-group {
+      position: relative;
+      .plan-qty {
+        background-color: #fff;
+        padding-left: 30px;
+      }
+    }
+    .plan-input::before {
+      content: "";
+      background-image: url('http://yeonsus.com/academy/cell-modify-icon.png');
+      background-size: contain; /* 아이콘이 잘리지 않도록 크기 조절 */
+      background-repeat: no-repeat;
+      width: 20px; /* 아이콘 크기 */
+      height: 20px; /* 아이콘 크기 */
+      position: absolute;
+      left: 20px; /* 아이콘 위치 조정 */
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
     }
   }
   .input-container {
