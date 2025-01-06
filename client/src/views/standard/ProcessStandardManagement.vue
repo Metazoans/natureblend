@@ -1,5 +1,6 @@
 <!-- 공정기준정보 관리 메뉴 -->
 <template>
+  <div class="partList container-fluid py-4">
     <div>
        <h3>&nbsp;&nbsp;공정기준정보 관리</h3>
     </div>
@@ -26,8 +27,9 @@
           </div>
  
           <!-- 저장 버튼 -->
-          <div class="col-sm-2">
-             <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+          <div class="col-sm-3">
+              <button style="position:relative; top:29px;" type="button" class="btn btn-success me-5" @click="upin? input_update(2) : input_update(1)">등록/수정</button>
+              <button style="position:relative; width:120px ; top:29px;" type="button" class="btn btn-warning me-5" @click="refresh"  >새로고침</button>
           </div>
        </form>
     </div>
@@ -46,6 +48,7 @@
        @cellClicked="onCellClicked"
     >
     </ag-grid-vue>
+ </div>
  </div>
  </template>
  <script>
@@ -114,6 +117,13 @@
      };
    },
    methods: {
+    refresh(){
+        this.processList();
+        this.upin = '';
+        this.processCode = '';
+        this.processName = '';
+        this.machineType = '';
+    },
     ...mapMutations(["addLoginInfo"]),
       async checkLogin(){
           this.loginInfo = this.$store.state.loginInfo;
@@ -238,4 +248,9 @@
        background-color: $white;
        border: solid 1px  ;
  }
+ input:focus {
+  background-color: #ffffff; /* 포커스 시 배경색 흰색 유지 */
+  border-color: #86b7fe; /* 선택 시 테두리 색상 약간 강조 */
+  outline: none; /* 기본 브라우저 포커스 아웃라인 제거 */
+}
  </style>

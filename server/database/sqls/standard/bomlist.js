@@ -18,7 +18,8 @@ const bomList =
  capacity,
  bom_num,
  product_code
- FROM bom`;
+ FROM bom
+ order by product_code`;
  
  // BOM 조회 
  const bomselectView =
@@ -31,7 +32,7 @@ const bomList =
  bm.material_con
  FROM bom_material bm join bom b
  on bm.bom_num = b.bom_num
- WHERE bom_num = ?;`;
+ WHERE bom_num = ?`;
  
  // bom등록
  const bomInsert =

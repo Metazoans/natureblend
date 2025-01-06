@@ -1,5 +1,6 @@
 <!--사원 관리 메뉴-->
 <template>
+  <div class="partList container-fluid py-4">
 <div>
     <h3>&nbsp;&nbsp;사원 관리</h3>
 </div>
@@ -14,12 +15,12 @@
                       <!-- 사원번호 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="empNum">사원번호</label>
-                         <input type="text" placeholder="ex)20250000" class="form-control" style="background-color: white; " id="empNum" v-model="empNum" >
+                         <input type="text" placeholder="ex)20250000"  autocomplete="off"  class="form-control" style="background-color: white; " id="empNum" v-model="empNum" >
                       </div>
                       <!-- 생년월일 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="birth">생년월일</label>
-                         <input type="date" class="form-control"  style="background-color: white; padding-left: 20px;" id="birth" v-model="birth" >
+                         <input type="date" class="form-control"  autocomplete="off"  style="background-color: white; padding-left: 20px;" id="birth" v-model="birth" >
                       </div>
                       <!-- 부서 -->
                       <div class="mb-3">
@@ -61,19 +62,19 @@
                       <!-- 입사일 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="employmentDate">입사일</label>
-                         <input type="date" class="form-control" style="background-color: white; padding-left: 20px;" id="employmentDate" v-model="employmentDate" >
+                         <input type="date"  autocomplete="off"  class="form-control" style="background-color: white; padding-left: 20px;" id="employmentDate" v-model="employmentDate" >
                       </div>
                   </div>
                   <div class="p-2 flex-fill">
                       <!-- 이름 -->
                       <div class="mb-3">
                          <label class="col-form-label fw-bold" for="name">이름</label>
-                         <input type="text" class="form-control" style="background-color: white; padding-left: 20px;" id="name" v-model="name" >
+                         <input type="text" class="form-control"  autocomplete="off"  style="background-color: white; padding-left: 20px;" id="name" v-model="name" >
                       </div>
                          <!-- 연락처 -->
                          <div class="mb-3">
                             <label class="col-form-label fw-bold" for="tel">연락처</label>
-                            <input type="tel" class="form-control" placeholder="010-0000-0000" style="background-color: white; padding-left: 20px;" id="tel" v-model="tel" >
+                            <input type="tel"  autocomplete="off"  class="form-control" placeholder="010-0000-0000" style="background-color: white; padding-left: 20px;" id="tel" v-model="tel" >
                         </div>
                         <!-- 부서번호 -->
                         <div class="mb-3">
@@ -138,6 +139,7 @@
       @deleteConfirmed="onDeleteConfirmed"
       @deleteCancelled="onDeleteCancelled"
  />
+  </div>
  </template>
  <script>
  import axios from 'axios';
