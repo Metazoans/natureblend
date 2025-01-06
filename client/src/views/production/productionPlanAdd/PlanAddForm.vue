@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="add-top mt-4">
-      <h3>생산계획 등록</h3>
+      <h4>생산계획 등록</h4>
       <span>* 위의 주문을 클릭 시 생산계획에 추가됩니다.</span>
       <material-button size="sm" color="success" class="button" @click="addPlan">등록</material-button>
     </div>
@@ -182,7 +182,7 @@ export default {
       }
 
       let result =
-          await axios.post(`${ajaxUrl}/production/planddd`, planInfo)
+          await axios.post(`${ajaxUrl}/production/plan`, planInfo)
               .catch(err => console.log(err));
 
       if(result.data.message === 'success') {
@@ -229,8 +229,8 @@ export default {
   }
   > span {
     position: absolute;
-    left: 180px;
-    top: 14px;
+    left: 150px;
+    top: 6px;
     font-size: 16px;
     font-weight: 700;
     margin-left: 12px;

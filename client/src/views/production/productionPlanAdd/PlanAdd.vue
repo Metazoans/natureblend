@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid product-plan-add py-4">
-    <h1>생산계획 등록</h1>
+    <h3>생산계획 등록</h3>
     <PlanAddOrderList @selectOrders="selectOrders"></PlanAddOrderList>
     <PlanAddForm :selectedOrders="selectedOrders" @resetSelectedOrders="resetSelectedOrders"></PlanAddForm>
 

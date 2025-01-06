@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid working-list py-4">
-    <h1>작업 목록</h1>
+    <h3>작업 목록</h3>
     <div class="container-fluid">
       <div class="search-container mt-4 mb-2">
         <div class="input-group w-auto h-25">

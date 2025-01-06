@@ -1,9 +1,9 @@
 <template>
   <div class="container-fluid py-4">
     <div class="pb-4">
-      <h1>생산계획 목록</h1>
+      <h3>생산계획 목록</h3>
     </div>
-    <div class="main-container">
+    <div class="main-container mt-4">
       <div class="content">
         <form class="row gx-3 gy-2 align-items-center">
           <div class="col-sm-2">
