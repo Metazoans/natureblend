@@ -1,4 +1,4 @@
-// 자재 발주서 (전체) 조회 하기 (이건 돌려쓰는거라 삭제금지!!)
+// 자재 발주서 (전체) 조회 하기 (이건 돌려쓰는거라 삭제금지!!) [ 확인 완료 2025-01-06 ]
 const configloding =
 `
 SELECT mob.body_num,
@@ -23,7 +23,7 @@ JOIN client cli ON moh.client_num = cli.client_num
 JOIN employee emp ON moh.emp_num = emp.emp_num
 `;
 
-//자재검사중
+//자재검사중 [ 확인 완료 2025-01-06 ]
 const selectQCMRWithConditions2 =`
 SELECT q.qc_material_id,
        q.order_code,
@@ -42,7 +42,7 @@ FROM qc_material q LEFT JOIN employee e ON q.emp_num = e.emp_num
 
 `;
 
-//자재 입고해야할 목록(자재입고대기)
+//자재 입고해야할 목록(자재입고대기) [ 확인 완료 2025-01-06 ]
 const material_input_qc_list2 =
 `
 SELECT mb.body_num,
@@ -66,7 +66,7 @@ WHERE mb.material_state = 'a1'
   AND qm.inspec_status = '검사완료'
 `;
 
-// 생산 지시 목록
+// 생산 지시 목록 [검사 완료 2025-01-06]
 const processlist =
 `
 SELECT your_product(po.product_code, 'product_name') AS product_name,
@@ -89,14 +89,19 @@ ORDER BY po.production_order_date DESC
 // 음료제작 공정
 const process1list =
 `
-SELECT product_name,
-       production_order_qty AS product_qty
-FROM process_work_header pwh
-WHERE pwh.process_status = 'processing' -- process_waiting  -- processing  -- process_complete
-
-  AND pwh.process_name = '음료제작공정' -- 세척공정 -- 포장공정 -- 음료제작공정
-  AND process_start_time IS NOT NULL
-ORDER BY pwh.work_date DESC
+SELECT
+		pwh.product_name,
+		pwh.production_order_qty AS product_qty
+FROM
+		process_work_body pwb
+		JOIN process_work_header pwh
+			ON pwb.process_work_header_num = pwh.process_work_header_num
+				AND pwh.process_name = '음료제작공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+			  AND pwh.process_start_time IS NOT NULL
+			  AND pwh.process_end_time IS NULL
+		JOIN qc_process_beverage qpb
+			ON	pwb.process_num = qpb.process_num
+			AND qpb.inspec_status = '검사요청완료'
 `;
 
 // 음료제작 품질
@@ -137,7 +142,7 @@ ORDER BY pwh.work_date DESC
 `;
 
 
-// 포장 공정 (확인 완료)
+// 포장 공정
 const process3list =
 `
 SELECT product_name,
@@ -150,7 +155,7 @@ WHERE pwh.process_status = 'processing' -- process_waiting  -- processing  -- pr
 ORDER BY pwh.work_date DESC 
 `;
 
-// 포장 품질 ( 확인 완료 )
+// 포장 품질
 const process3qclist =
 `
 SELECT b.product_name AS product_name,
@@ -162,7 +167,7 @@ WHERE qcpp.inspec_end IS NULL
 ORDER BY qcpp.inspec_start DESC
 `;
 
-// 제품 입고 대기
+// 제품 입고 대기  [ 검사 완료 2025-01-06]
 const product_input_wait =
 `
 SELECT p.product_name ,
@@ -222,7 +227,7 @@ ORDER BY product_qty DESC
 `;
 // GROUP BY p.product_code, p.product_name
 
-// 자재 재고
+// 자재 재고  [ 검사 완료 2025-01-06]
 const material_qtying =
 `
 WITH pass_material AS
