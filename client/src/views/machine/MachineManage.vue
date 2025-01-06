@@ -81,6 +81,7 @@
                      @click="openClientModal('client')"
                      v-model="this.selectedCom"
                      readonly
+                     placeholder="🔍"
               />
             </div>
             <Modal
@@ -720,6 +721,10 @@ button {
   padding: 0;
   font-size: 20px;
 
+}
+
+input::placeholder {
+  text-align: right;
 }
 
 </style>

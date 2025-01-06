@@ -417,22 +417,6 @@ onBeforeMount(()=>{
   getRequests();
 });
 
-// 입력확인
-// const fullInput = ref(false);
-// watch (
-//   maintenanceInfo.value,
-//   (newVal) => {
-//     let btnActive = true;
-//     for(let key in newVal) {
-//       if(newVal[key] == '' && key != 'maintenance_detail') {
-//         btnActive = false;
-//         break;
-//       }
-//     }
-//     fullInput.value = btnActive;
-//   },
-//   { deep: true }
-// )
 </script>
 
 
