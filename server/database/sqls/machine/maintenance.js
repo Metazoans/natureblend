@@ -1,6 +1,6 @@
 // 정비
 
-// 전체 리스트
+// 요청 리스트
 const requestList = `
 SELECT r.machine_num
        , machine_type
@@ -10,7 +10,7 @@ SELECT r.machine_num
        , request_date
        , request
        , request_emp
-       , work_emp
+       , e.name AS request_emp_name
        , maintenance_detail
        , maintenance_state
        , end_date
@@ -18,6 +18,8 @@ FROM maintenance r LEFT JOIN machine m
                      ON (r.machine_num = m.machine_num)
                    LEFT JOIN process p
                      ON (m.process_code = p.process_code)
+                   LEFT JOIN employee e
+                     ON (r.request_emp = e.emp_num)
 ORDER BY request_date
 `;
 
@@ -32,6 +34,7 @@ SELECT r.machine_num
        , request
        , request_emp
        , work_emp
+       , w.name AS work_emp_name
        , maintenance_detail
        , maintenance_state
        , end_date
@@ -39,6 +42,8 @@ FROM maintenance r LEFT JOIN machine m
                      ON (r.machine_num = m.machine_num)
                    LEFT JOIN process p
                      ON (m.process_code = p.process_code)
+                   LEFT JOIN employee w
+                     ON (r.work_emp = w.emp_num)
 ORDER BY end_date DESC
 `;
 
