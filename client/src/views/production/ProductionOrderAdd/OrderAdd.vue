@@ -175,6 +175,7 @@ export default {
       searchPlan: {},
       isOrderAddFormReset: false,
       originalRowDataNeed: [],
+      selectedStock: {}
     }
   },
 
@@ -194,8 +195,13 @@ export default {
       this.searchPlan = searchPlan
     },
 
-    onCellEditingStopped() {
-      // cell 편집 후 focusout 됐을 때 트리거됨
+    onCellEditingStopped(params) {
+      if(Number(params.value) > this.selectedStock.stockAmount) {
+        this.$notify({
+          text: `재고 수량을 초과하였습니다. 최대 수량은 ${this.selectedStock.stockAmount}입니다`,
+          type: 'error',
+        });
+      }
     },
 
     updateNeedStock() {
@@ -387,11 +393,11 @@ export default {
         this.focusOnCell()
       }, 10)
 
-      let selectedStock = params.data
+      this.selectedStock = params.data
 
       let isStop = false
       this.rowDataUse.forEach((data) => {
-        if((data.useLotSeq === selectedStock.stockLotSeq) && !isStop) {
+        if((data.useLotSeq === this.selectedStock.stockLotSeq) && !isStop) {
           this.$notify({
             text: "이미 선택한 자재입니다.",
             type: 'error',
@@ -407,10 +413,10 @@ export default {
       this.rowDataUse = [
         ...this.rowDataUse,
         {
-          useLotSeq: selectedStock.stockLotSeq,
-          useLot: selectedStock.stockLot,
-          useMaterialName: selectedStock.stockMaterialName,
-          useMaterialCode: selectedStock.stockMaterialCode
+          useLotSeq: this.selectedStock.stockLotSeq,
+          useLot: this.selectedStock.stockLot,
+          useMaterialName: this.selectedStock.stockMaterialName,
+          useMaterialCode: this.selectedStock.stockMaterialCode
         }
       ]
     },
