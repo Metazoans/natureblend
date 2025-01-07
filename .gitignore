@@ -2,6 +2,7 @@ node_modules/
 sessions/
 package-lock.json
 *.env
+public/
 
 .DS_Store
 /dist
