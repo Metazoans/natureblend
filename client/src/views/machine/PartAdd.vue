@@ -145,7 +145,7 @@ const selectclient = (client) => {
 };
 const openClientModal = (modalType,index) => {
     isShowModal.value[modalType] = true; 
-    indexNum.value = index; //현재 선택된 index
+    this.indexNum = index; //현재 선택된 index
 };
 const confirmClientModal = (modalType) => {
   alert('modal confirm test');
