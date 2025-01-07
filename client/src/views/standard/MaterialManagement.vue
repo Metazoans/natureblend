@@ -86,17 +86,19 @@
        columnDefs: [
          { headerName: "자재코드", field: "material_code", width: 220 },
          { headerName: "자재이름", field: "material_name" },
-         { headerName: "안전재고(g, 개)", 
+         { headerName: "안전재고", 
            field: "safety_inventory" ,
            cellStyle: { textAlign: 'right'} ,
            cellRenderer: params => {
-               if (params.value != null) {
-               const formatted_t_qty = Number(params.value).toLocaleString();
-               return `<span style="text-align: right;">${formatted_t_qty}</span>`;
-               } else {
-               return `<span style="text-align: right;"></span>`;
-               }
-            },
+            if (params.value != null) {
+              const formatted_t_qty = (params.data.material_name.includes('병') ? 
+              (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
+              return `<span style="text-align: right;">${formatted_t_qty}</span>`;
+            } else {
+              return `<span style="text-align: right;"></span>`;
+            }
+          },
+            
          },
          { headerName: "유통기한(일)", field: "expiration_date" ,cellStyle: { textAlign: 'right' }},
          { headerName: "등록일", field: "regi_date",cellStyle: { textAlign: 'center' } },
