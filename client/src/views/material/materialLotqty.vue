@@ -104,7 +104,7 @@
       :paginationPageSize="9"
       :paginationPageSizeSelector="[9, 20, 50, 100]"
       @grid-ready="onReady"
-      style="height: 471px;"
+      style="height: 473px;"
       rowSelection="multiple"
       :noRowsOverlayComponent="CustomNoRowsOverlay"
       :tooltipShowDelay="500"

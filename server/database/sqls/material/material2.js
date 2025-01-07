@@ -83,7 +83,7 @@ const process1list =
 `
 SELECT
 		pwh.product_name,
-		pwh.production_order_qty AS product_qty
+		sum(pwb.process_todo_qty) AS product_qty
 FROM
 		process_work_body pwb
 		JOIN process_work_header pwh
@@ -94,6 +94,7 @@ FROM
 		JOIN qc_process_beverage qpb
 			ON	pwb.process_num = qpb.process_num
 			AND qpb.inspec_status = '검사요청완료'
+GROUP BY pwb.process_work_header_num
 `;
 
 // 음료제작 품질 [검사 완료 2025-01-06]
@@ -115,25 +116,83 @@ GROUP BY pwh.process_work_header_num, pwh.product_name
 ORDER BY pwb.process_num DESC
 `;
 
-// 세척 공정  [ 실패작 더이상 아이디어가 안떠오름 DB설계가 잘못되어있음 ㅠ]
+// 세척 공정  [ ]
 const process2list =
 `
+WITH first_query AS (
+    SELECT 
+        pwh.product_name,
+        SUM(pwb.success_qty) AS product_qty
+    FROM	
+        qc_process_beverage qpc
+        JOIN process_work_body pwb
+            ON qpc.process_num = pwb.process_num
+            AND pwb.partial_process_status = 'partial_process_complete'
+            AND pwb.success_qty IS NULL
+        JOIN process_work_header pwh
+            ON pwb.process_work_header_num = pwh.process_work_header_num
+            AND pwh.process_status = 'processing'
+    GROUP BY
+        pwh.product_name
+),
+second_query AS (
+    SELECT
+        pwh.product_name,
+        SUM(pwb.process_todo_qty) AS product_qty
+    FROM
+        process_work_body pwb
+        JOIN process_work_header pwh
+            ON pwb.process_work_header_num = pwh.process_work_header_num
+            AND pwh.process_name = '병세척공정'
+            AND pwh.process_status != 'process_complete'
+      	WHERE pwb.success_qty IS NULL
+    GROUP BY
+        pwh.product_name
+)
 SELECT
-		pwh.product_name,
-		sum(pwb.process_todo_qty) AS product_qty
-FROM
-		process_work_body pwb
-		JOIN process_work_header pwh
-			ON pwb.process_work_header_num = pwh.process_work_header_num
-				AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
-			  AND pwh.process_start_time IS NOT NULL
-			  AND pwh.process_end_time IS NULL
-		JOIN qc_process_cleaning qpc
-			ON	pwb.process_num = qpc.process_num
-			AND qpc.inspec_status = '검사요청완료'
-			GROUP BY pwh.process_work_header_num, pwh.product_name
-      ORDER BY pwb.process_num DESC
+    COALESCE(fq.product_name, sq.product_name) AS product_name,
+    CASE
+        WHEN fq.product_qty IS NULL THEN sq.product_qty
+        WHEN sq.product_qty IS NULL THEN fq.product_qty
+        ELSE GREATEST(fq.product_qty, sq.product_qty)
+    END AS product_qty
+FROM 
+    first_query fq
+LEFT JOIN second_query sq
+    ON fq.product_name = sq.product_name
+
+UNION
+
+SELECT
+    COALESCE(fq.product_name, sq.product_name) AS product_name,
+    CASE
+        WHEN fq.product_qty IS NULL THEN sq.product_qty
+        WHEN sq.product_qty IS NULL THEN fq.product_qty
+        ELSE GREATEST(fq.product_qty, sq.product_qty)
+    END AS product_qty
+FROM 
+    second_query sq
+LEFT JOIN first_query fq
+    ON fq.product_name = sq.product_name
 `;
+
+// `
+// SELECT
+// 		pwh.product_name,
+// 		sum(pwb.process_todo_qty) AS product_qty
+// FROM
+// 		process_work_body pwb
+// 		JOIN process_work_header pwh
+// 			ON pwb.process_work_header_num = pwh.process_work_header_num
+// 				AND pwh.process_name = '병세척공정' -- 세척공정 -- 포장공정 -- 음료제작공정
+// 			  AND pwh.process_start_time IS NOT NULL
+// 			  AND pwh.process_end_time IS NULL
+// 		JOIN qc_process_cleaning qpc
+// 			ON	pwb.process_num = qpc.process_num
+// 			AND qpc.inspec_status = '검사요청완료'
+// 			GROUP BY pwh.process_work_header_num, pwh.product_name
+//       ORDER BY pwb.process_num DESC
+// `;
 
 // 세척 품질  [ 아 몰라 ㅋㅋㅋㅋㅋ 포기하면 편해 ㅠㅠ]
 const process2qclist =
