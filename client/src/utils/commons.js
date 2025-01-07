@@ -1,5 +1,5 @@
 const ajaxUrl = `/api`;
-const localUrl = `http://localhost:3000`;
+const localUrl = ``;
   
 export {
     ajaxUrl,
