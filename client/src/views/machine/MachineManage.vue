@@ -338,6 +338,9 @@ export default {
       }
       this.machineData.machine_state = '사용';
       this.machineData.emp_num = this.$store.state.loginInfo.emp_num;
+      this.machineData.emp_name = this.$store.state.loginInfo.name;
+      this.selectedCom = '';
+      this.searchCom = '';
       this.partCnt = 0;
     },
 
