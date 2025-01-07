@@ -6,6 +6,7 @@ const bookRouter = require('./router/book_router.js');
 const empRouter = require('./router/emp_router.js');
 
 const path = require('path');
+const history = require("connect-history-api-fallback");
 
 // 영업
 const salesRouter = require('./router/sales/order_router.js');
@@ -37,6 +38,12 @@ const loginRouter = require('./router/login_router.js');
 // 미들웨어
 app.use(express.json()); // application/json
 app.use(express.urlencoded({ extended : false}));
+
+
+// 새로고침 수정
+app.set("port", process.env.PORT || 3000);
+
+app.use(history()); //라우터보다 먼저 실행되야함
 
 //정적 경로 설정
 app.use(express.static(path.join(__dirname, 'public')));
