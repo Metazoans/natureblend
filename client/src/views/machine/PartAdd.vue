@@ -155,7 +155,7 @@ function confirmClientModal(modalType){
   closeClientModal(modalType); // 모달 닫기
 };
 function closeClientModal(modalType) {
-    this.isShowModal[modalType] = false;
+    isShowModal.value[modalType] = false;
 };
 
 
