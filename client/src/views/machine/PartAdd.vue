@@ -152,7 +152,7 @@ function confirmClientModal(modalType){
     searchCom.value = selectedCom.value;
   } 
 
-  this.closeClientModal(modalType); // 모달 닫기
+  closeClientModal(modalType); // 모달 닫기
 };
 function closeClientModal(modalType) {
     this.isShowModal[modalType] = false;
