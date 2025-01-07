@@ -139,25 +139,24 @@ const isShowModal = ref({
   client: false,
 })
 // 거래처 모달
-function selectclient(client){
+const selectclient = (client) => {
     selectedCom.value = client.com_name; 
     partInfo.value.client_num = client.client_num;
 };
-function openClientModal(modalType,index) {
+const openClientModal = (modalType,index) => {
     isShowModal.value[modalType] = true; 
-    this.indexNum = index; //현재 선택된 index
+    indexNum.value = index; //현재 선택된 index
 };
-function confirmClientModal(modalType){
+const confirmClientModal = (modalType) => {
     if (modalType === 'client') {
     searchCom.value = selectedCom.value;
   } 
 
   closeClientModal(modalType); // 모달 닫기
 };
-function closeClientModal(modalType) {
+const closeClientModal = (modalType) => {
     isShowModal.value[modalType] = false;
 };
-
 
 const store = useStore();
 const checkJob = ref(
