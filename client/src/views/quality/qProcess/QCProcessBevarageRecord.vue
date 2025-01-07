@@ -72,7 +72,7 @@
     <div class="grid-container">
       <ag-grid-vue :rowData="rowData1" :columnDefs="columnDefs" :theme="theme" :defaultColDef="defaultColDef"
         @grid-ready="onGridReady" @cell-clicked="onCellClicked" :pagination="true"
-        :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10" style="height: 700px;"
+        :paginationPageSizeSelector="[10, 20, 50, 100]" :paginationPageSize="10" style="height: 513px;"
         :noRowsOverlayComponent="noRowsOverlayComponent">
       </ag-grid-vue>
     </div>
