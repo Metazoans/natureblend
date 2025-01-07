@@ -85,6 +85,6 @@ app.listen(3000, ()=>{
 
 
 // 라우팅
-app.get('/', (req, res)=>{
-  res.send('Welcome!!');
+router.get('/', function(req, res, next) {
+  res.sendFile(path.join(__dirname, '../public', 'index.html'));
 })
