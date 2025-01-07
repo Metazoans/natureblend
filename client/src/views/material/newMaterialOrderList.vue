@@ -154,6 +154,7 @@ export default {
              this.$emit('planAndClientList', this.selectedRows);
              this.clientdate = [];
              this.isVisible2 = !this.isVisible2;
+             this.clientNamesearch = '';
              this.$notify({ text: '거래처가 정상적으로 선택 됐습니다.', type: 'success' });    // success, warn, error 가능
          }else{
             this.$notify({ text: '선택된 거래처가 없습니다.', type: 'error' }); // title:'주문생성', 

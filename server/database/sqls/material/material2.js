@@ -349,18 +349,31 @@ ORDER BY pwb.process_num DESC
 // 제품 입고 대기  [ 검사 완료 2025-01-06]
 const product_input_wait =
 `
-SELECT p.product_name ,
-       sum(q.pass_qnt) AS product_qty
-FROM process_work_body w
-LEFT JOIN qc_packaging q ON q.process_num = w.process_num
-LEFT JOIN product p ON w.product_code = p.product_code
-WHERE q.qc_packing_id NOT IN
+SELECT pwh.product_name,
+       sum(pwb.success_qty) AS product_qty
+FROM process_work_body pwb
+JOIN process_work_header pwh ON pwb.process_work_header_num = pwh.process_work_header_num
+AND pwh.process_name = '포장공정'
+LEFT JOIN qc_packaging qp ON pwb.process_num = qp.process_num
+WHERE pwb.partial_process_status = 'partial_process_complete'
+  AND qp.qc_packing_id NOT IN
     (SELECT qc_packing_id
      FROM input_body)
-AND q.pass_qnt != 0
-GROUP BY p.product_name
-ORDER BY q.inspec_start DESC
+GROUP BY pwh.product_name
 `;
+// `
+// SELECT p.product_name ,
+//        sum(q.pass_qnt) AS product_qty
+// FROM process_work_body w
+// LEFT JOIN qc_packaging q ON q.process_num = w.process_num
+// LEFT JOIN product p ON w.product_code = p.product_code
+// WHERE q.qc_packing_id NOT IN
+//     (SELECT qc_packing_id
+//      FROM input_body)
+// AND q.pass_qnt != 0
+// GROUP BY p.product_name
+// ORDER BY q.inspec_start DESC
+// `;
 
 // 제품 출고 대기 [ 검수 완료 2025-01-06 ]
 const produce_out_wait =

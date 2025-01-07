@@ -14,7 +14,7 @@
             :pagination="true"
             :paginationPageSize="50"
             @grid-ready="onReady"
-            style="height: 387px;"
+            style="height: 389px;"
             rowSelection="multiple"
             :singleClickEdit="true"
             :editOnFocus="true"
