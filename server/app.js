@@ -86,5 +86,5 @@ app.listen(3000, ()=>{
 
 // 라우팅
 app.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../public', 'index.html'));
+  res.sendFile(path.join(__dirname, './public', 'index.html'));
 })
