@@ -274,6 +274,7 @@ const lot_qty_list =
 `
 WITH in_material AS
   (SELECT lot_code,
+  				lot_seq,
           sum(material_qty) AS material_qty
    FROM invalid_material
    WHERE is_out = '0'
@@ -307,6 +308,7 @@ LEFT JOIN client cli ON mi.client_num = cli.client_num
 LEFT JOIN employee emp ON mi.emp_num = emp.emp_num
 LEFT JOIN warehouse ware ON mlq.warehouse_code = ware.warehouse_code
 LEFT JOIN in_material im ON mlq.lot_code = im.lot_code
+                  			AND mlq.lot_seq = im.lot_seq
 LEFT JOIN material_discard md ON mlq.lot_seq = md.lot_seq
 `;
 // `
