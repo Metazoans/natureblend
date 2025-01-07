@@ -176,6 +176,14 @@
         };
       },
       methods: {
+        async checkBusinessNumber(comNum) {
+          try {
+            const response = await axios.get(`${ajaxUrl}/checkBusinessNumber/${comNum}`);
+            return response.data.message === '사용 가능한 사업자번호입니다.'; // 중복되지 않으면 true 반환
+          } catch (error) {
+            return false; // 오류가 발생하면 사용 불가능으로 간주
+          }
+        },
         onDeleteCancelled() {
           this.showDeleteModal = false;
         },
@@ -233,6 +241,12 @@
            }
        },
        async customerInsert(newList){
+        const isBusinessNumberValid = await this.checkBusinessNumber(newList.com_num);
+          if (!isBusinessNumberValid) {
+            this.$notify({ text: '이미 등록된 사업자번호입니다.', type: 'error' });
+            return; // 중복된 사업자번호가 있을 경우, 등록을 하지 않음
+          }
+        // const comNumber = await axios.get(`${ajaxUrl}/customerList`);
            const result = await axios.post(`${ajaxUrl}/customerInsert`, newList)
                                      .catch(err => console.log(err));
            if(result.data === '성공'){
