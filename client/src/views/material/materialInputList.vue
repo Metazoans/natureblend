@@ -399,6 +399,6 @@ const matrialInputList = async function(){
 }
 input {
       background-color: $white;
-      border: solid 1px  ;
+      border: solid 1px  #ced4da;
 }
 </style>

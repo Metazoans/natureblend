@@ -630,6 +630,6 @@ onBeforeMount(()=>{
 }
 input {
      background-color: $white;
-     border: solid 1px  ;
+     border: solid 1px  #ced4da;
 }
 </style>
