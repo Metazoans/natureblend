@@ -153,7 +153,7 @@ const confirmClientModal = (modalType) => {
     searchCom.value = selectedCom.value;
   } 
 
-  closeClientModal(modalType); // 모달 닫기
+  this.closeClientModal(modalType); // 모달 닫기
 };
 const closeClientModal = (modalType) => {
     isShowModal.value[modalType] = false;
