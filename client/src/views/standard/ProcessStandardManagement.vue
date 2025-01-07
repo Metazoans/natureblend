@@ -50,6 +50,11 @@
     </ag-grid-vue>
  </div>
  </div>
+ <deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="onDeleteConfirmed"
+      @deleteCancelled="onDeleteCancelled"
+ />
  </template>
  <script>
  import axios from 'axios';
@@ -57,14 +62,20 @@
  // import userDateUtils from '@/utils/useDates.js';
  import theme from "@/utils/agGridTheme";
  import { mapMutations } from "vuex";
+ import deleteModal from './deleteModal.vue';
 
  
  export default {
+    components:{
+        deleteModal,
+    },
    data() {
      return {
        processCode: '',   // 공정코드
        processName: '',  // 공정이름
        machineType: '',  // 설비분류
+       showDeleteModal: false, // 삭제 모달 표시 여부
+       selectedProcess: null,
        columnDefs: [
          { headerName: "공정코드", field: "process_code", width: 220 },
          { headerName: "공정명", field: "process_name" },
@@ -92,20 +103,9 @@
              button2.addEventListener('click', () => {
                console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
                console.log("삭제할 공정코드 : ", params.data.process_code);
-               if(confirm("정말 삭제하시겠습니까?")){
-                    axios.delete(`${ajaxUrl}/processDelete/${params.data.process_code}`)
-                    .then(res => {
-                        if(res.data === '성공'){
-                            this.$notify({ text: '공정이 삭제되었습니다.', type: 'success' });
-                            this.processList();
-                        }else{
-                            this.$notify({ text: '삭제실패.', type: 'error' });
-                        }
-                    })
-                    .catch(err => console.log(err));
-               }
-               // 로트번호 조회해서 모달여는거
-               // lotinfo(params.data);
+               this.selectedProcess = params.data;
+               this.showDeleteModal = true;
+
              });
              return button2;
            }
@@ -117,6 +117,24 @@
      };
    },
    methods: {
+    onDeleteCancelled(){
+        this.showDeleteModal = false;
+    },
+    async onDeleteConfirmed(){
+        if(this.selectedProcess){
+                    axios.delete(`${ajaxUrl}/processDelete/${this.selectedProcess.process_code}`)
+                    .then(res => {
+                        if(res.data === '성공'){
+                            this.$notify({ text: '공정이 삭제되었습니다.', type: 'success' });
+                            this.processList();
+                        }else{
+                            this.$notify({ text: '삭제실패.', type: 'error' });
+                        }
+                    })
+                    .catch(err => console.log(err));
+                    this.showDeleteModal = false;
+        }
+    },
     refresh(){
         this.processList();
         this.upin = '';

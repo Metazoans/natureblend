@@ -66,6 +66,11 @@
     </ag-grid-vue>
  </div>
  </div>
+ <deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="onDeleteConfirmed"
+      @deleteCancelled="onDeleteCancelled"
+ />
  </template>
  <script>
  import axios from 'axios';
@@ -73,9 +78,13 @@
  // import userDateUtils from '@/utils/useDates.js';
  import theme from "@/utils/agGridTheme";
  import { mapMutations } from "vuex";
+ import deleteModal from './deleteModal.vue';
 
  
  export default {
+   components:{
+      deleteModal,
+   },
    data() {
      return {
        materialCode: '',   // 자재코드
@@ -83,6 +92,8 @@
        safetyInventory: '',  // 안전재고
        expirationDate: '', // 유통기한 
        regiDate: new Date().toISOString().split('T')[0], // 등록일
+       showDeleteModal: false, // 삭제 모달 표시 여부
+       selectedMaterial: null,
        columnDefs: [
          { headerName: "자재코드", field: "material_code", width: 220 },
          { headerName: "자재이름", field: "material_name" },
@@ -125,20 +136,8 @@
              button2.addEventListener('click', () => {
                console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
                console.log(params.data.material_code);
-               if (confirm('삭제하시겠습니까?')) {
-                  axios.delete(`${ajaxUrl}/materialDel/${params.data.material_code}`)
-                       .then(res => {
-                          if(res.data === '성공'){
-                           this.$notify({ text: '자재가 삭제되었습니다.', type: 'success' });
-                             this.materialList();
-                          }else{
-                           this.$notify({ text: '삭제 실패하였습니다.', type: 'error' });
-                          }
-                       })
-                       .catch(err => console.log(err));
-               }
-               // 로트번호 조회해서 모달여는거
-               // lotinfo(params.data);
+               this.selectedMaterial = params.data;
+               this.showDeleteModal = true;
              });
              return button2;
            }
@@ -150,6 +149,24 @@
      };
    },
    methods: {
+      onDeleteCancelled(){
+         this.showDeleteModal = false;
+      },
+      async onDeleteConfirmed(){
+         if(this.selectedMaterial){
+                  axios.delete(`${ajaxUrl}/materialDel/${this.selectedMaterial.material_code}`)
+                       .then(res => {
+                          if(res.data === '성공'){
+                           this.$notify({ text: '자재가 삭제되었습니다.', type: 'success' });
+                             this.materialList();
+                          }else{
+                           this.$notify({ text: '삭제 실패하였습니다.', type: 'error' });
+                          }
+                       })
+                       .catch(err => console.log(err));
+                       this.showDeleteModal = false;
+         }
+      },
       refresh(){
          this.materialList();
          this.upin = '';
