@@ -60,6 +60,11 @@
     </ag-grid-vue>
  </div>
  </div>
+ <deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="onDeleteConfirmed"
+      @deleteCancelled="onDeleteCancelled"
+ />
  </template>
  <script>
 import { ajaxUrl } from '@/utils/commons.js';
@@ -67,15 +72,20 @@ import { ajaxUrl } from '@/utils/commons.js';
 import theme from "@/utils/agGridTheme";
 import axios from "axios";
 import { mapMutations } from "vuex";
-
+import deleteModal from './deleteModal.vue';
  
  export default {
+  components:{
+    deleteModal,
+  },
    data() {
      return {
        productCode: '',   // 제품코드
        productName: '',  // 제품이름
        expirationDate: '',  // 유통기한
        capacity: '', // 제품용량
+       showDeleteModal: false, // 삭제 모달 표시 여부
+       selectedProduct: null,
        columnDefs: [
          { headerName: "제품코드", field: "product_code", width: 220 },
          { headerName: "제품명", field: "product_name" },
@@ -104,22 +114,8 @@ import { mapMutations } from "vuex";
              button2.addEventListener('click', () => {
                console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
                console.log(params.data.product_code);
-               if (confirm('정말 삭제하시겠습니까?')) {
-                 axios.delete(`${ajaxUrl}/productDelete/${params.data.product_code }`)
-                   .then((res) => {
-                     if (res.data === '성공') {
-                      this.$notify({ text: '제품이 삭제되었습니다.', type: 'success' });
-                       this.productSelect();
-                     } else {
-                      this.$notify({ text: '삭제 실패하였습니다.', type: 'error' });
-                     }
-                   })
-                   .catch((err) => {
-                     console.log(err);
-                   });
-               }
-               // 로트번호 조회해서 모달여는거
-               // lotinfo(params.data);
+               this.selectedProduct = params.data;
+               this.showDeleteModal = true;
              });
              return button2;
            }
@@ -131,6 +127,27 @@ import { mapMutations } from "vuex";
      };
    },
    methods: {
+    onDeleteCancelled() {
+      this.showDeleteModal = false;
+    },
+    async onDeleteConfirmed(){
+      if(this.selectedProduct){
+        axios.delete(`${ajaxUrl}/productDelete/${ this.selectedProduct.product_code }`)
+          .then((res) => {
+            if (res.data === '성공') {
+             this.$notify({ text: '제품이 삭제되었습니다.', type: 'success' });
+              this.productSelect();
+            } else {
+             this.$notify({ text: '삭제 실패하였습니다.', type: 'error' });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+          this.showDeleteModal = false;
+      }
+
+    },
     refresh(){
       this.productSelect();
       this.upin = '';

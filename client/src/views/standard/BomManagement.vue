@@ -110,6 +110,11 @@
   </materialModal>
   </div>
   </div>
+  <deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="this.onDeleteConfirmed(this.selectedBom.bom_num)"
+      @deleteCancelled="onDeleteCancelled"
+ />
 </template>
 
 <script>
@@ -119,11 +124,12 @@
   import Modal from "@/views/standard/Modal.vue";
   import materialModal from "@/views/standard/materialModal.vue";
   import { mapMutations } from "vuex";
+  import deleteModal from './deleteModal.vue';
 
   
   export default { 
       name: 'BomManagement',
-      components: {Modal,materialModal},
+      components: {Modal,materialModal,deleteModal},
       data() {
         return { 
           isShowModal: false, // 제품코드 클릭시 발생하는 모달
@@ -133,6 +139,8 @@
           selectedRow : null,
           theme: theme,
           rowData:[],
+          showDeleteModal: false, // 삭제 모달 표시 여부
+          selectedBom: null,
           columnBoms: [
             { checkboxSelection: true, headerCheckboxSelection: true, width: 50},
             { headerName:"자재코드", field : "material_code",
@@ -198,9 +206,11 @@
             button.style.lineHeight = '30px';
             button.addEventListener('click', () => {
                 console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
-                this.dele(params.data.bom_num);
-                this.$notify({ text: 'BOM이 삭제되었습니다.', type: 'success' });
-                this.getBomList(); // 삭제 후 목록 새로고침
+                this.selectedBom = params.data;
+                this.showDeleteModal = true;
+                //this.onDeleteConfirmed(params.data.bom_num);
+                // this.$notify({ text: 'BOM이 삭제되었습니다.', type: 'success' });
+                // this.getBomList(); // 삭제 후 목록 새로고침
             });
             return button;
           }
@@ -228,6 +238,33 @@
         this.getBomList();
       },
       methods: {
+        onDeleteCancelled(){
+          this.showDeleteModal = false;
+        },
+        async onDeleteConfirmed(bomnum){
+              console.log('삭제할번호',bomnum);
+            if(this.selectedBom){
+              let result1 = await axios.delete(`${ajaxUrl}/bomdelete/${bomnum}`);
+              console.log(result1);
+              let result2 = await axios.delete(`${ajaxUrl}/bomdelete/${bomnum}`);
+              console.log(result2);
+               this.$notify({ text: 'BOM이 삭제되었습니다.', type: 'success' });
+               this.getBomList(); // 삭제 후 목록 새로고침
+            }
+            this.showDeleteModal = false;
+        },
+        // async dele(bomnum){
+        //     console.log('삭제할번호',bomnum);
+        //     if(this.selectedBom){
+        //       let result1 = await axios.delete(`${ajaxUrl}/bomdelete/${bomnum}`);
+        //       console.log(result1);
+        //       let result2 = await axios.delete(`${ajaxUrl}/bomdelete/${bomnum}`);
+        //       console.log(result2);
+        //        this.$notify({ text: 'BOM이 삭제되었습니다.', type: 'success' });
+        //        this.getBomList(); // 삭제 후 목록 새로고침
+        //     }
+            
+        // },
         ...mapMutations(["addLoginInfo"]),
       async checkLogin(){
           this.loginInfo = this.$store.state.loginInfo;
@@ -454,13 +491,6 @@
             this.searchCapacity = capa;        // 용량 입력창에 값 설정
             this.searchMaterialcode = materialcode;
             this.searchProductcode = productcode; // 제품코드
-          },
-          async dele(bomnum){
-            console.log('삭제할번호',bomnum);
-            let result1 = await axios.delete(`${ajaxUrl}/bomdelete/${bomnum}`);
-            console.log(result1);
-            let result2 = await axios.delete(`${ajaxUrl}/bomdelete/${bomnum}`);
-            console.log(result2);
           },
           addMaterial() {
             this.bomBox.push({ bom_num:this.searchBomnum, material_code: '', material: '', material_con: 0 });

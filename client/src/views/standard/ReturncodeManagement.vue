@@ -44,6 +44,11 @@
     </ag-grid-vue>
  </div>
  </div>
+ <deleteModal
+      :showModal="showDeleteModal"
+      @deleteConfirmed="onDeleteConfirmed"
+      @deleteCancelled="onDeleteCancelled"
+ />
  </template>
  <script>
  import axios from 'axios';
@@ -51,12 +56,18 @@
  // import userDateUtils from '@/utils/useDates.js';
  import theme from "@/utils/agGridTheme";
  import { mapMutations } from "vuex";
+ import deleteModal from './deleteModal.vue';
  
  export default {
+   components:{
+      deleteModal,
+   },
    data() {
      return {
        returnCode: '',   // 반품코드
        returnReason: '',  // 반품사유
+       showDeleteModal: false, // 삭제 모달 표시 여부
+       selectedCode: null,
        columnDefs: [
          { headerName: "반품코드", field: "return_code", width: 220 },
          { headerName: "반품사유", field: "return_reason" },
@@ -81,20 +92,8 @@
              button2.style.lineHeight = '30px';
              button2.addEventListener('click', () => {
                console.log("레코드 확인[삭제] : ", JSON.stringify(params.data));
-               if(confirm("정말 삭제하시겠습니까?")){
-                    axios.delete(`${ajaxUrl}/returnDelete/${params.data.return_code}`)
-                    .then(res => {
-                        if(res.data === '성공'){
-                           this.$notify({ text: '코드가 삭제되었습니다.', type: 'success' });
-                            this.returnList();
-                        }else{
-                           this.$notify({ text: '삭제실패.', type: 'error' });
-                        }
-                    })
-                    .catch(err => console.log(err));
-               }
-               // 로트번호 조회해서 모달여는거
-               // lotinfo(params.data);
+               this.selectedCode = params.data;
+               this.showDeleteModal = true;
              });
              return button2;
            }
@@ -106,6 +105,25 @@
      };
    },
    methods: {
+      onDeleteCancelled(){
+         this.showDeleteModal = false;
+      },
+      async onDeleteConfirmed(){
+         if(this.selectedCode){
+
+                    axios.delete(`${ajaxUrl}/returnDelete/${this.selectedCode.return_code}`)
+                    .then(res => {
+                        if(res.data === '성공'){
+                           this.$notify({ text: '코드가 삭제되었습니다.', type: 'success' });
+                            this.returnList();
+                        }else{
+                           this.$notify({ text: '삭제실패.', type: 'error' });
+                        }
+                    })
+                    .catch(err => console.log(err));
+                    this.showDeleteModal = false;
+         }
+      },
       refresh(){
          this.returnList();
          this.upin = '';
