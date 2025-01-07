@@ -50,7 +50,8 @@
           { text: "생산", active: false },
           { text: "품질", active: false },
           { text: "설비", active: false },
-          { text: "기준정보", active: false }
+          { text: "기준정보", active: false },
+          { text: "현황", active: false }
         ],
       };
     },
@@ -86,6 +87,9 @@
               break;
             case '기준정보':
               this.movePage('employeemanagement');
+              break;
+            case '현황':
+              this.movePage('Factory');
               break;
           }
 

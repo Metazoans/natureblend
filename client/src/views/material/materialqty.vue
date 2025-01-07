@@ -14,7 +14,7 @@
          <div class="col-sm-2" style="width: 105px;" >
             <label class="col-form-label fw-bold" for="qty_state">재고 상태</label>
             <div id="qty_state" style="padding-left: 0px;">
-               <select class="form-select" v-model="qty_state" style="width: 85px; border: solid 1px; background-color: white; text-align: center;" aria-label="재고 상태 선택">
+               <select class="form-select" v-model="qty_state" style="width: 85px; border: solid 1px #ced4da; background-color: white; text-align: center;" aria-label="재고 상태 선택">
                      <option value="a1">전체</option>
                      <option value="a2">재고있음</option>
                      <option value="a3">재고없음</option>
@@ -286,7 +286,7 @@ const onExportClick = () => {
  }
  input {
       background-color: $white;
-      border: solid 1px  ;
+      border: solid 1px  #ced4da;
  }
 </style>
 
