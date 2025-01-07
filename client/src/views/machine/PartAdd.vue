@@ -148,6 +148,7 @@ const openClientModal = (modalType,index) => {
     indexNum.value = index; //현재 선택된 index
 };
 const confirmClientModal = (modalType) => {
+  alert('modal confirm test');
     if (modalType === 'client') {
     searchCom.value = selectedCom.value;
   } 
