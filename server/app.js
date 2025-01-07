@@ -40,6 +40,7 @@ app.use(express.urlencoded({ extended : false}));
 
 //정적 경로 설정
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
 // 라우터 등록
@@ -71,7 +72,6 @@ app.use('/api/inActs', inactRouter);
 app.use('/api/maintenances', maintenanceRouter);
 app.use('/api/parts', partRouter);
 
-app.use('/api/images', express.static(path.join(__dirname, 'images')));
 
 // 기준정보 라우터
 app.use('/api', standardRouter);

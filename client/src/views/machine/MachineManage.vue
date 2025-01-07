@@ -373,7 +373,10 @@ export default {
 
       // 부품 등록
       for(let i in this.partDataList) {
-        let cycle = this.partDataList[i].yearCycle + this.partDataList[i].monthCycle + this.partDataList[i].dayCycle;
+        let cycle = 0;
+        if(this.partDataList[i].yearCycle > 0) cycle += this.partDataList[i].yearCycle;
+        if(this.partDataList[i].monthCycle > 0) cycle += this.partDataList[i].monthCycle;
+        if(this.partDataList[i].dayCycle > 0) cycle += this.partDataList[i].dayCycle;
         if(this.partDataList[i].part_name != '' && cycle > 0) {
           let check = await this.partInsert(this.partDataList[i], obj, addRes.machine_num);
           console.log(check);
@@ -488,6 +491,8 @@ export default {
           type: 'error',
         });
       }
+      console.log('MM part : ', this.partDataList);
+
     },
     async delClicked(row) {
       let newArray = [...this.partDataList];
@@ -511,7 +516,10 @@ export default {
 
     // 부품 등록
     async partInsert(partData, machineData, machineNo) {
-      let cycle = (partData.yearCycle * 365) + (partData.monthCycle * 30) + partData.dayCycle;
+      let cycle = 0;
+      if(partData.yearCycle > 0) cycle += (partData.yearCycle * 365);
+      if(partData.monthCycle > 0) cycle += (partData.monthCycle * 30);
+      if(partData.dayCycle > 0) cycle += partData.dayCycle;
 
       let obj = {
         machine_type: machineData.process_code,
@@ -608,15 +616,12 @@ export default {
       } catch (error) {
         console.error('이미지 업로드 실패:', error);
       }
-
-      console.log('저장한 값 : ', this.machineData.machine_img);
     },
 
     // 거래처 모달
     selectclient(client){
         this.selectedCom = client.com_name; 
         this.machineData.client_num = client.client_num;
-        console.log('client : ', client);
     },
     openClientModal(modalType,index) {
         this.isShowModal[modalType] = true; 
