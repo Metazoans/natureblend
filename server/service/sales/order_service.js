@@ -59,7 +59,7 @@ const getOrderList = async (orderStatus, orderName, clientName, startDate, endDa
     querywhere+= (i == 0 ? ` `:`AND `) + search;  
   };
 
-  querywhere = searchList.length == 0 ? "" : `WHERE ${querywhere}`;
+  querywhere = searchList.length == 0 ? `ORDER BY o.due_date` : `WHERE ${querywhere} ORDER BY o.due_date`;
   console.log('selected Query', querywhere);
 
   let result = await mysql.query('orderListInfo',querywhere);
