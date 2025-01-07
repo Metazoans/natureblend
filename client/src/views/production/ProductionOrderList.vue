@@ -160,7 +160,10 @@ export default {
       let result2 = await axios.post(`${ajaxUrl}/production/order/delete/process`, prodOrderNums)
           .catch(err => console.log(err));
 
-      if(result1.data.message === 'success' && result2.data.message === 'success') {
+      let result3 = await axios.post(`${ajaxUrl}/production/order/delete/invalid/material`, prodOrderNums)
+          .catch(err => console.log(err));
+
+      if(result1.data.message === 'success' && result2.data.message === 'success' && result3.data.message === 'success') {
         this.$notify({
           text: "삭제되었습니다.",
           type: 'success',

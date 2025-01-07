@@ -143,7 +143,10 @@ const deleteProcessWork = `
     delete from process_work_header
     where production_order_num in (?)
 `
-
+const deleteInvalidMaterial = `
+    delete from invalid_material
+    where production_order_num in (?)
+`
 
 
 module.exports = {
@@ -156,5 +159,6 @@ module.exports = {
     insertProcessWork,
     prodOrderList,
     deleteProdOrder,
-    deleteProcessWork
+    deleteProcessWork,
+    deleteInvalidMaterial
 }

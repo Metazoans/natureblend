@@ -59,4 +59,9 @@ router.post('/delete/process', async (req, res)=>{
     res.send(await orderService.deleteProcessWork(prodOrderNums));
 });
 
+router.post('/delete/invalid/material', async (req, res)=>{
+    let prodOrderNums = req.body;
+    res.send(await orderService.deleteInvalidMaterial(prodOrderNums));
+});
+
 module.exports = router
