@@ -52,7 +52,7 @@ const partCol = shallowRef([
   },
   { headerName: '번호', field: 'part_num', cellStyle: { textAlign: "center" }, flex: 2 },
   { headerName: '부품이름', field: 'part_name', flex: 3 },
-  { headerName: '설비분류', field: 'machine_type', flex: 5 },
+  { headerName: '설비분류', field: 'machine_type_name', flex: 5 },
   { headerName: '거래처', field: 'client_num', flex: 3 },
   { headerName: '교체주기', field: 'replace_cycle', cellStyle: { textAlign: "right" }, flex: 3 },
   { headerName: '구매일자', field: 'buy_date', cellStyle: { textAlign: "center" }, flex: 5 },
@@ -72,7 +72,11 @@ const getParts = async () => {
 
   for(let i in partRow.value) {
     partRow.value[i].buy_date = userDateUtils.dateFormat(partRow.value[i].buy_date, 'yyyy-MM-dd');
+    partRow.value[i].machine_type_name = partRow.value[i].machine_type.replace('p1', '세척기기')
+                                                                      .replace('p2', '음료제작기기')
+                                                                      .replace('p3', '포장기기');
   }
+  
 }
 
 // 선택 삭제

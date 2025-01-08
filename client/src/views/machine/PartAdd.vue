@@ -143,17 +143,16 @@ const selectclient = (client) => {
     selectedCom.value = client.com_name; 
     partInfo.value.client_num = client.client_num;
 };
-const openClientModal = (modalType,index) => {
+const openClientModal = (modalType) => {
     isShowModal.value[modalType] = true; 
-    this.indexNum = index; //현재 선택된 index
+    // this.indexNum = index; //현재 선택된 index
 };
 const confirmClientModal = (modalType) => {
-  alert('modal confirm test');
     if (modalType === 'client') {
     searchCom.value = selectedCom.value;
   } 
 
-  this.closeClientModal(modalType); // 모달 닫기
+  closeClientModal(modalType); // 모달 닫기
 };
 const closeClientModal = (modalType) => {
     isShowModal.value[modalType] = false;
