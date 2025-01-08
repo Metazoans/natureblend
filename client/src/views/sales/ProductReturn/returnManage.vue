@@ -492,6 +492,13 @@ export default{
     },
     //반품등록
     async returninstall(){
+        if(!this.clientNum || !this.productCode || !this.returnNum || !this.searchReturnCode || !this.searchEmpNum || !this.outputNum){
+            this.$notify({
+                    text: `반품을 원하는 출고건과 반품수량,반품사유,담당자를 입력하세요`,
+                    type: 'error',
+                });
+            return;
+        }
         if(this.outputAmount < this.returnNum){
             this.$notify({
                     text: `출고량보다 반품량이 많습니다.`,
@@ -499,6 +506,7 @@ export default{
                 });
             return;
         }
+       
 
         let returnInfo ={
             client_num : this.clientNum,
