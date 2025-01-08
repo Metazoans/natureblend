@@ -18,7 +18,7 @@
             :paginationPageSize="4"
             :paginationPageSizeSelector="[4, 10, 20, 40]"
             @grid-ready="onReady"
-            style="height: 261px;"
+            style="height: 263px;"
             rowSelection="multiple"
         >
         </ag-grid-vue>
