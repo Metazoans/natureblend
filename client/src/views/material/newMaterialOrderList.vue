@@ -18,7 +18,7 @@
             :paginationPageSize="4"
             :paginationPageSizeSelector="[4, 10, 20, 40]"
             @grid-ready="onReady"
-            style="height: 263px;"
+            style="height: 261px;"
             rowSelection="multiple"
         >
         </ag-grid-vue>
@@ -68,15 +68,16 @@ export default {
             isVisible2:false,
             clientcolumnDefs: [
                 { 
+                    cellStyle: { textAlign: "center" },
                     headerCheckboxSelection: true,
                     checkboxSelection: true,
                     headerName: "",
-                    width:45,
+                    flex:1,
                 },
-                { headerName: "NO.", field: "client_num", width:100, cellStyle: { textAlign: "center" } },
-                { headerName: "거래처명", field: "com_name", cellStyle: { textAlign: "left" } },
-                { headerName: "발주담당자", field: "emp_name", width:130, cellStyle: { textAlign: "left" } },
-                { headerName: "연락처", field: "emp_tel", cellStyle: { textAlign: "center" } },
+                { headerName: "NO.", field: "client_num", flex:1, cellStyle: { textAlign: "center" } },
+                { headerName: "거래처명", field: "com_name", flex:3, cellStyle: { textAlign: "left" } },
+                { headerName: "발주담당자", field: "emp_name", flex:2, width:130, cellStyle: { textAlign: "left" } },
+                { headerName: "연락처", field: "emp_tel", flex:3, cellStyle: { textAlign: "center" } },
             ],
             clientdate: [],
             theme : theme,
@@ -85,7 +86,7 @@ export default {
     methods: {
         onReady(event) {
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
 
             // 페이징 영역에 버튼 만들기
             const allPanels = document.querySelectorAll('.ag-paging-panel');

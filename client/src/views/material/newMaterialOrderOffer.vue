@@ -14,7 +14,7 @@
             :pagination="true"
             :paginationPageSize="50"
             @grid-ready="onReady"
-            style="height: 389px;"
+            style="height: 387px;"
             rowSelection="multiple"
             :singleClickEdit="true"
             :editOnFocus="true"
@@ -105,18 +105,18 @@ export default {
                     headerCheckboxSelection: true,
                     checkboxSelection: true,
                     headerName: "",
-                    width:45,
+                    flex:1,
                 },
-                { headerName: "자재코드", field: "material_code", width:110, cellStyle: { textAlign: "center" } },
-                { headerName: "자재명", field: "material", cellStyle: { textAlign: "left" } },
-                { headerName: "자재재고", field: "stok_qty", width:110, cellStyle: { textAlign: "right" } },
-                { headerName: "안전재고", field: "safety_inventory", width:110, cellStyle: { textAlign: "right" } },
-                { headerName: "계획재고", field: "plan_qty", width:110, cellStyle: { textAlign: "right" } },
-                { headerName: "발주재고", field: "ordering_qty", width:110, cellStyle: { textAlign: "right" } },
-                { headerName: "필요수량", field: "need_qty", width:110, cellStyle: { textAlign: "right" } },
+                { headerName: "자재코드", field: "material_code", flex:3, cellStyle: { textAlign: "center" } },
+                { headerName: "자재명", field: "material", flex:4, cellStyle: { textAlign: "left" } },
+                { headerName: "자재재고", field: "stok_qty", flex:3, cellStyle: { textAlign: "right" } },
+                { headerName: "안전재고", field: "safety_inventory", flex:3, cellStyle: { textAlign: "right" } },
+                { headerName: "계획재고", field: "plan_qty", flex:3, cellStyle: { textAlign: "right" } },
+                { headerName: "발주재고", field: "ordering_qty", flex:3, cellStyle: { textAlign: "right" } },
+                { headerName: "필요수량", field: "need_qty", flex:3, cellStyle: { textAlign: "right" } },
                 {  
                     headerName: "거래처", 
-                    width:110,
+                    flex:3,
                     cellStyle: { textAlign: "center" },
                     field: "선택", 
                     editable: false,
@@ -149,8 +149,8 @@ export default {
                         return div;
                     }
                 },
-                { headerName: "거래처명", field: "com_name", cellStyle: { textAlign: "left" } },
-                { headerName: "발주량", field: "go_qty", width:100, editable: true, 
+                { headerName: "거래처명", field: "com_name", flex:4, cellStyle: { textAlign: "left" } },
+                { headerName: "발주량", field: "go_qty", flex:3, editable: true, 
                     cellStyle: { 
                         //backgroundColor: "#fff", // 연한 배경색
                         //border: "0.5px dashed #fb8c00", // 점선 테두리
@@ -178,7 +178,7 @@ export default {
                         }
                     },
                 },
-                { headerName: "단가", field: "go_price", width:100, editable: true, 
+                { headerName: "단가", field: "go_price", flex:3, editable: true, 
                     cellStyle: { 
                         //backgroundColor: "#fff",
                         //border: "0.5px dashed #fb8c00",
@@ -195,7 +195,7 @@ export default {
                         }
                     },
                 },
-                { headerName: "총금액", field: "go_total_price", width:130, 
+                { headerName: "총금액", field: "go_total_price", flex:3,
                     cellStyle: { 
                         textAlign: "right" 
                     },
@@ -215,7 +215,7 @@ export default {
                 //     editable: true,
                 //     cellRendererFramework: FlatPickrCellRenderer, // Vue 컴포넌트를 렌더러로 사용
                 // },
-                { headerName: "납기일", field: "limit_date", width:130, editable: true, cellEditor: 'agDateCellEditor', 
+                { headerName: "납기일", field: "limit_date", flex:3, editable: true, cellEditor: 'agDateCellEditor', 
                     cellStyle: { 
                         //backgroundColor: "#fff",
                         //border: "0.5px dashed #fb8c00",
@@ -247,7 +247,7 @@ export default {
                     headerName: "발주제거", 
                     field: "행삭제", 
                     editable: false,
-                    width: 110,
+                    flex:3,
                     cellStyle: { textAlign: "center" },
                     cellRenderer: params => {
                         const div = document.createElement('div');
@@ -296,7 +296,7 @@ export default {
     methods: {        
         onReady(event) {
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
 
             // 페이징 영역에 버튼 만들기
             const allPanels = document.querySelectorAll('.ag-paging-panel');

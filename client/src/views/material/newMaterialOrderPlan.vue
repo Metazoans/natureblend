@@ -15,7 +15,7 @@
             :paginationPageSize="4"
             :paginationPageSizeSelector="[4, 10, 20, 40]"
             @grid-ready="onReady"
-            style="height: 263px;"
+            style="height: 261px;"
             rowSelection="multiple"
             :quickFilterText="plenlistsearch"
             :noRowsOverlayComponent="noRowsOverlayComponent"
@@ -54,17 +54,18 @@ export default {
             plenlistsearch: '',
             plancolumnDefs: [
                 { 
+                    cellStyle: { textAlign: "center" },
                     headerCheckboxSelection: true,
                     checkboxSelection: true,
                     headerName: "",
-                    width:45,
+                    flex:1,
                 },
-                { headerName: "계획번호", field: "order_plan_num", width:100, cellStyle: { textAlign: "center" } },
-                { headerName: "생산번호", field: "plan_num", width:100, cellStyle: { textAlign: "center" } },
-                { headerName: "상품코드", field: "product_code", width:100, cellStyle: { textAlign: "center" } },
-                { headerName: "생산상품명", field: "product_name", cellStyle: { textAlign: "left" } },
-                { headerName: "생산수량", field: "plan_qty", width:100, cellStyle: { textAlign: "right" } },
-                { headerName: "계획작성일", field: "plan_create_date", cellStyle: { textAlign: "center" } },
+                { headerName: "계획번호", field: "order_plan_num",  flex:2, cellStyle: { textAlign: "center" } },
+                { headerName: "생산번호", field: "plan_num", flex:2, cellStyle: { textAlign: "center" } },
+                { headerName: "상품코드", field: "product_code", flex:2, cellStyle: { textAlign: "center" } },
+                { headerName: "생산상품명", field: "product_name", flex:4, cellStyle: { textAlign: "left" } },
+                { headerName: "생산수량", field: "plan_qty", flex:2, cellStyle: { textAlign: "right" } },
+                { headerName: "계획작성일", field: "plan_create_date", flex:3, cellStyle: { textAlign: "center" } },
             ],
             plandate: [],
             theme : theme,
@@ -98,7 +99,7 @@ export default {
         //그리드 시작하면 발생 이벤
         onReady(event) {
             this.gridApi = event.api;
-            event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
+            //event.api.sizeColumnsToFit(); //그리드 api 넓이 슬라이드 안생기게하는거
 
             // 페이징 영역에 버튼 만들기
             const paginationPanel = document.querySelector('.ag-paging-panel');
