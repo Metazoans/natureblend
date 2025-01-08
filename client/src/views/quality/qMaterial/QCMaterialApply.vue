@@ -35,7 +35,7 @@
         <!-- 검색 버튼 -->
         <div class="col-md-2 d-flex align-items-end">
           <material-button size="md" v-on:click="searchOrder">검색</material-button>
-          <material-button size="md" class="m-4" color="info" v-on:click="searchRequestAll">전체 조회</material-button>
+          <material-button size="md" class="m-4" color="info" v-on:click="searchOrderAll">전체 조회</material-button>
         </div>
 
       </div>
