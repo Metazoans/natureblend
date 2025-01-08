@@ -87,7 +87,7 @@
 
   <!-- 불량 상세 모달 -->
 
-  <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
+  <Modal :isShowModal="showModalRJC" @closeModal="doNotSaveDefectDetailsForRow()"
     @confirm="saveDefectDetailsForRow(selectedRow.qcProcessId)">
     <template v-slot:title>
       <h1 class="modal-title fs-5" id="exampleModalLabel">검사 상세 정보</h1>
@@ -212,6 +212,8 @@ export default {
       //db에서 가져온 제품별 검사 항목과 허용 범위
       testDetails: {},
       defectDetailsMap: {}, //검사번호별로 저장된 검사내용 { qcProcessId: [ { ... }, ... ] }
+      tempDefectDetailsMap: {},
+
       rowData2: [], //rowData1 중 검사상태(inspecStatus)가 '검사내역작성완료'인 것을 담음
       completedDefectDetailsMap: {},
       showModalDone: false,
@@ -301,6 +303,7 @@ export default {
       // ag grid에 결과값 넣기
       this.rowData1 = [];
       this.defectDetailsMap = {};
+      this.tempDefectDetailsMap = {};
 
       this.rowData1 = this.processSearchResults(this.searchList);
       this.rowData2 = [];
@@ -318,6 +321,7 @@ export default {
       // ag grid에 결과값 넣기
       this.rowData1 = [];
       this.defectDetailsMap = {};
+      this.tempDefectDetailsMap = {};
 
       this.rowData1 = this.processSearchResults(this.searchList);
       this.rowData2 = [];
@@ -329,6 +333,22 @@ export default {
     onCellClicked(event) {
       // 선택된 행 데이터 저장 및 모달 표시
       this.selectedRow = event.data;
+
+      // 임시 저장소에 선택된 항목의 데이터를 복사
+      if (this.defectDetailsMap[this.selectedRow.qcProcessId]) {
+        this.tempDefectDetailsMap = {
+          ...this.tempDefectDetailsMap,
+          [this.selectedRow.qcProcessId]: JSON.parse(
+            JSON.stringify(this.defectDetailsMap[this.selectedRow.qcProcessId])
+          ),
+        };
+      } else {
+        this.tempDefectDetailsMap = {
+          ...this.tempDefectDetailsMap,
+          [this.selectedRow.qcProcessId]: [],
+        };
+      }
+
       this.showModalRJC = true;
     },
     closeModal() {
@@ -427,6 +447,14 @@ export default {
 
       //검사 완료된 것만 밑에 출력
       this.rowData2 = this.rowData1.filter(row => row['inspecStatus'] === '검사내역입력완료');
+    },
+
+    doNotSaveDefectDetailsForRow(){
+      const qcProcessId = this.selectedRow.qcProcessId;
+      if (this.tempDefectDetailsMap[qcProcessId]) {
+        this.defectDetailsMap[qcProcessId] = this.tempDefectDetailsMap[qcProcessId];
+      }
+      this.closeModal();
     },
 
     //최종 처리 버튼

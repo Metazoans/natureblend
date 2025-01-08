@@ -87,7 +87,7 @@
 
   <!-- 불량 상세 모달 -->
 
-  <Modal :isShowModal="showModalRJC" @closeModal="closeModal"
+  <Modal :isShowModal="showModalRJC" @closeModal="doNotSaveDefectDetailsForRow()"
     @confirm="saveDefectDetailsForRow(selectedRow.qcMaterialId, selectedRow.totalQnt)">
     <template v-slot:title>
       <h1 class="modal-title fs-5" id="exampleModalLabel">검사 상세 정보</h1>
@@ -108,10 +108,10 @@
             <tr>
               <th scope="row" style="text-align: left; border: 1px solid #dee2e6;">총 수량</th>
               <td v-if="this.materialType === 'kg'" style="text-align: right; border: 1px solid #dee2e6;">
-                {{ selectedRow.totalQnt * 0.001 }} {{this.materialType }}
+                {{ selectedRow.totalQnt * 0.001 }} {{ this.materialType }}
               </td>
               <td v-else-if="this.materialType === '개'" style="text-align: right; border: 1px solid #dee2e6;">
-                {{ selectedRow.totalQnt * 1 }} {{this.materialType }}
+                {{ selectedRow.totalQnt * 1 }} {{ this.materialType }}
               </td>
             </tr>
           </tbody>
@@ -123,7 +123,8 @@
         </div>
         <h5 class="pt-5">불량 내역</h5>
         <!-- 불량 사유 입력 및 불량 수량 입력 -->
-        <div class="pt-2" v-if="defectDetailsMap[selectedRow.qcMaterialId] == null">
+        <div class="pt-2"
+          v-if="defectDetailsMap[selectedRow.qcMaterialId] == null || defectDetailsMap[selectedRow.qcMaterialId].length == 0">
           <b>불량 내역이 없습니다.</b>
         </div>
         <div v-for="(detail, index) in defectDetailsMap[selectedRow.qcMaterialId]" :key="index"
@@ -215,8 +216,8 @@ export default {
           headerName: "총 수량", field: "totalQnt", resizable: false, cellStyle: { textAlign: "right" }, flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              const formatted_t_qty = (params.data.mName.includes('병') ? 
-              (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
+              const formatted_t_qty = (params.data.mName.includes('병') ?
+                (`${Number(params.value).toLocaleString()}개`) : (`${Number(params.value * 0.001).toLocaleString()} kg`));
               return `<span style="text-align: right;">${formatted_t_qty}</span>`;
             } else {
               return `<span style="text-align: right;"></span>`;
@@ -233,8 +234,8 @@ export default {
           flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              const formatted_t_qty = (params.data.mName.includes('병') ? 
-              (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
+              const formatted_t_qty = (params.data.mName.includes('병') ?
+                (`${Number(params.value).toLocaleString()}개`) : (`${Number(params.value * 0.001).toLocaleString()} kg`));
               return `
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <i class="fas fa-edit" style=" color: gray; margin-right: 5px;"></i>
@@ -256,8 +257,8 @@ export default {
           flex: 1,
           cellRenderer: params => {
             if (params.value != null) {
-              const formatted_t_qty = (params.data.mName.includes('병') ? 
-              (`${Number(params.value).toLocaleString()}개`): (`${Number(params.value * 0.001).toLocaleString()} kg`));
+              const formatted_t_qty = (params.data.mName.includes('병') ?
+                (`${Number(params.value).toLocaleString()}개`) : (`${Number(params.value * 0.001).toLocaleString()} kg`));
               // return `<span style="text-align: right;">${formatted_t_qty}</span>`;
               return `
                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -293,6 +294,7 @@ export default {
       defectQty: 0, // 불량 수량
       /// db에 보낼 자재 한건의 불량항목및 수량
       defectDetailsMap: {}, // { qcMaterialId: [ { reason, qty }, ... ] }
+      tempDefectDetailsMap: {},
 
       rowData2: [], //rowData1 중 검사상태(inspecStatus)가 '검사내역작성완료'인 것을 담음
       showModalDone: false,
@@ -356,6 +358,7 @@ export default {
       // ag grid에 결과값 넣기
       this.rowData1 = [];
       this.defectDetailsMap = {};
+      this.tempDefectDetailsMap = {};
       this.rowData1 = this.processSearchResults(this.searchList);
       this.rowData2 = [];
     },
@@ -370,7 +373,8 @@ export default {
 
       // ag grid에 결과값 넣기
       this.rowData1 = [];
-      this.defectDetailsMap = [];
+      this.defectDetailsMap = {};
+      this.tempDefectDetailsMap = {};
       this.rowData1 = this.processSearchResults(this.searchList);
       this.rowData2 = [];
     },
@@ -386,12 +390,29 @@ export default {
         this.materialType = 'kg';
 
       }
+
+      // 임시 저장소에 선택된 항목의 데이터를 복사
+      if (this.defectDetailsMap[this.selectedRow.qcMaterialId]) {
+        this.tempDefectDetailsMap = {
+          ...this.tempDefectDetailsMap,
+          [this.selectedRow.qcMaterialId]: JSON.parse(
+            JSON.stringify(this.defectDetailsMap[this.selectedRow.qcMaterialId])
+          ),
+        };
+      } else {
+        this.tempDefectDetailsMap = {
+          ...this.tempDefectDetailsMap,
+          [this.selectedRow.qcMaterialId]: [],
+        };
+      }
       this.showModalRJC = true;
     },
     closeModal() {
       this.showModalRJC = false;
       this.selectedRow = {};
 
+      // console.log(this.defectDetailsMap);
+      // console.log(this.tempDefectDetailsMap);
       this.showModalDone = false;
     },
 
@@ -470,8 +491,16 @@ export default {
         type: "success",
       });
 
-      console.log(defectDetails);
-      console.log(this.defectDetailsMap);
+      // console.log(defectDetails);
+      // console.log(this.defectDetailsMap);
+    },
+
+    doNotSaveDefectDetailsForRow() {
+      const qcMaterialId = this.selectedRow.qcMaterialId;
+      if (this.tempDefectDetailsMap[qcMaterialId]) {
+        this.defectDetailsMap[qcMaterialId] = this.tempDefectDetailsMap[qcMaterialId];
+      }
+      this.closeModal();
     },
 
 
