@@ -242,7 +242,7 @@
        },
        async customerInsert(newList){
         const isBusinessNumberValid = await this.checkBusinessNumber(newList.com_num);
-          if (!isBusinessNumberValid) {
+          if (isBusinessNumberValid) {
             this.$notify({ text: '이미 등록된 사업자번호입니다.', type: 'error' });
             return; // 중복된 사업자번호가 있을 경우, 등록을 하지 않음
           }
