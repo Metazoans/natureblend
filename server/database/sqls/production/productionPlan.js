@@ -6,7 +6,7 @@ const productList =
 FROM product`;
 
 const orders =
-    `SELECT ROW_NUMBER() OVER (ORDER BY o.order_num)    AS rownum,
+    `SELECT o.order_num AS rownum,
             o.order_num,
             order_amount,
             total_price,
@@ -31,34 +31,90 @@ const orders =
               per_price, o.product_code, o.orderlist_num, ol.order_date,
               ol.due_date, p.product_name
      ORDER BY o.order_num`;
+//버전문제로
+// `SELECT ROW_NUMBER() OVER (ORDER BY o.order_num)    AS rownum,
+//      o.order_num,
+//      order_amount,
+//      total_price,
+//      order_status,
+//      per_price,
+//      o.product_code,
+//      o.orderlist_num,
+//      ol.order_date,
+//      ol.due_date,
+//      p.product_name,
+//      SUM(IFNULL(opr.plan_qty, 0))                AS plan_qty,
+//      order_amount - SUM(IFNULL(opr.plan_qty, 0)) AS unplanned_qty
+// FROM orders o
+//      INNER JOIN orderlists ol
+//                 ON o.orderlist_num = ol.orderlist_num
+//      INNER JOIN product p
+//                 on o.product_code = p.product_code
+//      left join order_plan_relation opr
+//                on opr.order_num = o.order_num
+// where o.order_status != 'shipped'
+// GROUP BY o.order_num, order_amount, total_price, order_status,
+//        per_price, o.product_code, o.orderlist_num, ol.order_date,
+//        ol.due_date, p.product_name
+// ORDER BY o.order_num`;
+
 
 const ordersByProductCode =
-    `SELECT ROW_NUMBER() OVER (ORDER BY o.order_num)    AS rownum,
-            o.order_num,
-            order_amount,
-            total_price,
-            order_status,
-            per_price,
-            o.product_code,
-            o.orderlist_num,
-            ol.order_date,
-            ol.due_date,
-            p.product_name,
-            SUM(IFNULL(opr.plan_qty, 0))                AS plan_qty,
-            order_amount - SUM(IFNULL(opr.plan_qty, 0)) AS unplanned_qty
-     FROM orders o
-            INNER JOIN orderlists ol
-                       ON o.orderlist_num = ol.orderlist_num
-            INNER JOIN product p
-                       on o.product_code = p.product_code
-            left join order_plan_relation opr
-                      on opr.order_num = o.order_num
-     where o.order_status != 'shipped'
-     and p.product_code = ?
-     GROUP BY o.order_num, order_amount, total_price, order_status,
-              per_price, o.product_code, o.orderlist_num, ol.order_date,
-              ol.due_date, p.product_name
-     ORDER BY o.order_num`;
+`
+  SELECT o.order_num AS rownum,
+          o.order_num,
+          order_amount,
+          total_price,
+          order_status,
+          per_price,
+          o.product_code,
+          o.orderlist_num,
+          ol.order_date,
+          ol.due_date,
+          p.product_name,
+          SUM(IFNULL(opr.plan_qty, 0))                AS plan_qty,
+          order_amount - SUM(IFNULL(opr.plan_qty, 0)) AS unplanned_qty
+    FROM orders o
+          INNER JOIN orderlists ol
+                      ON o.orderlist_num = ol.orderlist_num
+          INNER JOIN product p
+                      on o.product_code = p.product_code
+          left join order_plan_relation opr
+                    on opr.order_num = o.order_num
+    where o.order_status != 'shipped'
+    and p.product_code = ?
+    GROUP BY o.order_num, order_amount, total_price, order_status,
+            per_price, o.product_code, o.orderlist_num, ol.order_date,
+            ol.due_date, p.product_name
+    ORDER BY o.order_num
+`;
+//버전문제로
+    // `SELECT ROW_NUMBER() OVER (ORDER BY o.order_num)    AS rownum,
+    //         o.order_num,
+    //         order_amount,
+    //         total_price,
+    //         order_status,
+    //         per_price,
+    //         o.product_code,
+    //         o.orderlist_num,
+    //         ol.order_date,
+    //         ol.due_date,
+    //         p.product_name,
+    //         SUM(IFNULL(opr.plan_qty, 0))                AS plan_qty,
+    //         order_amount - SUM(IFNULL(opr.plan_qty, 0)) AS unplanned_qty
+    //  FROM orders o
+    //         INNER JOIN orderlists ol
+    //                    ON o.orderlist_num = ol.orderlist_num
+    //         INNER JOIN product p
+    //                    on o.product_code = p.product_code
+    //         left join order_plan_relation opr
+    //                   on opr.order_num = o.order_num
+    //  where o.order_status != 'shipped'
+    //  and p.product_code = ?
+    //  GROUP BY o.order_num, order_amount, total_price, order_status,
+    //           per_price, o.product_code, o.orderlist_num, ol.order_date,
+    //           ol.due_date, p.product_name
+    //  ORDER BY o.order_num`;
 
 // procedure 설정
 
