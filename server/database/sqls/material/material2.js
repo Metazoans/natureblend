@@ -119,34 +119,6 @@ ORDER BY pwb.process_num DESC
 // 세척 공정  [ ]
 const process2list =
 `
-WITH first_query AS (
-    SELECT 
-        pwh.product_name,
-        SUM(pwb.success_qty) AS product_qty
-    FROM	
-        qc_process_beverage qpc
-        JOIN process_work_body pwb
-            ON qpc.process_num = pwb.process_num
-            AND pwb.partial_process_status = 'partial_process_complete'
-            AND pwb.success_qty IS NULL
-        JOIN process_work_header pwh
-            ON pwb.process_work_header_num = pwh.process_work_header_num
-            AND pwh.process_status = 'processing'
-    GROUP BY pwh.product_name
-),
-second_query AS (
-    SELECT
-        pwh.product_name,
-        SUM(pwb.process_todo_qty) AS product_qty
-    FROM
-        process_work_body pwb
-        JOIN process_work_header pwh
-            ON pwb.process_work_header_num = pwh.process_work_header_num
-            AND pwh.process_name = '병세척공정'
-            AND pwh.process_status != 'process_complete'
-      	WHERE pwb.success_qty IS NULL
-      GROUP BY pwh.product_name
-)
 SELECT
     COALESCE(fq.product_name, sq.product_name) AS product_name,
     CASE
@@ -155,8 +127,34 @@ SELECT
         ELSE GREATEST(fq.product_qty, sq.product_qty)
     END AS product_qty
 FROM 
-    first_query fq
-LEFT JOIN second_query sq
+    (
+        SELECT 
+            pwh.product_name,
+            SUM(pwb.success_qty) AS product_qty
+        FROM	
+            qc_process_beverage qpc
+            JOIN process_work_body pwb
+                ON qpc.process_num = pwb.process_num
+                AND pwb.partial_process_status = 'partial_process_complete'
+                AND pwb.success_qty IS NULL
+            JOIN process_work_header pwh
+                ON pwb.process_work_header_num = pwh.process_work_header_num
+                AND pwh.process_status = 'processing'
+        GROUP BY pwh.product_name
+    ) AS fq
+LEFT JOIN (
+        SELECT
+            pwh.product_name,
+            SUM(pwb.process_todo_qty) AS product_qty
+        FROM
+            process_work_body pwb
+            JOIN process_work_header pwh
+                ON pwb.process_work_header_num = pwh.process_work_header_num
+                AND pwh.process_name = '병세척공정'
+                AND pwh.process_status != 'process_complete'
+            WHERE pwb.success_qty IS NULL
+        GROUP BY pwh.product_name
+    ) AS sq
     ON fq.product_name = sq.product_name
 
 UNION
@@ -169,10 +167,92 @@ SELECT
         ELSE GREATEST(fq.product_qty, sq.product_qty)
     END AS product_qty
 FROM 
-    second_query sq
-LEFT JOIN first_query fq
+    (
+        SELECT
+            pwh.product_name,
+            SUM(pwb.process_todo_qty) AS product_qty
+        FROM
+            process_work_body pwb
+            JOIN process_work_header pwh
+                ON pwb.process_work_header_num = pwh.process_work_header_num
+                AND pwh.process_name = '병세척공정'
+                AND pwh.process_status != 'process_complete'
+            WHERE pwb.success_qty IS NULL
+        GROUP BY pwh.product_name
+    ) AS sq
+LEFT JOIN (
+        SELECT 
+            pwh.product_name,
+            SUM(pwb.success_qty) AS product_qty
+        FROM	
+            qc_process_beverage qpc
+            JOIN process_work_body pwb
+                ON qpc.process_num = pwb.process_num
+                AND pwb.partial_process_status = 'partial_process_complete'
+                AND pwb.success_qty IS NULL
+            JOIN process_work_header pwh
+                ON pwb.process_work_header_num = pwh.process_work_header_num
+                AND pwh.process_status = 'processing'
+        GROUP BY pwh.product_name
+    ) AS fq
     ON fq.product_name = sq.product_name
 `;
+//버전문제로 수정
+// `
+// WITH first_query AS (
+//     SELECT 
+//         pwh.product_name,
+//         SUM(pwb.success_qty) AS product_qty
+//     FROM	
+//         qc_process_beverage qpc
+//         JOIN process_work_body pwb
+//             ON qpc.process_num = pwb.process_num
+//             AND pwb.partial_process_status = 'partial_process_complete'
+//             AND pwb.success_qty IS NULL
+//         JOIN process_work_header pwh
+//             ON pwb.process_work_header_num = pwh.process_work_header_num
+//             AND pwh.process_status = 'processing'
+//     GROUP BY pwh.product_name
+// ),
+// second_query AS (
+//     SELECT
+//         pwh.product_name,
+//         SUM(pwb.process_todo_qty) AS product_qty
+//     FROM
+//         process_work_body pwb
+//         JOIN process_work_header pwh
+//             ON pwb.process_work_header_num = pwh.process_work_header_num
+//             AND pwh.process_name = '병세척공정'
+//             AND pwh.process_status != 'process_complete'
+//       	WHERE pwb.success_qty IS NULL
+//       GROUP BY pwh.product_name
+// )
+// SELECT
+//     COALESCE(fq.product_name, sq.product_name) AS product_name,
+//     CASE
+//         WHEN fq.product_qty IS NULL THEN sq.product_qty
+//         WHEN sq.product_qty IS NULL THEN fq.product_qty
+//         ELSE GREATEST(fq.product_qty, sq.product_qty)
+//     END AS product_qty
+// FROM 
+//     first_query fq
+// LEFT JOIN second_query sq
+//     ON fq.product_name = sq.product_name
+
+// UNION
+
+// SELECT
+//     COALESCE(fq.product_name, sq.product_name) AS product_name,
+//     CASE
+//         WHEN fq.product_qty IS NULL THEN sq.product_qty
+//         WHEN sq.product_qty IS NULL THEN fq.product_qty
+//         ELSE GREATEST(fq.product_qty, sq.product_qty)
+//     END AS product_qty
+// FROM 
+//     second_query sq
+// LEFT JOIN first_query fq
+//     ON fq.product_name = sq.product_name
+// `;
 
 // `
 // SELECT
@@ -224,38 +304,6 @@ ORDER BY pwb.process_num DESC
 // 포장 공정
 const process3list =
 `
-WITH first_query AS (
-    SELECT 
-		pwh.product_name,
-		sum(pwb.success_qty) AS product_qty
-FROM	
-		qc_process_cleaning qpc
-		JOIN	
-			process_work_body pwb
-				ON 
-					qpc.process_num = pwb.process_num
-					AND
-						pwb.partial_process_status = 'partial_process_complete'
-		JOIN
-			process_work_header pwh
-				ON pwb.process_work_header_num = pwh.process_work_header_num
-					AND 
-						pwh.process_status = 'processing'
-GROUP BY pwh.product_name
-),
-second_query AS (
-    SELECT
-        pwh.product_name,
-        SUM(pwb.process_todo_qty) AS product_qty
-    FROM
-        process_work_body pwb
-        JOIN process_work_header pwh
-            ON pwb.process_work_header_num = pwh.process_work_header_num
-            AND pwh.process_name = '포장공정'
-            AND pwh.process_status != 'process_complete'
-      	WHERE pwb.success_qty IS NULL
-    GROUP BY pwh.product_name
-)
 SELECT
     COALESCE(fq.product_name, sq.product_name) AS product_name,
     CASE
@@ -264,8 +312,33 @@ SELECT
         ELSE GREATEST(fq.product_qty, sq.product_qty)
     END AS product_qty
 FROM 
-    first_query fq
-LEFT JOIN second_query sq
+    (
+        SELECT 
+            pwh.product_name,
+            SUM(pwb.success_qty) AS product_qty
+        FROM	
+            qc_process_cleaning qpc
+            JOIN process_work_body pwb
+                ON qpc.process_num = pwb.process_num
+                AND pwb.partial_process_status = 'partial_process_complete'
+            JOIN process_work_header pwh
+                ON pwb.process_work_header_num = pwh.process_work_header_num
+                AND pwh.process_status = 'processing'
+        GROUP BY pwh.product_name
+    ) AS fq
+LEFT JOIN (
+        SELECT
+            pwh.product_name,
+            SUM(pwb.process_todo_qty) AS product_qty
+        FROM
+            process_work_body pwb
+            JOIN process_work_header pwh
+                ON pwb.process_work_header_num = pwh.process_work_header_num
+                AND pwh.process_name = '포장공정'
+                AND pwh.process_status != 'process_complete'
+            WHERE pwb.success_qty IS NULL
+        GROUP BY pwh.product_name
+    ) AS sq
     ON fq.product_name = sq.product_name
 
 UNION
@@ -278,10 +351,97 @@ SELECT
         ELSE GREATEST(fq.product_qty, sq.product_qty)
     END AS product_qty
 FROM 
-    second_query sq
-LEFT JOIN first_query fq
+    (
+        SELECT
+            pwh.product_name,
+            SUM(pwb.process_todo_qty) AS product_qty
+        FROM
+            process_work_body pwb
+            JOIN process_work_header pwh
+                ON pwb.process_work_header_num = pwh.process_work_header_num
+                AND pwh.process_name = '포장공정'
+                AND pwh.process_status != 'process_complete'
+            WHERE pwb.success_qty IS NULL
+        GROUP BY pwh.product_name
+    ) AS sq
+LEFT JOIN (
+        SELECT 
+            pwh.product_name,
+            SUM(pwb.success_qty) AS product_qty
+        FROM	
+            qc_process_cleaning qpc
+            JOIN process_work_body pwb
+                ON qpc.process_num = pwb.process_num
+                AND pwb.partial_process_status = 'partial_process_complete'
+            JOIN process_work_header pwh
+                ON pwb.process_work_header_num = pwh.process_work_header_num
+                AND pwh.process_status = 'processing'
+        GROUP BY pwh.product_name
+    ) AS fq
     ON fq.product_name = sq.product_name
 `;
+//버전문제로 수정
+// `
+// WITH first_query AS (
+//     SELECT 
+// 		pwh.product_name,
+// 		sum(pwb.success_qty) AS product_qty
+// FROM	
+// 		qc_process_cleaning qpc
+// 		JOIN	
+// 			process_work_body pwb
+// 				ON 
+// 					qpc.process_num = pwb.process_num
+// 					AND
+// 						pwb.partial_process_status = 'partial_process_complete'
+// 		JOIN
+// 			process_work_header pwh
+// 				ON pwb.process_work_header_num = pwh.process_work_header_num
+// 					AND 
+// 						pwh.process_status = 'processing'
+// GROUP BY pwh.product_name
+// ),
+// second_query AS (
+//     SELECT
+//         pwh.product_name,
+//         SUM(pwb.process_todo_qty) AS product_qty
+//     FROM
+//         process_work_body pwb
+//         JOIN process_work_header pwh
+//             ON pwb.process_work_header_num = pwh.process_work_header_num
+//             AND pwh.process_name = '포장공정'
+//             AND pwh.process_status != 'process_complete'
+//       	WHERE pwb.success_qty IS NULL
+//     GROUP BY pwh.product_name
+// )
+// SELECT
+//     COALESCE(fq.product_name, sq.product_name) AS product_name,
+//     CASE
+//         WHEN fq.product_qty IS NULL THEN sq.product_qty
+//         WHEN sq.product_qty IS NULL THEN fq.product_qty
+//         ELSE GREATEST(fq.product_qty, sq.product_qty)
+//     END AS product_qty
+// FROM 
+//     first_query fq
+// LEFT JOIN second_query sq
+//     ON fq.product_name = sq.product_name
+
+// UNION
+
+// SELECT
+//     COALESCE(fq.product_name, sq.product_name) AS product_name,
+//     CASE
+//         WHEN fq.product_qty IS NULL THEN sq.product_qty
+//         WHEN sq.product_qty IS NULL THEN fq.product_qty
+//         ELSE GREATEST(fq.product_qty, sq.product_qty)
+//     END AS product_qty
+// FROM 
+//     second_query sq
+// LEFT JOIN first_query fq
+//     ON fq.product_name = sq.product_name
+// `;
+
+
 // `
 // SELECT
 // 		pwh.product_name,
@@ -390,23 +550,16 @@ ORDER BY order_num DESC
 //상품재고 [ 검수 완료 2025-01-06 ]
 const product_qtying = 
 `
-WITH output_aggregated AS (
-    SELECT 
-        input_num,
-        SUM(output_amount) AS total_output_amount
-    FROM output
-    GROUP BY input_num
-)
 SELECT 
     p.product_name, 
-    NVL(
+    COALESCE(
         (SUM(CASE 
                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
                 ELSE 0 
             END) 
          - 
          SUM(CASE 
-                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN COALESCE(oa.total_output_amount, 0) 
                 ELSE 0 
             END)
         ), 0) AS product_qty
@@ -414,63 +567,154 @@ FROM
     product p
 LEFT JOIN input_body i
 ON p.product_code = i.product_code
-LEFT JOIN output_aggregated oa
+LEFT JOIN (
+    SELECT 
+        input_num,
+        SUM(output_amount) AS total_output_amount
+    FROM output
+    GROUP BY input_num
+) AS oa
 ON i.input_num = oa.input_num
+GROUP BY p.product_name
 ORDER BY product_qty DESC
 `;
+//버전문제
+// `
+// WITH output_aggregated AS (
+//     SELECT 
+//         input_num,
+//         SUM(output_amount) AS total_output_amount
+//     FROM output
+//     GROUP BY input_num
+// )
+// SELECT 
+//     p.product_name, 
+//     NVL(
+//         (SUM(CASE 
+//                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+//                 ELSE 0 
+//             END) 
+//          - 
+//          SUM(CASE 
+//                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
+//                 ELSE 0 
+//             END)
+//         ), 0) AS product_qty
+// FROM 
+//     product p
+// LEFT JOIN input_body i
+// ON p.product_code = i.product_code
+// LEFT JOIN output_aggregated oa
+// ON i.input_num = oa.input_num
+// ORDER BY product_qty DESC
+// `;
+
+
+
 // GROUP BY p.product_code, p.product_name
 
 // 자재 재고  [ 검사 완료 2025-01-06]
 const material_qtying =
 `
-WITH pass_material AS
-  (SELECT material_code,
-          sum(stok_qty) AS stok_qty
-   FROM material_lot_qty1 mlq1
-   WHERE mlq1.material_nomal = 'b1'
-     AND mlq1.material_lot_state = 'c1'
-   GROUP BY material_code),
-     reject_materal AS
-  (SELECT material_code,
-          SUM(stok_qty) AS stok_qty
-   FROM material_lot_qty1
-   WHERE (material_nomal = 'b2'
-          AND material_lot_state = 'c1')
-     OR (limit_date <= NOW()
-         AND material_lot_state = 'c1')
-   GROUP BY material_code),
-     invalid_mat AS
-  (SELECT material_code,
-          SUM(material_qty) AS stok_qty
-   FROM invalid_material
-   WHERE is_out = '0'
-   GROUP BY material_code),
-     order_material AS
-  (SELECT material_code,
-          SUM(ord_qty) AS stok_qty
-   FROM material_order_body
-   WHERE material_state = 'a1'
-   GROUP BY material_code)
-SELECT ROW_NUMBER() OVER (
-                          ORDER BY mat.material_code) AS row_num,
-       mat.material_name,
-       case when COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0) < 0 then 0
-       ELSE COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0)
-		 END
-		  AS stok_qty
-FROM material mat
-LEFT JOIN pass_material pm ON mat.material_code = pm.material_code
-LEFT JOIN reject_materal rm ON mat.material_code = rm.material_code
-LEFT JOIN invalid_mat im ON mat.material_code = im.material_code
-LEFT JOIN order_material om ON mat.material_code = om.material_code
-WHERE (case when COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0) < 0 then 0
-       ELSE COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0)
-		 END) != 0
-AND mat.material_code != 'M010'
-ORDER BY (case when COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0) < 0 then 0
-       ELSE COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0)
-		 END) DESC
+SELECT
+        mat.material_name,
+        CASE
+            WHEN COALESCE(pm.stok_qty, 0) - COALESCE(im.stok_qty, 0) < 0 THEN 0
+            ELSE COALESCE(pm.stok_qty, 0) - COALESCE(im.stok_qty, 0)
+        END AS stok_qty
+    FROM material mat
+    LEFT JOIN (
+        SELECT material_code,
+               SUM(stok_qty) AS stok_qty
+        FROM material_lot_qty1
+        WHERE material_nomal = 'b1'
+          AND material_lot_state = 'c1'
+        GROUP BY material_code
+    ) AS pm ON mat.material_code = pm.material_code
+    LEFT JOIN (
+        SELECT material_code,
+               SUM(stok_qty) AS stok_qty
+        FROM material_lot_qty1
+        WHERE (material_nomal = 'b2' AND material_lot_state = 'c1')
+           OR (limit_date <= NOW() AND material_lot_state = 'c1')
+        GROUP BY material_code
+    ) AS rm ON mat.material_code = rm.material_code
+    LEFT JOIN (
+        SELECT material_code,
+               SUM(material_qty) AS stok_qty
+        FROM invalid_material
+        WHERE is_out = '0'
+        GROUP BY material_code
+    ) AS im ON mat.material_code = im.material_code
+    LEFT JOIN (
+        SELECT material_code,
+               SUM(ord_qty) AS stok_qty
+        FROM material_order_body
+        WHERE material_state = 'a1'
+        GROUP BY material_code
+    ) AS om ON mat.material_code = om.material_code
+    WHERE 
+        CASE
+            WHEN COALESCE(pm.stok_qty, 0) - COALESCE(im.stok_qty, 0) < 0 THEN 0
+            ELSE COALESCE(pm.stok_qty, 0) - COALESCE(im.stok_qty, 0)
+        END != 0
+    AND mat.material_code != 'M010'
+    ORDER BY 
+        CASE
+            WHEN COALESCE(pm.stok_qty, 0) - COALESCE(im.stok_qty, 0) < 0 THEN 0
+            ELSE COALESCE(pm.stok_qty, 0) - COALESCE(im.stok_qty, 0)
+        END DESC
 `;
+//버전문제
+// `
+// WITH pass_material AS
+//   (SELECT material_code,
+//           sum(stok_qty) AS stok_qty
+//    FROM material_lot_qty1 mlq1
+//    WHERE mlq1.material_nomal = 'b1'
+//      AND mlq1.material_lot_state = 'c1'
+//    GROUP BY material_code),
+//      reject_materal AS
+//   (SELECT material_code,
+//           SUM(stok_qty) AS stok_qty
+//    FROM material_lot_qty1
+//    WHERE (material_nomal = 'b2'
+//           AND material_lot_state = 'c1')
+//      OR (limit_date <= NOW()
+//          AND material_lot_state = 'c1')
+//    GROUP BY material_code),
+//      invalid_mat AS
+//   (SELECT material_code,
+//           SUM(material_qty) AS stok_qty
+//    FROM invalid_material
+//    WHERE is_out = '0'
+//    GROUP BY material_code),
+//      order_material AS
+//   (SELECT material_code,
+//           SUM(ord_qty) AS stok_qty
+//    FROM material_order_body
+//    WHERE material_state = 'a1'
+//    GROUP BY material_code)
+// SELECT ROW_NUMBER() OVER (
+//                           ORDER BY mat.material_code) AS row_num,
+//        mat.material_name,
+//        case when COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0) < 0 then 0
+//        ELSE COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0)
+// 		 END
+// 		  AS stok_qty
+// FROM material mat
+// LEFT JOIN pass_material pm ON mat.material_code = pm.material_code
+// LEFT JOIN reject_materal rm ON mat.material_code = rm.material_code
+// LEFT JOIN invalid_mat im ON mat.material_code = im.material_code
+// LEFT JOIN order_material om ON mat.material_code = om.material_code
+// WHERE (case when COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0) < 0 then 0
+//        ELSE COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0)
+// 		 END) != 0
+// AND mat.material_code != 'M010'
+// ORDER BY (case when COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0) < 0 then 0
+//        ELSE COALESCE(COALESCE(pm.stok_qty, 0)-COALESCE(im.stok_qty, 0),0)
+// 		 END) DESC
+// `;
 
 
 module.exports = {

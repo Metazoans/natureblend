@@ -21,51 +21,98 @@ WHERE o.orderlist_status != 'done' `;
 
 //미출고된 주문 조회
 const disoutputOrder = 
-`WITH output_summary AS (
-    SELECT 
-        order_num,
-        SUM(output_amount) AS total_output_amount
-    FROM output
-    GROUP BY order_num
-)
+`
 SELECT 
     o.order_num,
     p.product_code,
     p.product_name,
     o.order_amount,
-    NVL(os.total_output_amount, 0) AS output_amount,
-    o.order_amount - NVL(os.total_output_amount, 0) AS disorder_amount,
-    o.order_status 
+    COALESCE(os.total_output_amount, 0) AS output_amount,
+    o.order_amount - COALESCE(os.total_output_amount, 0) AS disorder_amount,
+    o.order_status
 FROM orders o
 LEFT JOIN product p 
     ON o.product_code = p.product_code
-LEFT JOIN output_summary os
+LEFT JOIN (
+    SELECT 
+        order_num,
+        SUM(output_amount) AS total_output_amount
+    FROM output
+    GROUP BY order_num
+) AS os
     ON o.order_num = os.order_num
 WHERE o.orderlist_num = ?
-  AND o.order_status != 'shipped' `;
+  AND o.order_status != 'shipped'
+`;
+//버전문제
+// `WITH output_summary AS (
+//     SELECT 
+//         order_num,
+//         SUM(output_amount) AS total_output_amount
+//     FROM output
+//     GROUP BY order_num
+// )
+// SELECT 
+//     o.order_num,
+//     p.product_code,
+//     p.product_name,
+//     o.order_amount,
+//     NVL(os.total_output_amount, 0) AS output_amount,
+//     o.order_amount - NVL(os.total_output_amount, 0) AS disorder_amount,
+//     o.order_status 
+// FROM orders o
+// LEFT JOIN product p 
+//     ON o.product_code = p.product_code
+// LEFT JOIN output_summary os
+//     ON o.order_num = os.order_num
+// WHERE o.orderlist_num = ?
+//   AND o.order_status != 'shipped' `;
 
 //제품별 lot 조회
 const getLotBaseProduct =
-`WITH output_aggregated AS (
-	SELECT
-		input_num,
-        SUM(output_amount) AS total_output_amount
-	FROM output
-    GROUP BY input_num
-)
+`
 SELECT 
-      b.product_lot
-	  ,b.input_amount - IFNULL(o.total_output_amount,0) AS total_amount
-      ,q.inspec_end
-FROM input_body b LEFT JOIN output_aggregated o
-                  ON b.input_num = o.input_num
-                  LEFT JOIN qc_packaging q
-                  ON b.qc_packing_id = q.qc_packing_id
+    b.product_lot,
+    b.input_amount - COALESCE(o.total_output_amount, 0) AS total_amount,
+    q.inspec_end
+FROM input_body b
+LEFT JOIN (
+    SELECT
+        input_num,
+        SUM(output_amount) AS total_output_amount
+    FROM output
+    GROUP BY input_num
+) AS o
+ON b.input_num = o.input_num
+LEFT JOIN qc_packaging q
+ON b.qc_packing_id = q.qc_packing_id
 WHERE b.product_code = ?
-AND b.input_amount - NVL(o.total_output_amount, 0) != 0
-AND b.input_flag = 0
-AND b.dispose_flag = 0
-order by b.expire_date`;
+  AND b.input_amount - COALESCE(o.total_output_amount, 0) != 0
+  AND b.input_flag = 0
+  AND b.dispose_flag = 0
+ORDER BY b.expire_date
+`;
+//버전문제
+// `WITH output_aggregated AS (
+// 	SELECT
+// 		input_num,
+//         SUM(output_amount) AS total_output_amount
+// 	FROM output
+//     GROUP BY input_num
+// )
+// SELECT 
+//       b.product_lot
+// 	  ,b.input_amount - IFNULL(o.total_output_amount,0) AS total_amount
+//       ,q.inspec_end
+// FROM input_body b LEFT JOIN output_aggregated o
+//                   ON b.input_num = o.input_num
+//                   LEFT JOIN qc_packaging q
+//                   ON b.qc_packing_id = q.qc_packing_id
+// WHERE b.product_code = ?
+// AND b.input_amount - NVL(o.total_output_amount, 0) != 0
+// AND b.input_flag = 0
+// AND b.dispose_flag = 0
+// order by b.expire_date`;
 
 
 // 출고 등록 및 주문서와 주문 상태 변화

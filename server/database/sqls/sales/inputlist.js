@@ -321,48 +321,44 @@ const deleteInput =
 
 // 제품별 재고 조회 (유효한입고 , 유효한 출고, 폐기된양, 입고취소된양 , 전체 재고)
 const productNum = 
-`WITH output_aggregated AS (
-    SELECT 
-        input_num,
-        SUM(output_amount) AS total_output_amount
-    FROM output
-    GROUP BY input_num
-)
+`
 SELECT 
     p.product_code,
     p.product_name, 
 
-    NVL(SUM(CASE 
-                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
-                ELSE 0 
-            END), 0) AS valid_input_amount,
+    -- 유효한 입고량
+    COALESCE(SUM(CASE 
+                    WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+                    ELSE 0 
+                END), 0) AS valid_input_amount,
 
+    -- 유효한 출고량
+    COALESCE(SUM(CASE 
+                    WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN COALESCE(oa.total_output_amount, 0) 
+                    ELSE 0 
+                END), 0) AS valid_output_amount,
 
-    NVL(SUM(CASE 
-                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
-                ELSE 0 
-            END), 0) AS valid_output_amount,
+    -- 폐기된 양
+    COALESCE(SUM(CASE 
+                    WHEN i.dispose_flag = 1 THEN COALESCE(i.input_amount, 0) 
+                    ELSE 0 
+                END), 0) AS disposed_amount,
 
-   
-    NVL(SUM(CASE 
-                WHEN i.dispose_flag = 1 THEN NVL(i.input_amount,0) 
-                ELSE 0 
-            END), 0) AS disposed_amount,
+    -- 입고 취소된 양
+    COALESCE(SUM(CASE 
+                    WHEN i.input_flag = 1 THEN COALESCE(i.input_amount, 0) 
+                    ELSE 0 
+                END), 0) AS canceled_amount,
 
-    NVL(SUM(CASE 
-                WHEN i.input_flag = 1 THEN NVL(i.input_amount,0) 
-                ELSE 0 
-            END), 0) AS canceled_amount,
-
-  
-    NVL(
+    -- 전체 재고량
+    COALESCE(
         (SUM(CASE 
                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
                 ELSE 0 
             END) 
          - 
          SUM(CASE 
-                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
+                WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN COALESCE(oa.total_output_amount, 0) 
                 ELSE 0 
             END)
         ), 0) AS stock_amount
@@ -370,56 +366,175 @@ FROM
     product p
 LEFT JOIN input_body i
 ON p.product_code = i.product_code
-LEFT JOIN output_aggregated oa
-ON i.input_num = oa.input_num `;
+LEFT JOIN (
+    SELECT 
+        input_num,
+        SUM(output_amount) AS total_output_amount
+    FROM output
+    GROUP BY input_num
+) AS oa
+ON i.input_num = oa.input_num
+`;
+//버전문제
+// `WITH output_aggregated AS (
+//     SELECT 
+//         input_num,
+//         SUM(output_amount) AS total_output_amount
+//     FROM output
+//     GROUP BY input_num
+// )
+// SELECT 
+//     p.product_code,
+//     p.product_name, 
+
+//     NVL(SUM(CASE 
+//                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+//                 ELSE 0 
+//             END), 0) AS valid_input_amount,
+
+
+//     NVL(SUM(CASE 
+//                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
+//                 ELSE 0 
+//             END), 0) AS valid_output_amount,
+
+   
+//     NVL(SUM(CASE 
+//                 WHEN i.dispose_flag = 1 THEN NVL(i.input_amount,0) 
+//                 ELSE 0 
+//             END), 0) AS disposed_amount,
+
+//     NVL(SUM(CASE 
+//                 WHEN i.input_flag = 1 THEN NVL(i.input_amount,0) 
+//                 ELSE 0 
+//             END), 0) AS canceled_amount,
+
+  
+//     NVL(
+//         (SUM(CASE 
+//                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN i.input_amount 
+//                 ELSE 0 
+//             END) 
+//          - 
+//          SUM(CASE 
+//                 WHEN i.input_flag = 0 AND i.dispose_flag = 0 THEN NVL(oa.total_output_amount, 0) 
+//                 ELSE 0 
+//             END)
+//         ), 0) AS stock_amount
+// FROM 
+//     product p
+// LEFT JOIN input_body i
+// ON p.product_code = i.product_code
+// LEFT JOIN output_aggregated oa
+// ON i.input_num = oa.input_num `;
 
 
 //lot별 재고 조회 (재고상태, 유통기한 필터)
 const lotNum =
-`WITH output_aggregated AS (
-	SELECT
-		input_num,
-        SUM(output_amount) AS total_output_amount
-	FROM output
-    GROUP BY input_num
-)
+`
 SELECT 
     ib.product_lot,
     ib.product_code,
     p.product_name,
-    NVL(SUM(ib.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) AS product_quantity,
+    COALESCE(SUM(ib.input_amount), 0) - COALESCE(SUM(o.total_output_amount), 0) AS product_quantity,
     w.warehouse_name,
     qp.inspec_end AS manufacturing_date,
     ib.expire_date,
     status.product_status
 FROM 
-    input_body ib LEFT JOIN output_aggregated o
-                  ON ib.input_num = o.input_num
-				  LEFT JOIN warehouse w
-                  ON ib.warehouse_code = w.warehouse_code
-				  LEFT JOIN qc_packaging qp
-                  ON ib.qc_packing_id = qp.qc_packing_id
-				  LEFT JOIN product p
-                  ON ib.product_code = p.product_code
-                  LEFT JOIN  (
-                                    SELECT 
-                                        ib_inner.input_num,
-                                        CASE 
-                                        WHEN NVL(SUM(ib_inner.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) <= 0 THEN '소진'
-                                        WHEN ib_inner.dispose_flag = 1 THEN '폐기'
-                                        WHEN ib_inner.input_flag = 1 THEN '취소'
-                                        ELSE '보관'
-                                        END AS product_status
-                                    FROM 
-                                        input_body ib_inner
-                                    LEFT JOIN output_aggregated o
-                                        ON ib_inner.input_num = o.input_num
-                                    GROUP BY 
-                                        ib_inner.input_num,
-                                        ib_inner.dispose_flag,
-                                        ib_inner.input_flag
-                                ) STATUS
-                  ON ib.input_num = status.input_num `;
+    input_body ib 
+LEFT JOIN (
+    SELECT
+        input_num,
+        SUM(output_amount) AS total_output_amount
+    FROM output
+    GROUP BY input_num
+) AS o
+ON ib.input_num = o.input_num
+LEFT JOIN warehouse w
+ON ib.warehouse_code = w.warehouse_code
+LEFT JOIN qc_packaging qp
+ON ib.qc_packing_id = qp.qc_packing_id
+LEFT JOIN product p
+ON ib.product_code = p.product_code
+LEFT JOIN (
+    SELECT 
+        ib_inner.input_num,
+        CASE 
+            WHEN COALESCE(SUM(ib_inner.input_amount), 0) - COALESCE(SUM(o_inner.total_output_amount), 0) <= 0 THEN '소진'
+            WHEN ib_inner.dispose_flag = 1 THEN '폐기'
+            WHEN ib_inner.input_flag = 1 THEN '취소'
+            ELSE '보관'
+        END AS product_status
+    FROM 
+        input_body ib_inner
+    LEFT JOIN (
+        SELECT
+            input_num,
+            SUM(output_amount) AS total_output_amount
+        FROM output
+        GROUP BY input_num
+    ) AS o_inner
+    ON ib_inner.input_num = o_inner.input_num
+    GROUP BY 
+        ib_inner.input_num,
+        ib_inner.dispose_flag,
+        ib_inner.input_flag
+) AS status
+ON ib.input_num = status.input_num
+`;
+
+
+//버전문제
+// `WITH output_aggregated AS (
+// 	SELECT
+// 		input_num,
+//         SUM(output_amount) AS total_output_amount
+// 	FROM output
+//     GROUP BY input_num
+// )
+// SELECT 
+//     ib.product_lot,
+//     ib.product_code,
+//     p.product_name,
+//     NVL(SUM(ib.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) AS product_quantity,
+//     w.warehouse_name,
+//     qp.inspec_end AS manufacturing_date,
+//     ib.expire_date,
+//     status.product_status
+// FROM 
+//     input_body ib LEFT JOIN output_aggregated o
+//                   ON ib.input_num = o.input_num
+// 				  LEFT JOIN warehouse w
+//                   ON ib.warehouse_code = w.warehouse_code
+// 				  LEFT JOIN qc_packaging qp
+//                   ON ib.qc_packing_id = qp.qc_packing_id
+// 				  LEFT JOIN product p
+//                   ON ib.product_code = p.product_code
+//                   LEFT JOIN  (
+//                                     SELECT 
+//                                         ib_inner.input_num,
+//                                         CASE 
+//                                         WHEN NVL(SUM(ib_inner.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) <= 0 THEN '소진'
+//                                         WHEN ib_inner.dispose_flag = 1 THEN '폐기'
+//                                         WHEN ib_inner.input_flag = 1 THEN '취소'
+//                                         ELSE '보관'
+//                                         END AS product_status
+//                                     FROM 
+//                                         input_body ib_inner
+//                                     LEFT JOIN output_aggregated o
+//                                         ON ib_inner.input_num = o.input_num
+//                                     GROUP BY 
+//                                         ib_inner.input_num,
+//                                         ib_inner.dispose_flag,
+//                                         ib_inner.input_flag
+//                                 ) STATUS
+//                   ON ib.input_num = status.input_num `;
+
+
+
+
+
 //service에서 조건에 맞게 쿼리 가져오기
 /**WHERE ib.expire_date >='2025-01-01' 
 AND ib.expire_date <='2025-08-01' -- 유통기한 범위
@@ -443,50 +558,57 @@ WHERE product_lot = ?`;
 
 //제품클릭시 제품의 lot 출력 
 const productLot = 
-`WITH output_aggregated AS (
-	SELECT
-		input_num,
-        SUM(output_amount) AS total_output_amount
-	FROM output
-    GROUP BY input_num
-)
+`
 SELECT 
     ib.product_lot,
     ib.product_code,
     p.product_name,
-    NVL(SUM(ib.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) AS product_quantity,
+    COALESCE(SUM(ib.input_amount), 0) - COALESCE(SUM(o.total_output_amount), 0) AS product_quantity,
     w.warehouse_name,
     qp.inspec_end AS manufacturing_date,
     ib.expire_date,
     status.product_status
 FROM 
-    input_body ib LEFT JOIN output_aggregated o
-                  ON ib.input_num = o.input_num
-				  LEFT JOIN warehouse w
-                  ON ib.warehouse_code = w.warehouse_code
-				  LEFT JOIN qc_packaging qp
-                  ON ib.qc_packing_id = qp.qc_packing_id
-				  LEFT JOIN product p
-                  ON ib.product_code = p.product_code
-                  LEFT JOIN  (
-                                    SELECT 
-                                        ib_inner.input_num,
-                                        CASE
-                                        WHEN NVL(SUM(ib_inner.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) <= 0 THEN '소진'
-                                        WHEN ib_inner.dispose_flag = 1 THEN '폐기'
-                                        WHEN ib_inner.input_flag = 1 THEN '취소'
-                                        ELSE '보관'
-                                        END AS product_status
-                                    FROM 
-                                        input_body ib_inner
-                                     LEFT JOIN output_aggregated o
-                                        ON ib_inner.input_num = o.input_num
-                                    GROUP BY 
-                                        ib_inner.input_num,
-                                        ib_inner.dispose_flag,
-                                        ib_inner.input_flag
-                                ) STATUS
-                  ON ib.input_num = status.input_num
+    input_body ib 
+LEFT JOIN (
+    SELECT
+        input_num,
+        SUM(output_amount) AS total_output_amount
+    FROM output
+    GROUP BY input_num
+) AS o
+ON ib.input_num = o.input_num
+LEFT JOIN warehouse w
+ON ib.warehouse_code = w.warehouse_code
+LEFT JOIN qc_packaging qp
+ON ib.qc_packing_id = qp.qc_packing_id
+LEFT JOIN product p
+ON ib.product_code = p.product_code
+LEFT JOIN (
+    SELECT 
+        ib_inner.input_num,
+        CASE
+            WHEN COALESCE(SUM(ib_inner.input_amount), 0) - COALESCE(SUM(o_inner.total_output_amount), 0) <= 0 THEN '소진'
+            WHEN ib_inner.dispose_flag = 1 THEN '폐기'
+            WHEN ib_inner.input_flag = 1 THEN '취소'
+            ELSE '보관'
+        END AS product_status
+    FROM 
+        input_body ib_inner
+    LEFT JOIN (
+        SELECT
+            input_num,
+            SUM(output_amount) AS total_output_amount
+        FROM output
+        GROUP BY input_num
+    ) AS o_inner
+    ON ib_inner.input_num = o_inner.input_num
+    GROUP BY 
+        ib_inner.input_num,
+        ib_inner.dispose_flag,
+        ib_inner.input_flag
+) AS status
+ON ib.input_num = status.input_num
 WHERE p.product_code = ?
 GROUP BY 
     ib.product_lot, 
@@ -501,7 +623,68 @@ ORDER BY
         WHEN status.product_status = '보관' THEN 1
         ELSE 2
     END,
-    ib.expire_date`;
+    ib.expire_date
+`;
+//버전문제
+// `WITH output_aggregated AS (
+// 	SELECT
+// 		input_num,
+//         SUM(output_amount) AS total_output_amount
+// 	FROM output
+//     GROUP BY input_num
+// )
+// SELECT 
+//     ib.product_lot,
+//     ib.product_code,
+//     p.product_name,
+//     NVL(SUM(ib.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) AS product_quantity,
+//     w.warehouse_name,
+//     qp.inspec_end AS manufacturing_date,
+//     ib.expire_date,
+//     status.product_status
+// FROM 
+//     input_body ib LEFT JOIN output_aggregated o
+//                   ON ib.input_num = o.input_num
+// 				  LEFT JOIN warehouse w
+//                   ON ib.warehouse_code = w.warehouse_code
+// 				  LEFT JOIN qc_packaging qp
+//                   ON ib.qc_packing_id = qp.qc_packing_id
+// 				  LEFT JOIN product p
+//                   ON ib.product_code = p.product_code
+//                   LEFT JOIN  (
+//                                     SELECT 
+//                                         ib_inner.input_num,
+//                                         CASE
+//                                         WHEN NVL(SUM(ib_inner.input_amount), 0) - IFNULL(SUM(o.total_output_amount), 0) <= 0 THEN '소진'
+//                                         WHEN ib_inner.dispose_flag = 1 THEN '폐기'
+//                                         WHEN ib_inner.input_flag = 1 THEN '취소'
+//                                         ELSE '보관'
+//                                         END AS product_status
+//                                     FROM 
+//                                         input_body ib_inner
+//                                      LEFT JOIN output_aggregated o
+//                                         ON ib_inner.input_num = o.input_num
+//                                     GROUP BY 
+//                                         ib_inner.input_num,
+//                                         ib_inner.dispose_flag,
+//                                         ib_inner.input_flag
+//                                 ) STATUS
+//                   ON ib.input_num = status.input_num
+// WHERE p.product_code = ?
+// GROUP BY 
+//     ib.product_lot, 
+//     ib.product_code, 
+//     p.product_name, 
+//     w.warehouse_name, 
+//     qp.inspec_end, 
+//     ib.expire_date, 
+//     status.product_status
+// ORDER BY 
+//     CASE 
+//         WHEN status.product_status = '보관' THEN 1
+//         ELSE 2
+//     END,
+//     ib.expire_date`;
 
 
 module.exports = {

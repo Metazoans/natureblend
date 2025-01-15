@@ -31,32 +31,41 @@ WHERE p.plan_num = o.plan_num
 // 자재리스트 조회 ( 개별 자재 주문 할때 사용)
 const material_list =
 `
-WITH material_lot_qty AS
-  (SELECT material_code,
-          COALESCE(SUM(stok_qty), 0) AS stok_qty
-   FROM material_lot_qty1
-   GROUP BY material_code)
 SELECT mat.material_code,
        mat.material_name,
        mat.safety_inventory,
        COALESCE(mlq.stok_qty, 0) AS stok_qty
 FROM material mat
-LEFT JOIN material_lot_qty mlq ON mat.material_code = mlq.material_code
+LEFT JOIN (
+    SELECT material_code,
+           COALESCE(SUM(stok_qty), 0) AS stok_qty
+    FROM material_lot_qty1
+    GROUP BY material_code
+) AS mlq ON mat.material_code = mlq.material_code
 WHERE mat.material_code != 'M010'
 ORDER BY mat.material_code ASC
 `;
+//버전 문제로 위드절 수정
+// `
+// WITH material_lot_qty AS
+//   (SELECT material_code,
+//           COALESCE(SUM(stok_qty), 0) AS stok_qty
+//    FROM material_lot_qty1
+//    GROUP BY material_code)
+// SELECT mat.material_code,
+//        mat.material_name,
+//        mat.safety_inventory,
+//        COALESCE(mlq.stok_qty, 0) AS stok_qty
+// FROM material mat
+// LEFT JOIN material_lot_qty mlq ON mat.material_code = mlq.material_code
+// WHERE mat.material_code != 'M010'
+// ORDER BY mat.material_code ASC
+// `;
 
 
 //발주계획 필요 자재 조회
 const need_order_material =
 `
-WITH stok_qty_cte AS
-  (SELECT material_code,
-          SUM(stok_qty) AS stok_qty
-   FROM material_lot_qty1
-   WHERE material_nomal = 'b1'
-     AND material_lot_state = 'c1'
-   GROUP BY material_code)
 SELECT bm.material_code AS material_code,
        bm.material AS material,
        COALESCE(stok.stok_qty, 0) AS stok_qty,
@@ -66,12 +75,12 @@ SELECT bm.material_code AS material_code,
                   (SELECT SUM(ord_qty)
                    FROM material_order_body
                    WHERE material_code = bm.material_code
-                     AND material_state = 'a1' ), 0) AS ordering_qty,
+                     AND material_state = 'a1'), 0) AS ordering_qty,
        COALESCE(GREATEST(((bm.material_con * opr.plan_qty) - COALESCE(stok.stok_qty, 0) - COALESCE(
                                                                                                                             (SELECT SUM(ord_qty)
                                                                                                                              FROM material_order_body
                                                                                                                              WHERE material_code = bm.material_code
-                                                                                                                               AND material_state = 'a1' ), 0)), 0), 0) AS need_qty,
+                                                                                                                               AND material_state = 'a1'), 0)), 0), 0) AS need_qty,
        opr.plan_num AS 생산계획코드,
        opr.plan_qty AS 생산수량,
        b.bom_num AS 레시피코드
@@ -79,10 +88,52 @@ FROM order_plan_relation opr
 JOIN bom b ON opr.product_code = b.product_code
 JOIN bom_material bm ON b.bom_num = bm.bom_num
 JOIN material mat ON bm.material_code = mat.material_code
-LEFT JOIN stok_qty_cte stok ON stok.material_code = bm.material_code
+LEFT JOIN (
+    SELECT material_code,
+           SUM(stok_qty) AS stok_qty
+    FROM material_lot_qty1
+    WHERE material_nomal = 'b1'
+      AND material_lot_state = 'c1'
+    GROUP BY material_code
+) AS stok ON stok.material_code = bm.material_code
 WHERE opr.order_plan_num = ?
   AND bm.material_code != 'M010'
 `;
+//버전문제로 위드절 제거
+// `
+// WITH stok_qty_cte AS
+//   (SELECT material_code,
+//           SUM(stok_qty) AS stok_qty
+//    FROM material_lot_qty1
+//    WHERE material_nomal = 'b1'
+//      AND material_lot_state = 'c1'
+//    GROUP BY material_code)
+// SELECT bm.material_code AS material_code,
+//        bm.material AS material,
+//        COALESCE(stok.stok_qty, 0) AS stok_qty,
+//        COALESCE(mat.safety_inventory, 0) AS safety_inventory,
+//        COALESCE((bm.material_con * opr.plan_qty), 0) AS plan_qty,
+//        COALESCE(
+//                   (SELECT SUM(ord_qty)
+//                    FROM material_order_body
+//                    WHERE material_code = bm.material_code
+//                      AND material_state = 'a1' ), 0) AS ordering_qty,
+//        COALESCE(GREATEST(((bm.material_con * opr.plan_qty) - COALESCE(stok.stok_qty, 0) - COALESCE(
+//                                                                                                                             (SELECT SUM(ord_qty)
+//                                                                                                                              FROM material_order_body
+//                                                                                                                              WHERE material_code = bm.material_code
+//                                                                                                                                AND material_state = 'a1' ), 0)), 0), 0) AS need_qty,
+//        opr.plan_num AS 생산계획코드,
+//        opr.plan_qty AS 생산수량,
+//        b.bom_num AS 레시피코드
+// FROM order_plan_relation opr
+// JOIN bom b ON opr.product_code = b.product_code
+// JOIN bom_material bm ON b.bom_num = bm.bom_num
+// JOIN material mat ON bm.material_code = mat.material_code
+// LEFT JOIN stok_qty_cte stok ON stok.material_code = bm.material_code
+// WHERE opr.order_plan_num = ?
+//   AND bm.material_code != 'M010'
+// `;
 
 //거래처 전체선택
 const full_client =
@@ -272,13 +323,6 @@ WHERE mlq1.material_nomal = 'b1'
 //로트 재고 조회 페이지에서 사용하는 전체조회 또는 선택조회 
 const lot_qty_list =
 `
-WITH in_material AS
-  (SELECT lot_code,
-  				lot_seq,
-          sum(material_qty) AS material_qty
-   FROM invalid_material
-   WHERE is_out = '0'
-   GROUP BY lot_code)
 SELECT mlq.lot_seq,
        mlq.lot_code,
        mat.material_name,
@@ -307,10 +351,58 @@ LEFT JOIN material_input mi ON mlq.input_num = mi.input_num
 LEFT JOIN client cli ON mi.client_num = cli.client_num
 LEFT JOIN employee emp ON mi.emp_num = emp.emp_num
 LEFT JOIN warehouse ware ON mlq.warehouse_code = ware.warehouse_code
-LEFT JOIN in_material im ON mlq.lot_code = im.lot_code
-                  			AND mlq.lot_seq = im.lot_seq
+LEFT JOIN (
+    SELECT lot_code,
+           lot_seq,
+           SUM(material_qty) AS material_qty
+    FROM invalid_material
+    WHERE is_out = '0'
+    GROUP BY lot_code, lot_seq
+) AS im ON mlq.lot_code = im.lot_code
+        AND mlq.lot_seq = im.lot_seq
 LEFT JOIN material_discard md ON mlq.lot_seq = md.lot_seq
 `;
+//버전문제로 위드절 제거
+// `
+// WITH in_material AS
+//   (SELECT lot_code,
+//   				lot_seq,
+//           sum(material_qty) AS material_qty
+//    FROM invalid_material
+//    WHERE is_out = '0'
+//    GROUP BY lot_code)
+// SELECT mlq.lot_seq,
+//        mlq.lot_code,
+//        mat.material_name,
+//        COALESCE(cli.com_name, 'NO_CLIENT') AS com_name,
+//        mlq.in_qty,
+//        COALESCE(emp.name, 'NO_EMP') AS name,
+//        mlq.stok_qty,
+//        COALESCE(im.material_qty, 0) AS hold_qty,
+//        mlq.out_qty,
+//        COALESCE(mi.inset_lot_date, '9999-12-31 23:59:59') AS inset_lot_date,
+//        mlq.limit_date,
+//        COALESCE(ware.warehouse_name, 'NO_WARE') AS warehouse_name,
+//        CASE
+//            WHEN mlq.material_lot_state = 'c1' THEN '정상'
+//            ELSE '폐기'
+//        END AS material_lot_state,
+//        CASE
+//            WHEN mlq.material_nomal = 'b1' THEN '정상'
+//            ELSE '불량'
+//        END AS material_nomal,
+//        md.material_dis_content,
+//        your_employee(md.emp_num, 'name') AS dis_name
+// FROM material_lot_qty1 mlq
+// JOIN material mat ON mlq.material_code = mat.material_code
+// LEFT JOIN material_input mi ON mlq.input_num = mi.input_num
+// LEFT JOIN client cli ON mi.client_num = cli.client_num
+// LEFT JOIN employee emp ON mi.emp_num = emp.emp_num
+// LEFT JOIN warehouse ware ON mlq.warehouse_code = ware.warehouse_code
+// LEFT JOIN in_material im ON mlq.lot_code = im.lot_code
+//                   			AND mlq.lot_seq = im.lot_seq
+// LEFT JOIN material_discard md ON mlq.lot_seq = md.lot_seq
+// `;
 // `
 // WITH in_material AS
 //   (SELECT lot_code,
@@ -384,52 +476,94 @@ WHERE mob.order_code = ?
 
 
 // 재고 조회 메뉴 ( 전체 또는 조건 )
-const material_qty_list = 
+const material_qty_list =
 `
-WITH pass_material AS
-  (SELECT material_code,
-          sum(stok_qty) AS stok_qty
-   FROM material_lot_qty1 mlq1
-   WHERE mlq1.material_nomal = 'b1'
-     AND mlq1.material_lot_state = 'c1'
-   GROUP BY material_code),
-     reject_materal AS
-  (SELECT material_code,
-          SUM(stok_qty) AS stok_qty
-   FROM material_lot_qty1
-   WHERE (material_nomal = 'b2'
-          AND material_lot_state = 'c1')
-     OR (limit_date <= NOW()
-         AND material_lot_state = 'c1')
-   GROUP BY material_code),
-     invalid_mat AS
-  (SELECT material_code,
-          SUM(material_qty) AS stok_qty
-   FROM invalid_material
-   WHERE is_out = '0'
-   GROUP BY material_code),
-     order_material AS
-  (SELECT material_code,
-          SUM(ord_qty) AS stok_qty
-   FROM material_order_body
-   WHERE material_state = 'a1'
-   GROUP BY material_code)
-SELECT ROW_NUMBER() OVER (
-                          ORDER BY mat.material_code) AS row_num,
-       mat.material_code,
-       mat.material_name,
-       COALESCE(pm.stok_qty, 0) AS stok_qty,
-       COALESCE(im.stok_qty, 0) AS reject_qty,
-       COALESCE(rm.stok_qty, 0) AS trush_qty,
-       COALESCE(om.stok_qty, 0) AS order_qty,
-       mat.safety_inventory,
-       mat.regi_date
-FROM material mat
-LEFT JOIN pass_material pm ON mat.material_code = pm.material_code
-LEFT JOIN reject_materal rm ON mat.material_code = rm.material_code
-LEFT JOIN invalid_mat im ON mat.material_code = im.material_code
-LEFT JOIN order_material om ON mat.material_code = om.material_code
-`;
+SELECT mat.material_code,
+               mat.material_name,
+               COALESCE(pm.stok_qty, 0) AS stok_qty,
+               COALESCE(im.stok_qty, 0) AS reject_qty,
+               COALESCE(rm.stok_qty, 0) AS trush_qty,
+               COALESCE(om.stok_qty, 0) AS order_qty,
+               mat.safety_inventory,
+               mat.regi_date
+        FROM material mat
+        LEFT JOIN (
+            SELECT material_code,
+                   SUM(stok_qty) AS stok_qty
+            FROM material_lot_qty1
+            WHERE material_nomal = 'b1'
+              AND material_lot_state = 'c1'
+            GROUP BY material_code
+        ) AS pm ON mat.material_code = pm.material_code
+        LEFT JOIN (
+            SELECT material_code,
+                   SUM(stok_qty) AS stok_qty
+            FROM material_lot_qty1
+            WHERE (material_nomal = 'b2' AND material_lot_state = 'c1')
+               OR (limit_date <= NOW() AND material_lot_state = 'c1')
+            GROUP BY material_code
+        ) AS rm ON mat.material_code = rm.material_code
+        LEFT JOIN (
+            SELECT material_code,
+                   SUM(material_qty) AS stok_qty
+            FROM invalid_material
+            WHERE is_out = '0'
+            GROUP BY material_code
+        ) AS im ON mat.material_code = im.material_code
+        LEFT JOIN (
+            SELECT material_code,
+                   SUM(ord_qty) AS stok_qty
+            FROM material_order_body
+            WHERE material_state = 'a1'
+            GROUP BY material_code
+        ) AS om ON mat.material_code = om.material_code
+`; 
+//버전 문제로 위드절 제거
+// `
+// WITH pass_material AS
+//   (SELECT material_code,
+//           sum(stok_qty) AS stok_qty
+//    FROM material_lot_qty1 mlq1
+//    WHERE mlq1.material_nomal = 'b1'
+//      AND mlq1.material_lot_state = 'c1'
+//    GROUP BY material_code),
+//      reject_materal AS
+//   (SELECT material_code,
+//           SUM(stok_qty) AS stok_qty
+//    FROM material_lot_qty1
+//    WHERE (material_nomal = 'b2'
+//           AND material_lot_state = 'c1')
+//      OR (limit_date <= NOW()
+//          AND material_lot_state = 'c1')
+//    GROUP BY material_code),
+//      invalid_mat AS
+//   (SELECT material_code,
+//           SUM(material_qty) AS stok_qty
+//    FROM invalid_material
+//    WHERE is_out = '0'
+//    GROUP BY material_code),
+//      order_material AS
+//   (SELECT material_code,
+//           SUM(ord_qty) AS stok_qty
+//    FROM material_order_body
+//    WHERE material_state = 'a1'
+//    GROUP BY material_code)
+// SELECT ROW_NUMBER() OVER (
+//                           ORDER BY mat.material_code) AS row_num,
+//        mat.material_code,
+//        mat.material_name,
+//        COALESCE(pm.stok_qty, 0) AS stok_qty,
+//        COALESCE(im.stok_qty, 0) AS reject_qty,
+//        COALESCE(rm.stok_qty, 0) AS trush_qty,
+//        COALESCE(om.stok_qty, 0) AS order_qty,
+//        mat.safety_inventory,
+//        mat.regi_date
+// FROM material mat
+// LEFT JOIN pass_material pm ON mat.material_code = pm.material_code
+// LEFT JOIN reject_materal rm ON mat.material_code = rm.material_code
+// LEFT JOIN invalid_mat im ON mat.material_code = im.material_code
+// LEFT JOIN order_material om ON mat.material_code = om.material_code
+// `;
 
 // LOT 재고 폐기
 const trush_go =

@@ -405,6 +405,12 @@ const materialQtyList = async (materialCode, materialName, startDate, endDate, q
   console.log('selected Query', querywhere);
 
   let list = await mysql.query('material_qty_list', querywhere);
+
+  list = list.map((row, index) => ({
+    row_num: list.length - index, // 순번 추가
+    ...row,
+  }));
+
   return list;
 }
 
